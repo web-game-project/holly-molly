@@ -1,9 +1,7 @@
 const express = require('express');
 const Http = require('http');
-const socketIo = require('socket.io');
-const { socketConfig } = require('./config/config')
+const socket = require('./socket/socket');
 
-//const socketInit = require('./socket/socket');
 const {
     loginRouter,
     roomRouter,
@@ -14,9 +12,7 @@ const PORT = 8080;
 
 const app = express();
 const server = Http.createServer(app);
-
-//const io = socketIo(server, socketConfig);
-//app.set('io', io);
+socket(server, app);
 
 app.get('/', (req, res) => {
     res.send('success!');
@@ -30,4 +26,3 @@ app.use('/game', gameRouter);
 server.listen(PORT, () => {
     console.log(`listening at ${PORT}`);
 });
-//socketInit(server, app, io);
