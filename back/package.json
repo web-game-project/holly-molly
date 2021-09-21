@@ -17,7 +17,8 @@
     "mysql2": "^2.3.0",
     "pm2": "^5.1.1",
     "sequelize": "^6.6.5",
-    "sequelize-auto": "^0.8.4"
+    "sequelize-auto": "^0.8.4",
+    "socket.io": "^4.2.0"
   },
   "devDependencies": {
     "prettier": "^2.4.1",

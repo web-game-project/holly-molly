@@ -1,25 +1,33 @@
 const express = require('express');
 const Http = require('http');
+const socketIo = require('socket.io');
+const { socketConfig } = require('./config/config')
 
-const app = express();
-const http = Http.createServer(app);
-const { User } = require('./models');
-
+//const socketInit = require('./socket/socket');
+const {
+    loginRouter,
+    roomRouter,
+    waitingRoomRouter,
+    gameRouter,
+} = require('./router');
 const PORT = 8080;
 
-app.use(express.json());
-app.get('/dbtest', async (req, res) => {
-    try {
-        const user = await User.create({
-            user_name: 'hy',
-        });
-        const users = await User.findAll();
-        res.json(users);
-    } catch (error) {
-        res.status(400).send({ message: 'DB not Connection' });
-    }
-});
+const app = express();
+const server = Http.createServer(app);
 
-http.listen(PORT, () => {
+//const io = socketIo(server, socketConfig);
+//app.set('io', io);
+
+app.get('/', (req, res) => {
+    res.send('success!');
+});
+app.use(express.json());
+app.use('/login', loginRouter);
+app.use('/room', roomRouter);
+app.use('/waiting-room', waitingRoomRouter);
+app.use('/game', gameRouter);
+
+server.listen(PORT, () => {
     console.log(`listening at ${PORT}`);
 });
+//socketInit(server, app, io);
