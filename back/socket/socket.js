@@ -1,12 +1,6 @@
 const { socketConfig } = require('../config/config');
 const socketIo = require('socket.io');
-
-async function sendAll(socket, io, event, message) {
-    io.emit(event, message);
-}
-async function sendRoom(socket, io, event, message, data) {  
-    io.to(data).emit(event, message);
-}
+const chat = require('./chat');
 
 module.exports = (server, app) => {
     const io = socketIo(server, socketConfig);
@@ -21,11 +15,9 @@ module.exports = (server, app) => {
             clearInterval(socket.interval);
         });
 
-        socket.on('event1', sendAll.bind(this, socket, io, "socket-js" ,'event1에 대한 message'));
-        socket.on('event2', sendRoom.bind(this, socket, io, "socket-js1", 'event2에 대한 message'));
-        socket.on('event3', sendRoom.bind(this, socket, io, "socket-js2",'event3에 대한 message'));
+        socket.on('chat', chat.bind(this, socket, io));
 
-        socket.join('1');
+        socket.join(1);
         console.log(socket.rooms);
     });
 };
