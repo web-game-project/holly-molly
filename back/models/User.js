@@ -10,13 +10,20 @@ module.exports = function(sequelize, DataTypes) {
     user_name: {
       type: DataTypes.STRING(45),
       allowNull: false
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     sequelize,
     tableName: 'User',
     timestamps: true,
     underscored: true,
-
     indexes: [
       {
         name: "PRIMARY",
