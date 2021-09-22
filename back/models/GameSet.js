@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('GameSet', {
     game_set_idx: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
@@ -14,16 +15,16 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(200),
       allowNull: true
     },
-    game_set_mafia_answer: {
+    game_set_human_answer: {
       type: DataTypes.STRING(45),
       allowNull: true
     },
-    game_set_mafia_score: {
+    game_set_human_score: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
     },
-    game_set_citizen_score: {
+    game_set_ghost_score: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
@@ -43,6 +44,14 @@ module.exports = function(sequelize, DataTypes) {
         model: 'Game',
         key: 'game_idx'
       }
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     sequelize,
