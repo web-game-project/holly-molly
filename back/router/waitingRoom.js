@@ -1,8 +1,9 @@
 const express = require('express');
-const router = express.Router();
-const { changeUserReady, changeUserColor } = require('../service/waitingRoom');
+const { changeUserReady, changeUserColor } = require('../service').waitingRoomService;
 
-router.patch('/user-ready', changeUserReady);
-router.patch('/user-color', changeUserColor);
+const router = express.Router();
+
+//router.patch('/user-ready', changeUserReady);
+//router.patch('/user-color', changeUserColor);
 
 module.exports = router;
