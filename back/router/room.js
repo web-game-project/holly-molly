@@ -1,9 +1,10 @@
 const express = require('express');
-const { getRoomInfoService, editRoomInfoService } = require('../service/room');
+const { getRoomInfo, editRoomInfo, deleteRoom } = require('../service').roomService;
 
 const router = express.Router();
 
-router.get('/info/:roomIdx', getRoomInfoService);
-router.put('/info', editRoomInfoService);
+router.get('/info/:roomIdx', getRoomInfo);
+router.put('/info', editRoomInfo);
+router.delete('/:roomIdx', deleteRoom);
 
 module.exports = router;
