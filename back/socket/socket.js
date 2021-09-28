@@ -26,7 +26,7 @@ module.exports = (server, app) => {
                 //console.log(io.sockets.adapter.rooms);
             }*/
         } catch (error) {
-            socket.emit("error", "auth token이 유효하지 않습니다."); 
+            socket.emit("error", {message:"auth token이 유효하지 않습니다."}); 
             socket.disconnect(true);
         }
 
