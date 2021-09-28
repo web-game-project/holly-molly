@@ -8,6 +8,9 @@ const verifyJWT = {
     verifyRefreshToken: (token) => {
         return jwt.verify(token, jwtRefreshKey);
     },
+    decode: (token) => {
+        return jwt.decode(token);
+    },
 };
 
 module.exports = verifyJWT;

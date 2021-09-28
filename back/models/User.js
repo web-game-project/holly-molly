@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     socket_id: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(30),
       allowNull: true
     },
     created_at: {

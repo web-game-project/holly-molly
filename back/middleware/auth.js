@@ -1,5 +1,4 @@
-const jwt = require('jsonwebtoken');
-const { jwtAccessKey } = require('../config/config');
+const verifyJWT = require('../util/jwt/verifyJWT');
 const { User } = require('../models');
 
 module.exports = (req, res, next) => {
@@ -24,13 +23,13 @@ module.exports = (req, res, next) => {
 
         let decodedToken;
         try {
-            decodedToken = jwt.verify(tokenValue, jwtAccessKey);
+            decodedToken = verifyJWT.verifyAccessToken(tokenValue);
         } catch (error) {
             try {
-                if (
-                    req.route.path != '/refresh' ||
-                    error.name != 'TokenExpiredError'
-                ) {
+                const isRefresh = req.route.path == '/refresh' && error.name == 'TokenExpiredError';
+                if(isRefresh){
+                    decodedToken = verifyJWT.decode(tokenValue);
+                }else{
                     res.status(401).send({
                         message: '회원가입 후 사용하세요.',
                     });
@@ -38,7 +37,7 @@ module.exports = (req, res, next) => {
                 }
             } catch (error) {}
         }
-
+        console.log(decodedToken);
         User.findByPk(decodedToken.user_idx).then((user) => {
             if (!user) {
                 res.status(401).send({
