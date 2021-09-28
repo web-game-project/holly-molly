@@ -11,6 +11,14 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(45),
       allowNull: false
     },
+    refresh_token: {
+      type: DataTypes.STRING(200),
+      allowNull: true
+    },
+    socket_id: {
+      type: DataTypes.STRING(30),
+      allowNull: true
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: true
