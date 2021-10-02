@@ -51,6 +51,7 @@ module.exports = async (req, res, next) => {
             return;
         }
 
+        res.locals.gameIdx = realGameIdx;
         res.locals.leader = gameMember.wrm_wrm_idx_WaitingRoomMember.wrm_leader;
         res.locals.role = gameMember.game_member_role; 
         next();
