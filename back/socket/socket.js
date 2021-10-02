@@ -9,31 +9,66 @@ module.exports = (server, app) => {
     app.set('io', io);
 
     io.on('connection', async (socket) => {
-        try {
-            const { user_idx } = verifyJWT.verifyAccessToken(socket.handshake.headers.auth); // postman test code
-            //const { user_idx } = verifyJWT.verifyAccessToken(socket.handshake.auth.token); // real code
-            
-            await User.update(
-                {
-                    socket_id : socket.id,
-                },
-                { where: { user_idx } }
-            )
+        saveSocketId(socket);
+        
+        // 여기에 socket.on 추가
+        socket.on('chat', chat.bind(this, socket, io));
+        
 
-            /* 대기실 리스트 조회 api로 이동 예정
-            if(socket.handshake.headers.path == 'roomlist'){
-                socket.join(0); 
-                //console.log(io.sockets.adapter.rooms);
-            }*/
-        } catch (error) {
-            socket.emit("error", "auth token이 유효하지 않습니다."); 
-            socket.disconnect(true);
-        }
 
-        socket.on('error', (error) => {});
+
+        socket.on('error', errorEvent.bind(this, socket));
         socket.on('disconnect', () => {
             clearInterval(socket.interval);
         });
-        socket.on('chat', chat.bind(this, socket, io));
+        socket.use(async (event, next) => {
+            let token;
+            try {
+                token = verifyJWT.verifyAccessToken(
+                    socket.handshake.headers.auth
+                );
+            } catch (error) {
+                return next(new Error('unauthorized event'));
+            }
+            const user = await User.findByPk(token.user_idx);
+            if (!user) {
+                return next(new Error('not user'));
+            }
+            next();
+        });
     });
+};
+
+const saveSocketId = async (socket) => {
+    try {
+        const { user_idx } = verifyJWT.verifyAccessToken(
+            socket.handshake.headers.auth
+        ); // postman test code
+        //const { user_idx } = verifyJWT.verifyAccessToken(socket.handshake.auth.token); // real code
+
+        const user = await User.update(
+            {
+                socket_id: socket.id,
+            },
+            { where: { user_idx } }
+        );
+
+        if (user[0] == 0) {
+            socket.disconnet(true);
+        }
+    } catch (error) {
+        socket.disconnect(true);
+    }
+};
+
+const errorEvent = (socket, err) => {
+    const isNotAuth =
+        err &&
+        (err.message === 'unauthorized event' || err.message === 'not user');
+    if (isNotAuth) {
+        socket.emit('error', {
+            message: 'auth token이 유효하지 않습니다.',
+        });
+        socket.disconnect(true);
+    }
 };
