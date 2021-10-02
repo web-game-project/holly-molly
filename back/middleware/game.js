@@ -1,4 +1,4 @@
-const { User, Game, GameSet, GameMember, WaitingRoomMember } = require('../models');
+const { GameSet, GameMember, WaitingRoomMember } = require('../models');
 
 module.exports = async (req, res, next) => {
     // game_set_idx, game_idx와 user 정보 가지고 방장/방원/마피아/시민인지 체크
