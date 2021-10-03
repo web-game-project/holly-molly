@@ -3,6 +3,7 @@ const sequelize = require('sequelize');
 
 module.exports = async (req, res, next) => {
     let { roomIdx } = req.params;
+    roomIdx = Number(roomIdx);
     let userIdx = 1;
 
     try {
@@ -48,9 +49,7 @@ module.exports = async (req, res, next) => {
             }
         });
 
-        console.log(member[0].dataValues);
         let { memberCount } = member[0].dataValues;
-        console.log(memberCount);
 
         const io = req.app.get('io');
         let member_data = { room_idx: roomIdx, room_member_count: memberCount};
