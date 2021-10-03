@@ -1,7 +1,9 @@
 const changeUserReady = require('./changeUserReady');
-const changeUSerColor = require('./changeUserColor');
+const changeUserColor = require('./changeUserColor');
+const exitWaitingRoom = require('./exitWaitingRoom');
 
 module.exports = {
     changeUserReady,
-    changeUSerColor
+    changeUserColor,
+    exitWaitingRoom
 }

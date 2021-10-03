@@ -13,9 +13,6 @@ module.exports = (server, app) => {
         
         // 여기에 socket.on 추가
         socket.on('chat', chat.bind(this, socket, io));
-        
-
-
 
         socket.on('error', errorEvent.bind(this, socket));
         socket.on('disconnect', () => {
