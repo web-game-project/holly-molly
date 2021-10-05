@@ -1,6 +1,5 @@
-const { Room, WaitingRoomMember } = require('../../models');
 const db = require('../../models');
-const sequelize = require('sequelize');
+const moveRoom = require('../../socket/moveRoom');
 
 module.exports = async (req, res, next) => {
     try {
@@ -20,19 +19,8 @@ module.exports = async (req, res, next) => {
         );
 
         // socket
-        const socketId = res.locals.user.socket_id;
-        const io = req.app.get('io');
-        const socket = io.sockets.sockets.get(socketId);
-        if (!socket) {
-            res.status(400).json({
-                message: 'socket connection을 다시 해주세요.',
-            });
-            return;
-        }
-
-        socket.join(0);
-        io.to(0).emit('test', '대기실 리스트를 보고 있습니다.');
-        console.log(res.locals.user.user_idx);
+        moveRoom(req,res,-1,0);
+        
         res.json({
             total_room_cnt: rooms.roomCount,
             room_list: rooms.roomList,

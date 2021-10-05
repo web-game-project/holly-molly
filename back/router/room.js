@@ -5,7 +5,7 @@ const {authMiddleware} = require('../middleware');
 const router = express.Router();
 
 router.get('/', authMiddleware, getRoomList);
-router.post('/', makeRoom);
+router.post('/', authMiddleware, makeRoom);
 router.post('/:type', enterRoom);
 router.get('/info/:roomIdx', getRoomInfo);
 router.put('/info', editRoomInfo);
