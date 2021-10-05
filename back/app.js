@@ -9,7 +9,7 @@ const {
     gameRouter,
 } = require('./router');
 const { authMiddleware, roomMiddleware, gameMiddleware } = require('./middleware');
-const PORT = 8080;
+const PORT = 3002;
 
 const app = express();
 const server = Http.createServer(app);
