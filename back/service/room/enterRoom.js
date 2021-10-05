@@ -7,6 +7,20 @@ module.exports = async (req, res, next) => {
     const user = res.locals.user;
     const room = await findRoom(req, res);
 
+    if(!room){
+        res.status(400).json({
+            message: "방이 존재하지 않습니다."
+        });
+        return;
+    }
+
+    if(room.room_status != 'waiting'){
+        res.status(400).json({
+            message: "게임이 이미 시작되었습니다."
+        });
+        return;
+    }
+
     // room에 들어와 있는 인원 정보 파악
     const { waitingRoomMemberList, leader_idx } = await findWaitingRoomMember(
         room.room_idx
