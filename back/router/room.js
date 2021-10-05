@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', authMiddleware, getRoomList);
 router.post('/', authMiddleware, makeRoom);
-router.post('/:type', enterRoom);
+router.post('/:type', authMiddleware, enterRoom);
 router.get('/info/:roomIdx', getRoomInfo);
 router.put('/info', editRoomInfo);
 router.delete('/:roomIdx', deleteRoom);

@@ -8,7 +8,7 @@ module.exports = async (req, res, next) => {
             req.body;
         const user = res.locals.user;
 
-        // room create
+        // create room
         let roomCode;
         let duplicatedRoomCode;
         do {
@@ -27,20 +27,20 @@ module.exports = async (req, res, next) => {
             room_status: 'waiting',
         });
 
-        // waitingroommeber create
+        // create WaitingRoomMember
         const member = await WaitingRoomMember.create({
             wrm_user_color: 0,
             wrm_leader: 1,
             wrm_user_ready: 0,
             room_room_idx: room.room_idx,
-            user_user_idx: user.user_idx
-        })
+            user_user_idx: user.user_idx,
+        });
 
-        // roomJoin
+        // join room
         moveRoom(req, res, 0, room.room_idx);
 
         // 대기실 리스트 보는 사람들에게 socket event 전송
-        if(!room.room_private){
+        if (!room.room_private) {
             const io = req.app.get('io');
             io.to(0).emit('create room', {
                 room_name: room.room_name,
@@ -51,10 +51,10 @@ module.exports = async (req, res, next) => {
                 room_status: room.room_status,
             });
         }
-        
+
         res.status(201).json({ room_idx: room.room_idx });
     } catch (error) {
         console.log(error);
-        res.status(400).json({message:"알 수 없는 오류가 발생했습니다."});
+        res.status(400).json({ message: '알 수 없는 오류가 발생했습니다.' });
     }
 };
