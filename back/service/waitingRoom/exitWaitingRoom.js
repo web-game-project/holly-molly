@@ -22,11 +22,10 @@ module.exports = async (req, res, next) => {
             //방장이라면
             const newLeader = await WaitingRoomMember.findOne({
                 attributes: ['user_user_idx'],
-                order: sequelize.literal('rand()'),
-                where: { room_room_idx: roomIdx }
+                where: { room_room_idx: roomIdx },
+                order: sequelize.literal('rand()')
             });
 
-            console.log(newLeader);
             newLeaderIdx = newLeader.dataValues.user_user_idx;
 
             await WaitingRoomMember.update(
@@ -37,19 +36,7 @@ module.exports = async (req, res, next) => {
             );
         }
 
-        const member = await WaitingRoomMember.findAll({
-            attributes: [
-                [
-                    sequelize.fn('count', sequelize.col('wrm_idx')),
-                    'memberCount',
-                ],
-            ],
-            where: {
-                room_room_idx: roomIdx,
-            }
-        });
-
-        let { memberCount } = member[0].dataValues;
+        let memberCount = getMemberCount(room_idx);
 
         const io = req.app.get('io');
         let member_data = { room_idx: roomIdx, room_member_count: memberCount};
@@ -65,3 +52,21 @@ module.exports = async (req, res, next) => {
         console.log('getRoomInfoService Error: ', error);
     }
 };
+
+const getMemberCount = async (room_idx) => {
+    const member = await WaitingRoomMember.findAll({
+        attributes: [
+            [
+                sequelize.fn('count', sequelize.col('wrm_idx')),
+                'memberCount',
+            ],
+        ],
+        where: {
+            room_room_idx: room_idx,
+        }
+    });
+
+    let { memberCount } = member[0].dataValues;
+
+    return memberCount;
+}
