@@ -11,8 +11,7 @@ module.exports = (server, app) => {
 
     io.on('connection', async (socket) => {
         saveSocketId(socket);
-        socket.join(4);
-        
+
         // 여기에 socket.on 추가
         socket.on('chat', chat.bind(this, socket, io));
         socket.on('draw', draw.bind(this, socket, io));
@@ -62,6 +61,7 @@ const saveSocketId = async (socket) => {
 };
 
 const errorEvent = (socket, err) => {
+    console.log(err);
     const isNotAuth =
         err &&
         (err.message === 'unauthorized event' || err.message === 'not user');
