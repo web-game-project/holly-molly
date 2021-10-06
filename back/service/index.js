@@ -5,5 +5,5 @@ const gameService = require('./game');
 module.exports = {
     roomService,
     waitingRoomService,
-    gameService
+    gameService,
 }
