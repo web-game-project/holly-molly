@@ -9,6 +9,12 @@ module.exports.startGame = async (req, res, next) => {
     let { room_idx } = req.body;
 
     try {
+        // socket : change game status
+        io.to(0).emit('change game status', {
+            room_idx: room_idx,
+            room_status: "playing",
+        });
+        
         let { game_idx } = await createAndGetGameInfo(room_idx);
         let { keyword_idx } = await getKeywordIdx();
         let { game_set_idx } = await createAndGetGameSetInfo(keyword_idx, game_idx);
