@@ -8,16 +8,7 @@ module.exports = async (req, res, next) => {
             req.body;
         const user = res.locals.user;
 
-        // create room
-        let roomCode;
-        let duplicatedRoomCode;
-        do {
-            roomCode = makeRandomCode(7);
-            duplicatedRoomCode = await Room.findOne({
-                where: { room_code: roomCode },
-            });
-        } while (duplicatedRoomCode);
-
+        let roomCode = await makeRoomCode();
         const room = await Room.create({
             room_code: roomCode,
             room_name,
@@ -26,9 +17,7 @@ module.exports = async (req, res, next) => {
             room_start_member_cnt,
             room_status: 'waiting',
         });
-
-        // create WaitingRoomMember
-        const member = await WaitingRoomMember.create({
+        await WaitingRoomMember.create({
             wrm_user_color: 0,
             wrm_leader: 1,
             wrm_user_ready: 0,
@@ -57,4 +46,16 @@ module.exports = async (req, res, next) => {
         console.log(error);
         res.status(400).json({ message: '알 수 없는 오류가 발생했습니다.' });
     }
+};
+
+const makeRoomCode = async () => {
+    let roomCode;
+    let duplicatedRoomCode;
+    do {
+        roomCode = makeRandomCode(7);
+        duplicatedRoomCode = await Room.findOne({
+            where: { room_code: roomCode },
+        });
+    } while (duplicatedRoomCode);
+    return roomCode;
 };
