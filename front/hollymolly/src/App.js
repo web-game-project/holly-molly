@@ -1,19 +1,20 @@
 import logo from './logo.svg';
+import React from 'react';
 import './App.css';
 import style from './styles/styles.js';
+import CreateRoom from './components/CreateRoom';
+import Filter from './components/Filter';
+const link = console.log('kkkk');
+const hi = console.log('hi');
 
 function App() {
+    const hi = console.log('hi');
     return (
-        <div style={{ backgroundColor: style.gray }} className="App">
-            {' '}
-            // import한 styles.js 사용할 때
-            <div style={styles.dd}>
-                {' '}
-                // 아래에서 만든 스타일 변수 사용할 때<h1>안녕하세요!</h1>
-                <hr style={{ width: '100%' }} />
-                <p style={styles.text}>이름을 입력해주세요.</p> 아래에서 만든 스타일 변수 사용할 때
-                <input type="text" />
-            </div>
+        <div>
+            {/* <button onclick={() => alert('Click!')}>방 만들기</button> */}
+            <CreateRoom />
+            <Filter />
+            {/* <button onclick={hi}>방 만들기</button> */}
         </div>
     );
 }
