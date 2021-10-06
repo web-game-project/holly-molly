@@ -40,7 +40,7 @@ module.exports = async (req, res, next) => {
 
         const io = req.app.get('io');
         let member_data = { room_idx: roomIdx, room_member_count: memberCount};
-        io.to(roomIdx).emit('change member count', member_data);
+        io.emit('change member count', member_data);
 
         if (newLeaderIdx > 0) {
             let leader_data = { user_idx: newLeaderIdx };
