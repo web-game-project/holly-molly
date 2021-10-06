@@ -40,10 +40,10 @@ module.exports = (server, app) => {
 
 const saveSocketId = async (socket) => {
     try {
-        /*const { user_idx } = verifyJWT.verifyAccessToken(
+        const { user_idx } = verifyJWT.verifyAccessToken(
             socket.handshake.headers.auth
-        ); // postman test code*/
-        const { user_idx } = verifyJWT.verifyAccessToken(socket.handshake.auth.token); // real code
+        ); // postman test code
+        //const { user_idx } = verifyJWT.verifyAccessToken(socket.handshake.auth.token); // real code
 
         const user = await User.update(
             {
