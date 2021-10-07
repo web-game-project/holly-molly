@@ -34,7 +34,7 @@ const RoomGridButton = (props) => {
     margin: false,
     bg: "white",
     border: "white",
-    boxShadow: "7px 5px 5px #2D2C2C",
+    boxShadow: false,
     cursor: false,
     onClick: false,
     disabled: false
@@ -53,7 +53,7 @@ const RoomGridButton = (props) => {
       ? `display: flex; align-items: center; justify-content: flex-end; `
       : ``}
   border-radius: 1.5rem;
-  box-shadow: ${(props) => props.boxShadow};
+  ${(props) => (props.boxShadow ? `box-shadow: 7px 5px 5px #2D2C2C;` : "")}
   border: white;
   ${(props) => props.cursor? `cursor: not-allowed; `: `cursor: grab; `}
   ${(props) => props.disabled? `background-color: rgba(0, 0, 0, 0.7); opacity: 0.7;` : `&:hover {box-shadow: 5px 5px 5px yellow}`}

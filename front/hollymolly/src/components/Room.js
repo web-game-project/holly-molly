@@ -11,47 +11,47 @@ const Room = (props) => {
 
   return (
     <React.Fragment>
-      <RoomGridButton onClick={onClick} padding="16px" margin="8px" width="234px" height="161px">
+      <RoomGridButton onClick={onClick} boxShadow padding="16px" margin="8px" width="234px" height="161px">
         {/* 방 제목 */}
-        <RoomGrid border="" boxShadow="" padding="16px" width="198px" height="30px">
-          <RoomText bold textShadow="3px 5px 5px #474747" size="32px" color={style.red}>
+        <RoomGrid is_flex_start border="" boxShadow="" padding="16px" width="198px" height="30px">
+          <RoomText bold textShadow="3px 5px 5px #474747" textStroke size="32px" color={style.red}>
             {props.room_info.room_name}
           </RoomText>
         </RoomGrid>
         {/* 방 현재 인원 / 총 인원 */}
-        <RoomGrid is_flex border="" boxShadow="" padding="16px" width="198px" height="30px">
+        <RoomGrid is_flex_end border="" boxShadow="" padding="16px" width="198px" height="30px">
           <RoomText bold>{props.room_info.room_current_people}/{props.room_info.room_total_people}</RoomText>
         </RoomGrid>
         {/* 방 모드 */}
-        <RoomGrid is_flex border="" boxShadow="" padding="16px" width="198px" height="30px">
+        <RoomGrid is_flex_end border="" boxShadow="" padding="16px" width="198px" height="30px">
           <RoomText bold>{props.room_info.room_mode}</RoomText>
         </RoomGrid>
         {/* 방 진행중 여부 */}
-        <RoomGrid is_flex border="" boxShadow="" padding="16px" width="198px" height="30px">
-          <RoomText bold color={style.light_green}>
+        <RoomGrid is_flex_end border="" boxShadow="" padding="16px" width="198px" height="30px">
+          <RoomText bold textStroke color={style.light_green}>
             {props.room_info.room_progress}
           </RoomText>
         </RoomGrid>
 
       </RoomGridButton>
 
-      <RoomGridButton disabled onClick={onClick} cursor padding="16px" margin="8px" width="234px" height="161px">
+      <RoomGridButton disabled onClick={onClick} boxShadow cursor padding="16px" margin="8px" width="234px" height="161px">
         {/* 방 제목 */}
-        <RoomGrid border="" boxShadow="" padding="16px" width="198px" height="30px">
+        <RoomGrid is_flex_start border="" boxShadow="" padding="16px" width="198px" height="30px">
           <RoomText bold textShadow="3px 5px 5px #474747" size="32px" color={style.red}>
             {props.room_info.room_name}
           </RoomText>
         </RoomGrid>
           {/* 방 현재 인원 / 총 인원 */}
-        <RoomGrid is_flex border="" boxShadow="" padding="16px" width="198px" height="30px">
+        <RoomGrid is_flex_end border="" boxShadow="" padding="16px" width="198px" height="30px">
           <RoomText bold>{props.room_info.room_current_people}/{props.room_info.room_total_people}</RoomText>
         </RoomGrid>
         {/* 방 모드 */}
-        <RoomGrid is_flex border="" boxShadow="" padding="16px" width="198px" height="30px">
+        <RoomGrid is_flex_end border="" boxShadow="" padding="16px" width="198px" height="30px">
           <RoomText bold>{props.room_info.room_mode}</RoomText>
         </RoomGrid>
         {/* 방 진행중 여부 */}
-        <RoomGrid is_flex border="" boxShadow="" padding="16px" width="198px" height="30px">
+        <RoomGrid is_flex_end border="" boxShadow="" padding="16px" width="198px" height="30px">
           <RoomText bold color={style.light_green}>
             {props.room_info.room_progress}
           </RoomText>

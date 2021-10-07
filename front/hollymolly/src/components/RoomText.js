@@ -2,8 +2,8 @@ import styled from "styled-components";
 import React from "react";
 
 const RoomText = (props) => {
-  const { bold, color, size, textShadow, children } = props;
-  const styles = { bold: bold, color: color, size: size, textShadow: textShadow};
+  const { bold, color, size, textShadow, textStroke, children } = props;
+  const styles = { bold: bold, color: color, size: size, textShadow: textShadow, textStroke: textStroke };
   return (
     <React.Fragment>
       <RoomTextP {...styles}>{children}</RoomTextP>
@@ -16,7 +16,8 @@ RoomText.defaultProps = {
   bold: false,
   color: "#222831",
   size: "24px",
-  textShadow: false
+  textShadow: false,
+  textStroke: false,
 };
 
 const RoomTextP = styled.p`
@@ -26,7 +27,7 @@ const RoomTextP = styled.p`
   stroke: ${(props) => props.stroke};
   stroke-width: ${(props) => props.strokeWidth};
   text-shadow: ${(props) => props.textShadow};
-  -webkit-text-stroke: 1px #000000;
+  ${(props) => (props.textStroke ? ` -webkit-text-stroke: 1px #000000;` : "")}
 `;
 
 export default RoomText;

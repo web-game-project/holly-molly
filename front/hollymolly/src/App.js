@@ -3,6 +3,7 @@ import './App.css';
 import style from './styles/styles';
 import {BrowserRouter, Route} from "react-router-dom";
 import RoomList from "../src/screens/RoomList";
+import RoomSearchBar from "../src/components/RoomSearchBar";
 
 import React from "react";
 
@@ -32,7 +33,7 @@ function App() {
     return (
         <React.Fragment>
           <BrowserRouter>
-            <Route path="/" exact component={RoomList}/>
+            <Route path="/" exact component={RoomSearchBar}/>
           </BrowserRouter>
         </React.Fragment>
       );
