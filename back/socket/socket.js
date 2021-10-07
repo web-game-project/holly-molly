@@ -43,6 +43,10 @@ const saveSocketId = async (socket) => {
         const { user_idx } = verifyJWT.verifyAccessToken(
             socket.handshake.headers.auth
         ); // postman test code
+        if(!user_idx){
+            console.log("hey");
+            const { user_idx } = verifyJWT.verifyAccessToken(socket.handshake.auth.token);
+        }
         //const { user_idx } = verifyJWT.verifyAccessToken(socket.handshake.auth.token); // real code
 
         const user = await User.update(

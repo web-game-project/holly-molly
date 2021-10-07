@@ -1,5 +1,8 @@
 module.exports = async (socket, io, data) => {
-    // 관련 로직 처리
-    console.log(data.room_idx, data.user_name)
-    io.to(data.room_idx).emit("chat", data.user_name);
+    console.log("socket");
+    socket.broadcast.to(data.room_idx).emit("chat", {
+        user_idx: data.user_idx,
+        user_name: data.user_name,
+        user_msg: data.msg
+    });
 };
