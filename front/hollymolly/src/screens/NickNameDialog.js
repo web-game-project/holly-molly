@@ -43,6 +43,7 @@ function NickNameDialog({ title, children, confirmText, cancelText }) {
       <DialogContent>
         <Title>
           <p>{title}</p>
+        {/*   <img src={closeBtn} onClick={closeClick} /> */}
           <Link to='/'>
             <img src={closeBtn} onClick={closeClick} />
           </Link>
@@ -52,7 +53,7 @@ function NickNameDialog({ title, children, confirmText, cancelText }) {
         <h5>＊한글2~8자 또는 영문2~16자, 특수문자 입력 불가능 </h5>
 
         <button onClick={connectClick}> {confirmText}</button>
-
+          
       </DialogContent>
 
     </DiglogBackground>
@@ -62,28 +63,35 @@ function NickNameDialog({ title, children, confirmText, cancelText }) {
 const Title= styled.div`
 display: flex;
 flex-direction: row;
+background-color: #221330;
 width: 100%;
 p{
   width: 100%;
-  font-size: 20px;
+  font-size: 17px;
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  background-color: #221330;
+  align-items: center;
+  justify-content: center;
   margin: 0px;
   padding: 15px;
   color: #fff;
 }
 img{
-  width: 55px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 50px;
+  height: 50px; 
   background-size: stretch;
   background-color: #221330;
+  position: absolute;
 }
 `;
+/* img{
+  width: 50px;
+  height: 50px; 
+  background-size: stretch;
+  background-color: #221330;
+  position: absolute;
+  top: 25%;
+   left: 66.2%;
+} */
 
 
 const DiglogBackground = styled.div`
@@ -106,7 +114,7 @@ const DialogContent = styled.div`
   border-radius: 10px;
   border-color: #ffffff;
   border-style: solid;
-  text-align: right;
+  text-align: center;
   input{
     font-size: 23px;
     border-radius: 30px;
@@ -128,15 +136,15 @@ const DialogContent = styled.div`
   }
   button{
     display:inline-block;
-    margin-top: 25%;
-    margin-right: 5%;
+    margin-top: 20%;
     width: 10vw;
+    height: 2vw;
     background: linear-gradient(to right, #5c258d, #4389a2);
     border-width: thin;
     border-radius: 5px;
     border-color: #ffffff;
     border-style: solid;
-    color: white;
+    color: white;    
   }
 `;
 
