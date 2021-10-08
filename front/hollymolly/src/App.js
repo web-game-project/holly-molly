@@ -1,6 +1,8 @@
-import logo from './logo.svg';
+
 import './App.css';
-import style from './styles/styles';
+import GameStart from './screens/GameStart';
+import Dialog from './screens/NickNameDialog';
+import { BrowserRouter, Route } from 'react-router-dom'; //React-Router import
 
 function App() {
     /* return (
@@ -17,13 +19,23 @@ function App() {
         </div>
     ); */
     return (
-        <div style={{background: style.black}}>
-                <p>
-                    {/* Edit <code>src/App.js</code> and save to reload.
-                     */}
-                    홀리몰리의 세계에 오신 것을 환영합니다!
-                </p>
-        </div>
+        <BrowserRouter>
+            <div>
+        {/*   <Dialog  title="닉네임 입력" confirmText="삭제" cancelText="취소" >
+                <input type='text'></input>
+                <p>한글</p>
+            </Dialog> */}
+
+            <Route path="/">
+            <GameStart />
+            </Route>
+
+            <Route path="/InputName">
+            <Dialog  title="닉네임 입력" confirmText="접속"/>
+            </Route>
+        </div >
+        </BrowserRouter>
+
     );
 }
 
