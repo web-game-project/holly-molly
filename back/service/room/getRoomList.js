@@ -9,7 +9,7 @@ module.exports = async (req, res, next) => {
         if (!room_start_row) {
             offset = 0;
         } else {
-            offset = 9 * (room_start_row - 1);
+            offset = 6 * (room_start_row - 1);
         }
 
         const rooms = await getRoomList(
@@ -19,8 +19,8 @@ module.exports = async (req, res, next) => {
         );
 
         // socket
-        moveRoom(req,res,-1,0);
-        
+        moveRoom(req, res, 0);
+
         res.json({
             total_room_cnt: rooms.roomCount,
             room_list: rooms.roomList,
@@ -32,7 +32,6 @@ module.exports = async (req, res, next) => {
 };
 
 const getRoomList = async (offset, roomMode, startMember) => {
-   
     let room_mode;
     let room_start_member_cnt;
     if (!roomMode) {
@@ -46,12 +45,12 @@ const getRoomList = async (offset, roomMode, startMember) => {
     } else {
         room_start_member_cnt = `(${startMember})`; //[startMember]
     }
-    
+
     const roomCount = await db.sequelize.query(
         `SELECT COUNT(*) as cnt FROM Room
         WHERE room_mode IN ${room_mode} AND room_start_member_cnt IN ${room_start_member_cnt} AND room_private != 1`,
         { type: db.sequelize.QueryTypes.SELECT }
-    )
+    );
     const roomList = await db.sequelize.query(
         `SELECT room_idx, room_name, room_mode, room_start_member_cnt, count(room_idx) as room_current_member_cnt, room_status FROM Room
         LEFT OUTER JOIN WaitingRoomMember as wrm
@@ -61,6 +60,6 @@ const getRoomList = async (offset, roomMode, startMember) => {
         LIMIT ${offset}, 9`,
         { type: db.sequelize.QueryTypes.SELECT }
     );
-   
-    return {roomCount:roomCount[0].cnt, roomList};
+
+    return { roomCount: roomCount[0].cnt, roomList };
 };
