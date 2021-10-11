@@ -6,6 +6,6 @@ const makeRandomCode = function (stringLength) {
         randomCode += chars.substring(randomNum, randomNum + 1);
     }
     return randomCode;
-}
+};
 
 module.exports = makeRandomCode;

@@ -1,4 +1,4 @@
-module.exports = (req, res, roomIdToLeave, roomIdToJoin) => {
+module.exports = (req, res, roomIdToJoin) => {
     // get Socket
     const socketId = res.locals.user.socket_id;
     const io = req.app.get('io');
@@ -9,9 +9,13 @@ module.exports = (req, res, roomIdToLeave, roomIdToJoin) => {
         });
         return;
     }
-    // move Room 
-    if(roomIdToLeave != -1) socket.leave(roomIdToLeave); //나갈 room이 없는 경우 -1
+    // move Room
+    const currentRoom = Array.from(socket.rooms);
+    for (const roomNum of currentRoom) {
+        if (roomNum == socketId) continue;
+        socket.leave(roomNum);
+    }
     socket.join(roomIdToJoin);
     // test message
-    io.to(roomIdToJoin).emit('test', `${roomIdToJoin}를 보고 있습니다.`);
-}
+    io.to(roomIdToJoin).emit('test', {roomIdToJoin, list:Array.from(socket.rooms)});
+};

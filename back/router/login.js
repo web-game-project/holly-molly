@@ -1,10 +1,13 @@
 const express = require('express');
-const loginService = require('../service/login');
-const { authMiddleware } = require('../middleware')
+const {
+    login,
+    refresh
+} = require('../service').loginService;
+const { authMiddleware } = require('../middleware');
 
 const router = express.Router();
 
-router.post('/', loginService.login);
-router.post('/refresh', authMiddleware, loginService.refresh);
+router.post('/', login);
+router.post('/refresh', authMiddleware, refresh);
 
 module.exports = router;

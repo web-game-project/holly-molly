@@ -41,12 +41,15 @@ module.exports = (server, app) => {
 const saveSocketId = async (socket) => {
     try {
         let tokenValue;
-        try { // postman test code
+        try {
+            // postman test code
             tokenValue = verifyJWT.verifyAccessToken(
                 socket.handshake.headers.auth
-            ); 
+            );
         } catch (error) {
-            tokenValue = verifyJWT.verifyAccessToken(socket.handshake.auth.token); // real code
+            tokenValue = verifyJWT.verifyAccessToken(
+                socket.handshake.auth.token
+            ); // real code
         }
 
         const user = await User.update(

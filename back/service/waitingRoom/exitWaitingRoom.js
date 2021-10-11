@@ -23,7 +23,7 @@ module.exports = async (req, res, next) => {
             const newLeader = await WaitingRoomMember.findOne({
                 attributes: ['user_user_idx'],
                 where: { room_room_idx: roomIdx },
-                order: sequelize.literal('rand()')
+                order: sequelize.literal('rand()'),
             });
 
             newLeaderIdx = newLeader.dataValues.user_user_idx;
@@ -32,14 +32,19 @@ module.exports = async (req, res, next) => {
                 {
                     wrm_leader: 1,
                 },
-                { where: { user_user_idx: newLeaderIdx, room_room_idx: roomIdx } }
+                {
+                    where: {
+                        user_user_idx: newLeaderIdx,
+                        room_room_idx: roomIdx,
+                    },
+                }
             );
         }
 
         let memberCount = getMemberCount(room_idx);
 
         const io = req.app.get('io');
-        let member_data = { room_idx: roomIdx, room_member_count: memberCount};
+        let member_data = { room_idx: roomIdx, room_member_count: memberCount };
         io.emit('change member count', member_data);
 
         if (newLeaderIdx > 0) {
@@ -56,17 +61,14 @@ module.exports = async (req, res, next) => {
 const getMemberCount = async (room_idx) => {
     const member = await WaitingRoomMember.findAll({
         attributes: [
-            [
-                sequelize.fn('count', sequelize.col('wrm_idx')),
-                'memberCount',
-            ],
+            [sequelize.fn('count', sequelize.col('wrm_idx')), 'memberCount'],
         ],
         where: {
             room_room_idx: room_idx,
-        }
+        },
     });
 
     let { memberCount } = member[0].dataValues;
 
     return memberCount;
-}
+};

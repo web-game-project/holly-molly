@@ -54,7 +54,7 @@ module.exports = async (req, res, next) => {
         });
 
         // socket : move room
-        moveRoom(req, res, 0, room.room_idx);
+        moveRoom(req, res, room.room_idx);
 
         // socket : enter room
         io.to(0).emit('change member count', {
@@ -62,8 +62,10 @@ module.exports = async (req, res, next) => {
             room_member_count: waitingRoomMemberList.length,
         });
 
-        res.json({
+        res.status(201).json({
             room_idx: room.room_idx,
+            room_name: room.room_name,
+            room_code: room.room_code,
             room_start_member_cnt: room.room_start_member_cnt,
             room_current_member_cnt: waitingRoomMemberList.length,
             leader_idx,

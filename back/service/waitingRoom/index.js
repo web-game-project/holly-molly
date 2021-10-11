@@ -5,5 +5,5 @@ const exitWaitingRoom = require('./exitWaitingRoom');
 module.exports = {
     changeUserReady,
     changeUserColor,
-    exitWaitingRoom
-}
+    exitWaitingRoom,
+};

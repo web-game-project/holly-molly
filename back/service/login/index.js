@@ -4,4 +4,4 @@ const refresh = require('./refresh');
 module.exports = {
     login,
     refresh,
-}
+};

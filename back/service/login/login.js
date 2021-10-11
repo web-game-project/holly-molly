@@ -12,7 +12,7 @@ module.exports = async (req, res, next) => {
         const accessToken = signJWT.makeAccessToken(user);
         const refreshToken = signJWT.makeRefreshToken(user);
         await updateRefreshTokenOfUser(refreshToken, user.user_idx);
-   
+
         res.json({
             access_token: accessToken,
             refresh_token: refreshToken,
@@ -25,11 +25,11 @@ module.exports = async (req, res, next) => {
     }
 };
 
-const updateRefreshTokenOfUser = async(refreshToken, userIdx) => {
+const updateRefreshTokenOfUser = async (refreshToken, userIdx) => {
     await User.update(
         {
             refresh_token: refreshToken,
         },
         { where: { user_idx: userIdx } }
     );
-}
+};
