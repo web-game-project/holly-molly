@@ -4,7 +4,7 @@ const moveRoom = require('../../socket/moveRoom');
 module.exports = async (req, res, next) => {
     try {
         const { game_idx, game_set_no } = req.body;
-        
+
         // 몇번째 판인지 맞게 왔는지 체크
 
         // 다음세트 생성
@@ -20,12 +20,10 @@ module.exports = async (req, res, next) => {
         */
 
         // socket : start set
-        
-        
+
         res.status(200).json({});
     } catch (error) {
         console.log(error);
         res.status(400).json({ meesage: '알 수 없는 에러가 발생했습니다.' });
     }
 };
-

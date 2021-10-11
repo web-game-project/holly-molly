@@ -26,7 +26,6 @@ module.exports = async (req, res, next) => {
     }
 };
 
-
 const deleteGame = async (gameMembers, gameIdx) => {
     let gameMemberIdx = [];
     for (member of gameMembers) {
@@ -54,4 +53,3 @@ const deleteGame = async (gameMembers, gameIdx) => {
         },
     });
 };
-

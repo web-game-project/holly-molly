@@ -8,24 +8,24 @@ module.exports = async (req, res, next) => {
         const { roomIdx } = req.params;
 
         // db 처리
-        const realRoomIdx = (!room_idx) ? roomIdx : room_idx;
-      
+        const realRoomIdx = !room_idx ? roomIdx : room_idx;
+
         // SELECT * FROM hollymolly.WaitingRoomMember WHERE room_room_idx = 1 AND user_user_idx = 1;
         const roomMember = await WaitingRoomMember.findOne({
-            where:{
+            where: {
                 room_room_idx: realRoomIdx,
-                user_user_idx: user.user_idx
-            }
+                user_user_idx: user.user_idx,
+            },
         });
-    
-        if(!roomMember){
+
+        if (!roomMember) {
             res.status(403).send({
                 message: '대기실/게임의 참여자가 아닙니다.',
             });
             return;
         }
-  
-        res.locals.leader = (roomMember.wrm_leader==1) ? true : false; // or false
+
+        res.locals.leader = roomMember.wrm_leader == 1 ? true : false; // or false
         next();
     } catch (error) {
         console.log(error);
@@ -35,4 +35,3 @@ module.exports = async (req, res, next) => {
         return;
     }
 };
-
