@@ -18,10 +18,10 @@ const {
 const PORT = 3002;
 
 const app = express();
-const server = Http.createServer(app);
-socket(server, app);
 app.use(cors());
 app.use(express.json());
+const server = Http.createServer(app);
+socket(server, app);
 
 app.get('/', (req, res) => {
     res.send('success');
