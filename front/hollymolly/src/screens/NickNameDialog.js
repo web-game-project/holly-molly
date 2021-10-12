@@ -23,12 +23,11 @@ function NickNameDialog({ title, children, confirmText, cancelText }) {
 
     const url = "http://3.17.55.178:3002/login";
 
-
     axios.post(url, {
       name: nickName
-    }, { headers: { 'Access-Control-Allow-Origin': '*' } })
+    })
       .then(function (response) { //response로 jwt token 반환
-        alert('success!');
+        alert('success! '+ response.data.access_token);
         //페이지 이동 코드 삽입
 
       })
@@ -120,6 +119,7 @@ const DialogContent = styled.div`
     border-radius: 30px;
     width: 50%;
     margin: 50px 25%;
+    padding: 5px;
   }
   input::placeholder{
     font-size: 15px;
