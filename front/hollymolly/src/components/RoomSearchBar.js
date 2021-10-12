@@ -15,10 +15,11 @@ const RoomSearchBar = (props) => {
     <React.Fragment>
       <RoomGrid
         is_flex_space
-        border="2px solid white"
-        padding="5px"
+        padding="10px"
         width="410px"
-        height="32px"
+        height="40px"
+        border=""
+        bg="white"
       >
         <input
           style={styles.input}
@@ -30,9 +31,9 @@ const RoomSearchBar = (props) => {
         <RoomGrid
           onClick={onClick}
           is_flex_center
-          padding="5px"
           width="160px"
           height="32px"
+          border="1px solid white"
           bg="#FFE600"
         >
           <RoomText bold size="15px" color={style.white}>
@@ -49,10 +50,10 @@ export default RoomSearchBar;
 const styles = {
   input: {
     borderColor: style.white,
-    border: "2px solid white",
+    border: "1px solid white",
     borderRadius: "1.5rem",
     color: style.black,
-    height: "20px",
+    height: "25px",
     width: "250px",
     fontSize: 15,
   },

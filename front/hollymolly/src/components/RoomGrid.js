@@ -2,13 +2,14 @@ import React from "react";
 import styled from "styled-components";
 
 const RoomGrid = (props) => {
-    const { is_flex_start, is_flex_end, is_flex_center, is_flex_space, width, height, margin, padding, bg, border, boxShadow, borderRadius, onClick, children } = props;
+    const { is_flex_start, is_flex_end, is_flex_center, is_flex_space, width, height, margin, padding, bg, border, boxShadow, borderRadius, onClick, flexDirection, cursor, disabled, children } = props;
   
     const styles = {
         is_flex_start: is_flex_start,
         is_flex_end: is_flex_end,
         is_flex_center: is_flex_center,
         is_flex_space: is_flex_space,
+        flexDirection: flexDirection,
         width: width,
         height: height,
         margin: margin,
@@ -18,6 +19,10 @@ const RoomGrid = (props) => {
         boxShadow: boxShadow,
         borderRadius: borderRadius,
         onClick: onClick,
+
+        cursor: cursor,
+        disabled: disabled
+
     };
     return (
       <React.Fragment>
@@ -41,6 +46,10 @@ const RoomGrid = (props) => {
     boxShadow: false,
     borderRadius: "1.5rem",
     onClick: false,
+    flexDirection: "row",
+
+    cursor: "true",
+    disabled: "false"
   };
   
   const RoomGridBox = styled.div`
@@ -54,11 +63,14 @@ const RoomGrid = (props) => {
     ${(props) => (props.is_flex_end? `display: flex; align-items: center; justify-content: flex-end;` : "")}
     ${(props) => (props.is_flex_center? `display: flex; align-items: center; justify-content: center;` : "")}
     ${(props) => (props.is_flex_space? `display: flex; align-items: center; justify-content: space-between;` : "")}
-
-   
+    flex-direction: ${(props) => props.flexDirection};
     border: ${(props) => props.border};
     border-radius: ${(props) => props.borderRadius};
     ${(props) => (props.boxShadow ? `box-shadow: 7px 5px 5px #2D2C2C;` : "")}
+
+  //   ${(props) => props.cursor === "true" ? `cursor: grab; `: `cursor: not-allowed; `} 
+ 
+  // ${(props) => props.disabled === "true"? `disabled: true; background-color: rgba(0, 0, 0, 0.7); opacity: 0.7;` : `&:hover {box-shadow: 5px 5px 5px yellow}`}
     
   `;
   

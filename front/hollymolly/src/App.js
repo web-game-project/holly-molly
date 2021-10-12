@@ -4,6 +4,7 @@ import style from './styles/styles';
 import {BrowserRouter, Route} from "react-router-dom";
 import RoomList from "../src/screens/RoomList";
 import RoomSearchBar from "../src/components/RoomSearchBar";
+import Room from "../src/components/Room";
 
 import React from "react";
 
@@ -33,7 +34,7 @@ function App() {
     return (
         <React.Fragment>
           <BrowserRouter>
-            <Route path="/" exact component={RoomSearchBar}/>
+            <Route path="/" exact component={RoomList}/>
           </BrowserRouter>
         </React.Fragment>
       );

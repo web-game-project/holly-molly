@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const RoomGridButton = (props) => {
+const RoomGridDiv = (props) => {
     const { is_flex, width, height, margin, padding, bg, border, boxShadow, cursor, onClick, disabled, children } = props;
   
     const styles = {
@@ -20,12 +20,12 @@ const RoomGridButton = (props) => {
     };
     return (
       <React.Fragment>
-        <RoomGridButtonBox {...styles}>{children}</RoomGridButtonBox>
+        <RoomGridDivBox {...styles}>{children}</RoomGridDivBox>
       </React.Fragment>
     );
   };
   
-  RoomGridButton.defaultProps = {
+  RoomGridDiv.defaultProps = {
     chidren: null,
     is_flex: false,
     width: "100%",
@@ -35,12 +35,12 @@ const RoomGridButton = (props) => {
     bg: "white",
     border: "white",
     boxShadow: false,
-    cursor: false,
+    cursor: "true",
     onClick: false,
-    disabled: false
+    disabled: "false"
   };
   
-  const RoomGridButtonBox  = styled.button`    
+  const RoomGridDivBox  = styled.div`    
   position: relative;
   width: ${(props) => props.width};
   height: ${(props) => props.height};
@@ -55,10 +55,11 @@ const RoomGridButton = (props) => {
   border-radius: 1.5rem;
   ${(props) => (props.boxShadow ? `box-shadow: 7px 5px 5px #2D2C2C;` : "")}
   border: white;
-  ${(props) => props.cursor? `cursor: not-allowed; `: `cursor: grab; `}
-  ${(props) => props.disabled? `background-color: rgba(0, 0, 0, 0.7); opacity: 0.7;` : `&:hover {box-shadow: 5px 5px 5px yellow}`}
+  ${(props) => props.cursor === "true" ? `cursor: grab; `: `cursor: not-allowed; `} 
+ 
+  ${(props) => props.disabled === "true"? `disabled: true; opacity: 0.7;` : `&:hover {background-color: #CFCFCF}`}
   
 `;
 
   
-  export default RoomGridButton;
+  export default RoomGridDiv;

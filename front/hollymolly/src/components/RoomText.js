@@ -15,9 +15,9 @@ RoomText.defaultProps = {
   children: null,
   bold: false,
   color: "#222831",
-  size: "24px",
+  size: "22px",
   textShadow: false,
-  textStroke: false,
+  textStroke: "false",
 };
 
 const RoomTextP = styled.p`
@@ -27,7 +27,7 @@ const RoomTextP = styled.p`
   stroke: ${(props) => props.stroke};
   stroke-width: ${(props) => props.strokeWidth};
   text-shadow: ${(props) => props.textShadow};
-  ${(props) => (props.textStroke ? ` -webkit-text-stroke: 1px #000000;` : "")}
+  ${(props) => (props.textStroke === "true" ? ` -webkit-text-stroke: 1px #000000;` : "")}
 `;
 
 export default RoomText;
