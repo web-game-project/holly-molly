@@ -1,5 +1,6 @@
 const { Room, WaitingRoomMember } = require('../../models');
 const moveRoom = require('../../socket/moveRoom');
+const getIOSocket = require('../../socket/getIOSocket');
 const makeRandomCode = require('../../util/makeRandomCode');
 
 module.exports = async (req, res, next) => {
@@ -25,8 +26,16 @@ module.exports = async (req, res, next) => {
             user_user_idx: user.user_idx,
         });
 
-        // join room
-        moveRoom(req, res, room.room_idx);
+        // socket : get socket
+        const { io, socket } = getIOSocket(req,res);
+        if(!io || !socket){
+            res.status(400).json({
+                message: 'socket connection을 다시 해주세요.',
+            });
+            return;
+        }
+        // socket : join room room_idx
+        moveRoom(io, socket, room.room_idx);
 
         // 대기실 리스트 보는 사람들에게 socket event 전송
         if (!room.room_private) {

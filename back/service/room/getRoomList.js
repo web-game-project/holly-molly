@@ -1,5 +1,6 @@
 const db = require('../../models');
 const moveRoom = require('../../socket/moveRoom');
+const getIOSocket = require('../../socket/getIOSocket');
 
 module.exports = async (req, res, next) => {
     try {
@@ -18,8 +19,17 @@ module.exports = async (req, res, next) => {
             room_start_member_cnt
         );
 
-        // socket
-        moveRoom(req, res, 0);
+        // socket : get socket
+        const { io, socket } = getIOSocket(req,res);
+        if(!io || !socket){
+            res.status(400).json({
+                message: 'socket connection을 다시 해주세요.',
+            });
+            return;
+        }
+        // socket : join room 0
+        moveRoom(io, socket, 0);
+
 
         res.json({
             total_room_cnt: rooms.roomCount,
