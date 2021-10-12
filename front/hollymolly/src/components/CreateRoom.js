@@ -1,66 +1,73 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import style from '../styles/styles';
 
 function CreateRoom() {
-    const hi = () => {
-        console.log('hi');
-    };
-
     const inputRef = useRef();
 
     // 난이도 useState
     const [isChecked, setIschecked] = React.useState(true);
     const isHard = () => {
-        if (isChecked == true) setIschecked(!isChecked);
-        console.log('난이도 상');
+        if (isChecked === true) setIschecked(!isChecked);
+        console.log('선택) 난이도 상');
     };
     const isEasy = () => {
-        if (isChecked == false) setIschecked(!isChecked);
-        console.log('난이도 하');
+        if (isChecked === false) setIschecked(!isChecked);
+        console.log('선택) 난이도 하');
     };
 
     // 인원 useState
-    const [people, setPeople] = React.useState([true, false, false]); // 4명이 디폴트
-    const select4 = () => {
-        if (people == true)
-            // 4명 선택
-            setPeople(people[(true, false, false)]);
-        console.log(people);
+    const [people, setPeople] = React.useState(4); // 4명이 디폴트
+    const click4 = () => {
+        setPeople((people) => (people = 4));
+        console.log('선택) 인원수 4명');
+    };
 
-        //     if (isChecked == true) setIschecked(!isChecked);
-        // };
-        // const isEasy = () => {
-        //     if (isChecked == false) setIschecked(!isChecked);
+    const click5 = () => {
+        setPeople((people) => (people = 5));
+        console.log('선택) 인원수 5명');
+    };
+
+    const click6 = () => {
+        setPeople((people) => (people = 6));
+        console.log('선택) 인원수 6명');
     };
 
     // 공개범위 useState
     const [ispublic, setIsPublic] = React.useState(true);
     const isPrivate = () => {
         if (ispublic == true) setIsPublic(!ispublic);
-        console.log('공개범위 전체');
+        console.log('선택) 공개범위 전체');
     };
     const isPublic = () => {
         if (ispublic == false) setIsPublic(!ispublic);
-        console.log('공개범위 개인');
+        console.log('선택) 공개범위 개인');
     };
 
     const result = () => {
+        console.log(':::최종결과:::');
         console.log('방이름은? ' + inputRef.current.value);
         if (isChecked) {
             // easy
             console.log('모드는? easy');
         } else console.log('모드는? hard');
+
+        console.log('인원수는? ' + people + '명');
+
         if (ispublic) {
             // public
             console.log('공개범위는? public');
         } else console.log('공개범위는? private');
+    };
 
-        // + '인원수는?' + '공개범위는?' + ispublic);
+    const close = () => {
+        console.log('일단 창 닫기');
     };
 
     return (
         <div style={styles.container}>
-            <button style={{ ...styles.button_close, float: 'right' }}>X</button>
+            <button style={{ ...styles.button_close, float: 'right' }} onClick={close}>
+                X
+            </button>
             <br />
 
             <h1 style={{ textAlign: 'center' }}>방 생성</h1>
@@ -80,15 +87,15 @@ function CreateRoom() {
                 </div>
                 <div style={styles.div}>
                     <text style={styles.text}>인원 수 : </text>
-                    <button style={styles.button_on} onClick={select4}>
+                    <button style={people == 4 ? styles.button_on : styles.button_off} onClick={click4}>
                         {' '}
                         4명{' '}
                     </button>
-                    <button style={styles.button_on} onClick={select4}>
+                    <button style={people == 5 ? styles.button_on : styles.button_off} onClick={click5}>
                         {' '}
                         5명{' '}
                     </button>
-                    <button style={styles.button_on} onClick={select4}>
+                    <button style={people == 6 ? styles.button_on : styles.button_off} onClick={click6}>
                         {' '}
                         6명{' '}
                     </button>
