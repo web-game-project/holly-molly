@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
 
         if (authorization == undefined) {
             res.status(401).send({
-                message: '회원가입 후 사용하세요.',
+                message: '로그인 후 이용해주세요.',
             });
             return;
         }
@@ -16,7 +16,7 @@ module.exports = (req, res, next) => {
 
         if (tokenType !== 'Bearer') {
             res.status(401).send({
-                message: '회원가입 후 사용하세요.',
+                message: '로그인 후 이용해주세요.',
             });
             return;
         }
@@ -26,12 +26,14 @@ module.exports = (req, res, next) => {
             decodedToken = verifyJWT.verifyAccessToken(tokenValue);
         } catch (error) {
             try {
-                const isRefresh = req.route.path == '/refresh' && error.name == 'TokenExpiredError';
-                if(isRefresh){
+                const isRefresh =
+                    req.route.path == '/refresh' &&
+                    error.name == 'TokenExpiredError';
+                if (isRefresh) {
                     decodedToken = verifyJWT.decode(tokenValue);
-                }else{
+                } else {
                     res.status(401).send({
-                        message: '회원가입 후 사용하세요.',
+                        message: '로그인 후 이용해주세요.',
                     });
                     return;
                 }
@@ -41,7 +43,7 @@ module.exports = (req, res, next) => {
         User.findByPk(decodedToken.user_idx).then((user) => {
             if (!user) {
                 res.status(401).send({
-                    message: '회원가입 후 사용하세요.',
+                    message: '로그인 후 이용해주세요.',
                 });
                 return;
             }
@@ -52,7 +54,7 @@ module.exports = (req, res, next) => {
     } catch (error) {
         console.log(error);
         res.status(401).send({
-            message: '회원가입 후 사용하세요.',
+            message: '로그인 후 이용해주세요.',
         });
         return;
     }

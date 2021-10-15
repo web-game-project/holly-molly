@@ -40,16 +40,23 @@ module.exports = (server, app) => {
 
 const saveSocketId = async (socket) => {
     try {
-        const { user_idx } = verifyJWT.verifyAccessToken(
-            socket.handshake.headers.auth
-        ); // postman test code
-        //const { user_idx } = verifyJWT.verifyAccessToken(socket.handshake.auth.token); // real code
+        let tokenValue;
+        try {
+            // postman test code
+            tokenValue = verifyJWT.verifyAccessToken(
+                socket.handshake.headers.auth
+            );
+        } catch (error) {
+            tokenValue = verifyJWT.verifyAccessToken(
+                socket.handshake.auth.token
+            ); // real code
+        }
 
         const user = await User.update(
             {
                 socket_id: socket.id,
             },
-            { where: { user_idx } }
+            { where: { user_idx: tokenValue.user_idx } }
         );
 
         if (user[0] == 0) {

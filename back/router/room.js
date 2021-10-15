@@ -1,6 +1,13 @@
 const express = require('express');
-const { getRoomList, makeRoom, enterRoom, getRoomInfo, editRoomInfo, deleteRoom } = require('../service').roomService;
-const {authMiddleware} = require('../middleware');
+const {
+    getRoomList,
+    makeRoom,
+    enterRoom,
+    getRoomInfo,
+    editRoomInfo,
+    deleteRoom,
+} = require('../service').roomService;
+const { authMiddleware } = require('../middleware');
 
 const router = express.Router();
 

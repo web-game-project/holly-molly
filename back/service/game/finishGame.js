@@ -15,7 +15,10 @@ module.exports = async (req, res, next) => {
         const gameMembers = await getGameMemberIndex(gameIdx);
         const game = await getGame(gameIdx);
         await deleteGame(gameMembers, game);
-        const room = await updateRoomStatus('waiting', game.get('room_room_idx'))
+        const room = await updateRoomStatus(
+            'waiting',
+            game.get('room_room_idx')
+        );
 
         // socket : change game status
         const io = req.app.get('io');
@@ -84,4 +87,4 @@ const updateRoomStatus = async (roomStatus, roomIdx) => {
             },
         }
     );
-}
+};

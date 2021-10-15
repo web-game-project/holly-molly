@@ -17,7 +17,7 @@ module.exports = async (req, res, next) => {
         let data = { user_idx, user_color };
 
         io.to(room_idx).emit('change member color', data);
-            
+
         res.status(200).json('success');
     } catch (error) {
         console.log('***********', error);

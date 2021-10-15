@@ -1,6 +1,6 @@
 const getRoomList = require('./getRoomList');
 const makeRoom = require('./makeRoom');
-const enterRoom = require('./enterRoom')
+const enterRoom = require('./enterRoom');
 const getRoomInfo = require('./getRoomInfo');
 const editRoomInfo = require('./editRoomInfo');
 const deleteRoom = require('./deleteRoom');
@@ -11,5 +11,5 @@ module.exports = {
     enterRoom,
     getRoomInfo,
     editRoomInfo,
-    deleteRoom
-}
+    deleteRoom,
+};

@@ -1,6 +1,7 @@
 const express = require('express');
 const Http = require('http');
 const socket = require('./socket/socket');
+const cors = require('cors');
 
 const {
     loginRouter,
@@ -8,18 +9,23 @@ const {
     waitingRoomRouter,
     gameRouter,
 } = require('./router');
-const { authMiddleware, roomMiddleware, gameMiddleware } = require('./middleware');
+const {
+    authMiddleware,
+    roomMiddleware,
+    gameMiddleware,
+} = require('./middleware');
+//const PORT = 8080;
 const PORT = 3002;
 
 const app = express();
+app.use(cors());
+app.use(express.json());
 const server = Http.createServer(app);
 socket(server, app);
 
 app.get('/', (req, res) => {
     res.send('success');
 });
-app.use(express.json());
-
 app.use('/login', loginRouter);
 app.use('/room', roomRouter);
 app.use('/waiting-room', waitingRoomRouter);

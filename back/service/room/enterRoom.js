@@ -1,5 +1,6 @@
 const { Room, WaitingRoomMember } = require('../../models');
 var Sequelize = require('sequelize');
+const getIOSocket = require('../../socket/getIOSocket');
 const moveRoom = require('../../socket/moveRoom');
 const db = require('../../models');
 
@@ -44,17 +45,23 @@ module.exports = async (req, res, next) => {
             user,
             room.room_idx
         );
-
+        
+        // socket : get socket
+        const { io, socket } = getIOSocket(req,res);
+        if(!io || !socket){
+            res.status(400).json({
+                message: 'socket connection을 다시 해주세요.',
+            });
+            return;
+        }
         // socket : change member count
-        const io = req.app.get('io');
         io.to(room.room_idx).emit('enter room', {
             user_idx: user.user_idx,
             user_name: user.user_name,
             user_color: insertedMember.wrm_user_color,
         });
-
-        // socket : move room
-        moveRoom(req, res, 0, room.room_idx);
+        // socket : join room room_idx
+        moveRoom(io, socket, room.room_idx);
 
         // socket : enter room
         io.to(0).emit('change member count', {
@@ -62,8 +69,10 @@ module.exports = async (req, res, next) => {
             room_member_count: waitingRoomMemberList.length,
         });
 
-        res.json({
+        res.status(201).json({
             room_idx: room.room_idx,
+            room_name: room.room_name,
+            room_code: room.room_code,
             room_start_member_cnt: room.room_start_member_cnt,
             room_current_member_cnt: waitingRoomMemberList.length,
             leader_idx,

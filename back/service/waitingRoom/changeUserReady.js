@@ -6,7 +6,7 @@ module.exports = async (req, res, next) => {
     // 토큰 완료되면 header에서 user_idx 받아옴
     let user_idx = 7;
     let { room_idx } = req.body;
-    
+
     try {
         await WaitingRoomMember.update(
             {

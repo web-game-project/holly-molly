@@ -1,5 +1,6 @@
 const express = require('express');
-const { changeUserReady, changeUserColor, exitWaitingRoom } = require('../service').waitingRoomService;
+const { changeUserReady, changeUserColor, exitWaitingRoom } =
+    require('../service').waitingRoomService;
 
 const router = express.Router();
 
