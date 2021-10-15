@@ -9,6 +9,7 @@ module.exports.startGame = async (req, res, next) => {
     let { room_idx } = req.body;
 
     try {
+        const io = req.app.get('io');
         // socket : change game status
         io.to(0).emit('change game status', {
             room_idx: room_idx,
@@ -24,10 +25,10 @@ module.exports.startGame = async (req, res, next) => {
 
         let user_list = await assignRoleAndOrder(game_idx, roleList, orderList, memberIdxList, memberCount);
 
-        const io = req.app.get('io');
+        
         let data = {game_idx, game_set_idx, user_list};
         io.to(room_idx).emit('start game', data);
-
+        
         res.status(200).json("success");
     } catch (error) {
         console.log('startGame Error: ', error);
