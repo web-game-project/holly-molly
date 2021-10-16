@@ -2,9 +2,7 @@ const { WaitingRoomMember } = require('../../models');
 
 module.exports = async (req, res, next) => {
     let { user_ready } = req.body;
-
-    // 토큰 완료되면 header에서 user_idx 받아옴
-    let user_idx = 7;
+    let { user_idx } = res.locals.user.dataValues;
     let { room_idx } = req.body;
 
     try {

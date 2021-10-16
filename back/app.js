@@ -27,9 +27,9 @@ app.get('/', (req, res) => {
     res.send('success');
 });
 app.use('/login', loginRouter);
-app.use('/room', roomRouter);
-app.use('/waiting-room', waitingRoomRouter);
-app.use('/game', gameRouter);
+app.use('/room', authMiddleware, roomRouter);
+app.use('/waiting-room', authMiddleware, waitingRoomRouter);
+app.use('/game', authMiddleware, gameRouter);
 
 server.listen(PORT, () => {
     console.log(`listening at ${PORT}`);
