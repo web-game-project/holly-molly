@@ -4,10 +4,10 @@ const { GameMember } = require('../../models');
 
 module.exports = async (req, res, next) => {
     let { gameIdx } = req.params;
-    let userIdx = 4;
+    let { user_idx } = res.locals.user.dataValues;
 
     try {
-        let userRole = await getUserRole(gameIdx, userIdx);
+        let userRole = await getUserRole(gameIdx, user_idx);
         let keyword = await getKeyword(gameIdx, userRole);
 
         res.status(200).json({keyword, user_role: userRole});
@@ -16,7 +16,7 @@ module.exports = async (req, res, next) => {
     }
 };
 
-const getUserRole = async (gameIdx, userIdx) => {
+const getUserRole = async (gameIdx, user_idx) => {
     try {
         const member = await GameMember.findOne({
             attributes: [
@@ -24,17 +24,13 @@ const getUserRole = async (gameIdx, userIdx) => {
             ],
             where: {
                 game_game_idx: gameIdx,
-                wrm_user_idx: userIdx
+                wrm_user_idx: user_idx
             }
         });
 
-        let userRole = "ghost";
-        let { game_member_role } = member.dataValues;
+        console.log(member);
 
-        if(game_member_role == 1)
-            userRole = "human";
-
-        return userRole;
+        return member.dataValues.game_member_role;
     } catch (error) {
         console.log('getUserRole Error: ', error);
     }

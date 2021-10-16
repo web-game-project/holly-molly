@@ -14,7 +14,7 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: false,
             },
             game_member_role: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING(10),
                 allowNull: false,
             },
             game_game_idx: {

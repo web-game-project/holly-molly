@@ -19,9 +19,8 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: false,
             },
             room_mode: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING(10),
                 allowNull: false,
-                defaultValue: 0,
             },
             room_private: {
                 type: DataTypes.TINYINT,

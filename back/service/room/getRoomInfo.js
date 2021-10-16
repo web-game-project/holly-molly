@@ -19,15 +19,6 @@ module.exports = async (req, res, next) => {
         );
         console.log('getRoomInfoService Success: ', roomInfo);
 
-        switch (roomInfo.room_mode) {
-            case 0:
-                roomInfo.room_mode = 'easy';
-                break;
-            case 1:
-                roomInfo.room_mode = 'hard';
-                break;
-        }
-
         res.status(200).json(roomInfo);
     } catch (error) {
         console.log('getRoomInfoService Error: ', error);
