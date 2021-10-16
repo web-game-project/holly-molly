@@ -46,7 +46,7 @@ module.exports = async (req, res, next) => {
             room.room_idx
         );
         await updateCurrentMemberCnt(waitingRoomMemberList.length, room.room_idx);
-        
+
         // socket : get socket
         const { io, socket } = getIOSocket(req, res);
         if (!io || !socket) {
@@ -89,7 +89,7 @@ const findRoom = async (req, res) => {
     try {
         const { type } = req.params;
         let roomMode = ['easy', 'hard'];
-        let roomStartMemberCnt = [4, 5];
+        let roomStartMemberCnt = [4, 5, 6];
 
         let room;
         if (type === 'idx') {
@@ -97,6 +97,7 @@ const findRoom = async (req, res) => {
             room = Room.findOne({
                 where: {
                     room_idx,
+                    room_private: false,
                 },
             });
         } else if (type === 'code') {
@@ -183,6 +184,7 @@ const insertWaitingRoomMember = async (
             .add('PINK');
         let insertedMember = undefined;
         for (let roomMember of waitingRoomMemberList) {
+            roomMember.wrm_user_ready = roomMember.wrm_user_ready ? true : false;
             if (roomMember.user_idx == user.user_idx) {
                 insertedMember = roomMember;
                 break;

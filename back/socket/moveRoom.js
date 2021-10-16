@@ -8,7 +8,7 @@ module.exports = (io, socket, roomIdToJoin) => {
     socket.join(roomIdToJoin);
     
     // send test message
-    if(!io){ 
+    if(io){ 
         io.to(roomIdToJoin).emit('test', {roomIdToJoin, list:Array.from(socket.rooms)});
     }
 };

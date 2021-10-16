@@ -9,6 +9,9 @@ module.exports = async (req, res, next) => {
             req.body;
         const user = res.locals.user;
 
+        //다른 방에 들어가 있으면
+        
+
         let roomCode = await makeRoomCode();
         const room = await Room.create({
             room_code: roomCode,
@@ -27,8 +30,8 @@ module.exports = async (req, res, next) => {
         });
 
         // socket : get socket
-        const { io, socket } = getIOSocket(req,res);
-        if(!io || !socket){
+        const { io, socket } = getIOSocket(req, res);
+        if (!io || !socket) {
             res.status(400).json({
                 message: 'socket connection을 다시 해주세요.',
             });
@@ -70,4 +73,64 @@ const makeRoomCode = async () => {
         });
     } while (duplicatedRoomCode);
     return roomCode;
+};
+
+const exitRoom = async (io, roomMember, roomIdx) => {
+    try {
+        await WaitingRoomMember.destroy({ // exit room
+            where: { user_user_idx: userIdx, room_room_idx: roomIdx },
+        });
+    
+        let memberCount = getMemberCount(roomIdx);
+        if (memberCount < 1) { // delete room
+            await Room.destroy({ where: { room_idx: roomIdx } });
+            io.to(0).emit('delete room', { room_idx: roomIdx });
+        } else {
+            if (roomMember.get('wrm_leader')) { // change host
+                const newLeader = await WaitingRoomMember.findOne({
+                    attributes: ['user_user_idx'],
+                    where: { room_room_idx: roomIdx },
+                    order: sequelize.literal('rand()'),
+                });
+                await WaitingRoomMember.update(
+                    {
+                        wrm_leader: true,
+                    },
+                    {
+                        where: {
+                            user_user_idx: newLeader.get('user_user_idx'),
+                            room_room_idx: roomIdx,
+                        },
+                    }
+                );
+                io.to(roomIdx).emit('change host', { user_idx: newLeaderIdx });
+            } 
+    
+            // 방 member count 변경
+            await Room.update(
+                {
+                    room_current_member_cnt: memberCount,
+                },
+                { where: { room_idx: roomIdx } }
+            );
+            io.emit('change member count', { room_idx: roomIdx, room_member_count: memberCount });
+        }
+    } catch (error) {
+        console.log("makeRoom-방 퇴장 중 에러 발생", error); //게임 시작한 경우 에러 발생 가능
+    }
+};
+
+const getMemberCount = async (roomIdx) => {
+    const member = await WaitingRoomMember.findAll({
+        attributes: [
+            [sequelize.fn('count', sequelize.col('wrm_idx')), 'memberCount'],
+        ],
+        where: {
+            room_room_idx: roomIdx,
+        },
+    });
+
+    let { memberCount } = member[0].dataValues;
+
+    return memberCount;
 };
