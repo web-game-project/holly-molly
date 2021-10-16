@@ -25,7 +25,7 @@ module.exports = async (req, res, next) => {
             return;
         }
 
-        res.locals.leader = roomMember.wrm_leader == 1 ? true : false; // or false
+        res.locals.leader = roomMember.wrm_leader ? true : false; // or false
         next();
     } catch (error) {
         console.log(error);

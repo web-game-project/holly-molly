@@ -45,10 +45,11 @@ module.exports = async (req, res, next) => {
             user,
             room.room_idx
         );
+        await updateCurrentMemberCnt(waitingRoomMemberList.length, room.room_idx);
         
         // socket : get socket
-        const { io, socket } = getIOSocket(req,res);
-        if(!io || !socket){
+        const { io, socket } = getIOSocket(req, res);
+        if (!io || !socket) {
             res.status(400).json({
                 message: 'socket connection을 다시 해주세요.',
             });
@@ -87,6 +88,8 @@ module.exports = async (req, res, next) => {
 const findRoom = async (req, res) => {
     try {
         const { type } = req.params;
+        let roomMode = ['easy', 'hard'];
+        let roomStartMemberCnt = [4, 5];
 
         let room;
         if (type === 'idx') {
@@ -106,17 +109,10 @@ const findRoom = async (req, res) => {
         } else if (type === 'random') {
             const { room_mode, room_start_member_cnt } = req.body;
 
-            let roomMode;
-            if (!room_mode) {
-                roomMode = [0, 1];
-            } else {
+            if (room_mode) {
                 roomMode = [room_mode];
             }
-
-            let roomStartMemberCnt;
-            if (!room_start_member_cnt) {
-                roomStartMemberCnt = [4, 5];
-            } else {
+            if (room_start_member_cnt) {
                 roomStartMemberCnt = [room_start_member_cnt];
             }
 
@@ -155,7 +151,7 @@ const getWaitingRoomMemberListAndLeader = async (roomIdx) => {
         const leader_idx = await WaitingRoomMember.findOne({
             attributes: [['user_user_idx', 'leader_idx']],
             where: {
-                wrm_leader: 1,
+                wrm_leader: true,
                 room_room_idx: roomIdx,
             },
         });
@@ -176,7 +172,15 @@ const insertWaitingRoomMember = async (
     roomIdx
 ) => {
     try {
-        let colorSet = new Set().add(0).add(1).add(2).add(3).add(4).add(5);
+        // "RED","ORANGE","YELLOW","GREEN","BLUE","PURPLE","PINK"
+        let colorSet = new Set()
+            .add('RED')
+            .add('ORANGE')
+            .add('YELLOW')
+            .add('GREEN')
+            .add('BLUE')
+            .add('PURPLE')
+            .add('PINK');
         let insertedMember = undefined;
         for (let roomMember of waitingRoomMemberList) {
             if (roomMember.user_idx == user.user_idx) {
@@ -190,8 +194,8 @@ const insertWaitingRoomMember = async (
         if (!insertedMember) {
             insertedMember = await WaitingRoomMember.create({
                 wrm_user_color: color,
-                wrm_leader: 0,
-                wrm_user_ready: 0,
+                wrm_leader: false,
+                wrm_user_ready: false,
                 room_room_idx: roomIdx,
                 user_user_idx: user.user_idx,
             });
@@ -199,12 +203,21 @@ const insertWaitingRoomMember = async (
                 user_idx: user.user_idx,
                 user_name: user.user_name,
                 wrm_user_color: insertedMember.wrm_user_color,
-                wrm_user_ready: 0,
+                wrm_user_ready: false,
             });
         }
+
         return insertedMember;
     } catch (error) {
         console.log(error);
         return undefined;
     }
+};
+const updateCurrentMemberCnt = async ( currentMember, roomIdx ) => {
+    await Room.update(
+        {
+            room_current_member_cnt: currentMember,
+        },
+        { where: { room_idx: roomIdx } }
+    );
 };

@@ -19,9 +19,9 @@ module.exports = async (req, res, next) => {
             room_status: 'waiting',
         });
         await WaitingRoomMember.create({
-            wrm_user_color: 0,
-            wrm_leader: 1,
-            wrm_user_ready: 0,
+            wrm_user_color: 'RED',
+            wrm_leader: true,
+            wrm_user_ready: false,
             room_room_idx: room.room_idx,
             user_user_idx: user.user_idx,
         });
