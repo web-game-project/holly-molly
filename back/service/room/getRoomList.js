@@ -42,17 +42,12 @@ module.exports = async (req, res, next) => {
 };
 
 const getRoomList = async (offset, roomMode, startMember) => {
-    let room_mode;
-    let room_start_member_cnt;
-    if (!roomMode) {
-        room_mode = '(0, 1)'; //[0,1]
-    } else {
-        room_mode = `(${roomMode})`; //[roomMode]
-    }
-
-    if (!startMember) {
-        room_start_member_cnt = '(4, 5)'; //[4,5]
-    } else {
+    let room_mode = '("easy","hard")'; //[0,1]
+    let room_start_member_cnt = '(4, 5, 6)'; //[4,5,6]
+    if (roomMode) {
+        room_mode = `("${roomMode}")`; //[roomMode]
+    } 
+    if (startMember) {
         room_start_member_cnt = `(${startMember})`; //[startMember]
     }
 
