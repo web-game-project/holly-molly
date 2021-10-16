@@ -4,20 +4,21 @@ const sequelize = require('sequelize');
 module.exports = async (req, res, next) => {
     let { roomIdx } = req.params;
     roomIdx = Number(roomIdx);
-    let userIdx = 1;
+    let { user_idx } = res.locals.user.dataValues;
 
     try {
         const isLeader = await WaitingRoomMember.findOne({
             attributes: ['wrm_leader'],
-            where: { user_user_idx: userIdx, room_room_idx: roomIdx },
+            where: { user_user_idx: user_idx, room_room_idx: roomIdx },
         });
 
         await WaitingRoomMember.destroy({
-            where: { user_user_idx: userIdx, room_room_idx: roomIdx },
+            where: { user_user_idx: user_idx, room_room_idx: roomIdx },
         });
 
         let newLeaderIdx = 0;
 
+        // 방장이라면 이 부분 미들웨어 사용
         if (isLeader.dataValues.wrm_leader) {
             //방장이라면
             const newLeader = await WaitingRoomMember.findOne({

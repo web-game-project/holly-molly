@@ -2,7 +2,7 @@ const { WaitingRoomMember } = require('../../models');
 
 module.exports = async (req, res, next) => {
     let { user_color } = req.body;
-    let user_idx = 7;
+    let { user_idx } = res.locals.user.dataValues;
     let { room_idx } = req.body;
 
     try {
