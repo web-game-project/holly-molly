@@ -22,6 +22,7 @@ module.exports = async (req, res, next) => {
         // socket : get socket
         const { io, socket } = getIOSocket(req,res);
         if(!io || !socket){
+            console.log("*****", io, socket.id);
             res.status(400).json({
                 message: 'socket connection을 다시 해주세요.',
             });

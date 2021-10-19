@@ -3,7 +3,7 @@ const socketIo = require('socket.io');
 const verifyJWT = require('../util/jwt/verifyJWT');
 const chat = require('./chat');
 const draw = require('./draw');
-const { User } = require('../models');
+const { User, WaitingRoomMember } = require('../models');
 
 module.exports = (server, app) => {
     const io = socketIo(server, socketConfig);
@@ -62,6 +62,19 @@ const saveSocketId = async (socket) => {
         if (user[0] == 0) {
             socket.disconnet(true);
         }
+
+        // Join to room based on db
+        const roomMember = await WaitingRoomMember.findOne({
+            attribute: ['room_room_idx'],
+            where: {
+                user_user_idx: tokenValue.user_idx,
+            }
+        });
+        if(roomMember){
+            socket.join(roomMember.get('room_room_idx'));
+            console.log(socket.id ,socket.rooms)
+        }
+
     } catch (error) {
         socket.disconnect(true);
     }
