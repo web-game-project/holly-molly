@@ -67,11 +67,6 @@ const RoomGrid = (props) => {
     border: ${(props) => props.border};
     border-radius: ${(props) => props.borderRadius};
     ${(props) => (props.boxShadow ? `box-shadow: 7px 5px 5px #2D2C2C;` : "")}
-
-  //   ${(props) => props.cursor === "true" ? `cursor: grab; `: `cursor: not-allowed; `} 
- 
-  // ${(props) => props.disabled === "true"? `disabled: true; background-color: rgba(0, 0, 0, 0.7); opacity: 0.7;` : `&:hover {box-shadow: 5px 5px 5px yellow}`}
-    
   `;
   
   export default RoomGrid;
