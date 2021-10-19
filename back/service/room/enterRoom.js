@@ -3,11 +3,28 @@ var Sequelize = require('sequelize');
 const getIOSocket = require('../../socket/getIOSocket');
 const moveRoom = require('../../socket/moveRoom');
 const db = require('../../models');
+const { exitGameAndRoom } = require('../game/exitGame');
 
 module.exports = async (req, res, next) => {
     try {
         const user = res.locals.user;
-        const room = await findRoom(req, res);
+        const { io, socket } = getIOSocket(req, res);
+
+        let room = await findRoom(req, res);
+        const beforeWaitingRoomMember = await getWaitingRoomMember(
+            user.user_idx
+        );
+
+        const flagTodeleteBeforeMember =
+            beforeWaitingRoomMember &&
+            beforeWaitingRoomMember.get('room_room_idx') != room.get('room_idx');
+
+        if (flagTodeleteBeforeMember) {
+            await exitGameAndRoom(user, io);
+            room = await Room.findOne({
+                where: { room_idx: room.room_idx },
+            });
+        }
 
         if (!room) {
             res.status(400).json({
@@ -34,10 +51,15 @@ module.exports = async (req, res, next) => {
         }
 
         if (room.room_start_member_cnt <= waitingRoomMemberList.length) {
-            res.status(400).json({
-                message: '방의 정원이 가득 찼습니다.',
-            });
-            return;
+            const flagReconnect =
+                beforeWaitingRoomMember &&
+                beforeWaitingRoomMember.get('room_room_idx') == room.get('room_idx');
+            if (!flagReconnect) {
+                res.status(400).json({
+                    message: '방의 정원이 가득 찼습니다.',
+                });
+                return;
+            }
         }
 
         const insertedMember = await insertWaitingRoomMember(
@@ -45,17 +67,20 @@ module.exports = async (req, res, next) => {
             user,
             room.room_idx
         );
-        await updateCurrentMemberCnt(waitingRoomMemberList.length, room.room_idx);
+        await updateCurrentMemberCnt(
+            waitingRoomMemberList.length,
+            room.room_idx
+        );
 
         // socket : get socket
-        const { io, socket } = getIOSocket(req, res);
         if (!io || !socket) {
+            console.log("*****", io, socket.id);
             res.status(400).json({
                 message: 'socket connection을 다시 해주세요.',
             });
             return;
         }
-        // socket : change member count
+        // socket : enter room
         io.to(room.room_idx).emit('enter room', {
             user_idx: user.user_idx,
             user_name: user.user_name,
@@ -64,7 +89,7 @@ module.exports = async (req, res, next) => {
         // socket : join room room_idx
         moveRoom(io, socket, room.room_idx);
 
-        // socket : enter room
+        // socket : change member count
         io.to(0).emit('change member count', {
             room_idx: room.room_idx,
             room_member_count: waitingRoomMemberList.length,
@@ -184,7 +209,9 @@ const insertWaitingRoomMember = async (
             .add('PINK');
         let insertedMember = undefined;
         for (let roomMember of waitingRoomMemberList) {
-            roomMember.wrm_user_ready = roomMember.wrm_user_ready ? true : false;
+            roomMember.wrm_user_ready = roomMember.wrm_user_ready
+                ? true
+                : false;
             if (roomMember.user_idx == user.user_idx) {
                 insertedMember = roomMember;
                 break;
@@ -215,11 +242,19 @@ const insertWaitingRoomMember = async (
         return undefined;
     }
 };
-const updateCurrentMemberCnt = async ( currentMember, roomIdx ) => {
+const updateCurrentMemberCnt = async (currentMember, roomIdx) => {
     await Room.update(
         {
             room_current_member_cnt: currentMember,
         },
         { where: { room_idx: roomIdx } }
     );
+};
+const getWaitingRoomMember = async (userIdx) => {
+    let roomMember = await WaitingRoomMember.findOne({
+        where: {
+            user_user_idx: userIdx,
+        },
+    });
+    return roomMember;
 };

@@ -6,6 +6,7 @@ const {
     startGame,
     getGameMemberInfo,
     finishGame,
+    exitGame,
 } = require('../service').gameService;
 const { authMiddleware, gameMiddleware } = require('../middleware');
 
@@ -14,5 +15,6 @@ router.get('/interim-result/:gameIdx', getInterimResult);
 router.get('/final-result/:gameIdx', getFinalResult);
 router.get('/member/:gameIdx', getGameMemberInfo);
 router.delete('/:gameIdx', authMiddleware, gameMiddleware, finishGame);
+router.delete('/exit', authMiddleware, exitGame);
 
 module.exports = router;

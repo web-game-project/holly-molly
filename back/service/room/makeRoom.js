@@ -2,15 +2,22 @@ const { Room, WaitingRoomMember } = require('../../models');
 const moveRoom = require('../../socket/moveRoom');
 const getIOSocket = require('../../socket/getIOSocket');
 const makeRandomCode = require('../../util/makeRandomCode');
+const { exitGameAndRoom } = require('../game/exitGame');
 
 module.exports = async (req, res, next) => {
     try {
         const { room_name, room_mode, room_private, room_start_member_cnt } =
             req.body;
         const user = res.locals.user;
+        const { io, socket } = getIOSocket(req, res);
+        console.log("*****", socket.id);
 
-        //다른 방에 들어가 있으면
-        
+        const beforeWaitingRoomMember = await WaitingRoomMember.findOne({
+            where: {
+                user_user_idx: user.user_idx,
+            },
+        });
+        if (beforeWaitingRoomMember) await exitGameAndRoom(user, io);
 
         let roomCode = await makeRoomCode();
         const room = await Room.create({
@@ -30,8 +37,8 @@ module.exports = async (req, res, next) => {
         });
 
         // socket : get socket
-        const { io, socket } = getIOSocket(req, res);
         if (!io || !socket) {
+            console.log("*****", io, socket.id);
             res.status(400).json({
                 message: 'socket connection을 다시 해주세요.',
             });
@@ -77,16 +84,19 @@ const makeRoomCode = async () => {
 
 const exitRoom = async (io, roomMember, roomIdx) => {
     try {
-        await WaitingRoomMember.destroy({ // exit room
+        await WaitingRoomMember.destroy({
+            // exit room
             where: { user_user_idx: userIdx, room_room_idx: roomIdx },
         });
-    
+
         let memberCount = getMemberCount(roomIdx);
-        if (memberCount < 1) { // delete room
+        if (memberCount < 1) {
+            // delete room
             await Room.destroy({ where: { room_idx: roomIdx } });
             io.to(0).emit('delete room', { room_idx: roomIdx });
         } else {
-            if (roomMember.get('wrm_leader')) { // change host
+            if (roomMember.get('wrm_leader')) {
+                // change host
                 const newLeader = await WaitingRoomMember.findOne({
                     attributes: ['user_user_idx'],
                     where: { room_room_idx: roomIdx },
@@ -104,8 +114,8 @@ const exitRoom = async (io, roomMember, roomIdx) => {
                     }
                 );
                 io.to(roomIdx).emit('change host', { user_idx: newLeaderIdx });
-            } 
-    
+            }
+
             // 방 member count 변경
             await Room.update(
                 {
@@ -113,10 +123,13 @@ const exitRoom = async (io, roomMember, roomIdx) => {
                 },
                 { where: { room_idx: roomIdx } }
             );
-            io.emit('change member count', { room_idx: roomIdx, room_member_count: memberCount });
+            io.to(0).emit('change member count', {
+                room_idx: roomIdx,
+                room_member_count: memberCount,
+            });
         }
     } catch (error) {
-        console.log("makeRoom-방 퇴장 중 에러 발생", error); //게임 시작한 경우 에러 발생 가능
+        console.log('makeRoom-방 퇴장 중 에러 발생', error); //게임 시작한 경우 에러 발생 가능
     }
 };
 

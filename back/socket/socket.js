@@ -72,6 +72,7 @@ const saveSocketId = async (socket) => {
         });
         if(roomMember){
             socket.join(roomMember.get('room_room_idx'));
+            console.log(socket.id ,socket.rooms)
         }
 
     } catch (error) {
