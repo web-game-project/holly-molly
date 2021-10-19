@@ -31,8 +31,7 @@ function App() {
         <div>
             <CreateRoom />
             <Filter />
-            <WaitingRoom />
-
+            <CheckBox />
             <table>
                 <tbody>
                     <tr>
@@ -62,18 +61,15 @@ function App() {
                     </tr>
                 </tbody>
             </table>
-
             <div>
                 <BrowserRouter>
                     <Route path="/">
                         <GameStart />
                     </Route>
-
+                    <Route path="/" exact component={RoomList} />
                     <Route path="/InputName">
                         <Dialog title="닉네임 입력" confirmText="접속" />
                     </Route>
-
-                    <Route path="/" exact component={RoomList} />
                 </BrowserRouter>
             </div>
         </div>
