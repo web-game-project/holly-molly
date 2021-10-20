@@ -7,15 +7,15 @@ const {
     editRoomInfo,
     deleteRoom,
 } = require('../service').roomService;
-const { authMiddleware } = require('../middleware');
+const { authMiddleware, roomMiddleware } = require('../middleware');
 
 const router = express.Router();
 
 router.get('/', authMiddleware, getRoomList);
 router.post('/', authMiddleware, makeRoom);
 router.post('/:type', authMiddleware, enterRoom);
-router.get('/info/:roomIdx', getRoomInfo);
-router.put('/info', editRoomInfo);
-router.delete('/:roomIdx', deleteRoom);
+router.get('/info/:roomIdx', roomMiddleware, getRoomInfo);
+router.put('/info', roomMiddleware, roomMiddleware, editRoomInfo);
+router.delete('/:roomIdx', roomMiddleware, deleteRoom);
 
 module.exports = router;
