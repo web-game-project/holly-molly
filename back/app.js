@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 });
 app.use('/login', loginRouter);
 app.use('/room', authMiddleware, roomRouter);
-app.use('/waiting-room', authMiddleware, waitingRoomRouter);
+app.use('/waiting-room', authMiddleware, roomMiddleware, waitingRoomRouter);
 app.use('/game', authMiddleware, gameRouter);
 
 server.listen(PORT, () => {
