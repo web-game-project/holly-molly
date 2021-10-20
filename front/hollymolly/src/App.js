@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 import style from './styles/styles.js';
-import CreateRoom from './components/CreateRoom';
-import Filter from './components/Filter';
 
 import io from 'socket.io-client';
 import './App.css';
@@ -16,22 +14,19 @@ import UserCard from './components/UserCard.js';
 import WaitingRoom from './screens/WaitingRoom.js';
 
 function App() {
-    //     useEffect(() => {
-    //         console.log('통신 시작!');
-    //         const socket = io('http://3.17.55.178:3002/', {
-    //             token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug',
-    //         });
+    useEffect(() => {
+        console.log('통신 시작!');
+        const socket = io('http://3.17.55.178:3002/', {
+            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug',
+        });
 
-    //         socket.on('connect', () => {
-    //             console.log('connection server');
-    //         });
-    //     }, []);
+        socket.on('connect', () => {
+            console.log('connection server');
+        });
+    }, []);
 
     return (
         <div>
-            <CreateRoom />
-            <Filter />
-            <CheckBox />
             <table>
                 <tbody>
                     <tr>
@@ -44,20 +39,19 @@ function App() {
                         <td>
                             <UserCard id={3} nickname="신사동 양꼬치" color="green" ready />
                         </td>
-                        <tr>
-                            <td>
-                                <UserCard id={7} nickname="방배동 살쾡이" color="red" ready />
-                            </td>
-                            <td>
-                                <UserCard id={5} nickname="수유동 불주먹" color="pink" />
-                            </td>
-                            <td>
-                                <UserCard id={6} nickname="용두동 쭈꾸미" color="blue" />
-                            </td>
-                            <td>
-                                <UserCard id={1} nickname="인계동 껍데기" color="orange" ready />
-                            </td>
-                        </tr>
+
+                        <td>
+                            <UserCard id={7} nickname="방배동 살쾡이" color="red" ready />
+                        </td>
+                        <td>
+                            <UserCard id={5} nickname="수유동 불주먹" color="pink" />
+                        </td>
+                        <td>
+                            <UserCard id={6} nickname="용두동 쭈꾸미" color="blue" />
+                        </td>
+                        <td>
+                            <UserCard id={1} nickname="인계동 껍데기" color="orange" ready />
+                        </td>
                     </tr>
                 </tbody>
             </table>

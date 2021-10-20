@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-
-function Filter() {
+function Filter({ result, getResult }) {
     const inputRef = useRef();
     const list = [
         {
@@ -30,7 +29,7 @@ function Filter() {
         },
     ];
 
-    const [CheckList, setCheckList] = useState([]);
+    const [CheckList, setCheckList] = useState([1, 5, 6]);
     const [IdList, setIdList] = useState([]);
 
     const data = inputRef.current;
@@ -44,15 +43,18 @@ function Filter() {
         });
 
         setIdList(ids);
+        getResult(CheckList);
     }, []);
 
     // 체크박스 전체 선택
     const onChangeAll = (e) => {
         // 체크할 시 CheckList에 id 값 전체 넣기, 체크 해제할 시 CheckList에 빈 배열 넣기
         setCheckList(e.target.checked ? IdList : []);
+        getResult(CheckList);
     };
 
     const onChangeEach = (e, id) => {
+        getResult(CheckList);
         // 체크할 시 CheckList에 id값 넣기
         if (e.target.checked) {
             setCheckList([...CheckList, id]);
@@ -60,13 +62,13 @@ function Filter() {
         } else {
             setCheckList(CheckList.filter((checkedId) => checkedId !== id));
         }
-
-        console.log(data);
     };
+    getResult(CheckList);
 
     return (
         <Container>
             <Title>--- Filter ---</Title>
+            <div>{/* <button onClick={onClick}>+</button> */}</div>
             <table>
                 <tbody>
                     {list &&
@@ -79,7 +81,10 @@ function Filter() {
                                         <input
                                             type="checkbox"
                                             label={item.id}
-                                            onChange={(e) => onChangeEach(e, item.id)}
+                                            onChange={(e) => {
+                                                onChangeEach(e, item.id);
+                                                getResult(CheckList);
+                                            }}
                                             checked={CheckList.includes(item.id)}
                                             ref={inputRef}
                                             label={item.id}
@@ -113,13 +118,13 @@ export default Filter;
 
 const Container = styled.div`
     width: 130px;
-    height: 300px;
+    height: 310px;
     background-color: #8676c7;
     padding: 0px 10px;
     margin: 10px auto;
     border-radius: 15px;
-    border: 1px solid #8676c7;
-    box-shadow: 10px 10px 20px #808080;
+    border: 1px solid #4d1596;
+    box-shadow: 10px 10px 20px #000;
     overflow: hidden;
 `;
 

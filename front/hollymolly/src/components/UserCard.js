@@ -119,6 +119,8 @@ const RedContainer = styled.div`
     align-items: center;
     justify-content: center;
     align-self: center;
+
+    z-index: 31;
 `;
 
 const OrangeContainer = styled.div`

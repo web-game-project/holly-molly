@@ -65,11 +65,6 @@ function CreateRoom() {
 
     return (
         <div style={styles.container}>
-            <button style={{ ...styles.button_close, float: 'right' }} onClick={close}>
-                X
-            </button>
-            <br />
-
             <h1 style={{ textAlign: 'center' }}>방 생성</h1>
             <div style={{ marginLeft: '50px' }}>
                 <div style={styles.div}>
@@ -125,10 +120,9 @@ export default CreateRoom;
 
 const styles = {
     container: {
-        border: '2px solid #000',
-        width: '500px',
-        padding: '20px',
-        hieght: '310px',
+        border: '2px solid #fff',
+        width: '400px',
+        hieght: '250px',
         flexDirection: 'column',
         borderRadius: 10,
     },
@@ -139,8 +133,6 @@ const styles = {
         fontSize: 20,
     },
     button_on: {
-        // isChecked? style={styles.button_on} : style={styles.button_off}
-        // style={isChecked? styles.button_on: styles.button_off}
         fontSize: 20,
         color: style.lightblue,
         backgroundColor: 'transparent',
@@ -181,7 +173,6 @@ const styles = {
         fontSize: 20,
         color: style.white,
         backgroundColor: style.skyblue,
-        // border: style.white,
         borderRadius: 7,
         paddingLeft: 20,
         paddingRight: 20,
