@@ -1,14 +1,35 @@
-const { Room, Game, GameSet, GameMember, GameVote } = require('../../models');
+const { Room, Game, GameSet, GameMember, WaitingRoomMember, KeyWord } = require('../../models');
 const moveRoom = require('../../socket/moveRoom');
 
 module.exports = async (req, res, next) => {
     try {
         const { game_idx, game_set_no } = req.body;
-
-        // 몇번째 판인지 맞게 왔는지 체크
-
-        // 다음세트 생성
-
+        
+        const keyWord = await KeyWord.findOne({
+            order: Sequelize.literal('RAND()'),
+            limit: 1,
+        });
+        const beforeGameSet = await GameSet.findOne({
+            where:{
+                game_game_idx: game_idx,
+                game_set_no: game_set_no-1.
+            }
+        });
+        /*const gameSet = await GameSet.create({
+            game_set_no: game_set_no,
+            game_set_human_score: 0,
+            game_set_ghost_score: 0,
+            keyword_keyword_idx: keyWord.get("keyWord_idx"),
+            game_game_idx: game_idx,
+        });*/
+        const gameMemberList = await WaitingRoomMember.fineAll({
+            attributes: ['wrm_user_color', 'user_user_idx', ['GameMembers.game_member_order','game_member_order']],
+            include: [{ model: GameMember, required: true, as: 'GameMembers', attributes:[] }],
+            where:{
+                game_game_idx: game_idx,
+            }
+        });
+        res.json(keyWord, beforeGameSet, gameMemberList);
         // response
         /*
         {
@@ -21,7 +42,7 @@ module.exports = async (req, res, next) => {
 
         // socket : start set
 
-        res.status(200).json({});
+        //res.status(200).json({});
     } catch (error) {
         console.log(error);
         res.status(400).json({ meesage: '알 수 없는 에러가 발생했습니다.' });
