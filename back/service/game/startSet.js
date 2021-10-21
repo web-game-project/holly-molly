@@ -5,10 +5,17 @@ const {
     Keyword,
 } = require('../../models');
 var Sequelize = require('sequelize');
+const getIOSocket = require('../../socket/getIOSocket');
 
 module.exports = async (req, res, next) => {
     try {
-        //방장인지 체크
+       
+        if(!res.locals.leader){
+            res.status(403).json({
+                message: "방장이 아닙니다."
+            });
+            return;
+        }
         
         const { game_idx, game_set_no } = req.body;
 
@@ -36,7 +43,7 @@ module.exports = async (req, res, next) => {
             game_set_no: game_set_no,
             game_set_human_score: 0,
             game_set_ghost_score: 0,
-            keyword_keyword_idx: keyWord[0].get("keyWord_idx"),
+            keyword_keyword_idx: keyWord[0].get("keyword_idx"),
             game_game_idx: game_idx,
         });
 
