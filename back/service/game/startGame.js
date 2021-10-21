@@ -137,9 +137,9 @@ const getRoleAndOrder = (memberCount) => {
     let random_idx = Math.floor(Math.random() * memberCount) + 1;
 
     for (let i = 1; i <= memberCount; i++) {
-        if (i == random_idx) roleList.push(1);
+        if (i == random_idx) roleList.push('human');
         //"citizen"
-        else roleList.push(0); //"ghost"
+        else roleList.push('ghost'); //"ghost"
         orderList.push(i);
     }
 

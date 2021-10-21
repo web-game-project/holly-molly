@@ -65,6 +65,7 @@ const saveSocketId = async (socket) => {
             socket.disconnet(true);
         }
 
+        //socket.user_idx = tokenValue.user_idx;
         // Join to room based on db
         const roomMember = await WaitingRoomMember.findOne({
             attribute: ['room_room_idx'],

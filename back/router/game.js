@@ -7,6 +7,10 @@ const {
     getGameMemberInfo,
     finishGame,
     exitGame,
+    startSet,
+    vote,
+    getVoteResult,
+    writeHumanKeyword,
 } = require('../service').gameService;
 const { authMiddleware, gameMiddleware } = require('../middleware');
 
@@ -14,7 +18,11 @@ router.post('/start', startGame);
 router.get('/interim-result/:gameIdx', gameMiddleware, getInterimResult);
 router.get('/final-result/:gameIdx', gameMiddleware, getFinalResult);
 router.get('/member/:gameIdx', gameMiddleware, getGameMemberInfo);
-router.delete('/:gameIdx', authMiddleware, gameMiddleware, finishGame);
-router.delete('/exit', authMiddleware, exitGame);
+router.delete('/:gameIdx', gameMiddleware, finishGame);
+router.delete('/exit', exitGame);
+router.post('/set', gameMiddleware, startSet);
+router.post('/vote', gameMiddleware,vote);
+router.get('/vote-result/:gameSetIdx', gameMiddleware, getVoteResult);
+router.patch('/human-keyword', gameMiddleware, writeHumanKeyword);
 
 module.exports = router;
