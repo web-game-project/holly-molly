@@ -5,7 +5,7 @@ const {
     Keyword,
 } = require('../../models');
 var Sequelize = require('sequelize');
-const getIOSocket = require('../../socket/getIOSocket');
+const shuffleList = require('../../util/shuffleList');
 
 module.exports = async (req, res, next) => {
     try {
@@ -19,59 +19,19 @@ module.exports = async (req, res, next) => {
         
         const { game_idx, game_set_no } = req.body;
 
-        const keyWord = await Keyword.findAll({
-            order: Sequelize.literal('RAND()'),
-            limit: 1,
-        });
+        const keyword = await getKeyword();
+        const beforeGameSet = await getGameSet(game_idx, game_set_no-1);
+        await creageGameSet(game_set_no, keyword[0].get("keyword_idx"), game_idx);
+        const gameMemberList = await getGameMemberList(game_idx);
+        const orderList = await updateGameOrder(gameMemberList);
 
-        const beforeGameSet = await GameSet.findOne({
-            include: [
-                {
-                    model: Keyword,
-                    required: true,
-                    as: 'keyword_keyword_idx_Keyword',
-                    attributes: ['keyword_child'],
-                },
-            ],
-            where: {
-                game_game_idx: game_idx,
-                game_set_no: game_set_no - 1,
-            },
-        });
-
-        const gameSet = await GameSet.create({
-            game_set_no: game_set_no,
-            game_set_human_score: 0,
-            game_set_ghost_score: 0,
-            keyword_keyword_idx: keyWord[0].get("keyword_idx"),
-            game_game_idx: game_idx,
-        });
-
-        const gameMemberList = await GameMember.findAll({
-            attributes: ['game_member_order'],
-            include: [
-                {
-                    model: WaitingRoomMember,
-                    required: true,
-                    as: 'wrm_wrm_idx_WaitingRoomMember',
-                    attributes: [
-                        'wrm_user_color',
-                        'user_user_idx',
-                        'room_room_idx',
-                    ],
-                },
-            ],
-            where: {
-                game_game_idx: game_idx,
-            },
-        });
-
+        // make socket data
         const userList = [];
-        for (const user of gameMemberList){
+        for (const i in gameMemberList){
             userList.push({
-                user_idx: user.get('wrm_wrm_idx_WaitingRoomMember').get('user_user_idx'),
-                game_member_order: user.get('game_member_order'),
-                user_color: user.get('wrm_wrm_idx_WaitingRoomMember').get('wrm_user_color'),
+                user_idx: gameMemberList[i].get('wrm_wrm_idx_WaitingRoomMember').get('user_user_idx'),
+                game_member_order: orderList[i],
+                user_color: gameMemberList[i].get('wrm_wrm_idx_WaitingRoomMember').get('wrm_user_color'),
             });
         }
         const setInfo = {
@@ -90,3 +50,84 @@ module.exports = async (req, res, next) => {
         res.status(400).json({ meesage: '알 수 없는 에러가 발생했습니다.' });
     }
 };
+
+const getKeyword = async () => {
+    return await Keyword.findAll({
+        order: Sequelize.literal('RAND()'),
+        limit: 1,
+    });
+}
+
+const getGameSet = async(gameIdx, gameSetNo) => {
+    return await GameSet.findOne({
+        include: [
+            {
+                model: Keyword,
+                required: true,
+                as: 'keyword_keyword_idx_Keyword',
+                attributes: ['keyword_child'],
+            },
+        ],
+        where: {
+            game_game_idx: gameIdx,
+            game_set_no: gameSetNo,
+        },
+    });
+} 
+
+const creageGameSet = async(gameSetNo, keywordIdx, gameIdx) => {
+    const gameSet = await GameSet.findOne({
+        where:{
+            game_game_idx: gameIdx, 
+            game_set_no: gameSetNo,
+        }
+    });
+    if(!gameSet){
+        await GameSet.create({
+            game_set_no: gameSetNo,
+            game_set_human_score: 0,
+            game_set_ghost_score: 0,
+            keyword_keyword_idx: keywordIdx,
+            game_game_idx: gameIdx,
+        });
+    }
+}
+
+const getGameMemberList = async(gameIdx) => {
+    return await GameMember.findAll({
+        attributes: ['game_member_idx','game_member_order'],
+        include: [
+            {
+                model: WaitingRoomMember,
+                required: true,
+                as: 'wrm_wrm_idx_WaitingRoomMember',
+                attributes: [
+                    'wrm_user_color',
+                    'user_user_idx',
+                    'room_room_idx',
+                ],
+            },
+        ],
+        where: {
+            game_game_idx: gameIdx,
+        },
+    });
+}
+const updateGameOrder = async(gameMemberList) => {
+    const orderList = [];
+    for (const i in gameMemberList){
+        orderList.push(Number(i)+1);
+    }
+    shuffleList(gameMemberList);
+
+    for(const i in gameMemberList){
+        await GameMember.update({
+            game_member_order: orderList[i]
+        },{
+            where:{
+                game_member_idx: gameMemberList[i].get('game_member_idx'),
+            }
+        });
+    }
+    return orderList;
+}

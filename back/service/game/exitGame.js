@@ -51,7 +51,7 @@ const exitGameAndRoom = async (user, io) => {
                 );
 
                 // game status 이벤트
-                await updateRoomStatus(room.get('room_idx'));
+                await updateRoomStatus(room.get('room_idx'), 'waiting');
                 io.to(0).emit('change game status', {
                     room_idx: room.get('room_idx'),
                     room_status: 'waiting',
@@ -61,7 +61,6 @@ const exitGameAndRoom = async (user, io) => {
 
         if (isLeader) {
             const hostIdx = await changeHost(memberList, user.user_idx);
-            console.log("******exitGame", hostIdx);
             io.to(room.get('room_idx')).emit('change host', { user_idx: hostIdx });
         }
 
@@ -135,7 +134,11 @@ const deleteRoomAndMember = async (wrmIdx, roomIdx) => {
 const deleteAllAboutGame = async (members, gameIdx) => {
     let gameMemberIdx = [];
     for (const member of members) {
-        gameMemberIdx.push(member.get('GameMembers').get('game_member_idx'));
+        try {
+            gameMemberIdx.push(member.get('GameMembers').get('game_member_idx'));
+        } catch (error) {
+            gameMemberIdx.push(member.get('game_member_idx'));   
+        }
     }
 
     await GameVote.destroy({
@@ -213,9 +216,9 @@ const getFinalResult = async (gameIdx) => {
 
     return finalResult;
 };
-const updateRoomStatus = async (roomIdx) => {
+const updateRoomStatus = async (roomIdx, status) => {
     await Room.update(
-        { room_status: 'waiting' },
+        { room_status: status },
         {
             where: {
                 room_idx: roomIdx,
@@ -228,7 +231,7 @@ const changeHost = async (memberList, userIdx) => {
         memberList[0].get('user_user_idx') != userIdx
             ? memberList[0].get('user_user_idx')
             : memberList[1].get('user_user_idx');
-    console.log("#######", memberList.length, memberList[0].get('user_user_idx'), hostIdx);
+   
     await WaitingRoomMember.update(
         {
             wrm_leader: true,
@@ -256,5 +259,7 @@ const deleteRoomMember = async (wrmIdx) => {
 
 module.exports = {
     exitGame,
-    exitGameAndRoom
+    exitGameAndRoom,
+    deleteAllAboutGame,
+    updateRoomStatus,
 };
