@@ -94,7 +94,7 @@ const Room = (props) => {
           {props.room_mode === "easy" && <RoomText bold textStroke={props.textStroke} color={style.white}>Easy Mode</RoomText>}
           {props.room_mode === "hard" && <RoomText bold textStroke={props.textStroke} color={style.white}>Hard Mode</RoomText>}
           <RoomGrid is_flex_end border="" boxShadow="" width="100px" height="25px">
-            <RoomText bold textStroke={props.textStroke} color={style.white}>{props.room_current_member}/{props.room_start_member}</RoomText> 👻
+            <RoomText bold textStroke={props.textStroke} color='#FFE400'> {props.room_current_member}/{props.room_start_member}&nbsp;</RoomText>👻
           </RoomGrid>
         </RoomGrid>
         {/* 방 진행중 여부 */}
