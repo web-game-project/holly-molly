@@ -2,7 +2,6 @@ const getInterimResult = require('./getInterimResult');
 const getFinalResult = require('./getFinalResult');
 const { startGame } = require('./startGame');
 const getGameMemberInfo = require('./getGameMemberInfo');
-const finishGame = require('./finishGame');
 const { exitGame } = require('./exitGame');
 const startSet = require('./startSet');
 const vote = require('./vote');
@@ -14,7 +13,6 @@ module.exports = {
     getFinalResult,
     startGame,
     getGameMemberInfo,
-    finishGame,
     exitGame,
     startSet,
     vote,
