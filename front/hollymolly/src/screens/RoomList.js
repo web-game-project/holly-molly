@@ -17,34 +17,23 @@ import { io } from 'socket.io-client';
 
 let total_room_cnt = 0;
 
+ // 연결 실패 시,
+ const socket = io('http://3.17.55.178:3002/', {
+    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
+    auth: {
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug',
+    },
+});
+
 const RoomList = () => {
     // 방 전체 리스트
     const [rooms, setRooms] = useState();
 
-    // 소켓 응답 상태
-    const [socketResponse, setSocketResponse] = useState(false);
-
     useEffect(() => {
-        //const socketCheck = () => {
-        // 연결 실패 시,
-        const socket = io('http://3.17.55.178:3002/', {
-            // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
-            auth: {
-                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug',
-            },
-        });
-
-        // 수동으로 다시 연결 시도
         socket.on('error', () => {
             setTimeout(() => {
                 socket.connect();
             }, 1000);
-        });
-
-        // 소켓이 서버에 연결되어 있는지 여부
-        // 연결 성공 시 시작
-        socket.on('connect', () => {
-            setSocketResponse(socket.connected);
         });
 
         // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
@@ -60,10 +49,12 @@ const RoomList = () => {
 
     // 페이지 슬라이드
     let TOTAL_SLIDES = Math.floor(total_room_cnt / 7); // 한 페이지 당 6개 방을 가지고 있으므로, 즉, 전체 페이지 개수 =  전체 방의 개수 / 6
-    console.log('TOTAL_SLIDES: ' + TOTAL_SLIDES);
 
     const [currentSlide, setCurrentSlide] = useState(0);
     const slideRef = useRef(null);
+
+    console.log("currentSlide: " + currentSlide) 
+
 
     useEffect(() => {
         slideRef.current.style.transition = 'all 0.5s ease-in-out'; //속도
@@ -92,7 +83,9 @@ const RoomList = () => {
     // 방 리스트 조회 => get 방식으로 데이터 요청
     useEffect(() => {
         const roomListCheck = async () => {
-            const restURL = 'http://3.17.55.178:3002/room ';
+            // const restURL = 'http://3.17.55.178:3002/room '
+            const restURL = 'http://3.17.55.178:3002/room?room_start_row='+ currentSlide+1;
+
             const reqHeaders = {
                 headers: {
                     authorization:
@@ -111,7 +104,7 @@ const RoomList = () => {
                 });
         };
         roomListCheck();
-    }, [socketResponse]);
+    }, [currentSlide]);
 
     console.log(rooms);
 
@@ -126,14 +119,14 @@ const RoomList = () => {
 
     return (
         <React.Fragment>
-            <RoomGrid flexDirection="column" padding="20px" width="965px" height="475px" bg="#251D82">
+            <RoomGrid flexDirection="column" padding="20px" width="1020px" height="620px" bg="#DAD4F6">
                 {/* 검색바 & 버튼 div*/}
-                <RoomGrid is_flex_space width="920px" height="100px" bg="#251D82" border="1px solid #251D82">
+                <RoomGrid is_flex_space width="980px" height="110px" bg="#DAD4F6" border="1px solid #DAD4F6">
                     <div style={styles.grid}>
                         <RoomSearchBar />
                     </div>
                     {/* 버튼 div*/}
-                    <div style={{ flexDirection: 'column' }}>
+                    <div style={{ flexDirection: 'column', width: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                         {/* 방만들기 모달 */}
                         <ModalBase />
                         <br />
@@ -142,7 +135,7 @@ const RoomList = () => {
                 </RoomGrid>
 
                 {/* 방 & 필터 div*/}
-                <RoomGrid is_flex_space width="920px" height="330px" bg="#251D82" border="1px solid #251D82">
+                <RoomGrid is_flex_space width="980px" height="460px" bg="#DAD4F6" border="1px solid #DAD4F6">
                     {/* 왼쪽 화살표 div*/}
                     <PrevBtn onClick={prevPage} />
                     {/* 방 리스트 슬라이더 div*/}
@@ -306,42 +299,32 @@ const Button = styled.button`
 export default RoomList;
 
 const styles = {
-    filter: {
-        width: '130px',
-        height: '300px',
-        background: 'black',
-    },
-    btn: {
-        width: '130px',
-        height: '90px',
-        background: 'black',
-    },
     grid: {
-        width: '130px',
-        height: '90px',
-        background: '#251D82',
+        width: '220px',
+        height: '110px',
+        background: '#DAD4F6',
         marginLeft: '42px',
     },
     roomListContainer: {
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start', 
         justifyContent: 'space-between',
         flexDirection: 'column',
-        width: '700px',
-        height: '330px',
-        bg: '#251D82',
-        border: '1px solid #251D82',
-        flexFlow: 'column wrap',
+        width : '680px', 
+        height: '410px',
+        bg: '#251D82', 
+        border: '1px solid #DAD4F6',
+        flexFlow: 'row wrap'
     },
     sliderContainer: {
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         justifyContent: 'space-between',
         flexDirection: 'column',
-        width: '700px',
-        height: '330px',
-        bg: '#251D82',
-        border: '1px solid #251D82',
+        width : '680px', 
+        height: '410px',
+        bg: '#251D82', 
+        border: '1px solid #DAD4F6',
         overflow: 'hidden',
-    },
+    }
 };

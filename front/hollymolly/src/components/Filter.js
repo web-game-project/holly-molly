@@ -118,7 +118,7 @@ export default Filter;
 
 const Container = styled.div`
     width: 130px;
-    height: 310px;
+    height: 350px;
     background-color: #8676c7;
     padding: 0px 10px;
     margin: 10px auto;

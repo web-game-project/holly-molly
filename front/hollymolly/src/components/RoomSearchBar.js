@@ -6,6 +6,14 @@ import axios from 'axios'
  // 소켓 
 import { io } from "socket.io-client";
 
+const socket = io("http://3.17.55.178:3002/", {
+  // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
+  auth: {
+    token:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug",
+  },
+}); 
+
 const RoomSearchBar = (props) => {
   const inputRef = useRef();
   const [clicked, setClicked] = useState(false);
@@ -13,11 +21,11 @@ const RoomSearchBar = (props) => {
   
     useEffect(() => {
         // 연결 실패 시, 
-        const socket = io("http://3.17.55.178:3002/", { // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요 
-            auth: {
-              token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug"
-            }
-          }); 
+        // const socket = io("http://3.17.55.178:3002/", { // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요 
+        //     auth: {
+        //       token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug"
+        //     }
+        //   }); 
 
         // 오류 시, 수동으로 다시 연결 시도 
         socket.on("error", () => {
@@ -91,7 +99,7 @@ const RoomSearchBar = (props) => {
           width="160px"
           height="32px"
           border="1px solid white"
-          bg="#FFE600"
+          bg="#4D1596"
         >
           <RoomText bold size="15px" color={style.white}>
             코드로 입장하기
