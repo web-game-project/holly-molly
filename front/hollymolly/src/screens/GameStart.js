@@ -41,17 +41,18 @@ const Logo = styled.div`
 `;
 
 const Background = styled.div`
-  background-image: url(${gameBackground});
+  background-color: #180928;
   width: 100vw;
   height: 100vh;
-  background-size: cover;
-  background-repeat: no-repeat;
+  display: flex;
+  align-items: center; 
+  justify-content: center;
 `;
 
 const Backgroundimg = styled.div`
   background-image: url(${gameBackground});
-  width: 100vw;
-  height: 100vh;
+  width: 1020px;
+  height: 720px;
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;

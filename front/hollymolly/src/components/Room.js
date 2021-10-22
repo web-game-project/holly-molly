@@ -4,8 +4,16 @@ import style from "../styles/styles";
 import RoomText from "../components/RoomText";
 import RoomGridDiv from "./RoomGridDiv";
 import axios from 'axios'
+import styled from 'styled-components';
  // 소켓 
 import { io } from "socket.io-client";
+/* 소켓 연결은 컴포넌트와 동등한 위치에서 선언되어야 한다.
+왜냐하면 지속적으로 연결이 유지되어야 하기 때문이다*/
+const socket = io("http://3.17.55.178:3002/", { // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요 
+            auth: {
+              token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug"
+            }
+}); 
 
 const Room = (props) => {
   const [waitingRoomMemberList, setWaitingRoomMemberList] = useState();
@@ -13,11 +21,11 @@ const Room = (props) => {
 
     useEffect(() => {
         // 연결 실패 시, 
-        const socket = io("http://3.17.55.178:3002/", { // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요 
-            auth: {
-              token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug"
-            }
-          }); 
+        // const socket = io("http://3.17.55.178:3002/", { // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요 
+        //     auth: {
+        //       token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug"
+        //     }
+        //   }); 
 
         // 오류 시, 수동으로 다시 연결 시도 
         socket.on("error", () => {
@@ -30,12 +38,6 @@ const Room = (props) => {
         // 연결 성공 시 시작 
         socket.on("connect", () => {
           console.log("room connection server");
-
-          /* socket.on("enter room", (msg) => { // "enter room" 라는 이벤트 받음 
-            alert('socket success!')
-            console.log("socket success!" + msg.user_idx);
-          });  */
-          
         });
 
         // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도  
@@ -80,29 +82,31 @@ const Room = (props) => {
 
   return (
     <React.Fragment>
-      <RoomGridDiv disabled={props.disabled} onClick={onClick} boxShadow cursor={props.cursor} padding="10px" margin="10px" width="214px" height="125px">
+      <RoomGridDiv disabled={props.disabled} onClick={onClick} boxShadow cursor={props.cursor} padding="10px" margin="10px" width="320px" height="115px">
         {/* 방 제목 */}
-        <RoomGrid is_flex_start border="" boxShadow="" padding="10px" width="198px" height="25px">
-          <RoomText bold textShadow="3px 5px 5px #474747" textStroke={props.textStroke} size="15px" color={style.red}>
+        <RoomGrid is_flex_start border="" boxShadow="" padding="15px" width="300px" height="25px">
+          <RoomText bold size="20px" color="#FF2222">
             {props.room_name}
           </RoomText>
         </RoomGrid>
-        {/* 방 현재 인원 / 총 인원 */}
-        <RoomGrid is_flex_end border="" boxShadow="" padding="10px" width="198px" height="25px">
-          <RoomText bold>{props.room_current_member}/{props.room_start_member}</RoomText>
-        </RoomGrid>
-        {/* 방 모드 */}
-        <RoomGrid is_flex_end border="" boxShadow="" padding="10px" width="198px" height="25px">
-          <RoomText bold>{props.room_mode} mode</RoomText>
+        {/* 방 모드  방 현재 인원 / 총 인원 */}
+        <RoomGrid is_flex_space border="" boxShadow="" padding="15px" width="300px" height="25px">
+          {props.room_mode === "easy" && <RoomText bold textStroke={props.textStroke} color={style.white}>Easy Mode</RoomText>}
+          {props.room_mode === "hard" && <RoomText bold textStroke={props.textStroke} color={style.white}>Hard Mode</RoomText>}
+          <RoomGrid is_flex_end border="" boxShadow="" width="100px" height="25px">
+            <RoomText bold textStroke={props.textStroke} color={style.white}>{props.room_current_member}/{props.room_start_member}</RoomText> 👻
+          </RoomGrid>
         </RoomGrid>
         {/* 방 진행중 여부 */}
-        <RoomGrid is_flex_end border="" boxShadow="" padding="10px" width="198px" height="25px">
-          <RoomText bold textStroke={props.textStroke} color={style.light_green}>
-            {props.room_status}
-          </RoomText>
+        <RoomGrid is_flex_end border="" boxShadow="" padding="15px" width="300px" height="25px">
+          {props.room_status === "waiting" && <RoomText bold size="24px" textStroke={props.textStroke} color={style.light_green}>
+            WAITING
+          </RoomText>}
+          {props.room_status === "playing" && <RoomText bold size="24px" textStroke={props.textStroke} color="#FF7B89">
+            PLAYING
+          </RoomText>}
         </RoomGrid>
       </RoomGridDiv>
-
     </React.Fragment>
   );
 };
