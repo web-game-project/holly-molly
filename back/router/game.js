@@ -5,7 +5,6 @@ const {
     getFinalResult,
     startGame,
     getGameMemberInfo,
-    finishGame,
     exitGame,
     startSet,
     vote,
@@ -18,7 +17,6 @@ router.post('/start', startGame);
 router.get('/interim-result/:gameIdx', gameMiddleware, getInterimResult);
 router.delete('/final/:gameIdx', gameMiddleware, getFinalResult);
 router.get('/member/:gameIdx', gameMiddleware, getGameMemberInfo);
-router.delete('/:gameIdx', gameMiddleware, finishGame);
 router.delete('/exit', exitGame);
 router.post('/set', gameMiddleware, startSet);
 router.post('/vote', gameMiddleware,vote);
