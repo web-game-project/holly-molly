@@ -101,7 +101,7 @@ const RoomSearchBar = (props) => {
           border="1px solid white"
           bg="#4D1596"
         >
-          <RoomText bold size="15px" color={style.white}>
+          <RoomText size="17px" color={style.white}>
             코드로 입장하기
           </RoomText>
         </RoomGrid>

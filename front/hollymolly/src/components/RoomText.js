@@ -23,11 +23,12 @@ RoomText.defaultProps = {
 const RoomTextP = styled.p`
   color: ${(props) => props.color};
   font-size: ${(props) => props.size};
-  font-weight: ${(props) => (props.bold ? "800" : "400")};
+  font-weight: ${(props) => (props.bold ? "500" : "400")};
   stroke: ${(props) => props.stroke};
   stroke-width: ${(props) => props.strokeWidth};
   text-shadow: ${(props) => props.textShadow};
   ${(props) => (props.textStroke === "true" ? ` -webkit-text-stroke: 1px #000000;` : "")}
+  font-family: "BlackHanSans";
 `;
 
 export default RoomText;
