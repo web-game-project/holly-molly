@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import UserCard from '../components/UserCard';
+import '../assets/font.css';
 
 export default function UserTable() {
     return (

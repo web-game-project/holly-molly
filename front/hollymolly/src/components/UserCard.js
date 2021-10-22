@@ -1,5 +1,6 @@
 import style from '../styles/styles';
 import styled from 'styled-components';
+import '../assets/font.css';
 
 import { ReactComponent as RedCharacter } from '../assets/red.svg';
 import { ReactComponent as OOO } from '../assets/orange.svg';
@@ -30,7 +31,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <RedContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name>{nickname}</Name>
+                            <Name className="Hahmlet">{nickname}</Name>
                             <RedInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <RedCharacter className="ghost" width="80" height="127" />
@@ -41,7 +42,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <OrangeContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name>{nickname}</Name>
+                            <Name className="Gaegu">{nickname}</Name>
                             <OrangeInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <img src={orangePng} className="ghost" width="80" />
@@ -52,7 +53,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <YellowContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name>{nickname}</Name>
+                            <Name className="Jua">{nickname}</Name>
                             <YellowInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <YellowCharacter className="ghost" width="80" height="117" />
@@ -63,7 +64,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <GreenContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name>{nickname}</Name>
+                            <Name className="East_Sea_Dokdo">{nickname}</Name>
                             <GreenInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <GreenCharacter className="ghost" width="80" height="117" />
@@ -74,7 +75,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <BlueContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name>{nickname}</Name>
+                            <Name className="Jua">{nickname}</Name>
                             <BlueInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <BlueCharacter className="ghost" width="80" height="117" />
@@ -85,7 +86,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <PurpleContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name>{nickname}</Name>
+                            <Name className="Black_Han_Sans">{nickname}</Name>
                             <PurpleInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <PurpleCharacter className="ghost" width="80" height="117" />
@@ -96,7 +97,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <PinkContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name>{nickname}</Name>
+                            <Name className="East_Sea_Dokdo">{nickname}</Name>
                             <PinkInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <PinkCharacter className="ghost" width="80" height="117" />
@@ -604,6 +605,8 @@ const Name = styled.h4`
     justify-content: center;
     align-self: center;
     // background-color: blue;
+    // font-family: 'Hahmlet', serif;
+    // @import url('https://fonts.googleapis.com/css2?family=East+Sea+Dokdo&display=swap');
 `;
 
 const ReadyImg = styled.img`

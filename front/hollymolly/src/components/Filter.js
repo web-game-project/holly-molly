@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
+import '../assets/font.css';
+
 function Filter({ result, getResult }) {
     const inputRef = useRef();
     const list = [
@@ -123,8 +125,8 @@ const Container = styled.div`
     padding: 0px 10px;
     margin: 10px auto;
     border-radius: 15px;
-    border: 1px solid #4d1596;
-    box-shadow: 10px 10px 20px #000;
+    border: 2px solid #ffffff;
+    box-shadow: 5px 5px 20px #f0f0f0;
     overflow: hidden;
 `;
 
