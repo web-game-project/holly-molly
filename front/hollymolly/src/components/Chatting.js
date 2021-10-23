@@ -104,11 +104,13 @@ const Chatting = (props) => {
     <BodyDiv>
     <Container>
       <ChatContainer> {/* 18개부터 스크롤 생김 */}
-        <ChatContext color={"blue"} name={"이태원돈까스"} text={"방가방가~"} ></ChatContext>
-        <ChatContext color={"orange"} name={"가나다라마바사"} text={"안녕하소~^^안녕하소~^^안녕하소~^^"} ></ChatContext>
-        <ChatContext color={"yellow"} name={"마라도 해물탕"} text={"안녕하세요~!!!안녕하세요~!!!안녕하세요~!!!안녕하세요~!!!"} ></ChatContext>
-
-
+        <ChatContext color={"yellow"} name={"이태원돈까스"} text={"방가방가~"} ></ChatContext>
+        <ChatContext color={"orange"} name={"용산 묵은지 김밥"} text={"안녕하소"} ></ChatContext>
+        <ChatContext color={"green"} name={"마라도 해물탕"} text={"어쩔티비 어쩔냉장고"} ></ChatContext>
+        <ChatContext color={"red"} name={"인계동 껍데기"} text={"안녕하세요~! 저는 세상 최고 귀요미입니다."} ></ChatContext>
+        <ChatContext color={"pink"} name={"용두동 쭈꾸미"} text={"아이유 신곡 나옴 들어보셈"} ></ChatContext>
+        <ChatContext color={"blue"} name={"삼각지 육회나라 연어공주"} text={"아 방 잘못들어왔다!"} ></ChatContext>
+        <ChatContext color={"purple"} name={"성신 지지고"} text={"만나서 반가워요^^"} ></ChatContext>
         {recentChat? <ChatContext name={recentChatUserName} text={chatMonitor} ></ChatContext> : ""}
       </ChatContainer>
       <InputMsgContainer>

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import React from "react";
+import '../assets/font.css';
 
 const RoomText = (props) => {
   const { bold, color, size, textShadow, textStroke, children } = props;
@@ -28,7 +29,7 @@ const RoomTextP = styled.p`
   stroke-width: ${(props) => props.strokeWidth};
   text-shadow: ${(props) => props.textShadow};
   ${(props) => (props.textStroke === "true" ? ` -webkit-text-stroke: 1px #000000;` : "")}
-  font-family: "BlackHanSans";
+  font-family: "Black Han Sans";
 `;
 
 export default RoomText;

@@ -38,7 +38,7 @@ function App() {
                     <Route path="/InputName">
                         <Dialog title="닉네임 입력" confirmText="접속" />
                     </Route>
-                    {/*<Route path="/" exact component={Chatting}/> */}
+                    <Route path="/" exact component={Chatting}/>
                 </BrowserRouter>
             </div>
         </div>
