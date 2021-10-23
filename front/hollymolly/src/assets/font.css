@@ -3,11 +3,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=East+Sea+Dokdo&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+
 
 * {
     /* font-weight: 600; */
-    font-family: 'Hahmlet', serif;
-}
+     font-family: 'Jua', sans-serif;
+} 
 
 .Hahmlet {
     font-family: 'Hahmlet', serif;
@@ -27,4 +29,8 @@
 
 .East_Sea_Dokdo {
     font-family: 'East Sea Dokdo', cursive;
+}
+
+.Gowun_Dodum {
+    font-family: 'Gowun Dodum', sans-serif;
 }
