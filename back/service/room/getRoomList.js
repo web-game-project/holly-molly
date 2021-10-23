@@ -63,7 +63,7 @@ const getRoomList = async (offset, roomMode, startMember) => {
         ON room_idx = room_room_idx
         WHERE room_mode IN ${room_mode} AND room_start_member_cnt IN ${room_start_member_cnt} AND room_private != 1
         GROUP BY room_idx
-        LIMIT ${offset}, 9`,
+        LIMIT ${offset}, 6`,
         { type: db.sequelize.QueryTypes.SELECT }
     );
 

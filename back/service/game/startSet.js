@@ -34,6 +34,8 @@ module.exports = async (req, res, next) => {
                 user_color: gameMemberList[i].get('wrm_wrm_idx_WaitingRoomMember').get('wrm_user_color'),
             });
         }
+
+        // 추후 파일 이미지 전송 기능 추가 예정
         const setInfo = {
             before_game_set_img: beforeGameSet.get('game_set_img'),
             before_game_set_keyword: beforeGameSet.get('keyword_keyword_idx_Keyword').get('keyword_child'),
