@@ -7,11 +7,11 @@ import './App.css';
 import RoomList from '../src/screens/RoomList';
 import RoomSearchBar from '../src/components/RoomSearchBar';
 import Room from '../src/components/Room';
-import Chatting from "../src/components/Chatting";
+import Chatting from '../src/components/Chatting';
 import GameStart from './screens/GameStart';
 import Dialog from './screens/NickNameDialog';
 
-import HeaderComponent from '../src/components/HeaderComponent'
+import HeaderComponent from '../src/components/HeaderComponent';
 import { BrowserRouter, Route } from 'react-router-dom'; //React-Router import
 import WaitingRoom from './screens/WaitingRoom.js';
 import UserTable from './components/UserTable.js';
@@ -38,7 +38,8 @@ function App() {
                     <Route path="/InputName">
                         <Dialog title="닉네임 입력" confirmText="접속" />
                     </Route>
-                    <Route path="/" exact component={Chatting}/>
+                    <Route path="/" exact component={Chatting} />
+                    <Route path="/" exact component={WaitingRoom} />
                 </BrowserRouter>
             </div>
         </div>
