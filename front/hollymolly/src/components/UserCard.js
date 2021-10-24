@@ -31,7 +31,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <RedContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name className="Hahmlet">{nickname}</Name>
+                            <Name>{nickname}</Name>
                             <RedInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <RedCharacter className="ghost" width="80" height="127" />
@@ -42,10 +42,10 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <OrangeContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name className="Gaegu">{nickname}</Name>
+                            <Name>{nickname}</Name>
                             <OrangeInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
-                                <img src={orangePng} className="ghost" width="80" />
+                                <img src={orangePng} className="ghost" width="80" style={{ marginTop: 0 }} />
                             </OrangeInnerContainer>
                         </OrangeContainer>
                     );
@@ -53,7 +53,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <YellowContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name className="Jua">{nickname}</Name>
+                            <Name>{nickname}</Name>
                             <YellowInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <YellowCharacter className="ghost" width="80" height="117" />
@@ -64,7 +64,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <GreenContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name className="East_Sea_Dokdo">{nickname}</Name>
+                            <Name>{nickname}</Name>
                             <GreenInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <GreenCharacter className="ghost" width="80" height="117" />
@@ -75,7 +75,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <BlueContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name className="Jua">{nickname}</Name>
+                            <Name>{nickname}</Name>
                             <BlueInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <BlueCharacter className="ghost" width="80" height="117" />
@@ -86,7 +86,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <PurpleContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name className="Black_Han_Sans">{nickname}</Name>
+                            <Name>{nickname}</Name>
                             <PurpleInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <PurpleCharacter className="ghost" width="80" height="117" />
@@ -97,7 +97,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                     return (
                         <PinkContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
-                            <Name className="East_Sea_Dokdo">{nickname}</Name>
+                            <Name>{nickname}</Name>
                             <PinkInnerContainer>
                                 {ready && <ReadyImg src={readyImg} />}
                                 <PinkCharacter className="ghost" width="80" height="117" />
@@ -122,6 +122,8 @@ const RedContainer = styled.div`
     align-items: center;
     justify-content: center;
     align-self: center;
+    margin-left: 10px;
+    margin-right: 10px;
 
     z-index: 31;
 `;
@@ -138,6 +140,8 @@ const OrangeContainer = styled.div`
     align-items: center;
     justify-content: center;
     align-self: center;
+    margin-left: 10px;
+    margin-right: 10px;
 `;
 
 const YellowContainer = styled.div`
@@ -152,6 +156,8 @@ const YellowContainer = styled.div`
     align-items: center;
     justify-content: center;
     align-self: center;
+    margin-left: 10px;
+    margin-right: 10px;
 `;
 
 const GreenContainer = styled.div`
@@ -166,6 +172,8 @@ const GreenContainer = styled.div`
     align-items: center;
     justify-content: center;
     align-self: center;
+    margin-left: 10px;
+    margin-right: 10px;
 `;
 
 const BlueContainer = styled.div`
@@ -180,6 +188,8 @@ const BlueContainer = styled.div`
     align-items: center;
     justify-content: center;
     align-self: center;
+    margin-left: 10px;
+    margin-right: 10px;
 `;
 
 const PurpleContainer = styled.div`
@@ -194,6 +204,8 @@ const PurpleContainer = styled.div`
     align-items: center;
     justify-content: center;
     align-self: center;
+    margin-left: 10px;
+    margin-right: 10px;
 `;
 
 const PinkContainer = styled.div`
@@ -208,6 +220,8 @@ const PinkContainer = styled.div`
     align-items: center;
     justify-content: center;
     align-self: center;
+    margin-left: 10px;
+    margin-right: 10px;
 `;
 
 const RedInnerContainer = styled.div`
@@ -618,6 +632,6 @@ const ReadyImg = styled.img`
 const LeaderImg = styled.img`
     width: 30px;
     position: absolute;
-    margin-top: 3px;
-    margin-left: 3px;
+    margin-top: 40px;
+    margin-left: 48px;
 `;
