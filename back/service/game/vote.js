@@ -199,8 +199,7 @@ const calculateVoteResult = async (gameIdx, gameSetIdx, numberLimit) => {
         if (numberLimit && topVoteRankList.length >= numberLimit) break;
     }
     console.log("[***********]",topVoteRankList, score, voteCntOrderList);
-    return { game, topVoteRankList, score, voteRankJSON }; 
-    //return { game, topVoteRankList, score };
+    return { game, topVoteRankList, score };
 };
 const addGhostScore = async (gameSetIdx) => {
     const gameSet = await GameSet.findOne({
@@ -220,4 +219,7 @@ const addGhostScore = async (gameSetIdx) => {
     );
 };
 
-module.exports = vote;
+module.exports = {
+    vote,
+    calculateVoteResult,
+};
