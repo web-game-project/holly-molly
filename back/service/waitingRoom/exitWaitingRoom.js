@@ -1,6 +1,7 @@
 const { WaitingRoomMember } = require('../../models');
 const sequelize = require('sequelize');
 
+// 코드를 외부에서도 사용할 수 있게 모듈화하기
 module.exports = async (req, res, next) => {
     let { roomIdx } = req.params;
     roomIdx = Number(roomIdx);
@@ -18,7 +19,7 @@ module.exports = async (req, res, next) => {
 
         let newLeaderIdx = 0;
 
-        // 방장이라면 이 부분 미들웨어 사용
+        // 방장이라면 이 부분 res.locals.leader 사용
         if (isLeader.dataValues.wrm_leader) {
             //방장이라면
             const newLeader = await WaitingRoomMember.findOne({
@@ -42,7 +43,7 @@ module.exports = async (req, res, next) => {
             );
         }
 
-        let memberCount = getMemberCount(room_idx);
+        let memberCount = getMemberCount(roomIdx);
 
         const io = req.app.get('io');
         let member_data = { room_idx: roomIdx, room_member_count: memberCount };
@@ -52,6 +53,8 @@ module.exports = async (req, res, next) => {
             let leader_data = { user_idx: newLeaderIdx };
             io.to(roomIdx).emit('change host', leader_data);
         }
+
+        io.to(roomIdx).emit('exit room', { user_idx });
 
         res.status(200).json('success');
     } catch (error) {
@@ -73,3 +76,5 @@ const getMemberCount = async (room_idx) => {
 
     return memberCount;
 };
+
+
