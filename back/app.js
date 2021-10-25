@@ -9,11 +9,7 @@ const {
     waitingRoomRouter,
     gameRouter,
 } = require('./router');
-const {
-    authMiddleware,
-    roomMiddleware,
-    gameMiddleware,
-} = require('./middleware');
+const { authMiddleware } = require('./middleware');
 //const PORT = 8080;
 const PORT = 3002;
 
@@ -28,7 +24,7 @@ app.get('/', (req, res) => {
 });
 app.use('/login', loginRouter);
 app.use('/room', authMiddleware, roomRouter);
-app.use('/waiting-room', authMiddleware, roomMiddleware, waitingRoomRouter);
+app.use('/waiting-room', authMiddleware, waitingRoomRouter);
 app.use('/game', authMiddleware, gameRouter);
 
 server.listen(PORT, () => {
