@@ -17,8 +17,9 @@ socket.on('connect', () => {
 const Chatting = (props) => {
     // 입력된 채팅 메시지 상태 값
     const [inputMessage, setInputMessage] = useState('');
-    //const { content } = inputMessage;
 
+    const [emitMessage, setEmitMessage] = useState(false);
+    
     // 로컬의 입장에서 계속 전체 값이 바뀌는 것이기에 내용 전체가 다시 렌더링 되는 것을 막기 위해 상태값을 두 종류로 나누어 관리
 
     // 하나는 기존의 채팅 내용을 담아두고 UI와 직접 연결되는 상태값
@@ -43,8 +44,9 @@ const Chatting = (props) => {
         if (e.key === 'Enter') {
             if (inputMessage.length > 0) {
                 alert(inputMessage.length);
-                socket.emit('chat', { inputMessage });
+                socket.emit("chat", inputMessage);
                 setInputMessage('');
+                setEmitMessage(!emitMessage);
             }
         }
     };
@@ -53,22 +55,25 @@ const Chatting = (props) => {
     const handleSubmit = () => {
         if (inputMessage.length > 0) {
             alert(inputMessage);
-            socket.emit('chat', { inputMessage });
+            socket.emit("chat", inputMessage);
             //setInputMessage({ ...inputMessage, content: '' });
             setInputMessage('');
+            setEmitMessage(!emitMessage);
         }
     };
 
     // 서버에서 받은 입력값을 로컬 상태값으로 갱신하는 함수(바로 밑의 함수로 연결된다)
+   
     useEffect(() => {
-        socket.on('chat', (data) => {
+        socket.on("chat", (data) => {
+            alert("소켓 " + data.msg);
+
             setRecentChatUserIdx(data.user_idx);
             setRecentChatUserName(data.user_name);
             setRecentChat(data.msg);
-
-            console(data.msg);
+            
         });
-    }, []);
+    }, [emitMessage]);
 
     // 서버에서 갱신된 내용(recentChat)을 받았을 때 로컬 채팅창에 추가하는 함수
     useEffect(() => {

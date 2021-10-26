@@ -33,6 +33,7 @@ const RoomList = () => {
         socket.on('error', () => {
             setTimeout(() => {
                 socket.connect();
+                console.log(socket);
             }, 1000);
         });
 
@@ -51,14 +52,6 @@ const RoomList = () => {
     let TOTAL_SLIDES = Math.floor(total_room_cnt / 7); // 한 페이지 당 6개 방을 가지고 있으므로, 즉, 전체 페이지 개수 =  전체 방의 개수 / 6
 
     const [currentSlide, setCurrentSlide] = useState(0);
-    const slideRef = useRef(null);
-
-    console.log('currentSlide: ' + currentSlide);
-
-    useEffect(() => {
-        slideRef.current.style.transition = 'all 0.5s ease-in-out'; //속도
-        slideRef.current.style.transform = `translateX(-${currentSlide}00%)`; // 백틱을 사용하여 슬라이드로 이동하는 애니메이션을 만듭니다.
-    }, [currentSlide]);
 
     // 다음 페이지 이동
     const nextPage = () => {
@@ -82,8 +75,9 @@ const RoomList = () => {
     // 방 리스트 조회 => get 방식으로 데이터 요청
     useEffect(() => {
         const roomListCheck = async () => {
-            // const restURL = 'http://3.17.55.178:3002/room '
-            const restURL = 'http://3.17.55.178:3002/room?room_start_row=' + currentSlide + 1;
+            const currentPage = currentSlide + 1;
+
+            const restURL = 'http://3.17.55.178:3002/room?room_start_row=' + currentPage;
 
             const reqHeaders = {
                 headers: {
@@ -104,8 +98,6 @@ const RoomList = () => {
         };
         roomListCheck();
     }, [currentSlide]);
-
-    console.log(rooms);
 
     // Filter 선택값 결과 배열 list
     const [result, setResult] = useState([]);
@@ -141,8 +133,8 @@ const RoomList = () => {
                     <PrevBtn onClick={prevPage} />
                     {/* 방 리스트 슬라이더 div*/}
                     <div style={styles.sliderContainer}>
-                        <div style={styles.roomListContainer} ref={slideRef}>
-                            {/* {roomList} */}
+                        {currentSlide}
+                        <div style={styles.roomListContainer}>
                             {rooms &&
                                 rooms.room_list.map((values) => {
                                     let member = false;
@@ -313,8 +305,8 @@ const styles = {
         flexDirection: 'column',
         width: '680px',
         height: '410px',
-        bg: '#251D82',
-        border: '1px solid #DAD4F6',
+
+        border: '1px solid #FF0000',
         flexFlow: 'row wrap',
     },
     sliderContainer: {
@@ -324,8 +316,7 @@ const styles = {
         flexDirection: 'column',
         width: '680px',
         height: '410px',
-        bg: '#251D82',
-        border: '1px solid #DAD4F6',
+        border: '1px solid #00FF00', //  #DAD4F6
         overflow: 'hidden',
     },
 };
