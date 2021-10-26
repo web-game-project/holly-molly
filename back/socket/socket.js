@@ -32,17 +32,18 @@ module.exports = (server, app) => {
         });
         socket.use(async(event, next) => {
             let token;
-            let socketToken;
             try {
                 try {
-                    socketToken = socket.handshake.headers.auth;
+                    token = verifyJWT.verifyAccessToken(
+                        socket.handshake.headers.auth
+                    );
                 } catch (error) {
-                    socketToken = socket.handshake.auth.token;
+                    token = verifyJWT.verifyAccessToken(
+                        socket.handshake.auth.token
+                    );
                 }
+                console.log(token);
                 
-                token = verifyJWT.verifyAccessToken(
-                    socketToken
-                );
             } catch (error) {
                 return next(new Error('unauthorized event'));
             }
