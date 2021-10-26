@@ -5,6 +5,7 @@ const chat = require('./chat');
 const draw = require('./draw');
 const sendNextTurn = require('./sendNextTurn');
 const { User, WaitingRoomMember } = require('../models');
+var fs = require('fs');
 
 module.exports = (server, app) => {
     const io = socketIo(server, socketConfig);
@@ -12,6 +13,13 @@ module.exports = (server, app) => {
 
     io.on('connection', async (socket) => {
         saveSocketId(socket);
+
+        // image test code
+        fs.readFile('./socket/image.png', function(err, data){
+            console.log(err, data);
+            socket.emit('imageConversionByClient', { image: true, buffer: data });
+            socket.emit('imageConversionByServer', "data:image/png;base64,"+ data.toString("base64"));
+        });
 
         // 여기에 socket.on 추가
         socket.on('chat', chat.bind(this, socket, io));
