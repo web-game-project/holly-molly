@@ -10,6 +10,87 @@ import UserTable from '../components/UserTable.js';
 
 export default function WaitingRoom() {
     const BaseURL = 'http://3.17.55.178:3002';
+
+    //사람이 색을 변경해서 클릭했을 때 소켓통신을 실행하기 위한 변수
+    const [changeColor, setChangeColor] = React.useState(false);
+
+    //내가 무슨 색을 선택했는지 
+    const [selectColor, setSelectColor] = React.useState(""); 
+
+    // 개별 색 state
+    const [redColor, setRedColor] = React.useState("#FF0000");
+    const [orangeColor, setOrangeColor] = React.useState("#FF5E00");
+    const [yellowColor, setYellowColor] = React.useState("#FFE400");
+    const [greenColor, setGreenColor] = React.useState("#1DDB16");
+    const [blueColor, setBlueColor] = React.useState("#0B37D3");
+    const [purpleColor, setPurpleColor] = React.useState("#5F00FF");
+    const [pinkColor, setPinkColor] = React.useState("#FF00DD");
+
+    useEffect(() => {
+        //alert('통신 시작!');
+
+        //8번 토큰 사용
+        /* const socket = io(BaseURL, {
+            auth: {
+                token:
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw",
+            },
+        }); */
+
+        //3번 토큰 사용
+        const socket = io(BaseURL, {
+            auth: {
+                token:
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MywidXNlcl9uYW1lIjoiaHkiLCJpYXQiOjE2MzI4MzMwMTd9.-i36Z3KoqzCfgtVNl1-c8h5fZNSZ8Nlhnp4UI41tFxM",
+            },
+        });
+
+
+        // 소켓이 서버에 연결되어 있는지 여부 
+        // 연결 성공 시 시작 
+        /*   socket.on("connect", () => {
+              console.log("Waiting connection server");
+          }); */
+
+        /*  socket.on('error', () => {
+            setTimeout(() => {
+                socket.connect();
+            }, 1000);
+        });
+ 
+         // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
+         socket.on('disconnect', (reason) => {
+             if (reason === 'io server disconnect') {
+                 // the disconnection was initiated by the server, you need to reconnect manually
+                 socket.connect();
+             }
+             // else the socket will automatically try to reconnect
+         }); */
+
+        socket.on("change member color", (data) => {
+            console.log("socket-> index: " + data.user_idx + " color: " + data.user_color);
+            //해당 user_color값 클릭안되게 설정 + X 표시로 바꿔줄 코드 삽입
+            if (data.user_idx != 8) {  // 내인덱스값이 아닌 이상 (숫자 자리에 인덱스 넣기)
+                //지금 연희 맞춤 8번 
+                if (data.user_color == "RED")
+                    setRedColor("#8C8C8C");
+                else if (data.user_color == "ORANGE")
+                    setOrangeColor("#8C8C8C");
+                else if (data.user_color == "YELLOW")
+                    setYellowColor("#8C8C8C");
+                else if (data.user_color == "GREEN")
+                    setGreenColor("#8C8C8C");
+                else if (data.user_color == "BLUE")
+                    setBlueColor("#8C8C8C");
+                else if (data.user_color == "PURPLE")
+                    setPurpleColor("#8C8C8C");
+                else
+                    setPinkColor("#8C8C8C");
+            }
+        });
+
+    }, [changeColor]);
+
     // useEffect(() => {
     //     console.log('소켓 통신 시작');
     //     const socket = io(BaseURL, {
@@ -47,6 +128,47 @@ export default function WaitingRoom() {
     //     roomInfo();
     // }, []);
 
+    function colorClick(str) {
+
+        alert("click: " + str);
+
+        setSelectColor(str);
+
+        const restURL = BaseURL + '/waiting-room/user-color';
+
+        //8번 토큰
+       /*  const reqHeaders = {
+            headers: {
+                authorization:
+                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
+            },
+        }; */
+
+        //3번 토큰
+        const reqHeaders = {
+            headers: {
+                authorization:
+                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MywidXNlcl9uYW1lIjoiaHkiLCJpYXQiOjE2MzI4MzMwMTd9.-i36Z3KoqzCfgtVNl1-c8h5fZNSZ8Nlhnp4UI41tFxM',
+            },
+        };
+
+        axios
+            .patch(restURL,
+                {
+                    room_idx: 53, //룸 인덱스 변수로 들어가야함.
+                    user_color: str //클릭했을 때 해당 색
+                }
+                , reqHeaders)
+            .then(function (response) {
+                alert("rest " + response.data);
+            })
+            .catch(function (error) {
+                alert('error ' + error.message);
+            });
+
+        setChangeColor(!changeColor); //색이 바꼈다는 상태값 변경
+    }
+
     return (
         <Container>
             <SelectDiv>
@@ -57,8 +179,41 @@ export default function WaitingRoom() {
                     <br />
                 </TitleDiv>
                 <BarDiv>
-                    BarDiv
-                    <br />
+                    <BarInnerDiv>
+                        {
+                            selectColor == "RED" ? <BarColorBox color={redColor} onClick={() => { colorClick("RED") }}>V</BarColorBox>
+                                : <BarColorBox color={redColor} onClick={() => { colorClick("RED") }} />
+                        }
+
+                        {
+                            selectColor == "ORANGE" ? <BarColorBox color={orangeColor} onClick={() => { colorClick("ORANGE") }}>V</BarColorBox>
+                                : <BarColorBox color={orangeColor} onClick={() => { colorClick("ORANGE") }} />
+                        }
+                        {
+                            selectColor == "YELLOW" ? <BarColorBox color={yellowColor} onClick={() => { colorClick("YELLOW") }}>V</BarColorBox>
+                                : <BarColorBox color={yellowColor} onClick={() => { colorClick("YELLOW") }} />
+                        }
+
+                        {
+                            selectColor == "GREEN" ? <BarColorBox color={greenColor} onClick={() => { colorClick("GREEN") }}>V</BarColorBox>
+                                : <BarColorBox color={greenColor} onClick={() => { colorClick("GREEN") }} />
+                        }
+
+                        {
+                            selectColor == "BLUE" ? <BarColorBox color={blueColor} onClick={() => { colorClick("BLUE") }}>V</BarColorBox>
+                                : <BarColorBox color={blueColor} onClick={() => { colorClick("BLUE") }} />
+                        }
+
+                        {
+                            selectColor == "PURPLE" ? <BarColorBox color={purpleColor} onClick={() => { colorClick("PURPLE") }}>V</BarColorBox>
+                                : <BarColorBox color={purpleColor} onClick={() => { colorClick("PURPLE") }} />
+                        }
+                        {
+                            selectColor == "PINK" ? <BarColorBox color={pinkColor} onClick={() => { colorClick("BPINKLUE") }}>V</BarColorBox>
+                                : <BarColorBox color={pinkColor} onClick={() => { colorClick("PINK") }} />
+                        }
+
+                    </BarInnerDiv>
                 </BarDiv>
                 <UserDiv>
                     <UserTable
@@ -130,8 +285,35 @@ const UserDiv = styled.div`
 const BarDiv = styled.div`
     width: 450px;
     height: 35px;
-    // margin-top: 3px;
-    background-color: #6880fb;
+    //background-color: #6880fb;
     display: inline-block;
     overflow: hidden;
 `;
+
+const BarInnerDiv = styled.div`
+  width: 420px;
+  height: 29px;
+  background-size: contain;
+  margin-left: 15px;
+  margin-top: 3px;
+  //border-width:1;
+  //border-style: solid; 
+  display: flex;
+  flex-direction: row;
+  border-radius: 30px;  
+  box-shadow: 0px 4px 4px #878787;   
+`;
+
+
+const BarColorBox = styled.div`
+  width: 70px;
+  height: 29px;   
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 2px solid #000000;
+  disabled: true;
+
+  ${(props) => (props.color == '#FF0000' ? `background-color: ${props.color}; border-top-left-radius: 15px; border-bottom-left-radius: 15px;` :
+        (props.color == '#FF00DD' ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;` : `background-color: ${props.color};`))}
+  `;
