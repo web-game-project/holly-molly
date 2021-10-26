@@ -89,12 +89,13 @@ const saveSocketId = async (socket) => {
         }
 
     } catch (error) {
+        console.log("*",error);
         socket.disconnect(true);
     }
 };
 
 const errorEvent = (socket, err) => {
-    console.log(err);
+    console.log("*",err);
     const isNotAuth =
         err &&
         (err.message === 'unauthorized event' || err.message === 'not user');

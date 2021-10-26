@@ -1,6 +1,6 @@
 const { User, Game, GameMember, GameSet, GameVote } = require('../../models');
-const moveRoom = require('../../socket/moveRoom');
 const db = require('../../models');
+const { getVoteList, calculateVoteResult, } = require('./getVoteResult');
 
 const vote = async (req, res, next) => {
     try {
@@ -12,7 +12,7 @@ const vote = async (req, res, next) => {
         if (!gameVoteList || gameVoteList.length == 0) {
             // first vote
             if (!timerResolveMap.get(game_set_idx)) {
-                timer(game_set_idx, 15, voteResult, [
+                timer(game_set_idx, 15, finishVote, [
                     res.locals.gameIdx,
                     game_set_idx,
                     io,
@@ -94,26 +94,6 @@ const checkNumberOfVoters = async (gameIdx, gameSetIdx) => {
 };
 
 // vote
-const getVoteList = async (gameSetIdx) => {
-    return await GameVote.findAll({
-        include: [
-            {
-                model: GameMember,
-                as: 'game_member_game_member_idx_GameMember',
-                required: true,
-                attributes: [
-                    'game_member_idx',
-                    'wrm_user_idx',
-                    'game_member_role',
-                ],
-            },
-        ],
-        where: {
-            game_set_game_set_idx: gameSetIdx,
-        },
-        order: [['game_vote_cnt', 'DESC']],
-    });
-};
 const voteByCreating = async (gameSetIdx, userIdx) => {
     let voteRecipients = await GameMember.findOne({
         where: {
@@ -135,7 +115,7 @@ const voteByUpdating = async (voteRecipientsIdx) => {
 };
 
 // vote result
-const voteResult = async (gameIdx, gameSetIdx, io) => {
+const finishVote = async (gameIdx, gameSetIdx, io) => {
     const { game, topVoteRankList, score } = await calculateVoteResult(
         gameIdx,
         gameSetIdx,
@@ -148,58 +128,6 @@ const voteResult = async (gameIdx, gameSetIdx, io) => {
 
     console.log(game.get('room_room_idx'), topVoteRankList);
     io.to(game.get('room_room_idx')).emit('vote', { vote_rank: topVoteRankList });
-};
-const calculateVoteResult = async (gameIdx, gameSetIdx, numberLimit) => {
-    const game = await Game.findOne({
-        where: { game_idx: gameIdx },
-    });
-    const gameVotes = await getVoteList(gameSetIdx);
-
-    const voteRankJSON = {};
-    const voteCntOrderList = [];
-    for (const vote of gameVotes) {
-        voteCnt = vote.get('game_vote_cnt');
-        if (voteRankJSON[voteCnt]) {
-            voteRankJSON[voteCnt].push(vote);
-        } else {
-            voteRankJSON[voteCnt] = [vote];
-            voteCntOrderList.push(voteCnt);
-        }
-    }
-
-    let topVoteRankList = []; //user_idx, user_name, game_rank_no
-    let score = false;
-    for (const index in voteCntOrderList) {
-        const cnt = voteCntOrderList[index];
-        console.log("[*******Cnt] ", index, cnt);
-        for (const gameMember of voteRankJSON[cnt]) {
-            // update top vote list
-            const user = await User.findOne({
-                attributes: ['user_idx', 'user_name'],
-                where: {
-                    user_idx: gameMember
-                        .get('game_member_game_member_idx_GameMember')
-                        .get('wrm_user_idx'),
-                },
-            });
-            topVoteRankList.push({
-                user_idx: user.user_idx,
-                user_name: user.user_name,
-                game_rank_no: Number(index) + 1,
-            });
-            // check if the voted person is a human
-            if (
-                gameMember
-                    .get('game_member_game_member_idx_GameMember')
-                    .get('game_member_role') == 'human'
-            ) {
-                score = true;
-            }
-        }
-        if (numberLimit && topVoteRankList.length >= numberLimit) break;
-    }
-    console.log("[***********]",topVoteRankList, score, voteCntOrderList);
-    return { game, topVoteRankList, score };
 };
 const addGhostScore = async (gameSetIdx) => {
     const gameSet = await GameSet.findOne({
@@ -219,7 +147,4 @@ const addGhostScore = async (gameSetIdx) => {
     );
 };
 
-module.exports = {
-    vote,
-    calculateVoteResult,
-};
+module.exports = vote;

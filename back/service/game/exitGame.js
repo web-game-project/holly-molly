@@ -25,6 +25,7 @@ const exitGameAndRoom = async (user, io) => {
         const memberList = await getMemberList(room.get('room_idx')); //roomMember+gameMemberIdx
         const isLeader = roomMember.get('wrm_leader');
 
+        console.log("****exitGame test - ",memberList);
         if (memberList.length <= 1) {
             if(game){
                 await deleteAllAboutGame(memberList, game.get('game_idx')); // game, gameMember, gameSet, gameVote 삭제
