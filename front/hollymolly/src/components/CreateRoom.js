@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import style from '../styles/styles';
+import styled from 'styled-components';
 
 function CreateRoom() {
     const inputRef = useRef();
@@ -106,10 +107,7 @@ function CreateRoom() {
                 </div>
             </div>
             <p>
-                <button style={{ ...styles.button_OK, float: 'right' }} onClick={result}>
-                    {' '}
-                    OK{' '}
-                </button>
+                <OKButton onClick={result}>OK</OKButton>
                 <br />
             </p>
         </div>
@@ -185,3 +183,26 @@ const styles = {
         shadowRadius: 60,
     },
 };
+
+const OKButton = styled.button`
+    float: right;
+    font-size: 20px;
+    color: ${style.skyblue};
+    background-color: ${style.white};
+    border: 2px solid ${style.skyblue};
+    border-radius: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    shadow-color: '#000';
+    shadow-offset: {
+        width: 0;
+        height: 10;
+    }
+    shadow-opacity: 0.12;
+    shadow-radius: 60;
+    &:hover {
+        background-color: ${style.skyblue};
+        // border: 2px solid ${style.white};
+        color: ${style.white};
+    }
+`;

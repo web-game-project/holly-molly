@@ -17,8 +17,8 @@ import { io } from 'socket.io-client';
 
 let total_room_cnt = 0;
 
- // 연결 실패 시,
- const socket = io('http://3.17.55.178:3002/', {
+// 연결 실패 시,
+const socket = io('http://3.17.55.178:3002/', {
     // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug',
@@ -33,7 +33,7 @@ const RoomList = () => {
         socket.on('error', () => {
             setTimeout(() => {
                 socket.connect();
-                console.log(socket)
+                console.log(socket);
             }, 1000);
         });
 
@@ -76,9 +76,9 @@ const RoomList = () => {
     useEffect(() => {
         const roomListCheck = async () => {
             const currentPage = currentSlide + 1;
-            
-            const restURL = 'http://3.17.55.178:3002/room?room_start_row='+ currentPage;
-            
+
+            const restURL = 'http://3.17.55.178:3002/room?room_start_row=' + currentPage;
+
             const reqHeaders = {
                 headers: {
                     authorization:
@@ -117,7 +117,9 @@ const RoomList = () => {
                         <RoomSearchBar />
                     </div>
                     {/* 버튼 div*/}
-                    <div style={{ flexDirection: 'column', width: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    <div
+                        style={{ flexDirection: 'column', width: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
                         {/* 방만들기 모달 */}
                         <ModalBase />
                         <br />
@@ -132,7 +134,7 @@ const RoomList = () => {
                     {/* 방 리스트 슬라이더 div*/}
                     <div style={styles.sliderContainer}>
                         {currentSlide}
-                        <div style={styles.roomListContainer}> 
+                        <div style={styles.roomListContainer}>
                             {rooms &&
                                 rooms.room_list.map((values) => {
                                     let member = false;
@@ -213,7 +215,7 @@ const RoomList = () => {
                                     return (
                                         member &&
                                         level &&
-                                        (wait ? ( 
+                                        (wait ? (
                                             <Room
                                                 room_idx={values.room_idx}
                                                 room_name={values.room_name}
@@ -224,7 +226,7 @@ const RoomList = () => {
                                                 disabled="false"
                                                 textStroke="true"
                                                 cursor="true"
-                                            />              
+                                            />
                                         ) : (
                                             values.room_status == 'playing' && (
                                                 <Room
@@ -298,20 +300,21 @@ const styles = {
     },
     roomListContainer: {
         display: 'flex',
-        alignItems: 'flex-start', 
+        alignItems: 'flex-start',
         justifyContent: 'space-between',
         flexDirection: 'column',
-        width : '680px', 
+        width: '680px',
         height: '410px',
+
         border: '1px solid #FF0000',
-        flexFlow: 'row wrap'
+        flexFlow: 'row wrap',
     },
     sliderContainer: {
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
         flexDirection: 'column',
-        width : '680px', 
+        width: '680px',
         height: '410px',
         border: '1px solid #00FF00', //  #DAD4F6
         overflow: 'hidden',
