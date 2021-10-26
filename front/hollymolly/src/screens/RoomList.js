@@ -17,8 +17,8 @@ import { io } from 'socket.io-client';
 
 let total_room_cnt = 0;
 
- // 연결 실패 시,
- const socket = io('http://3.17.55.178:3002/', {
+// 연결 실패 시,
+const socket = io('http://3.17.55.178:3002/', {
     // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug',
@@ -53,8 +53,7 @@ const RoomList = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const slideRef = useRef(null);
 
-    console.log("currentSlide: " + currentSlide) 
-
+    console.log('currentSlide: ' + currentSlide);
 
     useEffect(() => {
         slideRef.current.style.transition = 'all 0.5s ease-in-out'; //속도
@@ -84,7 +83,7 @@ const RoomList = () => {
     useEffect(() => {
         const roomListCheck = async () => {
             // const restURL = 'http://3.17.55.178:3002/room '
-            const restURL = 'http://3.17.55.178:3002/room?room_start_row='+ currentSlide+1;
+            const restURL = 'http://3.17.55.178:3002/room?room_start_row=' + currentSlide + 1;
 
             const reqHeaders = {
                 headers: {
@@ -126,7 +125,9 @@ const RoomList = () => {
                         <RoomSearchBar />
                     </div>
                     {/* 버튼 div*/}
-                    <div style={{ flexDirection: 'column', width: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    <div
+                        style={{ flexDirection: 'column', width: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
                         {/* 방만들기 모달 */}
                         <ModalBase />
                         <br />
@@ -307,24 +308,24 @@ const styles = {
     },
     roomListContainer: {
         display: 'flex',
-        alignItems: 'flex-start', 
+        alignItems: 'flex-start',
         justifyContent: 'space-between',
         flexDirection: 'column',
-        width : '680px', 
+        width: '680px',
         height: '410px',
-        bg: '#251D82', 
+        bg: '#251D82',
         border: '1px solid #DAD4F6',
-        flexFlow: 'row wrap'
+        flexFlow: 'row wrap',
     },
     sliderContainer: {
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
         flexDirection: 'column',
-        width : '680px', 
+        width: '680px',
         height: '410px',
-        bg: '#251D82', 
+        bg: '#251D82',
         border: '1px solid #DAD4F6',
         overflow: 'hidden',
-    }
+    },
 };
