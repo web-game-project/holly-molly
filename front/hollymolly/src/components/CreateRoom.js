@@ -1,9 +1,41 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import style from '../styles/styles';
 import styled from 'styled-components';
 
+import axios from 'axios';
+// 소켓
+import { io } from 'socket.io-client';
+
+// 연결 실패 시,
+const socket = io('http://3.17.55.178:3002/', {
+    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
+    auth: {
+        // 유효기간 없는 1번 토큰
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
+    },
+});
+
 function CreateRoom() {
+    useEffect(() => {
+        socket.on('error', () => {
+            setTimeout(() => {
+                socket.connect();
+                console.log(socket);
+            }, 1000);
+        });
+
+        // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
+        socket.on('disconnect', (reason) => {
+            if (reason === 'io server disconnect') {
+                // the disconnection was initiated by the server, you need to reconnect manually
+                socket.connect();
+            }
+            // else the socket will automatically try to reconnect
+        });
+        //}
+    });
     const inputRef = useRef();
+    let roomMode = '';
 
     // 난이도 useState
     const [isChecked, setIschecked] = React.useState(true);
@@ -47,22 +79,69 @@ function CreateRoom() {
     const result = () => {
         console.log(':::최종결과:::');
         console.log('방이름은? ' + inputRef.current.value);
+
+        if (inputRef.current.value == null || inputRef.current.value == '') {
+            inputRef.current.value = '어서들어오세요! 기본방'; // 제목 안적으면 디폴트
+        }
         if (isChecked) {
             // easy
+            roomMode = 'easy';
             console.log('모드는? easy');
-        } else console.log('모드는? hard');
+        } else {
+            roomMode = 'hard';
+            console.log('모드는? hard');
+        }
 
         console.log('인원수는? ' + people + '명');
 
         if (ispublic) {
             // public
-            console.log('공개범위는? public');
-        } else console.log('공개범위는? private');
+            console.log('공개범위는? public'); // 반대로 나옴
+        } else console.log('공개범위는? private'); // 반대로 나옴
+
+        roomCreate();
     };
 
     const close = () => {
         console.log('일단 창 닫기');
     };
+
+    const roomCreate = async () => {
+        console.log('방 생성 api 시작');
+        const restURL = 'http://3.17.55.178:3002/room';
+        const reqHeaders = {
+            headers: {
+                // 유효기간 없는 1번 토큰
+                authorization:
+                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
+            },
+        };
+        axios
+            .post(
+                restURL,
+                {
+                    room_name: inputRef.current.value,
+                    room_mode: roomMode,
+                    room_private: !ispublic, // false면 공개
+                    room_start_member_cnt: people,
+                },
+                reqHeaders
+            )
+            .then(function (response) {
+                // console.log(response.data);
+                // console.log(inputRef.current.value, roomMode, !ispublic, people);
+                console.log('성공');
+            })
+            .catch(function (error) {
+                console.log(error.response);
+                console.log('실패');
+            });
+    };
+
+    // 방 생성 => post 방식으로 데이터 생성
+    // useEffect(() => {
+    //     roomCreate();
+    // }, []);
 
     return (
         <div style={styles.container}>
