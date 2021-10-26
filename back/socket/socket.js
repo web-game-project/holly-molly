@@ -16,7 +16,6 @@ module.exports = (server, app) => {
 
         // image test code
         fs.readFile('./socket/image.png', function(err, data){
-            console.log(err, data);
             socket.emit('imageConversionByClient', { image: true, buffer: data });
             socket.emit('imageConversionByServer', "data:image/png;base64,"+ data.toString("base64"));
         });
@@ -42,8 +41,7 @@ module.exports = (server, app) => {
                         socket.handshake.auth.token
                     );
                 }
-                console.log(token);
-                
+                console.log("*****소켓 테스트 중",token);
             } catch (error) {
                 return next(new Error('unauthorized event'));
             }
