@@ -4,13 +4,13 @@ const getIOSocket = require('../../socket/getIOSocket');
 
 module.exports = async (req, res, next) => {
     try {
-        const { room_start_row, room_mode, room_start_member_cnt } = req.query;
+        const { page, room_mode, room_start_member_cnt } = req.query;
 
         let offset;
-        if (!room_start_row) {
+        if (!page) {
             offset = 0;
         } else {
-            offset = 6 * (room_start_row - 1);
+            offset = 6 * (page - 1);
         }
 
         const rooms = await getRoomList(
@@ -22,7 +22,7 @@ module.exports = async (req, res, next) => {
         // socket : get socket
         const { io, socket } = getIOSocket(req,res);
         if(!io || !socket){
-            console.log("*****", io, socket.id);
+            console.log("*****", io, socket);
             res.status(400).json({
                 message: 'socket connection을 다시 해주세요.',
             });
@@ -43,13 +43,21 @@ module.exports = async (req, res, next) => {
 };
 
 const getRoomList = async (offset, roomMode, startMember) => {
+    console.log(typeof(roomMode), typeof(startMember))
+    console.log(roomMode, startMember);
     let room_mode = '("easy","hard")'; //[0,1]
     let room_start_member_cnt = '(4, 5, 6)'; //[4,5,6]
     if (roomMode) {
-        room_mode = `("${roomMode}")`; //[roomMode]
+        if(typeof(roomMode)=='object')
+            room_mode=`("`+roomMode.join(`","`)+`")`; // [roomMode]
+        else
+            room_mode = `("${roomMode}")`; 
     } 
     if (startMember) {
-        room_start_member_cnt = `(${startMember})`; //[startMember]
+        if(typeof(startMember)=='object')
+            room_start_member_cnt = '('+startMember.join(',')+')'
+        else
+            room_start_member_cnt = `(${startMember})`; //[startMember]
     }
 
     const roomCount = await db.sequelize.query(

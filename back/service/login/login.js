@@ -16,6 +16,7 @@ module.exports = async (req, res, next) => {
         res.json({
             access_token: accessToken,
             refresh_token: refreshToken,
+            user_idx: user.user_idx,
         });
     } catch (error) {
         console.log(error);

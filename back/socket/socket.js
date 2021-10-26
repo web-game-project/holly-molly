@@ -41,14 +41,10 @@ module.exports = (server, app) => {
                         socket.handshake.auth.token
                     );
                 }
-                console.log("*****소켓 테스트 중",token);
             } catch (error) {
                 return next(new Error('unauthorized event'));
             }
-           /* const user = await User.findByPk(token.user_idx);
-            if (!user) {
-                return next(new Error('not user'));
-            }*/
+           
             next();
         });
     });
