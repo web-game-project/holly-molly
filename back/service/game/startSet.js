@@ -43,7 +43,7 @@ module.exports = async (req, res, next) => {
             before_game_set_human_answer: beforeGameSet.get('game_set_human_answer'),
             user_list: userList,
         };
-
+     
         // socket : start set
         const io = req.app.get('io');
         io.to(gameMemberList[0].get('wrm_wrm_idx_WaitingRoomMember').get('room_room_idx')).emit("start set", setInfo);
@@ -136,10 +136,10 @@ const updateGameOrder = async(gameMemberList) => {
 }
 
 const getImageSync = (imageLocation) => {
-    let image;
-    if (!fs.existsSync(imageLocation)) {
+    try {
+        const image = fs.readFileSync(imageLocation);
+        return image.toString("base64");
+    } catch (error) {
         return undefined;
     }
-    image = fs.readFileSync(imageLocation);
-    return image.toString("base64");
 }
