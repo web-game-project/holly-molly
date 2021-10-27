@@ -5,6 +5,7 @@ const {
     Keyword,
 } = require('../../models');
 var Sequelize = require('sequelize');
+var fs = require('fs');
 const shuffleList = require('../../util/shuffleList');
 
 module.exports = async (req, res, next) => {
@@ -35,14 +36,14 @@ module.exports = async (req, res, next) => {
             });
         }
 
-        // 추후 파일 이미지 전송 기능 추가 예정
+        const beforeSetImg = getImageSync(`./image/${beforeGameSet.get('game_set_img')}`);
         const setInfo = {
-            before_game_set_img: beforeGameSet.get('game_set_img'),
+            before_game_set_img: (beforeSetImg) ? "data:image/png;base64,"+ beforeSetImg : null,
             before_game_set_keyword: beforeGameSet.get('keyword_keyword_idx_Keyword').get('keyword_child'),
             before_game_set_human_answer: beforeGameSet.get('game_set_human_answer'),
             user_list: userList,
         };
- 
+
         // socket : start set
         const io = req.app.get('io');
         io.to(gameMemberList[0].get('wrm_wrm_idx_WaitingRoomMember').get('room_room_idx')).emit("start set", setInfo);
@@ -132,4 +133,13 @@ const updateGameOrder = async(gameMemberList) => {
         });
     }
     return orderList;
+}
+
+const getImageSync = (imageLocation) => {
+    let image;
+    if (!fs.existsSync(imageLocation)) {
+        return undefined;
+    }
+    image = fs.readFileSync(imageLocation);
+    return image.toString("base64");
 }

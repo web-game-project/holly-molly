@@ -14,12 +14,6 @@ module.exports = (server, app) => {
     io.on('connection', async (socket) => {
         saveSocketId(socket);
 
-        // image test code
-        fs.readFile('./socket/image.png', function(err, data){
-            socket.emit('imageConversionByClient', { image: true, buffer: data });
-            socket.emit('imageConversionByServer', "data:image/png;base64,"+ data.toString("base64"));
-        });
-
         // 여기에 socket.on 추가
         socket.on('chat', chat.bind(this, socket, io));
         socket.on('draw', draw.bind(this, socket, io));
