@@ -16,7 +16,7 @@ const { authMiddleware, gameMiddleware } = require('../middleware');
 router.post('/start', startGame);
 router.get('/interim-result/:gameIdx', gameMiddleware, getInterimResult);
 router.delete('/final/:gameIdx', gameMiddleware, getFinalResult);
-router.get('/member/:gameIdx', gameMiddleware, getGameMemberInfo);
+router.get('/member/:gameSetIdx', gameMiddleware, getGameMemberInfo);
 router.delete('/exit', exitGame);
 router.post('/set', gameMiddleware, startSet);
 router.post('/vote', gameMiddleware,vote);
