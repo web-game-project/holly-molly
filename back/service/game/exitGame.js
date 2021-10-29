@@ -134,10 +134,8 @@ const deleteRoomAndMember = async (wrmIdx, roomIdx) => {
     });
 };
 const deleteAllAboutGame = async (members, gameIdx) => {
-    console.log("**", members);
     let gameMemberIdx = [];
     for (const member of members) {
-        console.log("***",member.get('GameMembers'));
         try {
             gameMemberIdx.push(member.get('GameMembers')[0].get('game_member_idx'));
         } catch (error) {

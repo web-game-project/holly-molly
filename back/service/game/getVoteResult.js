@@ -3,7 +3,7 @@ const { User, Game, GameMember, GameVote } = require('../../models');
 const getVoteResult = async (req, res, next) => {
     try {
         if(res.locals.role != 'human'){
-            res.staus(403).json({
+            res.status(403).json({
                 message: '권한이 없습니다.',
             });
             return;
