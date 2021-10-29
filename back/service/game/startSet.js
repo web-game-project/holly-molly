@@ -22,7 +22,7 @@ module.exports = async (req, res, next) => {
 
         const keyword = await getKeyword();
         const beforeGameSet = await getGameSet(game_idx, game_set_no-1);
-        await creageGameSet(game_set_no, keyword[0].get("keyword_idx"), game_idx);
+        const currentGameSet = await creageGameSet(game_set_no, keyword[0].get("keyword_idx"), game_idx);
         const gameMemberList = await getGameMemberList(game_idx);
         const orderList = await updateGameOrder(gameMemberList);
 
@@ -41,13 +41,14 @@ module.exports = async (req, res, next) => {
             before_game_set_img: (beforeSetImg) ? "data:image/png;base64,"+ beforeSetImg : null,
             before_game_set_keyword: beforeGameSet.get('keyword_keyword_idx_Keyword').get('keyword_child'),
             before_game_set_human_answer: beforeGameSet.get('game_set_human_answer'),
+            current_game_set_idx: currentGameSet.get('game_set_idx'),
             user_list: userList,
         };
      
         // socket : start set
         const io = req.app.get('io');
         io.to(gameMemberList[0].get('wrm_wrm_idx_WaitingRoomMember').get('room_room_idx')).emit("start set", setInfo);
-        res.status(200).json(setInfo);
+        res.status(201).json({});
     } catch (error) {
         console.log(error);
         res.status(400).json({ meesage: '알 수 없는 에러가 발생했습니다.' });
@@ -94,6 +95,7 @@ const creageGameSet = async(gameSetNo, keywordIdx, gameIdx) => {
             game_game_idx: gameIdx,
         });
     }
+    return gameSet;
 }
 
 const getGameMemberList = async(gameIdx) => {

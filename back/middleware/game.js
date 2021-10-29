@@ -53,7 +53,7 @@ module.exports = async (req, res, next) => {
         res.locals.gameIdx = realGameIdx;
         res.locals.leader = gameMember.wrm_wrm_idx_WaitingRoomMember.wrm_leader;
         res.locals.role = gameMember.game_member_role;
-        console.log("*******gameIdx", res.locals.gameIdx, "leader", res.locals.leader, "role", res.locals.role);
+        
         next();
     } catch (error) {
         console.log(error);

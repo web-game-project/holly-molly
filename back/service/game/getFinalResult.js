@@ -6,7 +6,7 @@ module.exports = async (req, res, next) => {
     let { gameIdx } = req.params;
 
     if (!res.locals.leader) {
-        res.staus(403).json({
+        res.status(403).json({
             message: '권한이 없습니다.',
         });
     }
