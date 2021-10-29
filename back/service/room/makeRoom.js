@@ -48,6 +48,7 @@ module.exports = async (req, res, next) => {
         moveRoom(io, socket, room.room_idx);
 
         // 대기실 리스트 보는 사람들에게 socket event 전송
+        console.log("**************private",room.room_private);
         if (!room.room_private) {
             const io = req.app.get('io');
             io.to(0).emit('create room', {
