@@ -25,7 +25,7 @@ const exitGameAndRoom = async (user, io) => {
         const memberList = await getMemberList(room.get('room_idx')); //roomMember+gameMemberIdx
         const isLeader = roomMember.get('wrm_leader');
 
-        console.log("****exitGame test - ",memberList.length);
+        console.log("****exitGame test - ",memberList);
         if (memberList.length <= 1) {
             if(game){
                 await deleteAllAboutGame(memberList, game.get('game_idx')); // game, gameMember, gameSet, gameVote 삭제
@@ -134,10 +134,12 @@ const deleteRoomAndMember = async (wrmIdx, roomIdx) => {
     });
 };
 const deleteAllAboutGame = async (members, gameIdx) => {
+    console.log("**", members);
     let gameMemberIdx = [];
     for (const member of members) {
+        console.log("***",member.get('GameMembers'));
         try {
-            gameMemberIdx.push(member.get('GameMembers').get('game_member_idx'));
+            gameMemberIdx.push(member.get('GameMembers')[0].get('game_member_idx'));
         } catch (error) {
             gameMemberIdx.push(member.get('game_member_idx'));   
         }
@@ -172,7 +174,7 @@ const deleteUser = async (userIdx) => {
     });
 };
 const getFinalResult = async (gameIdx) => {
-    const setResult = await GameSet.findOne({
+    const setResult = await GameSet.findAll({
         attributes: [
             'game_set_no',
             'game_set_human_score',
