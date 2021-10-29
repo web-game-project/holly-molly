@@ -3,8 +3,9 @@ const { GameSet } = require('../../models');
 const { GameMember } = require('../../models');
 
 module.exports = async (req, res, next) => {
-    let { gameSetIdx } = req.query;
+    let { gameSetIdx } = req.params;
     let gameIdx = res.locals.gameIdx;
+    console.log(gameIdx);
     let { user_idx } = res.locals.user.dataValues;
 
     try {

@@ -1,9 +1,8 @@
 let memberCountMap = new Map();
 let timerResolveMap = new Map();
 let acceptedMemberMap = new Map();
-const { User, WaitingRoomMember, GameMember } = require('../models');
-const sequelize = require('sequelize');
-const { exitGameAndRoom, deleteUser } = require('../service/game') 
+const { User, WaitingRoomMember, GameMember, sequelize } = require('../models');
+const { exitGameAndRoom, deleteUser } = require('../service/game/exitGame') 
 
 module.exports.timerResolveMap = timerResolveMap;
 module.exports.memberCountMap = memberCountMap;
@@ -56,6 +55,6 @@ const exitGameAndRoomAndDeleteUser = async (io, roomIdx, acceptedMember) => {
         let { user_user_idx } = NotAcceptedMembers[i];
         const isSuccess = await exitGameAndRoom({user_idx: user_user_idx}, io);
         if(!isSuccess)  throw "exitGame fail";
-        await deleteUser(user_user_idx);
+        deleteUser(user_user_idx);
     }
 };
