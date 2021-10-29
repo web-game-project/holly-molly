@@ -25,7 +25,7 @@ const exitGameAndRoom = async (user, io) => {
         const memberList = await getMemberList(room.get('room_idx')); //roomMember+gameMemberIdx
         const isLeader = roomMember.get('wrm_leader');
 
-        console.log("****exitGame test - ",memberList);
+        console.log("****exitGame test - ",memberList.length);
         if (memberList.length <= 1) {
             if(game){
                 await deleteAllAboutGame(memberList, game.get('game_idx')); // game, gameMember, gameSet, gameVote 삭제
@@ -66,6 +66,7 @@ const exitGameAndRoom = async (user, io) => {
         }
 
         if (gameMember) {
+            await deleteGameVote(gameMember.game_member_idx);
             await deleteGameMember(gameMember.game_member_idx);
         }
         if (roomMember) {
@@ -243,6 +244,13 @@ const changeHost = async (memberList, userIdx) => {
     );
     return hostIdx;
 };
+const deleteGameVote = async (gameMemberIdx) => {
+    await GameVote.destroy({
+        where: {
+            game_member_game_member_idx: gameMemberIdx,
+        },
+    });
+};
 const deleteGameMember = async (gameMemberIdx) => {
     await GameMember.destroy({
         where: {
@@ -263,4 +271,8 @@ module.exports = {
     exitGameAndRoom,
     deleteAllAboutGame,
     updateRoomStatus,
+    deleteGameVote,
+    deleteGameMember,
+    deleteRoomMember,
+    deleteUser,
 };

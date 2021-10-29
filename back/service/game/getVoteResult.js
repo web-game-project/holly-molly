@@ -47,6 +47,10 @@ const calculateVoteResult = async (gameIdx, gameSetIdx, numberLimit) => {
     });
     const gameVotes = await getVoteList(gameSetIdx);
 
+    if(!gameVotes){
+        return { game, topVoteRankList:[], score:false };
+    }
+
     const voteRankJSON = {};
     const voteCntOrderList = [];
     for (const vote of gameVotes) {
