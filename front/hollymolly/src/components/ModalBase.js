@@ -3,16 +3,13 @@ import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 import style from '../styles/styles';
-
 // 소켓
 import { io } from 'socket.io-client';
 import axios from 'axios';
 
-// 연결 실패 시,
 const socket = io('http://3.17.55.178:3002/', {
-    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
-        // 유효기간 없는 1번 토큰
+        // 1번 토큰
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
     },
 });
@@ -151,9 +148,8 @@ export default function ModalBase() {
             .then(function (response) {
                 // console.log(inputRef.current.value, roomMode, !ispublic, people);
                 setRoomdata(response.data);
+                console.log(roomdata);
                 console.log('성공');
-                setTimeout(() => enterRoom(), 3000);
-                // roomEnter();
             })
             .catch(function (error) {
                 console.log(error.response);
@@ -161,33 +157,7 @@ export default function ModalBase() {
             });
     };
 
-    // 방 생성 후에 방 접속
-    const enterRoom = async () => {
-        const reqURL = 'http://3.17.55.178:3002/room/idx'; //parameter : 방 타입
-        const reqHeaders = {
-            headers: {
-                authorization:
-                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
-            },
-        };
-
-        axios
-            .post(
-                reqURL,
-                {
-                    room_idx: roomdata.room_idx, // 룸 index
-                },
-                reqHeaders
-            )
-            .then(function (response) {
-                //response로 jwt token 반환
-                alert('rest api success!');
-                // setWaitingRoomMemberList(response.data);
-            })
-            .catch(function (error) {
-                alert(error);
-            });
-    };
+    // 방 생성 후에 방 접속까지 해줌
 
     const [modalIsOpen, setIsOpen] = React.useState(false);
 

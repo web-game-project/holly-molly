@@ -31,7 +31,7 @@ function Filter({ result, getResult }) {
         },
     ];
 
-    const [CheckList, setCheckList] = useState([1, 5, 6]); // 처음 체크되어 있을 체크리스트
+    const [CheckList, setCheckList] = useState([1, 2, 3, 4, 5, 6]); // 처음 체크되어 있을 체크리스트
     const [IdList, setIdList] = useState([]);
 
     const data = inputRef.current;
