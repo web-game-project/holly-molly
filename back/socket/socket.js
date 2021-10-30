@@ -36,6 +36,7 @@ module.exports = (server, app) => {
                     );
                 }
             } catch (error) {
+                console.log("*", error);
                 return next(new Error('unauthorized event'));
             }
            
@@ -66,7 +67,7 @@ const saveSocketId = async (socket) => {
         );
 
         if (user[0] == 0) {
-            socket.disconnet(true);
+            socket.Disconnet(true);
         }
 
         //socket.user_idx = tokenValue.user_idx;
@@ -83,13 +84,13 @@ const saveSocketId = async (socket) => {
         }
 
     } catch (error) {
-        console.log("*",error);
-        socket.disconnect(true);
+        console.log("*authError: ",error);
+        socket.Disconnect(true);
     }
 };
 
 const errorEvent = (socket, err) => {
-    console.log("*",err);
+    console.log("*errorEvent: ",err);
     const isNotAuth =
         err &&
         (err.message === 'unauthorized event' || err.message === 'not user');
@@ -97,6 +98,6 @@ const errorEvent = (socket, err) => {
         socket.emit('error', {
             message: 'auth token이 유효하지 않습니다.',
         });
-        socket.disconnect(true);
+        socket.Disconnect(true);
     }
 };
