@@ -85,9 +85,7 @@ const RoomList = () => {
     useEffect(() => {
         const roomListCheck = async () => {
             const currentPage = currentSlide + 1;
-
             var restURL = 'http://3.17.55.178:3002/room?page=' + currentPage;
-
             restURL = filterUrl(restURL, resultArray);
 
             const reqHeaders = {
@@ -103,9 +101,7 @@ const RoomList = () => {
                 .then(function (response) {
                     total_room_cnt = response.data.total_room_cnt;
                     setRooms(response.data);
-
                     console.log(response.data);
-
                     console.log(restURL);
                 })
                 .catch(function (error) {

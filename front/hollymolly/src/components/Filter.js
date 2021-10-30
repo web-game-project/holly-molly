@@ -69,8 +69,8 @@ function Filter({ result, getResult }) {
 
     return (
         <Container>
-            <Title>--- Filter ---</Title>
-            <div>{/* <button onClick={onClick}>+</button> */}</div>
+            <Title className="Hahmlet"> -- Filter -- </Title>
+
             <table>
                 <tbody>
                     {list &&
@@ -78,7 +78,7 @@ function Filter({ result, getResult }) {
                             <tr key={index}>
                                 <td>
                                     <ListDiv>
-                                        <Context>{item.text}</Context>
+                                        <Context className="Hahmlet">{item.text}</Context>
 
                                         <input
                                             type="checkbox"
@@ -104,9 +104,9 @@ function Filter({ result, getResult }) {
                 </tbody>
                 <tr>
                     <th>
-                        <Line></Line>
+                        <UnberLine></UnberLine>
                         <ListDiv>
-                            <Context_all>Check All</Context_all>
+                            <Context_all className="Hahmlet">Check All</Context_all>
                             <input type="checkbox" onChange={onChangeAll} ref={inputRef} checked={CheckList.length === IdList.length} />
                         </ListDiv>
                     </th>
@@ -133,7 +133,7 @@ const Container = styled.div`
 const ListDiv = styled.div`
     width: 110px;
 
-    margin: 5px;
+    margin: 5px 5px 7px 5px;
     flex-direction: row;
     display: flex;
     align-items: center;
@@ -143,7 +143,7 @@ const ListDiv = styled.div`
     }
 `;
 
-const Title = styled.h4`
+const Title = styled.h3`
     color: white;
     text-align: center;
     // -webkit-text-stroke: 1px #fff;
@@ -153,7 +153,14 @@ const Title = styled.h4`
 `;
 
 const Line = styled.hr`
-    margin: 10px 0px 2px 0px;
+    margin: 17px 0px 5px 0px;
+    border: 0.1px solid #ddd;
+    border-color: rgba(255, 255, 255, 0.1);
+`;
+
+const UnberLine = styled.hr`
+    margin: 7px 0px 0px 0px;
+    paddig-bott0m: 3px;
     border: 0.1px solid #ddd;
     border-color: rgba(255, 255, 255, 0.1);
 `;
