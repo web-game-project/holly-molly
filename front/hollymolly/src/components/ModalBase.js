@@ -1,23 +1,21 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 import style from '../styles/styles';
-
 // 소켓
 import { io } from 'socket.io-client';
 import axios from 'axios';
 
-// 연결 실패 시,
 const socket = io('http://3.17.55.178:3002/', {
-    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
-        // 유효기간 없는 1번 토큰
+        // 1번 토큰
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
     },
 });
 
 export default function ModalBase() {
+    const [roomdata, setRoomdata] = useState();
     const customStyles = {
         content: {
             top: '50%',
@@ -149,6 +147,8 @@ export default function ModalBase() {
             )
             .then(function (response) {
                 // console.log(inputRef.current.value, roomMode, !ispublic, people);
+                setRoomdata(response.data);
+                console.log(roomdata);
                 console.log('성공');
             })
             .catch(function (error) {
@@ -156,6 +156,8 @@ export default function ModalBase() {
                 console.log('실패');
             });
     };
+
+    // 방 생성 후에 방 접속까지 해줌
 
     const [modalIsOpen, setIsOpen] = React.useState(false);
 
