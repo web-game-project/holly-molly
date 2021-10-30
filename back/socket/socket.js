@@ -66,10 +66,6 @@ const saveSocketId = async (socket) => {
             { where: { user_idx: tokenValue.user_idx } }
         );
 
-        if (user[0] == 0) {
-            socket.Disconnet(true);
-        }
-
         //socket.user_idx = tokenValue.user_idx;
         // Join to room based on db
         const roomMember = await WaitingRoomMember.findOne({
@@ -85,7 +81,6 @@ const saveSocketId = async (socket) => {
 
     } catch (error) {
         console.log("*authError: ",error);
-        socket.Disconnect(true);
     }
 };
 
@@ -98,6 +93,5 @@ const errorEvent = (socket, err) => {
         socket.emit('error', {
             message: 'auth token이 유효하지 않습니다.',
         });
-        socket.Disconnect(true);
     }
 };
