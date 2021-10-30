@@ -81,6 +81,7 @@ const saveSocketId = async (socket) => {
 
     } catch (error) {
         console.log("*authError: ",error);
+        socket.disconnect(true);
     }
 };
 
@@ -93,5 +94,6 @@ const errorEvent = (socket, err) => {
         socket.emit('error', {
             message: 'auth token이 유효하지 않습니다.',
         });
+        socket.disconnect(true);
     }
 };
