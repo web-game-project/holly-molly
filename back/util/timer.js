@@ -1,8 +1,8 @@
 let memberCountMap = new Map();
 let timerResolveMap = new Map();
 let acceptedMemberMap = new Map();
-const { User, WaitingRoomMember, GameMember } = require('../models');
-const sequelize = require('sequelize');
+const { User, WaitingRoomMember, GameMember, sequelize } = require('../models');
+const { exitGameAndRoom, deleteUser } = require('../service/game/exitGame') 
 
 module.exports.timerResolveMap = timerResolveMap;
 module.exports.memberCountMap = memberCountMap;
@@ -25,48 +25,36 @@ module.exports.startTimer = async (io, roomIdx, user_idx, memberCount) => {
     io.to(roomIdx).emit('get next turn', { message: 'success' });
     
     if (result == 'time out') {
-        exitGame(io, roomIdx, acceptedMemberMap.get(roomIdx));
+        exitGameAndRoomAndDeleteUser(io, roomIdx, acceptedMemberMap.get(roomIdx));
         acceptedMemberMap.delete(roomIdx);
     }
 };
 
-const exitGame = async (io, roomIdx, acceptedMember) => {
-    const roomInfo = await WaitingRoomMember.findAll({
-        attributes: ['wrm_idx', 'user_user_idx'],
-        where: {
-            room_room_idx: roomIdx,
-            user_user_idx: { [sequelize.Op.notIn] : acceptedMember }
-        }
-    });
+const exitGameAndRoomAndDeleteUser = async (io, roomIdx, acceptedMember) => {
+    let query = "SELECT WaitingRoomMember.user_user_idx "
+              + "FROM WaitingRoomMember "
+              + "JOIN GameMember on WaitingRoomMember.wrm_idx = GameMember.wrm_wrm_idx "
+              + `where WaitingRoomMember.room_room_idx=${roomIdx} and WaitingRoomMember.user_user_idx not in (`;
 
-    let wrmIdxList = [];
-    let notAcceptedMember = [];
-
-    for(let i in roomInfo){
-        let { wrm_idx, user_user_idx } = roomInfo[i].dataValues;
-        wrmIdxList.push(wrm_idx);
-        notAcceptedMember.push(user_user_idx);
-        io.emit('change member count', member_data);
+    for(let i in acceptedMember){
+        if(i == acceptedMember.length - 1)
+            query += acceptedMember[i];
+        else
+            query += acceptedMember[i] + ', ';
     }
 
-    let memberCount = getMemberCount(roomIdx);
-    let member_data = { room_idx: roomIdx, room_member_count: memberCount };
-    io.emit('change member count', member_data);
+    query += ')';
 
-    console.log(roomInfo);
-};
+    const NotAcceptedMembers = await sequelize.query(query,
+        {
+            type: sequelize.QueryTypes.SELECT, 
+            raw: true
+        });
 
-const getMemberCount = async (room_idx) => {
-    const member = await WaitingRoomMember.findAll({
-        attributes: [
-            [sequelize.fn('count', sequelize.col('wrm_idx')), 'memberCount'],
-        ],
-        where: {
-            room_room_idx: room_idx,
-        },
-    });
-
-    let { memberCount } = member[0].dataValues;
-
-    return memberCount;
+    for(let i in NotAcceptedMembers){
+        let { user_user_idx } = NotAcceptedMembers[i];
+        const isSuccess = await exitGameAndRoom({user_idx: user_user_idx}, io);
+        if(!isSuccess)  throw "exitGame fail";
+        deleteUser(user_user_idx);
+    }
 };
