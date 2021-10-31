@@ -9,7 +9,7 @@ import Chatting from '../src/components/Chatting';
 import GameStart from './screens/GameStart';
 import Dialog from './screens/NickNameDialog';
 import HeaderComponent from '../src/components/HeaderComponent';
-import { BrowserRouter, Route } from 'react-router-dom'; //React-Router import
+import { BrowserRouter, Route, Switch } from 'react-router-dom'; //React-Router import
 import WaitingRoom from './screens/WaitingRoom.js';
 import UserTable from './components/UserTable.js';
 
@@ -20,18 +20,20 @@ import axios from 'axios';
 export default function App() {
     return (
         <div>
-            <UserTable />
+            {/* <UserTable /> */}
             <div>
                 <BrowserRouter>
-                    <Route path="/">
-                        <GameStart />
-                    </Route>
-                    <Route path="/" exact component={RoomList} />
-                    <Route path="/InputName">
+                    <Route exact path="/" component={GameStart} />
+                    <Route path="/inputname" component={Dialog}>
                         <Dialog title="닉네임 입력" confirmText="접속" />
                     </Route>
-                    <Route path="/" exact component={Chatting} />
-                    <Route path="/" exact component={WaitingRoom} />
+                    <Route path="/roomlist" component={RoomList} />
+                    <Route path="/chatting" component={Chatting} />
+                    <Switch>
+                        <Route path="/waitingroom/:name" component={WaitingRoom} />
+                        <Route path="/waitingroom" component={WaitingRoom} />
+                    </Switch>
+                    <Route path="/usertable" component={UserTable} />
                 </BrowserRouter>
             </div>
         </div>
