@@ -11,7 +11,7 @@ import UserTable from '../components/UserTable.js';
 export default function WaitingRoom({ match }) {
     const room_index = match.params.name; // url에 입력해준 방 인덱스
     console.log('방 번호는 ?' + room_index);
-    const [roomEnterInfo, setRoomEnterInfo] = useState();
+    const [roomEnterInfo, setRoomEnterInfo] = useState('');
 
     const BaseURL = 'http://3.17.55.178:3002';
 
@@ -229,14 +229,14 @@ export default function WaitingRoom({ match }) {
                 selectDiv
                 <br />
                 <TitleDiv>
-                    TitleDiv {match.params.name}번 방입니다
-                    <br />
-                    <Text>{roomEnterInfo.room_name} </Text>
-                    <br />
-                    <Text>{roomEnterInfo.room_code} </Text>
+                    TitleDiv {match.params.name}번 방
                     <br />
                     <Text>
-                        현재 {roomEnterInfo.room_current_member_cnt} / {roomEnterInfo.room_start_member_cnt} 명
+                        방제 : {roomEnterInfo.room_name} | 방 코드 : {roomEnterInfo.room_code}
+                    </Text>
+                    <br />
+                    <Text>
+                        인원: {roomEnterInfo.room_current_member_cnt} / {roomEnterInfo.room_start_member_cnt} 명
                     </Text>
                 </TitleDiv>
                 <BarDiv>
