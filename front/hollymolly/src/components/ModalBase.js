@@ -44,6 +44,12 @@ export default function ModalBase() {
             }, 1000);
         });
 
+        // 소켓이 서버에 연결되어 있는지 여부
+        // 연결 성공 시 시작
+        socket.on('connect', () => {
+            console.log('room connection server!');
+        });
+
         // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
         socket.on('disconnect', (reason) => {
             if (reason === 'io server disconnect') {
@@ -53,7 +59,7 @@ export default function ModalBase() {
             // else the socket will automatically try to reconnect
         });
         //}
-    });
+    }, []);
 
     const inputRef = useRef();
     let roomMode = '';
@@ -122,6 +128,11 @@ export default function ModalBase() {
 
         roomCreate();
         closeModal();
+
+        //방 생성했으면 초기화
+        if (isChecked === false) setIschecked(!isChecked); // easy로 바꿈
+        setPeople((people) => (people = 4)); //4명으로 바꿈
+        if (ispublic == false) setIsPublic(!ispublic); // public으로 바꿈
     };
 
     const roomCreate = async () => {
@@ -149,11 +160,12 @@ export default function ModalBase() {
                 // console.log(inputRef.current.value, roomMode, !ispublic, people);
                 setRoomdata(response.data);
                 console.log(roomdata);
-                console.log('성공');
+                // console.log('성공');
+                // console.log(roomdata);
             })
             .catch(function (error) {
                 console.log(error.response);
-                console.log('실패');
+                // console.log('실패');
             });
     };
 
