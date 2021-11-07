@@ -15,11 +15,17 @@ export default function WaitingRoom({ match }) {
 
     const BaseURL = 'http://3.17.55.178:3002';
 
+    //내 인덱스 저장 변수
+    const [myIdx, setMyIdx] = React.useState(-1);
+
     //사람이 색을 변경해서 클릭했을 때 소켓통신을 실행하기 위한 변수
     const [changeColor, setChangeColor] = React.useState(false);
 
     //내가 무슨 색을 선택했는지
     const [selectColor, setSelectColor] = React.useState('');
+
+    //내 이전 색이 무엇인지, 서버에서 색깔 지정해준 색도 이 변수에 넣기
+    const [previousColor, setPreviousColor] = React.useState('');
 
     // 개별 색 state
     const [redColor, setRedColor] = React.useState('#FF0000');
@@ -41,16 +47,16 @@ export default function WaitingRoom({ match }) {
             },
         }); */
 
-        //3번 토큰 사용
+        //1번 토큰 사용
         const socket = io(BaseURL, {
             auth: {
-                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MywidXNlcl9uYW1lIjoiaHkiLCJpYXQiOjE2MzI4MzMwMTd9.-i36Z3KoqzCfgtVNl1-c8h5fZNSZ8Nlhnp4UI41tFxM',
+                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
             },
         });
 
         // 소켓이 서버에 연결되어 있는지 여부
         // 연결 성공 시 시작
-        /*   socket.on("connect", () => {
+         /*  socket.on("connect", () => {
               console.log("Waiting connection server");
           }); */
 
@@ -72,9 +78,8 @@ export default function WaitingRoom({ match }) {
         socket.on('change member color', (data) => {
             console.log('socket-> index: ' + data.user_idx + ' color: ' + data.user_color);
             //해당 user_color값 클릭안되게 설정 + X 표시로 바꿔줄 코드 삽입
-            if (data.user_idx != 8) {
-                // 내인덱스값이 아닌 이상 (숫자 자리에 인덱스 넣기)
-                //지금 연희 맞춤 8번
+            console.log('소켓 안 userindex: ' + myIdx)
+            if (data.user_idx != myIdx) { //지금 내 인덱스값과 비교해서 다른 인덱스들한테만 회색박스처리
                 if (data.user_color == 'RED') setRedColor('#8C8C8C');
                 else if (data.user_color == 'ORANGE') setOrangeColor('#8C8C8C');
                 else if (data.user_color == 'YELLOW') setYellowColor('#8C8C8C');
@@ -126,7 +131,16 @@ export default function WaitingRoom({ match }) {
     function colorClick(str) {
         alert('click: ' + str);
 
+        if (previousColor == 'RED') setRedColor ('#FF0000');
+        else if (previousColor  == 'ORANGE') setOrangeColor('#FF5E00');
+        else if (previousColor == 'YELLOW') setYellowColor('#FFE400');
+        else if (previousColor == 'GREEN') setGreenColor('#1DDB16');
+        else if (previousColor == 'BLUE') setBlueColor('#0B37D3');
+        else if (previousColor == 'PURPLE') setPurpleColor('#5F00FF');
+        else setPinkColor('#FF00DD');
+
         setSelectColor(str);
+        setPreviousColor(str); 
 
         const restURL = BaseURL + '/waiting-room/user-color';
 
@@ -139,18 +153,26 @@ export default function WaitingRoom({ match }) {
         }; */
 
         //3번 토큰
-        const reqHeaders = {
+        /* const reqHeaders = {
             headers: {
                 authorization:
                     'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MywidXNlcl9uYW1lIjoiaHkiLCJpYXQiOjE2MzI4MzMwMTd9.-i36Z3KoqzCfgtVNl1-c8h5fZNSZ8Nlhnp4UI41tFxM',
             },
-        };
+        }; */
 
+        //1번 토큰
+        const reqHeaders = {
+            headers: {
+                authorization:
+                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
+            },
+        };
+        
         axios
             .patch(
                 restURL,
                 {
-                    room_idx: 53, //룸 인덱스 변수로 들어가야함.
+                    room_idx: room_index, //룸 인덱스 변수로 들어가야함.
                     user_color: str, //클릭했을 때 해당 색
                 },
                 reqHeaders
@@ -187,7 +209,23 @@ export default function WaitingRoom({ match }) {
             )
             .then(function (response) {
                 setRoomEnterInfo(response.data);
-                console.log(response.data);
+                //console.log(roomEnterInfo);
+
+                //현재 멤버 카운트에서 -1로 내가 들어간 인덱스 값을 알아낸 후 그 정보를 빼와서 
+                //state 변수에 저장한다.
+
+                const memberCnt = (response.data.room_current_member_cnt)-1;
+                console.log('현재 인원 : ' + memberCnt);
+
+                //서버에서 할당해준 색 구하기
+                const serverColor = response.data.waiting_room_member_list[memberCnt].wrm_user_color;
+                //선택된 값과 이전색으로 세팅
+                setSelectColor(serverColor);
+                setPreviousColor(serverColor); 
+
+                //내 인덱스 구하기      
+                setMyIdx(response.data.waiting_room_member_list[memberCnt].user_idx);
+
                 console.log('enterRoom 성공');
             })
             .catch(function (error) {
@@ -468,8 +506,8 @@ const BarColorBox = styled.div`
         props.color == '#FF0000'
             ? `background-color: ${props.color}; border-top-left-radius: 15px; border-bottom-left-radius: 15px;`
             : props.color == '#FF00DD'
-            ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
-            : `background-color: ${props.color};`}
+                ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
+                : `background-color: ${props.color};`}
 `;
 
 const Text = styled.text`
