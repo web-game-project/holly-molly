@@ -19,7 +19,7 @@ const ChatContext = (props) => {
   };
 
   const ChatContextBox = styled.div`
-    width: 220px;
+    width: 200px;
     background-color: #B0B0B0;
     border-radius: 0.5rem;
     font-size: 15px;
@@ -27,7 +27,6 @@ const ChatContext = (props) => {
     font-family: 'Gowun Dodum';
     font-weight: bold;
     display: flex
-    flex-flow: row wrap;
     margin-bottom: 5px;
     white-space: pre;
    

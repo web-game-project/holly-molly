@@ -14,42 +14,31 @@ const socket = io('http://3.17.55.178:3002/', {
     },
 });
 
+socket.on('connect', () => {
+    console.log('Room SearchBar connection server');
+});
+
 const RoomSearchBar = (props) => {
     const inputRef = useRef();
     const [clicked, setClicked] = useState(false);
     const [waitingRoomMemberList, setWaitingRoomMemberList] = useState();
 
-    useEffect(() => {
-        // 연결 실패 시,
-        const socket = io('http://3.17.55.178:3002/', {
-            // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
-            auth: {
-                // 1번 토큰
-                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
-            },
-        });
+    // useEffect(() => {
+    //     // 오류 시, 수동으로 다시 연결 시도
+    //     socket.on('error', () => {
+    //         setTimeout(() => {
+    //             socket.connect();
+    //         }, 1000);
+    //     });
 
-        // 오류 시, 수동으로 다시 연결 시도
-        socket.on('error', () => {
-            setTimeout(() => {
-                socket.connect();
-            }, 1000);
-        });
-
-        // 소켓이 서버에 연결되어 있는지 여부
-        // 연결 성공 시 시작
-        socket.on('connect', () => {
-            // console.log("room connection server");
-        });
-
-        // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
-        socket.on('disconnect', (reason) => {
-            if (reason === 'io server disconnect') {
-                // 재연결 시도
-                socket.connect();
-            }
-        });
-    }, [clicked]);
+    //     // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
+    //     socket.on('disconnect', (reason) => {
+    //         if (reason === 'io server disconnect') {
+    //             // 재연결 시도
+    //             socket.connect();
+    //         }
+    //     });
+    // }, [clicked]);
 
     const enterRoom = async () => {
         const reqURL = 'http://3.17.55.178:3002/room/code'; //parameter : 방 타입
@@ -57,7 +46,7 @@ const RoomSearchBar = (props) => {
             headers: {
                 // 1번 토큰
                 authorization:
-                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
+                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NiwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.ZnrUNSkD92PD-UV2z2DV4w5lbC2bXIn8GYu05sMb2FQ',
             },
         };
 
@@ -75,7 +64,7 @@ const RoomSearchBar = (props) => {
                 setWaitingRoomMemberList(response.data);
             })
             .catch(function (error) {
-                alert(error);
+                console.log(error.response);
             });
     };
 

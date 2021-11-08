@@ -193,10 +193,9 @@ const Room = (props) => {
           </RoomGrid>
         </RoomGridDiv>
       ) : (
-        <RoomGridDiv
-          disabled={props.disabled}
+        <RoomGrid
           boxShadow
-          cursor={props.cursor}
+          bg="#ffffff"
           padding="10px"
           margin="10px"
           width="320px"
@@ -210,7 +209,7 @@ const Room = (props) => {
           <RoomGrid is_flex_end border="" boxShadow="" margin="5px" width="280px" height="25px" >       
             <RoomGrid is_flex_end border="" boxShadow="" width="120px" height="25px" bg="#eeeeee"></RoomGrid>
           </RoomGrid>
-        </RoomGridDiv>
+        </RoomGrid>
       )}
     </React.Fragment>
   );
