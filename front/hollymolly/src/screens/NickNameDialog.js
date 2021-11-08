@@ -5,10 +5,17 @@ import { Link } from "react-router-dom";
 //이미지
 import closeBtn from '../assets/close.png';
 
+import { BrowserRouter, Route, Switch } from 'react-router-dom'; //React-Router import
+
 //storage
 import RefreshVerification from '../server/RefreshVerification';
 
+//페이지 이동
+import {useHistory} from "react-router";
+
 function NickNameDialog({ title, children, confirmText, cancelText }) {
+  //history 객체
+  const history = useHistory();
 
   const [nickName, setNickName] = React.useState('');
 
@@ -29,18 +36,21 @@ function NickNameDialog({ title, children, confirmText, cancelText }) {
       name: nickName
     })
       .then(function (response) { //response로 jwt token 반환
-        alert('success! '+ response.data.access_token);       
+        alert('success! ' + response.data.access_token);
 
         window.localStorage.setItem("token", JSON.stringify({
           access_token: response.data.access_token,
           refresh_token: response.data.refresh_token,
           user_idx: response.data.user_idx,
         }));
-       
+
       })
       .catch(function (error) {
         alert(error);
       })
+
+     //window.location.href = '/roomlist';
+     history.push("/roomlist");
   }
 
   return (
@@ -48,7 +58,7 @@ function NickNameDialog({ title, children, confirmText, cancelText }) {
       <DialogContent>
         <Title>
           <p>{title}</p>
-        {/*   <img src={closeBtn} onClick={closeClick} /> */}
+          {/*   <img src={closeBtn} onClick={closeClick} /> */}
           <Link to='/'>
             <img src={closeBtn} onClick={closeClick} />
           </Link>
@@ -58,14 +68,13 @@ function NickNameDialog({ title, children, confirmText, cancelText }) {
         <h5>＊한글2~8자 또는 영문2~16자, 특수문자 입력 불가능 </h5>
 
         <button onClick={connectClick}> {confirmText}</button>
-          
       </DialogContent>
 
     </DiglogBackground>
   );
 }
 
-const Title= styled.div`
+const Title = styled.div`
 display: flex;
 flex-direction: row;
 background-color: #221330;
