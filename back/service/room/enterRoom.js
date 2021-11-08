@@ -133,13 +133,14 @@ const findRoom = async (req, res) => {
                 },
             });
         } else if (type === 'random') {
-            const { room_mode, room_start_member_cnt } = req.body;
-
+            const { room_mode, room_start_member_cnt } = req.body; 
+            //console.log("####",room_mode, room_start_member_cnt, typeof(room_mode), typeof(room_start_member_cnt));
+           
             if (room_mode) {
-                roomMode = [room_mode];
+                roomMode = room_mode;
             }
             if (room_start_member_cnt) {
-                roomStartMemberCnt = [room_start_member_cnt];
+                roomStartMemberCnt = room_start_member_cnt;
             }
 
             room = Room.findOne({
@@ -147,6 +148,7 @@ const findRoom = async (req, res) => {
                     room_mode: roomMode,
                     room_start_member_cnt: roomStartMemberCnt,
                     room_private: false,
+                    room_status: "waiting",
                 },
                 order: Sequelize.literal('RAND()'),
                 limit: 1,
