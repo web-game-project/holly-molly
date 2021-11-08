@@ -7,11 +7,13 @@ import style from '../styles/styles.js';
 import UserCard from '../components/UserCard';
 
 import UserTable from '../components/UserTable.js';
+import ModalSetting from '../components/ModalSetting.js';
 
 export default function WaitingRoom({ match }) {
     const room_index = match.params.name; // url에 입력해준 방 인덱스
     console.log('방 번호는 ?' + room_index);
     const [roomEnterInfo, setRoomEnterInfo] = useState('');
+    const [roomInfo, setRoomInfo] = useState('');
 
     const BaseURL = 'http://3.17.55.178:3002';
 
@@ -56,9 +58,9 @@ export default function WaitingRoom({ match }) {
 
         // 소켓이 서버에 연결되어 있는지 여부
         // 연결 성공 시 시작
-         /*  socket.on("connect", () => {
-              console.log("Waiting connection server");
-          }); */
+        socket.on('connect', () => {
+            console.log('Waiting connection server');
+        });
 
         /*  socket.on('error', () => {
             setTimeout(() => {
@@ -78,8 +80,9 @@ export default function WaitingRoom({ match }) {
         socket.on('change member color', (data) => {
             console.log('socket-> index: ' + data.user_idx + ' color: ' + data.user_color);
             //해당 user_color값 클릭안되게 설정 + X 표시로 바꿔줄 코드 삽입
-            console.log('소켓 안 userindex: ' + myIdx)
-            if (data.user_idx != myIdx) { //지금 내 인덱스값과 비교해서 다른 인덱스들한테만 회색박스처리
+            console.log('소켓 안 userindex: ' + myIdx);
+            if (data.user_idx != myIdx) {
+                //지금 내 인덱스값과 비교해서 다른 인덱스들한테만 회색박스처리
                 if (data.user_color == 'RED') setRedColor('#8C8C8C');
                 else if (data.user_color == 'ORANGE') setOrangeColor('#8C8C8C');
                 else if (data.user_color == 'YELLOW') setYellowColor('#8C8C8C');
@@ -91,48 +94,11 @@ export default function WaitingRoom({ match }) {
         });
     }, [changeColor]);
 
-    // useEffect(() => {
-    //     console.log('소켓 통신 시작');
-    //     const socket = io(BaseURL, {
-    //         auth: {
-    //             token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug',
-    //         },
-    //     });
-
-    //     socket.on('connect', () => {
-    //         console.log('connection server 연결 성공입니다!'); // 소켓 연결
-    //     });
-    // }, []);
-
-    // useEffect(() => {
-    //     const roomInfo = async () => {
-    //         console.log('서버 통신 시작');
-    //         // const url = BaseURL + '/room/info/2';
-    //         const restURL = 'http://3.17.55.178:3002/room/info/0 ';
-    //         const reqHeaders = {
-    //             headers: {
-    //                 authorization:
-    //                     'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug',
-    //             },
-    //         };
-
-    //         axios
-    //             .get(restURL, reqHeaders)
-    //             .then(function (response) {
-    //                 console.log(response.data);
-    //             })
-    //             .catch(function (error) {
-    //                 console.log(restURL);
-    //             });
-    //     };
-    //     roomInfo();
-    // }, []);
-
     function colorClick(str) {
         alert('click: ' + str);
 
-        if (previousColor == 'RED') setRedColor ('#FF0000');
-        else if (previousColor  == 'ORANGE') setOrangeColor('#FF5E00');
+        if (previousColor == 'RED') setRedColor('#FF0000');
+        else if (previousColor == 'ORANGE') setOrangeColor('#FF5E00');
         else if (previousColor == 'YELLOW') setYellowColor('#FFE400');
         else if (previousColor == 'GREEN') setGreenColor('#1DDB16');
         else if (previousColor == 'BLUE') setBlueColor('#0B37D3');
@@ -140,7 +106,7 @@ export default function WaitingRoom({ match }) {
         else setPinkColor('#FF00DD');
 
         setSelectColor(str);
-        setPreviousColor(str); 
+        setPreviousColor(str);
 
         const restURL = BaseURL + '/waiting-room/user-color';
 
@@ -167,7 +133,7 @@ export default function WaitingRoom({ match }) {
                     'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
             },
         };
-        
+
         axios
             .patch(
                 restURL,
@@ -211,19 +177,19 @@ export default function WaitingRoom({ match }) {
                 setRoomEnterInfo(response.data);
                 //console.log(roomEnterInfo);
 
-                //현재 멤버 카운트에서 -1로 내가 들어간 인덱스 값을 알아낸 후 그 정보를 빼와서 
+                //현재 멤버 카운트에서 -1로 내가 들어간 인덱스 값을 알아낸 후 그 정보를 빼와서
                 //state 변수에 저장한다.
 
-                const memberCnt = (response.data.room_current_member_cnt)-1;
+                const memberCnt = response.data.room_current_member_cnt - 1;
                 console.log('현재 인원 : ' + memberCnt);
 
                 //서버에서 할당해준 색 구하기
                 const serverColor = response.data.waiting_room_member_list[memberCnt].wrm_user_color;
                 //선택된 값과 이전색으로 세팅
                 setSelectColor(serverColor);
-                setPreviousColor(serverColor); 
+                setPreviousColor(serverColor);
 
-                //내 인덱스 구하기      
+                //내 인덱스 구하기
                 setMyIdx(response.data.waiting_room_member_list[memberCnt].user_idx);
 
                 console.log('enterRoom 성공');
@@ -247,8 +213,11 @@ export default function WaitingRoom({ match }) {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
-                // console.log(response.data);
+                console.log('여기보세요');
+                console.log(response.data);
+                setRoomInfo(response.data);
                 console.log('getRoomInfo 성공');
+                console.log(restURL);
             })
             .catch(function (error) {
                 console.log('getRoomInfo 실패');
@@ -270,12 +239,21 @@ export default function WaitingRoom({ match }) {
                     TitleDiv {match.params.name}번 방
                     <br />
                     <Text>
-                        방제 : {roomEnterInfo.room_name} | 방 코드 : {roomEnterInfo.room_code}
+                        방제 : {roomEnterInfo.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
+                        {roomEnterInfo.room_current_member_cnt} / {roomEnterInfo.room_start_member_cnt} 명
                     </Text>
                     <br />
-                    <Text>
-                        인원: {roomEnterInfo.room_current_member_cnt} / {roomEnterInfo.room_start_member_cnt} 명
-                    </Text>
+                    <ModalSetting
+                        title={roomInfo.room_name}
+                        mode={roomInfo.room_mode}
+                        member={roomInfo.room_start_member_cnt}
+                        room_private={roomInfo.room_private}
+                    />
+                    {/* <SettingIcon
+                        onClick={() => {
+                            console.log('RED');
+                        }}
+                    /> */}
                 </TitleDiv>
                 <BarDiv>
                     <BarInnerDiv>
@@ -506,8 +484,8 @@ const BarColorBox = styled.div`
         props.color == '#FF0000'
             ? `background-color: ${props.color}; border-top-left-radius: 15px; border-bottom-left-radius: 15px;`
             : props.color == '#FF00DD'
-                ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
-                : `background-color: ${props.color};`}
+            ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
+            : `background-color: ${props.color};`}
 `;
 
 const Text = styled.text`

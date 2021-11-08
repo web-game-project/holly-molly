@@ -625,7 +625,7 @@ const Name = styled.h4`
 
 const ReadyImg = styled.img`
     position: absolute;
-    z-index: 30;
+    z-index: 0; // 안되면 30으로 바꿔보기..
     width: 112px;
 `;
 
