@@ -23,5 +23,12 @@ const colors = {
     purple_fill: '#FDF1FF',
     pink_bg: '#CE3BDB',
     pink_fill: '#FEF1FF',
+
+    //written by jh, 211023
+    orange: '#FF5E00',
+    yellow: '#FFE400',
+    green: '#1DDB16',
+    purple: '#5F00FF',
+    pink: '#FF00DD',
 };
 export default colors;

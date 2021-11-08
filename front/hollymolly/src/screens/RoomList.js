@@ -17,23 +17,32 @@ import { io } from 'socket.io-client';
 
 let total_room_cnt = 0;
 
- // 연결 실패 시,
- const socket = io('http://3.17.55.178:3002/', {
+// 연결 실패 시,
+const socket = io('http://3.17.55.178:3002/', {
     // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug',
+        // 1번 토큰
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
     },
 });
 
 const RoomList = () => {
     // 방 전체 리스트
     const [rooms, setRooms] = useState();
+    // Filter 선택값 결과 배열 list
+    const [result, setResult] = useState([]);
+
+    const getResult = (result) => {
+        setResult(result);
+    };
+
+    const resultArray = result.sort();
 
     useEffect(() => {
         socket.on('error', () => {
             setTimeout(() => {
                 socket.connect();
-                console.log(socket)
+                console.log(socket);
             }, 1000);
         });
 
@@ -76,13 +85,14 @@ const RoomList = () => {
     useEffect(() => {
         const roomListCheck = async () => {
             const currentPage = currentSlide + 1;
-            
-            const restURL = 'http://3.17.55.178:3002/room?room_start_row='+ currentPage;
-            
+            var restURL = 'http://3.17.55.178:3002/room?page=' + currentPage;
+            restURL = filterUrl(restURL, resultArray);
+
             const reqHeaders = {
                 headers: {
+                    //1번 토큰
                     authorization:
-                        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug',
+                        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
                 },
             };
 
@@ -91,22 +101,46 @@ const RoomList = () => {
                 .then(function (response) {
                     total_room_cnt = response.data.total_room_cnt;
                     setRooms(response.data);
+                    console.log(response.data);
+                    console.log(restURL);
                 })
                 .catch(function (error) {
                     console.log(error.data);
                 });
         };
         roomListCheck();
-    }, [currentSlide]);
+    }, [currentSlide, resultArray]);
 
-    // Filter 선택값 결과 배열 list
-    const [result, setResult] = useState([]);
-
-    const getResult = (result) => {
-        setResult(result);
-    };
-
-    const resultArray = result.sort();
+    function filterUrl(exitedUrl, resultArray) {
+        if (resultArray.includes(6)) {
+            // 대기중
+            exitedUrl += '&is_waiting=true';
+        } else if (!resultArray.includes(6)) {
+            // 게임중
+            exitedUrl += '&is_waiting=false';
+        }
+        if (resultArray.includes(1)) {
+            // 난이도 easy
+            exitedUrl += '&room_mode=easy';
+        }
+        if (resultArray.includes(2)) {
+            // 난이도 hard
+            exitedUrl += '&room_mode=hard';
+        }
+        if (resultArray.includes(3)) {
+            // 인원 4명
+            exitedUrl += '&room_start_member_cnt=4';
+        }
+        if (resultArray.includes(4)) {
+            // 인원 5명
+            exitedUrl += '&room_start_member_cnt=5';
+        }
+        if (resultArray.includes(5)) {
+            // 인원 6명
+            exitedUrl += '&room_start_member_cnt=6';
+        }
+        return exitedUrl;
+    }
 
     return (
         <React.Fragment>
@@ -117,7 +151,9 @@ const RoomList = () => {
                         <RoomSearchBar />
                     </div>
                     {/* 버튼 div*/}
-                    <div style={{ flexDirection: 'column', width: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    <div
+                        style={{ flexDirection: 'column', width: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
                         {/* 방만들기 모달 */}
                         <ModalBase />
                         <br />
@@ -132,114 +168,33 @@ const RoomList = () => {
                     {/* 방 리스트 슬라이더 div*/}
                     <div style={styles.sliderContainer}>
                         {currentSlide}
-                        <div style={styles.roomListContainer}> 
+                        <div style={styles.roomListContainer}>
                             {rooms &&
                                 rooms.room_list.map((values) => {
-                                    let member = false;
-                                    let level = false;
-                                    let wait = false;
-
-                                    // 난이도 필터 체크
-                                    if (resultArray.includes(1)) {
-                                        if (resultArray.includes(2)) {
-                                            if (values.room_mode == 'easy' || values.room_mode == 'hard') level = true;
-                                            // 1,2 둘 다 체크했으면
-                                            //모두 다 보여주기
-                                        } else {
-                                            // 1만 체크했으면
-                                            // easy만 보여주기
-                                            if (values.room_mode == 'easy') level = true;
-                                        }
-                                    } else if (resultArray.includes(2)) {
-                                        //2만 체크했으면
-                                        // hard만 보여주기
-                                        if (values.room_mode == 'hard') level = true;
-                                    } else if (!resultArray.includes(1, 2)) {
-                                        // 둘 다 체크 안했으면
-                                        // 아무 방도 안보여주기
-                                        level = false;
-                                    }
-
-                                    // 인원수 필터 체크
-                                    {
-                                        if (resultArray.includes(3)) {
-                                            if (resultArray.includes(4)) {
-                                                if (resultArray.includes(5)) {
-                                                    // 4,5,6명 보여주기
-                                                    if (
-                                                        values.room_start_member_cnt === 6 ||
-                                                        values.room_start_member_cnt === 5 ||
-                                                        values.room_start_member_cnt === 4
-                                                    )
-                                                        member = true;
-                                                } else {
-                                                    // 4,5 명 보여주기
-                                                    if (values.room_start_member_cnt == 4 || values.room_start_member_cnt == 5)
-                                                        member = true;
-                                                }
-                                            } else if (resultArray.includes(5)) {
-                                                // 4,6 명 보여주기
-                                                if (values.room_start_member_cnt == 6 || values.room_start_member_cnt == 4) member = true;
-                                            } else {
-                                                // 4 명 보여주기
-                                                if (values.room_start_member_cnt == 4) member = true;
-                                            }
-                                        } else if (resultArray.includes(4)) {
-                                            if (resultArray.includes(5)) {
-                                                // 5,6 명 보여주기
-                                                if (values.room_start_member_cnt == 6 || values.room_start_member_cnt == 5) member = true;
-                                            } else {
-                                                // 5명 보여주기
-                                                if (values.room_start_member_cnt == 5) member = true;
-                                            }
-                                        } else if (resultArray.includes(5)) {
-                                            // 6 명 보여주기
-                                            if (values.room_start_member_cnt == 6) member = true;
-                                        } else {
-                                            // 안 보여주기
-                                            member = false;
-                                        }
-                                    }
-
-                                    // 게임 상태 체크 필터
-                                    if (resultArray.includes(6)) {
-                                        // 6 체크 했으면
-                                        if (values.room_status == 'waiting') wait = true;
-                                    } else if (!resultArray.includes(6)) {
-                                        // 6 체크 안했으면
-                                        if (values.room_status == 'playing') wait = false;
-                                    }
-
-                                    return (
-                                        member &&
-                                        level &&
-                                        (wait ? ( 
-                                            <Room
-                                                room_idx={values.room_idx}
-                                                room_name={values.room_name}
-                                                room_current_member={values.room_current_member_cnt}
-                                                room_start_member={values.room_start_member_cnt}
-                                                room_mode={values.room_mode}
-                                                room_status={values.room_status}
-                                                disabled="false"
-                                                textStroke="true"
-                                                cursor="true"
-                                            />              
-                                        ) : (
-                                            values.room_status == 'playing' && (
-                                                <Room
-                                                    room_idx={values.room_idx}
-                                                    room_name={values.room_name}
-                                                    room_current_member={values.room_current_member_cnt}
-                                                    room_start_member={values.room_start_member_cnt}
-                                                    room_mode={values.room_mode}
-                                                    room_status={values.room_status}
-                                                    disabled="true"
-                                                    textStroke="true"
-                                                    cursor="true"
-                                                />
-                                            )
-                                        ))
+                                    return values.room_status == 'waiting' ? (
+                                        <Room
+                                            room_idx={values.room_idx}
+                                            room_name={values.room_name}
+                                            room_current_member={values.room_current_member_cnt}
+                                            room_start_member={values.room_start_member_cnt}
+                                            room_mode={values.room_mode}
+                                            room_status={values.room_status}
+                                            disabled="false"
+                                            textStroke="true"
+                                            cursor="true"
+                                        />
+                                    ) : (
+                                        <Room
+                                            room_idx={values.room_idx}
+                                            room_name={values.room_name}
+                                            room_current_member={values.room_current_member_cnt}
+                                            room_start_member={values.room_start_member_cnt}
+                                            room_mode={values.room_mode}
+                                            room_status={values.room_status}
+                                            disabled="true"
+                                            textStroke="true"
+                                            cursor="false"
+                                        />
                                     );
                                 })}
                         </div>
@@ -298,20 +253,21 @@ const styles = {
     },
     roomListContainer: {
         display: 'flex',
-        alignItems: 'flex-start', 
+        alignItems: 'flex-start',
         justifyContent: 'space-between',
         flexDirection: 'column',
-        width : '680px', 
+        width: '680px',
         height: '410px',
+
         border: '1px solid #FF0000',
-        flexFlow: 'row wrap'
+        flexFlow: 'row wrap',
     },
     sliderContainer: {
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
         flexDirection: 'column',
-        width : '680px', 
+        width: '680px',
         height: '410px',
         border: '1px solid #00FF00', //  #DAD4F6
         overflow: 'hidden',
