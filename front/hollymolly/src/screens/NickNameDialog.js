@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 //이미지
 import closeBtn from '../assets/close.png';
 
+//storage
+import RefreshVerification from '../server/RefreshVerification';
 
 function NickNameDialog({ title, children, confirmText, cancelText }) {
 
@@ -27,12 +29,16 @@ function NickNameDialog({ title, children, confirmText, cancelText }) {
       name: nickName
     })
       .then(function (response) { //response로 jwt token 반환
-        alert('success! '+ response.data.access_token);
-        //페이지 이동 코드 삽입
+        alert('success! '+ response.data.access_token);       
 
+        window.localStorage.setItem("token", JSON.stringify({
+          access_token: response.data.access_token,
+          refresh_token: response.data.refresh_token,
+          user_idx: response.data.user_idx,
+        }));
+       
       })
       .catch(function (error) {
-        //alert("이미 존재하는 email입니다. 다른 이메일을 사용해주세요.");
         alert(error);
       })
   }
