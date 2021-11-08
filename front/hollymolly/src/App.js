@@ -16,6 +16,7 @@ import { BrowserRouter, Route } from 'react-router-dom'; //React-Router import
 import WaitingRoom from './screens/WaitingRoom.js';
 import UserTable from './components/UserTable.js';
 
+import PlayingRoom from './screens/PlayingRoom.js';
 function App() {
     useEffect(() => {
         console.log('통신 시작!');
@@ -40,6 +41,7 @@ function App() {
                     </Route>
                     <Route path="/" exact component={Chatting} />
                     <Route path="/" exact component={WaitingRoom} />
+                    <Route path="/" exact component={PlayingRoom} />
                 </BrowserRouter>
             </div>
         </div>
