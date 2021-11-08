@@ -9,7 +9,12 @@ import UserCard from '../components/UserCard';
 import UserTable from '../components/UserTable.js';
 import ModalSetting from '../components/ModalSetting.js';
 
+//function component 사용시:
+import {useLocation} from "react-router";
+
 export default function WaitingRoom({ match }) {
+    let location = useLocation();
+
     const room_index = match.params.name; // url에 입력해준 방 인덱스
     console.log('방 번호는 ?' + room_index);
     const [roomEnterInfo, setRoomEnterInfo] = useState('');
@@ -226,8 +231,13 @@ export default function WaitingRoom({ match }) {
     };
 
     useEffect(() => {
-        enterRoom();
-        getRoomInfo();
+        //const user = location.state.data.room_idx;
+        
+        setRoomEnterInfo(location.state.data);
+
+        //alert('값 : ' + user);
+       // enterRoom();
+       // getRoomInfo();
     }, []);
 
     return (

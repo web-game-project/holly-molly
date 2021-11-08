@@ -29,8 +29,10 @@ export default function App() {
                     <Route path="/inputname" component={Dialog}>
                         <Dialog title="닉네임 입력" confirmText="접속" />
                     </Route>
-
-                    <Route path="/playingroom" exact component={PlayingRoom} />
+                    <Switch>
+                        <Route path="/playingroom/:name" exact component={PlayingRoom} />
+                        <Route path="/playingroom" exact component={PlayingRoom} />
+                    </Switch>                    
                     <Route path="/roomlist" component={RoomList} />
                     <Route path="/chatting" component={Chatting} />
                     <Route path="/ingame" component={InGame} />
@@ -40,6 +42,7 @@ export default function App() {
                         <Route path="/waitingroom" component={WaitingRoom} />
                     </Switch>
                     <Route path="/usertable" component={UserTable} />
+
                 </BrowserRouter>
             </div>
         </div>

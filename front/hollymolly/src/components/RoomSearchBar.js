@@ -6,6 +6,8 @@ import axios from 'axios';
 // 소켓
 import { io } from 'socket.io-client';
 
+import {useHistory} from "react-router";
+
 const socket = io('http://3.17.55.178:3002/', {
     // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
@@ -19,6 +21,9 @@ socket.on('connect', () => {
 });
 
 const RoomSearchBar = (props) => {
+
+    const history = useHistory();
+
     const inputRef = useRef();
     const [clicked, setClicked] = useState(false);
     const [waitingRoomMemberList, setWaitingRoomMemberList] = useState();
@@ -61,7 +66,11 @@ const RoomSearchBar = (props) => {
             .then(function (response) {
                 //response로 jwt token 반환
                 alert('rest api success!');
-                setWaitingRoomMemberList(response.data);
+                //setWaitingRoomMemberList(response.data);
+                history.push({
+                    pathname: "/waitingroom/" + response.data.room_idx,
+                    state: {data: response.data}
+                  })
             })
             .catch(function (error) {
                 console.log(error.response);
