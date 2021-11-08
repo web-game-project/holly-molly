@@ -57,7 +57,7 @@ const RoomGridDiv = (props) => {
   border: white;
   ${(props) => props.cursor === "true" ? `cursor: grab; `: `cursor: not-allowed; `} 
  
-  ${(props) => props.disabled === "true"? `disabled: true; opacity: 0.7;` : `&:hover {background-color: #CFCFCF}`}
+  ${(props) => props.disabled === "true"? `opacity: 0.7;` : `&:hover {background-color: #CFCFCF}`}
   
 `;
 

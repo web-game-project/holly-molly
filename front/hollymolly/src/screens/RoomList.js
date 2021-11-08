@@ -27,6 +27,8 @@ const socket = io('http://3.17.55.178:3002/', {
 });
 
 const RoomList = () => {
+    const [emptyRoomsLength, setEmptyRoomsLength] = useState('');
+
     // 방 전체 리스트
     const [rooms, setRooms] = useState();
     // Filter 선택값 결과 배열 list
@@ -101,8 +103,7 @@ const RoomList = () => {
                 .then(function (response) {
                     total_room_cnt = response.data.total_room_cnt;
                     setRooms(response.data);
-                    console.log(response.data);
-                    console.log(restURL);
+                    setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length 
                 })
                 .catch(function (error) {
                     console.log(error.data);
@@ -142,6 +143,25 @@ const RoomList = () => {
         return exitedUrl;
     }
 
+    // 빈방 채우기 
+    function emptyRoomList() {
+      
+      if (emptyRoomsLength !== 6) {
+        let forArray = [];
+        for (let i = 0; i < emptyRoomsLength; i++) {
+          forArray.push(
+            <Room
+              empty = "true"
+            />
+          );
+        }
+        return forArray;
+      } else {
+        return <EmptyText>😲 해당 필터에 맞는 방이 없습니다.😲</EmptyText>;
+      }
+    }
+    
+
     return (
         <React.Fragment>
             <RoomGrid flexDirection="column" padding="20px" width="1020px" height="620px" bg="#DAD4F6">
@@ -167,7 +187,6 @@ const RoomList = () => {
                     <PrevBtn onClick={prevPage} />
                     {/* 방 리스트 슬라이더 div*/}
                     <div style={styles.sliderContainer}>
-                        {currentSlide}
                         <div style={styles.roomListContainer}>
                             {rooms &&
                                 rooms.room_list.map((values) => {
@@ -197,6 +216,7 @@ const RoomList = () => {
                                         />
                                     );
                                 })}
+                               {emptyRoomList()}
                         </div>
                     </div>
                     {/* 오른쪽 화살표 div*/}
@@ -242,6 +262,16 @@ const Button = styled.button`
     }
 `;
 
+const EmptyText = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flexDirection: column;
+    width: 680px;
+    height: 410px;
+    font-size: 20px;
+`;
+
 export default RoomList;
 
 const styles = {
@@ -258,8 +288,6 @@ const styles = {
         flexDirection: 'column',
         width: '680px',
         height: '410px',
-
-        border: '1px solid #FF0000',
         flexFlow: 'row wrap',
     },
     sliderContainer: {
@@ -269,7 +297,6 @@ const styles = {
         flexDirection: 'column',
         width: '680px',
         height: '410px',
-        border: '1px solid #00FF00', //  #DAD4F6
         overflow: 'hidden',
     },
 };
