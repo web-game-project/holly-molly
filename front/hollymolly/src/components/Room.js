@@ -5,6 +5,7 @@ import RoomText from "../components/RoomText";
 import RoomGridDiv from "./RoomGridDiv";
 import axios from "axios";
 import styled from "styled-components";
+import {useHistory} from "react-router";
 // 소켓
 import { io } from "socket.io-client";
 /* 소켓 연결은 컴포넌트와 동등한 위치에서 선언되어야 한다.
@@ -19,6 +20,7 @@ const socket = io("http://3.17.55.178:3002/", {
 });
 
 const Room = (props) => {
+  const history = useHistory();
   const [waitingRoomMemberList, setWaitingRoomMemberList] = useState();
   const [clicked, setClicked] = useState(false);
 
@@ -75,8 +77,12 @@ const Room = (props) => {
       )
       .then(function (response) {
         //response로 jwt token 반환
-        alert("rest api success!");
-        setWaitingRoomMemberList(response.data);
+        
+        history.push({
+          pathname: "/waitingroom/" + response.data.room_idx,
+          state: {data: response.data}
+        })
+        
       })
       .catch(function (error) {
         alert(error);
