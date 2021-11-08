@@ -10,7 +10,7 @@ import UserTable from '../components/UserTable.js';
 import ModalSetting from '../components/ModalSetting.js';
 
 //function component 사용시:
-import {useLocation} from "react-router";
+import { useLocation } from 'react-router';
 
 export default function WaitingRoom({ match }) {
     let location = useLocation();
@@ -159,55 +159,9 @@ export default function WaitingRoom({ match }) {
     }
 
     // written by sunga at 10.31
-
-    const enterRoom = async () => {
-        // 대기실 접속 api
-        const restURL = 'http://3.17.55.178:3002/room/idx';
-        const reqHeaders = {
-            headers: {
-                authorization:
-                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
-            },
-        };
-
-        axios
-            .post(
-                restURL,
-                {
-                    room_idx: room_index, // 룸 index
-                },
-                reqHeaders
-            )
-            .then(function (response) {
-                setRoomEnterInfo(response.data);
-                //console.log(roomEnterInfo);
-
-                //현재 멤버 카운트에서 -1로 내가 들어간 인덱스 값을 알아낸 후 그 정보를 빼와서
-                //state 변수에 저장한다.
-
-                const memberCnt = response.data.room_current_member_cnt - 1;
-                console.log('현재 인원 : ' + memberCnt);
-
-                //서버에서 할당해준 색 구하기
-                const serverColor = response.data.waiting_room_member_list[memberCnt].wrm_user_color;
-                //선택된 값과 이전색으로 세팅
-                setSelectColor(serverColor);
-                setPreviousColor(serverColor);
-
-                //내 인덱스 구하기
-                setMyIdx(response.data.waiting_room_member_list[memberCnt].user_idx);
-
-                console.log('enterRoom 성공');
-            })
-            .catch(function (error) {
-                console.log('enterRoom 실패');
-                console.log(error.response);
-            });
-    };
-
     const getRoomInfo = async () => {
         // 대기실 정보 조회 api
-        const restURL = 'http://3.17.55.178:3002/room/info/' + room_index;
+        const restURL = 'http://3.17.55.178:3002/room/info/' + roomEnterInfo.room_idx;
         const reqHeaders = {
             headers: {
                 //1번 토큰 이용
@@ -218,11 +172,8 @@ export default function WaitingRoom({ match }) {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
-                console.log('여기보세요');
-                console.log(response.data);
                 setRoomInfo(response.data);
                 console.log('getRoomInfo 성공');
-                console.log(restURL);
             })
             .catch(function (error) {
                 console.log('getRoomInfo 실패');
@@ -232,12 +183,10 @@ export default function WaitingRoom({ match }) {
 
     useEffect(() => {
         //const user = location.state.data.room_idx;
-        
-        setRoomEnterInfo(location.state.data);
-
         //alert('값 : ' + user);
-       // enterRoom();
-       // getRoomInfo();
+
+        setRoomEnterInfo(location.state.data);
+        getRoomInfo(); //방 정보 조회 api + 모달창에 뿌리기용
     }, []);
 
     return (
@@ -259,11 +208,6 @@ export default function WaitingRoom({ match }) {
                         member={roomInfo.room_start_member_cnt}
                         room_private={roomInfo.room_private}
                     />
-                    {/* <SettingIcon
-                        onClick={() => {
-                            console.log('RED');
-                        }}
-                    /> */}
                 </TitleDiv>
                 <BarDiv>
                     <BarInnerDiv>
