@@ -6,6 +6,7 @@ const { exitGame } = require('./exitGame');
 const startSet = require('./startSet');
 const vote = require('./vote');
 const { getVoteResult } = require('./getVoteResult');
+const saveSetImage = require('./saveSetImage');
 const writeHumanKeyword = require('./writeHumanKeyword');
 
 module.exports = {
@@ -18,4 +19,5 @@ module.exports = {
     vote,
     getVoteResult,
     writeHumanKeyword,
+    saveSetImage
 };
