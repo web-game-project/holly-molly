@@ -6,7 +6,8 @@ import ChatContext from '../components/ChatContext';
 const socket = io('http://3.17.55.178:3002/', {
     // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NiwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.ZnrUNSkD92PD-UV2z2DV4w5lbC2bXIn8GYu05sMb2FQ',
+        // 6 token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NiwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.ZnrUNSkD92PD-UV2z2DV4w5lbC2bXIn8GYu05sMb2FQ',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
     },
 });
 
@@ -51,7 +52,7 @@ const Chatting = (props) => {
         if (e.key === 'Enter') {
             if (inputMessage.length > 0) {
                 let room_idx = 53;
-                let user_idx = 6;
+                let user_idx = 8;
                 let user_name = "test";
                 let msg = inputMessage;
 
@@ -140,15 +141,12 @@ const Chatting = (props) => {
 
   return (
     <React.Fragment>
-        <BodyDiv>
             <Container>
                 <ChatContainer>
-                    
                     {/* 18개부터 스크롤 생김 */}
                     {chatMonitor.map((values, index) => {          
                         return (<ChatContext key={index} name={values.recentChatUserName} color={userColor} text={values.recentChat}></ChatContext>);
                     })}
-                    
                 </ChatContainer>
                 <InputMsgContainer>
                     <InputMsg
@@ -162,17 +160,9 @@ const Chatting = (props) => {
                     <InputMsgBtn onClick={handleSubmit}>🚀</InputMsgBtn>
                 </InputMsgContainer>
             </Container>
-        </BodyDiv>
     </React.Fragment>
 );
 };
-
-const BodyDiv = styled.div`
-    border: 1px solid blue;
-    width: 1020px;
-    height: 620px;
-    margin: 20px; // 삭제할거임
-`;
 
 const Container = styled.div`
     width: 220px;
@@ -181,20 +171,35 @@ const Container = styled.div`
     justify-content: space-between;
     flex-direction: column;
     color: white;
+    opacity: 0.7;
 `;
 
 const ChatContainer = styled.div`
-    width: 220px;
+    width: 200px;
     height: 520px;
     padding: 10px;
     margin-bottom: 20px;
     background-color: #b0b0b0;
     border-radius: 0.5rem;
-    overflow: auto;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+        /* 세로 스크롤 넓이 */
+        width: 10px;
+
+        /* 가로 스크롤 높이 */
+        height: 10px;
+
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.4);
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 6px;
+    }
 `;
 
 const InputMsgContainer = styled.div`
-    width: 220px;
+    width: 200px;
     height: 80px;
     padding: 10px;
     background-color: #b0b0b0;
@@ -204,7 +209,7 @@ const InputMsgContainer = styled.div`
 `;
 
 const InputMsg = styled.textarea`
-    width: 180px;
+    width: 160px;
     height: 60px;
     padding: 10px;
     background-color: #797979;
@@ -218,6 +223,22 @@ const InputMsg = styled.textarea`
         font-weight: bold;
     }
     color: white;
+
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+        /* 세로 스크롤 넓이 */
+        width: 10px;
+
+        /* 가로 스크롤 높이 */
+        height: 10px;
+
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.4);
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 6px;
+    }
 `;
 
 const InputMsgBtn = styled.div`

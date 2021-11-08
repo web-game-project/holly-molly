@@ -28,6 +28,12 @@ const socket = io('http://3.17.55.178:3002/', {
 
 const RoomList = () => {
     const [emptyRoomsLength, setEmptyRoomsLength] = useState('');
+    const [waitingRoomMemberList, setWaitingRoomMemberList] = useState();
+
+    // 랜덤 입장을 위한 mode 리스트 
+    const [randomEntryModeList, setRandomEntryModeList] = useState([]);
+    // 랜덤 입장을 위한 people 리스트 
+    const [randomEntryPeopleList, setRandomEntryPeopleList] = useState([]);
 
     // 방 전체 리스트
     const [rooms, setRooms] = useState();
@@ -123,10 +129,12 @@ const RoomList = () => {
         if (resultArray.includes(1)) {
             // 난이도 easy
             exitedUrl += '&room_mode=easy';
+            setRandomEntryModeList([...randomEntryModeList, "easy"]);
         }
         if (resultArray.includes(2)) {
             // 난이도 hard
             exitedUrl += '&room_mode=hard';
+            setRandomEntryModeList([...randomEntryModeList, "hard"]);
         }
         if (resultArray.includes(3)) {
             // 인원 4명
@@ -160,7 +168,38 @@ const RoomList = () => {
         return <EmptyText>😲 해당 필터에 맞는 방이 없습니다.😲</EmptyText>;
       }
     }
-    
+
+
+    console.log("random : " + randomEntryModeList);
+    const randomEntry = () => async () => {
+
+         const reqURL = 'http://3.17.55.178:3002/room/random'; //parameter : 방 타입
+         const reqHeaders = {
+             headers: {
+                 // 1번 토큰
+                 authorization:
+                     'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NiwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.ZnrUNSkD92PD-UV2z2DV4w5lbC2bXIn8GYu05sMb2FQ',
+             },
+         };
+
+         axios
+             .post(
+                 reqURL,
+                 {
+                    //  room_mode: ,
+                    //  room-start-member-cnt: 
+                 },
+                 reqHeaders
+             )
+             .then(function (response) {
+                 //response로 jwt token 반환
+                 alert('rest api success!');
+                 setWaitingRoomMemberList(response.data);
+             })
+             .catch(function (error) {
+                 console.log(error.response);
+             });
+     };
 
     return (
         <React.Fragment>
@@ -177,7 +216,7 @@ const RoomList = () => {
                         {/* 방만들기 모달 */}
                         <ModalBase />
                         <br />
-                        <Button>랜덤 입장</Button>
+                        <Button onClick={randomEntry}>랜덤 입장</Button>
                     </div>
                 </RoomGrid>
 
