@@ -8,17 +8,6 @@ import { io } from 'socket.io-client';
 
 import {useHistory} from "react-router";
 
-const socket = io('http://3.17.55.178:3002/', {
-    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
-    auth: {
-        // 1번 토큰
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
-    },
-});
-
-socket.on('connect', () => {
-    console.log('Room SearchBar connection server');
-});
 
 const RoomSearchBar = (props) => {
 
@@ -26,30 +15,24 @@ const RoomSearchBar = (props) => {
 
     const inputRef = useRef();
     const [clicked, setClicked] = useState(false);
-    const [waitingRoomMemberList, setWaitingRoomMemberList] = useState();
 
-    // useEffect(() => {
-    //     // 오류 시, 수동으로 다시 연결 시도
-    //     socket.on('error', () => {
-    //         setTimeout(() => {
-    //             socket.connect();
-    //         }, 1000);
-    //     });
 
-    //     // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
-    //     socket.on('disconnect', (reason) => {
-    //         if (reason === 'io server disconnect') {
-    //             // 재연결 시도
-    //             socket.connect();
-    //         }
-    //     });
-    // }, [clicked]);
+    useEffect(() => {
+        const socket = io('http://3.17.55.178:3002/', {
+            auth: {
+                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
+            },
+        });
+
+        socket.on('connect', () => {
+            console.log('Room SearchBar connection server');
+        });
+    })
 
     const enterRoom = async () => {
         const reqURL = 'http://3.17.55.178:3002/room/code'; //parameter : 방 타입
         const reqHeaders = {
             headers: {
-                // 1번 토큰
                 authorization:
                     'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NiwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.ZnrUNSkD92PD-UV2z2DV4w5lbC2bXIn8GYu05sMb2FQ',
             },
@@ -59,14 +42,12 @@ const RoomSearchBar = (props) => {
             .post(
                 reqURL,
                 {
-                    room_code: inputRef.current.value, // 룸 index
+                    room_code: inputRef.current.value, // 룸 code
                 },
                 reqHeaders
             )
             .then(function (response) {
-                //response로 jwt token 반환
                 alert('rest api success!');
-                //setWaitingRoomMemberList(response.data);
                 history.push({
                     pathname: "/waitingroom/" + response.data.room_idx,
                     state: {data: response.data}
@@ -80,7 +61,6 @@ const RoomSearchBar = (props) => {
     const onClick = () => {
         setClicked(!clicked);
         enterRoom();
-        alert('방이름은? ' + inputRef.current.value);
     };
 
     return (
@@ -109,5 +89,6 @@ const styles = {
         height: '25px',
         width: '250px',
         fontSize: 15,
+        outline: 'none',
     },
 };
