@@ -53,8 +53,11 @@ const vote = async (req, res, next) => {
 
         checkNumberOfVoters(res.locals.gameIdx, game_set_idx);
     } catch (error) {
-        console.log(error);
-        res.status(400).json({ meesage: '알 수 없는 에러가 발생했습니다.' });
+        console.log('[error]-vote: ', error);
+        res.status(400).json({
+            meesage: '알 수 없는 에러가 발생했습니다.',
+            error,
+        });
     }
 };
 

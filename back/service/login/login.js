@@ -19,9 +19,10 @@ module.exports = async (req, res, next) => {
             user_idx: user.user_idx,
         });
     } catch (error) {
-        console.log(error);
+        console.log('[error]-login: ', error);
         res.status(400).send({
-            message: '알 수 없는 오류가 발생하였습니다. 관리자에게 문의하세요.',
+            message: '알 수 없는 오류가 발생하였습니다.',
+            error,
         });
     }
 };

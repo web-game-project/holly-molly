@@ -11,8 +11,11 @@ const exitGame = async (req, res, next) => {
 
         res.status(204).end();
     } catch (error) {
-        console.log(error);
-        res.status(400).json({ meesage: '알 수 없는 에러가 발생했습니다.' });
+        console.log('[error]-exitGame: ', error);
+        res.status(400).json({
+            meesage: '알 수 없는 에러가 발생했습니다.',
+            error,
+        });
     }
 };
 
