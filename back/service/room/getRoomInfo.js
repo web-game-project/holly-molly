@@ -14,8 +14,8 @@ module.exports = async (req, res, next) => {
                     'room_mode',
                     'room_start_member_cnt',
                 ],
+                where: { room_idx: roomIdx } 
             },
-            { where: { room_idx: roomIdx } }
         );
         console.log('getRoomInfoService Success: ', roomInfo);
 
