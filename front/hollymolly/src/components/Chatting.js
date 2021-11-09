@@ -169,7 +169,7 @@ const ChatContainer = styled.div`
     height: 520px;
     padding: 10px;
     margin-bottom: 20px;
-    background-color: #b0b0b0;
+    background-color: rgba( 0, 0, 0, 0.5 );
     border-radius: 0.5rem;
     // overflow-y: scroll;
     // overflow-x:hidden;
@@ -194,7 +194,7 @@ const InputMsgContainer = styled.div`
     width: 200px;
     height: 80px;
     padding: 10px;
-    background-color: #b0b0b0;
+    background-color: rgba( 0, 0, 0, 0.5 );
     border-radius: 0.5rem;
     display: flex;
     justify-content: space-between;
@@ -204,7 +204,7 @@ const InputMsg = styled.textarea`
     width: 160px;
     height: 60px;
     padding: 10px;
-    background-color: #797979;
+    background-color: #000000;
     border-radius: 0.5rem;
     margin-right: 7px;
     border: none;
@@ -236,7 +236,7 @@ const InputMsg = styled.textarea`
 const InputMsgBtn = styled.div`
     width: 40px;
     height: 80px;
-    background-color: #797979;
+    background-color: #000000;
     border-radius: 0.5rem;
     display: flex;
     align-items: center;

@@ -20,7 +20,6 @@ const ChatContext = (props) => {
 
   const ChatContextBox = styled.div`
     width: 200px;
-    background-color: #B0B0B0;
     border-radius: 0.5rem;
     font-size: 15px;
     color: ${(props) => props.color};
