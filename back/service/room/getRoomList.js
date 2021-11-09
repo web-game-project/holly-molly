@@ -4,7 +4,8 @@ const getIOSocket = require('../../socket/getIOSocket');
 
 module.exports = async (req, res, next) => {
     try {
-        const { page, room_mode, room_start_member_cnt, is_waiting } = req.query;
+        const { page, room_mode, room_start_member_cnt, is_waiting } =
+            req.query;
 
         let offset;
         if (!page) {
@@ -21,9 +22,9 @@ module.exports = async (req, res, next) => {
         );
 
         // socket : get socket
-        const { io, socket } = getIOSocket(req,res);
-        if(!io || !socket){
-            //console.log("*****", io, socket);
+        const { io, socket } = getIOSocket(req, res);
+        if (!io || !socket) {
+            console.log('[error]-getRoomList: 소켓 커넥션 에러');
             res.status(400).json({
                 message: 'socket connection을 다시 해주세요.',
             });
@@ -32,36 +33,36 @@ module.exports = async (req, res, next) => {
         // socket : join room 0
         moveRoom(io, socket, 0);
 
-
         res.json({
             total_room_cnt: rooms.roomCount,
             room_list: rooms.roomList,
         });
     } catch (error) {
-        console.log("[getRoomList]",error);
-        res.status(400).json({ meesage: '알 수 없는 에러가 발생했습니다.' });
+        console.log('[error]-getRoomList: ', error);
+        res.status(400).json({
+            meesage: '알 수 없는 에러가 발생했습니다.',
+            error,
+        });
     }
 };
 
 const getRoomList = async (offset, roomMode, startMember, isWaiting) => {
-    console.log(typeof(roomMode), typeof(startMember), typeof(isWaiting))
-    
-    let room_mode = '("easy","hard")'; 
-    let room_start_member_cnt = '(4, 5, 6)'; 
-    let room_status = '("waiting","playing")'; 
+    console.log(typeof roomMode, typeof startMember, typeof isWaiting);
+
+    let room_mode = '("easy","hard")';
+    let room_start_member_cnt = '(4, 5, 6)';
+    let room_status = '("waiting","playing")';
     if (roomMode) {
-        if(typeof(roomMode)=='object')
-            room_mode=`("`+roomMode.join(`","`)+`")`; 
-        else
-            room_mode = `("${roomMode}")`; 
-    } 
-    if (startMember) {
-        if(typeof(startMember)=='object')
-            room_start_member_cnt = '('+startMember.join(',')+')'
-        else
-            room_start_member_cnt = `(${startMember})`; 
+        if (typeof roomMode == 'object')
+            room_mode = `("` + roomMode.join(`","`) + `")`;
+        else room_mode = `("${roomMode}")`;
     }
-    if (isWaiting=="true"){
+    if (startMember) {
+        if (typeof startMember == 'object')
+            room_start_member_cnt = '(' + startMember.join(',') + ')';
+        else room_start_member_cnt = `(${startMember})`;
+    }
+    if (isWaiting == 'true') {
         room_status = '("waiting")';
     }
 

@@ -62,7 +62,10 @@ module.exports = async (req, res, next) => {
 
         res.status(201).json({});
     } catch (error) {
-        console.log(error);
-        res.status(400).json({ meesage: '알 수 없는 에러가 발생했습니다.' });
+        console.log('[error]-writeHumanKeyword: ', error);
+        res.status(400).json({
+            meesage: '알 수 없는 에러가 발생했습니다.',
+            error,
+        });
     }
 };

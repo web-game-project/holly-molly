@@ -36,7 +36,7 @@ module.exports = (server, app) => {
                     );
                 }
             } catch (error) {
-                console.log("*", error);
+                console.log("[error]-socket-socketUse: ",error);
                 return next(new Error('unauthorized event'));
             }
            
@@ -80,13 +80,13 @@ const saveSocketId = async (socket) => {
         }
 
     } catch (error) {
-        console.log("*authError: ",error);
+        console.log("[error]-socket-saveSocketId: ",error);
         socket.disconnect(true);
     }
 };
 
 const errorEvent = (socket, err) => {
-    console.log("*errorEvent: ",err);
+    console.log("[error]-socket-errorEvent: ",err);
     const isNotAuth =
         err &&
         (err.message === 'unauthorized event' || err.message === 'not user');

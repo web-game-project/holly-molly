@@ -50,8 +50,11 @@ module.exports = async (req, res, next) => {
         io.to(gameMemberList[0].get('wrm_wrm_idx_WaitingRoomMember').get('room_room_idx')).emit("start set", setInfo);
         res.status(201).json({});
     } catch (error) {
-        console.log(error);
-        res.status(400).json({ meesage: '알 수 없는 에러가 발생했습니다.' });
+        console.log('[error]-startSet: ', error);
+        res.status(400).json({
+            meesage: '알 수 없는 에러가 발생했습니다.',
+            error,
+        });
     }
 };
 

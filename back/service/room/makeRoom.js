@@ -38,7 +38,7 @@ module.exports = async (req, res, next) => {
 
         // socket : get socket
         if (!io || !socket) {
-            //console.log("*****", io, socket.id);
+            console.log('[error]-getRoomList: 소켓 커넥션 에러');
             res.status(400).json({
                 message: 'socket connection을 다시 해주세요.',
             });
@@ -65,8 +65,11 @@ module.exports = async (req, res, next) => {
             room_code: room.room_code,
         });
     } catch (error) {
-        console.log("[makeRoom]",error);
-        res.status(400).json({ message: '알 수 없는 오류가 발생했습니다.' });
+        console.log('[error]-makeRoom: ', error);
+        res.status(400).json({
+            meesage: '알 수 없는 에러가 발생했습니다.',
+            error,
+        });
     }
 };
 
