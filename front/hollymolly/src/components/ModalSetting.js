@@ -17,7 +17,7 @@ const socket = io('http://3.17.55.178:3002/', {
 
 export default function ModalSetting({ title, mode, member, room_private }) {
     // 인원수 0 제목 0 난이도
-    console.log(title, mode, member, room_private);
+    // console.log(title, mode, member, room_private);
     // 방 설정 수정
     const [roomdata, setRoomdata] = useState();
     const customStyles = {
@@ -203,7 +203,6 @@ export default function ModalSetting({ title, mode, member, room_private }) {
             {/* <Button onClick={openModal}>방 만들기</Button> */}
             <SettingIcon
                 onClick={() => {
-                    console.log('RED');
                     openModal();
                 }}
             />
