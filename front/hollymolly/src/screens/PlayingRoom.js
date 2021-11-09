@@ -5,6 +5,7 @@ import MissionWord from '../components/MissionWord';
 import night from '../assets/night.svg';
 import day from '../assets/day.svg';
 import Chatting from '../components/Chatting'
+import GameUserCard from '../components/GameUserCard'
 
 const socket = io('http://3.17.55.178:3002/', {
     // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
@@ -23,15 +24,17 @@ const PlayingRoom = (props) => {
         <React.Fragment>
             <Container>
                 <UserDiv>
-                    {/* 제시어 */}
-                    <MissionWord text={'크리스마스'}></MissionWord>
+                    {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
+                    <MissionWord text={'크리스마스'} role={'ghost'}></MissionWord> 
                     {/* 유저 컴포넌트 */}
-                    <EachUserDiv></EachUserDiv>
-                    <EachUserDiv></EachUserDiv>
-                    <EachUserDiv></EachUserDiv>
-                    <EachUserDiv></EachUserDiv>
-                    <EachUserDiv></EachUserDiv>
-                    <EachUserDiv></EachUserDiv>
+                    <GameUserCard color="red" name="인계동 껍데기" role="ghost" order="1"></GameUserCard>
+                    <GameUserCard color="orange" name="돈암동 마라탕" role="ghost" order="2"></GameUserCard>
+                    <GameUserCard color="yellow" name="용두동 쭈꾸미" role="ghost" order="3"></GameUserCard>
+                    <GameUserCard color="blue" name="왕십리 소곱창" role="ghost" order="4"></GameUserCard>
+                    <GameUserCard color="pink" name="매탄동 닭갈비" role="ghost" order="5"></GameUserCard>
+                    {/* <GameUserCard color="purple" name="수유동 케이크" role="ghost" order="6"></GameUserCard> */}
+
+                    <GameUserCard color="gray"></GameUserCard>
                 
                 </UserDiv>
                 <BackGroundDiv><Chatting/></BackGroundDiv>
@@ -53,7 +56,11 @@ const UserDiv = styled.div`
     text-align: center;
     width: 160px;
     height: 620px;
-    background-color: #ffe5e5; 
+    border-color: transparent; 
+    background-color: transparent; 
+    position: absolute;
+    top: 0;
+    left: 0;
     justify-content: center;
     align-items: center;
 `;
