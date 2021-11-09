@@ -6,8 +6,8 @@ import ChatContext from '../components/ChatContext';
 const socket = io('http://3.17.55.178:3002/', {
     // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
-        // 6 token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NiwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.ZnrUNSkD92PD-UV2z2DV4w5lbC2bXIn8GYu05sMb2FQ',
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NiwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.ZnrUNSkD92PD-UV2z2DV4w5lbC2bXIn8GYu05sMb2FQ',
+        // 8 token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
     },
 });
 
@@ -75,7 +75,6 @@ const Chatting = (props) => {
     // 전송 버튼 클릭 시, 입력값을 서버로 보내는 함수
     const handleSubmit = () => {
         if (inputMessage.length > 0) {
-            alert(inputMessage);
             let room_idx = 53;
             let user_idx = 6;
             let user_name = "test";
@@ -110,39 +109,30 @@ const Chatting = (props) => {
 
     }, []);
 
-    // 서버에서 갱신된 내용(recentChat)을 받았을 때 로컬 채팅창에 추가하는 함수
-    useEffect(() => {
-        recentChat.length > 0 && setChatMonitor([...chatMonitor, {recentChat, recentChatUserName}]);  
+    // 스크롤을 하단으로 이동시키는 함수
+    const scrollToBottom = () => {
+        document.getElementById('chatMonitor').scrollBy({ top: 100 });
+    };
+
+    // 갱신 후, 스크롤을 하단으로 이동시키기 위해, async, await 구문을 활용해서 아래 함수가 채팅방이 갱신되고 나서 실행되도록 설정
+    useEffect( () => {
+        const scrollUpdate = async () => {
+        // 새로운 채팅 내용 갱신 
+        (await recentChat.length) > 0 && setChatMonitor([...chatMonitor, {recentChat, recentChatUserName}]); 
         
+        // await 밑에 스크롤 함수 위치
+        scrollToBottom();
         setRecentChat('');
-        
-        // 채팅값 초기화 : 이렇게 설정하지 않으면 같은 채팅이 반복됐을 때 이 함수가 반응하지 않는다.
+        };
+
+        scrollUpdate();
     }, [recentChat]);
-
-//   // 스크롤을 하단으로 이동시키는 함수
-//   const scrollToBottom = () => {
-//     document.getElementById('chatMonitor').scrollBy({ top: 100 });
-//   };
-
-//   // 이때 async, await 구문을 활용해서 아래 함수가 채팅방이 갱신되고 나서 실행되도록 설정하는 것이다
-//   useEffect( () => {
-//     const scrollUpdate = async () => {
-//       (await recentChat.content?.length) > 0 &&
-//         setChatMonitor([...chatMonitor, recentChat]);
-      
-//       // await 밑에 스크롤 함수가 위치되어야 한다
-//       scrollToBottom();
-//       setRecentChat('');
-//     };
-
-//     scrollUpdate();
-//   }, [recentChat]);
   
 
   return (
     <React.Fragment>
             <Container>
-                <ChatContainer>
+                <ChatContainer id="chatMonitor">
                     {/* 18개부터 스크롤 생김 */}
                     {chatMonitor.map((values, index) => {          
                         return (<ChatContext key={index} name={values.recentChatUserName} color={userColor} text={values.recentChat}></ChatContext>);
@@ -181,7 +171,9 @@ const ChatContainer = styled.div`
     margin-bottom: 20px;
     background-color: #b0b0b0;
     border-radius: 0.5rem;
-    overflow-y: scroll;
+    // overflow-y: scroll;
+    // overflow-x:hidden;
+    overflow: auto;
     &::-webkit-scrollbar {
         /* 세로 스크롤 넓이 */
         width: 10px;

@@ -28,7 +28,7 @@ const ChatContext = (props) => {
     font-weight: bold;
     display: flex
     margin-bottom: 5px;
-    white-space: pre;
+    white-space: normal;
    
   `;
 
