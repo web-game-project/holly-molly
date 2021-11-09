@@ -23,7 +23,7 @@ module.exports = async (req, res, next) => {
         // socket : get socket
         const { io, socket } = getIOSocket(req,res);
         if(!io || !socket){
-            console.log("*****", io, socket);
+            //console.log("*****", io, socket);
             res.status(400).json({
                 message: 'socket connection을 다시 해주세요.',
             });
@@ -38,7 +38,7 @@ module.exports = async (req, res, next) => {
             room_list: rooms.roomList,
         });
     } catch (error) {
-        console.log(error);
+        console.log("[getRoomList]",error);
         res.status(400).json({ meesage: '알 수 없는 에러가 발생했습니다.' });
     }
 };
