@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import ChatContext from '../components/ChatContext';
 import RefreshVerification from '../server/RefreshVerification';
 
-RefreshVerification.verification();
+//RefreshVerification.verification();
 
 let data = localStorage.getItem("token");
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
