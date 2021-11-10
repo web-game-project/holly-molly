@@ -42,6 +42,7 @@ function NickNameDialog({ title, children, confirmText, cancelText }) {
           access_token: response.data.access_token,
           refresh_token: response.data.refresh_token,
           user_idx: response.data.user_idx,
+          user_name: nickName,
         }));
 
       })
