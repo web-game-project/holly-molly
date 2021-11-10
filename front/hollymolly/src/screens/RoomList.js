@@ -6,6 +6,8 @@ import axios from 'axios';
 import styled from 'styled-components';
 import Filter from '../components/Filter';
 import ModalBase from '../components/ModalBase';
+import {useHistory} from "react-router";
+
 // import Child from '../components/Child';
 
 // 이미지
@@ -15,25 +17,21 @@ import rightArrowBtn from '../assets/rightArrowBtn.png';
 // 소켓
 import { io } from 'socket.io-client';
 
-let total_room_cnt = 0;
+let total_room_cnt = 0; // 룸 리스트 총 방의 갯수 
 
-// 연결 실패 시,
 const socket = io('http://3.17.55.178:3002/', {
-    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
-    auth: {
-        // 1번 토큰
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
-    },
-});
+            // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
+            auth: {
+                // 1번 토큰
+                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
+            },
+ });
 
 const RoomList = () => {
+    const history = useHistory();
+
     const [emptyRoomsLength, setEmptyRoomsLength] = useState('');
     const [waitingRoomMemberList, setWaitingRoomMemberList] = useState();
-
-    // 랜덤 입장을 위한 mode 리스트 
-    const [randomEntryModeList, setRandomEntryModeList] = useState([]);
-    // 랜덤 입장을 위한 people 리스트 
-    const [randomEntryPeopleList, setRandomEntryPeopleList] = useState([]);
 
     // 방 전체 리스트
     const [rooms, setRooms] = useState();
@@ -47,6 +45,10 @@ const RoomList = () => {
     const resultArray = result.sort();
 
     useEffect(() => {
+        socket.on("connect", () => {
+            console.log("room list connection server");
+        });
+
         socket.on('error', () => {
             setTimeout(() => {
                 socket.connect();
@@ -57,12 +59,10 @@ const RoomList = () => {
         // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
         socket.on('disconnect', (reason) => {
             if (reason === 'io server disconnect') {
-                // the disconnection was initiated by the server, you need to reconnect manually
                 socket.connect();
             }
-            // else the socket will automatically try to reconnect
         });
-        //}
+       
     });
 
     // 페이지 슬라이드
@@ -129,12 +129,10 @@ const RoomList = () => {
         if (resultArray.includes(1)) {
             // 난이도 easy
             exitedUrl += '&room_mode=easy';
-            setRandomEntryModeList([...randomEntryModeList, "easy"]);
         }
         if (resultArray.includes(2)) {
             // 난이도 hard
             exitedUrl += '&room_mode=hard';
-            setRandomEntryModeList([...randomEntryModeList, "hard"]);
         }
         if (resultArray.includes(3)) {
             // 인원 4명
@@ -153,32 +151,67 @@ const RoomList = () => {
 
     // 빈방 채우기 
     function emptyRoomList() {
-      
       if (emptyRoomsLength !== 6) {
         let forArray = [];
         for (let i = 0; i < emptyRoomsLength; i++) {
-          forArray.push(
-            <Room
-              empty = "true"
-            />
-          );
+          forArray.push(<Room empty = "true"/>);
         }
         return forArray;
       } else {
         return <EmptyText>😲 해당 필터에 맞는 방이 없습니다.😲</EmptyText>;
       }
     }
+    
+    // 랜덤 입장을 위한 필터 리스트 - 모드 
+    function modeFilterList() {
+         let modeFilterArray = [];
+         let easy = resultArray.includes(1);
+         let hard = resultArray.includes(2);
 
+         if(easy){
+            modeFilterArray.push("easy");
+         }
 
-    console.log("random : " + randomEntryModeList);
-    const randomEntry = () => async () => {
+         if(hard){
+            modeFilterArray.push("hard");
+         }
 
+         return modeFilterArray;
+    }
+
+    // 랜덤 입장을 위한 필터 리스트 - 인원 
+    function personFilterList() {
+         let personFilterArray = [];
+         let fourPeople = resultArray.includes(3);
+         let fivePeople = resultArray.includes(4);
+         let sixPeople = resultArray.includes(5);
+
+         if(fourPeople){
+            personFilterArray.push("4");
+         }
+
+         if(fivePeople){
+            personFilterArray.push("5");
+         }
+
+         if(sixPeople){
+            personFilterArray.push("6");
+         }
+
+         return personFilterArray;
+    }
+
+    const randomEntry = async () => {
+         let modeFilterArray = modeFilterList();
+         let personFilterArray = personFilterList();
+
+         console.log(modeFilterArray);
+         console.log(personFilterArray)
          const reqURL = 'http://3.17.55.178:3002/room/random'; //parameter : 방 타입
          const reqHeaders = {
              headers: {
-                 // 1번 토큰
                  authorization:
-                     'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NiwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.ZnrUNSkD92PD-UV2z2DV4w5lbC2bXIn8GYu05sMb2FQ',
+                     'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
              },
          };
 
@@ -186,18 +219,21 @@ const RoomList = () => {
              .post(
                  reqURL,
                  {
-                    //  room_mode: ,
-                    //  room-start-member-cnt: 
+                      room_mode: modeFilterArray,
+                      room_start_member_cnt: personFilterArray 
                  },
                  reqHeaders
              )
              .then(function (response) {
-                 //response로 jwt token 반환
-                 alert('rest api success!');
-                 setWaitingRoomMemberList(response.data);
+                console.log(response.data);
+                // 대기실로 이동 
+                history.push({
+                    pathname: "/waitingroom/" + response.data.room_idx,
+                    state: {data: response.data}
+                })
              })
              .catch(function (error) {
-                 console.log(error.response);
+                console.log(error.response);
              });
      };
 

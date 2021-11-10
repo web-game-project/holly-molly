@@ -113,7 +113,7 @@ const Room = (props) => {
       {props.empty !== "true" ? (
         <RoomGridDiv
           disabled={props.disabled}
-          onClick={props.disabled === "true" ? null : onClick}
+          onClick={props.disabled === "false" ? onClick : undefined}
           boxShadow
           cursor={props.cursor}
           padding="10px"
