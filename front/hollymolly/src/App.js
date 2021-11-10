@@ -30,8 +30,8 @@ export default function App() {
                         <Dialog title="닉네임 입력" confirmText="접속" />
                     </Route>
                     <Switch>
-                        <Route path="/playingroom/:name" exact component={PlayingRoom} />
-                        <Route path="/playingroom" exact component={PlayingRoom} />
+                        <Route path="/playingroom/:name" component={PlayingRoom} />
+                        <Route path="/playingroom" component={PlayingRoom} />
                     </Switch>                    
                     <Route path="/roomlist" component={RoomList} />
                     <Route path="/chatting" component={Chatting} />
