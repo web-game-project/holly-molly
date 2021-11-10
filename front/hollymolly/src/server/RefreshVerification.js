@@ -11,13 +11,17 @@ const RefreshVerification = {
   //API는 방 리스트 조회 사용 -> 각 각 request body나 parameter에 필요한 데이터들이 앞부분에는 없어서 가장 처음 사용하는 api로 결정
 
   async verification() {
-    let data = localStorage.getItem("token");
+    /* let data = localStorage.getItem("token");
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
     let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
     let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-    let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
+    let save_user_name = JSON.parse(data) && JSON.parse(data).user_name; */
 
-    const BaseURL = "http://3.17.55.178:3002/";
+    const BaseURL = 'http://3.17.55.178:3002/';
+    const save_token = JSON.parse(window.localStorage.getItem("token")).access_token;                
+    const save_refreshToken = JSON.parse(window.localStorage.getItem("token")).refresh_token;
+    const save_userIdx = JSON.parse(window.localStorage.getItem("token")).user_idx;
+    const save_userName = JSON.parse(window.localStorage.getItem("token")).user_name;
 
     const socket = io(BaseURL, {
       auth: {
@@ -56,7 +60,7 @@ const RefreshVerification = {
 
           axios
             .post(restURL_refresh, {
-              refresh_token: save_refresh_token,
+              refresh_token: save_refreshToken,
             })
             .then(function (response) {
               //response로 access token 반환
@@ -67,9 +71,9 @@ const RefreshVerification = {
                 "token",
                 JSON.stringify({
                   access_token: response.data.access_token,
-                  refresh_token: save_refresh_token,
-                  user_idx: save_user_idx,
-                  user_name : save_user_name,
+                  refresh_token: save_refreshToken,
+                  user_idx: save_userIdx,
+                  user_name : save_userName,
                 })
               );
             })
