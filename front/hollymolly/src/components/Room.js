@@ -8,18 +8,30 @@ import styled from "styled-components";
 import {useHistory} from "react-router";
 // 소켓
 import { io } from "socket.io-client";
-/* 소켓 연결은 컴포넌트와 동등한 위치에서 선언되어야 한다.
-왜냐하면 지속적으로 연결이 유지되어야 하기 때문이다*/
+
+import RefreshVerification from '../server/RefreshVerification';
+RefreshVerification.verification();
+
+// local storage에 있는지 확인 
+let data = localStorage.getItem("token");
+let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
+
+
+
 const socket = io("http://3.17.55.178:3002/", {
   // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
   auth: {
     // 1번 토큰
-    token:
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY",
+    token: save_token
+      //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY",
   },
 });
 
 const Room = (props) => {
+  console.log("save_token_room: " + save_token);
   const history = useHistory();
   const [waitingRoomMemberList, setWaitingRoomMemberList] = useState();
   const [clicked, setClicked] = useState(false);
@@ -30,8 +42,8 @@ const Room = (props) => {
       // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
       auth: {
         // 1번 토큰
-        token:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY",
+        token: save_token
+          //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY",
       },
     });
 
@@ -62,8 +74,8 @@ const Room = (props) => {
     const reqURL = "http://3.17.55.178:3002/room/idx"; //parameter : 방 타입
     const reqHeaders = {
       headers: {
-        authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY",
+        authorization: save_token
+          //"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY",
       },
     };
 

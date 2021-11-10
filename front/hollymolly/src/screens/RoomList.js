@@ -9,6 +9,7 @@ import ModalBase from '../components/ModalBase';
 import {useHistory} from "react-router";
 
 // import Child from '../components/Child';
+import RefreshVerification from '../server/RefreshVerification';
 
 // 이미지
 import leftArrowBtn from '../assets/leftArrowBtn.png';
@@ -19,11 +20,22 @@ import { io } from 'socket.io-client';
 
 let total_room_cnt = 0; // 룸 리스트 총 방의 갯수 
 
+RefreshVerification.verification();
+
+// local storage에 있는지 확인 
+let data = localStorage.getItem("token");
+let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
+
+console.log("save_token: " + save_token);
+
 const socket = io('http://3.17.55.178:3002/', {
             // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
             auth: {
                 // 1번 토큰
-                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
+                token: save_token,
             },
  });
 
@@ -99,8 +111,7 @@ const RoomList = () => {
             const reqHeaders = {
                 headers: {
                     //1번 토큰
-                    authorization:
-                        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
+                    authorization: 'Bearer ' + save_token,
                 },
             };
 
@@ -211,7 +222,7 @@ const RoomList = () => {
          const reqHeaders = {
              headers: {
                  authorization:
-                     'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
+                    'Bearer ' + save_token,
              },
          };
 

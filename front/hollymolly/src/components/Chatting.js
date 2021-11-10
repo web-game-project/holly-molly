@@ -2,12 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import styled from 'styled-components';
 import ChatContext from '../components/ChatContext';
+import RefreshVerification from '../server/RefreshVerification';
+
+RefreshVerification.verification();
+
+let data = localStorage.getItem("token");
+let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const socket = io('http://3.17.55.178:3002/', {
     // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NiwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.ZnrUNSkD92PD-UV2z2DV4w5lbC2bXIn8GYu05sMb2FQ',
+        //token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NiwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.ZnrUNSkD92PD-UV2z2DV4w5lbC2bXIn8GYu05sMb2FQ',
         // 8 token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
+        token: save_token,
     },
 });
 
@@ -17,6 +27,11 @@ socket.on('connect', () => {
 
 const Chatting = (props) => {
     // 입력된 유저 색깔 
+    // console.log("room_idx : " + parseInt(props.room_idx));
+    // console.log("save_token : " + save_token);
+    // console.log("save_user_idx : " +save_user_idx);
+    // console.log("save_user_name : " +save_user_name);
+
     const [userColor, setUserColor] = useState('white');
     
     // 입력된 채팅 메시지 상태 값
@@ -51,9 +66,9 @@ const Chatting = (props) => {
     const handleEnter = (e) => {
         if (e.key === 'Enter') {
             if (inputMessage.length > 0) {
-                let room_idx = 53;
-                let user_idx = 8;
-                let user_name = "test";
+                let room_idx = parseInt(props.room_idx);
+                let user_idx = parseInt(save_user_idx);
+                let user_name = save_user_name;
                 let msg = inputMessage;
 
                 let getMsgInfo = {
@@ -75,9 +90,9 @@ const Chatting = (props) => {
     // 전송 버튼 클릭 시, 입력값을 서버로 보내는 함수
     const handleSubmit = () => {
         if (inputMessage.length > 0) {
-            let room_idx = 53;
-            let user_idx = 6;
-            let user_name = "test";
+            let room_idx = parseInt(props.room_idx);
+            let user_idx = parseInt(save_user_idx);
+            let user_name = save_user_name;
             let msg = inputMessage;
 
             let sendMsgInfo = {
