@@ -9,13 +9,23 @@ import UserCard from '../components/UserCard';
 import UserTable from '../components/UserTable.js';
 import ModalSetting from '../components/ModalSetting.js';
 
+import Chatting from '../components/Chatting.js';
+
 //function component 사용시:
 
 import { useLocation } from "react-router";
+import RefreshVerification from '../server/RefreshVerification.js';
 
 const BaseURL = 'http://3.17.55.178:3002';
 
-console.log('토큰 값이지 : ' + JSON.parse(window.localStorage.getItem("token")).access_token);
+RefreshVerification.verification();
+
+// local storage에 있는지 확인 
+let data = localStorage.getItem("token");
+let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 //1번 토큰 사용
 const socket = io(BaseURL, {
@@ -23,7 +33,7 @@ const socket = io(BaseURL, {
         //token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
         //8번
         //token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw'
-        token: JSON.parse(window.localStorage.getItem("token")).access_token,       
+        token: save_token,      
     },
 });
 
@@ -120,7 +130,7 @@ export default function WaitingRoom({ match }) {
                 authorization:
                 //    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
                 //'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
-                'Bearer ' + JSON.parse(window.localStorage.getItem("token")).access_token,
+                'Bearer ' + save_token,
             },
         };
 
@@ -203,7 +213,7 @@ export default function WaitingRoom({ match }) {
                 authorization:
                 //    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
                 //'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
-                'Bearer ' + JSON.parse(window.localStorage.getItem("token")).access_token,
+                'Bearer ' + save_token,
             },
         };
 
@@ -236,7 +246,7 @@ export default function WaitingRoom({ match }) {
                 authorization:
                 //    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
                 //   'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
-                'Bearer ' + JSON.parse(window.localStorage.getItem("token")).access_token,
+                'Bearer ' + save_token,
             },
         };
 
@@ -305,7 +315,7 @@ export default function WaitingRoom({ match }) {
                 authorization:
                 //    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
                 //   'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
-                 'Bearer ' + JSON.parse(window.localStorage.getItem("token")).access_token,
+                 'Bearer ' + save_token,
             },
         };
         axios
@@ -489,9 +499,10 @@ export default function WaitingRoom({ match }) {
                 </UserDiv>
             </SelectDiv>
             <RightDiv>
+                {/* <Chatting room_idx={location.state.data.room_idx}>
+                </Chatting> */}
                 <ChatDiv>
-                    ChatDiv
-                    <br />
+                    <Chatting room_idx={location.state.data.room_idx}></Chatting>
                 </ChatDiv>
                 <StartDiv>
                     {isLeader === 0 ? ( //방장 아님
@@ -521,6 +532,7 @@ const Container = styled.div`
     background-color: ${style.white};
     display: flex;
     flex-direction: row;
+    overflow: hidden;
 `;
 
 const SelectDiv = styled.div`

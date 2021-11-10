@@ -8,11 +8,20 @@ import { io } from 'socket.io-client';
 
 import {useHistory} from "react-router";
 
+// local storage에 있는지 확인 
+let data = localStorage.getItem("token");
+let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
+
 const socket = io('http://3.17.55.178:3002/', {
     // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
         // 1번 토큰
-        token: JSON.parse(window.localStorage.getItem("token")).access_token,
+        //token: JSON.parse(typeof localStorage['token'] == "undefined" ? null : localStorage['token']).user_idx,
+        token: save_token
+        
     },
 });
 
@@ -45,7 +54,7 @@ const RoomSearchBar = (props) => {
         const reqHeaders = {
             headers: {
                 authorization:
-                'Bearer ' + JSON.parse(window.localStorage.getItem("token")).access_token,
+                'Bearer ' + save_token
             },
         };
 
@@ -58,7 +67,6 @@ const RoomSearchBar = (props) => {
                 reqHeaders
             )
             .then(function (response) {
-                alert('rest api success!');
                 history.push({
                     pathname: "/waitingroom/" + response.data.room_idx,
                     state: {data: response.data}
