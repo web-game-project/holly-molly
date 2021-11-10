@@ -13,10 +13,7 @@ let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const socket = io('http://3.17.55.178:3002/', {
-    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
-        //token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NiwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.ZnrUNSkD92PD-UV2z2DV4w5lbC2bXIn8GYu05sMb2FQ',
-        // 8 token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
         token: save_token,
     },
 });
@@ -146,7 +143,7 @@ const Chatting = (props) => {
 
   return (
     <React.Fragment>
-            <Container>
+            <Container style={{height : props.height}}>
                 <ChatContainer id="chatMonitor">
                     {/* 18개부터 스크롤 생김 */}
                     {chatMonitor.map((values, index) => {          
