@@ -17,7 +17,7 @@ const socket = io('http://3.17.55.178:3002/', {
 
 export default function ModalSetting({ title, mode, member, room_private }) {
     // 인원수 0 제목 0 난이도
-    // console.log(title, mode, member, room_private);
+    console.log(title, mode, member, room_private);
     // 방 설정 수정
     const [roomdata, setRoomdata] = useState();
     const customStyles = {
@@ -41,8 +41,7 @@ export default function ModalSetting({ title, mode, member, room_private }) {
     };
 
     useEffect(() => {
-        setPeople((people) => (people = member)); // m 명으로 바꿈
-
+        setPeople(m);
         socket.on('error', () => {
             setTimeout(() => {
                 socket.connect();
@@ -84,9 +83,21 @@ export default function ModalSetting({ title, mode, member, room_private }) {
     };
 
     // 인원 useState
-    member *= 1;
-    let m = member;
-    const [people, setPeople] = useState(m); // 4명이 디폴트
+
+    let m;
+    if (member == 4) {
+        m = 4;
+    } else if (member == 5) {
+        m = 5;
+    } else if (member == 6) {
+        m = 6;
+    }
+    const [people, setPeople] = React.useState(m);
+    // setPeople(m);
+    console.log(people);
+    console.log('people');
+
+    console.log(m);
 
     const click4 = () => {
         setPeople((people) => (people = 4));

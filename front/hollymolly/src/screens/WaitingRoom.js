@@ -161,7 +161,7 @@ export default function WaitingRoom({ match }) {
     // written by sunga at 10.31
     const getRoomInfo = async () => {
         // 대기실 정보 조회 api
-        const restURL = 'http://3.17.55.178:3002/room/info/' + roomEnterInfo.room_idx;
+        const restURL = 'http://3.17.55.178:3002/room/info/' + location.state.data.room_idx;
         const reqHeaders = {
             headers: {
                 //1번 토큰 이용
@@ -186,7 +186,7 @@ export default function WaitingRoom({ match }) {
         //alert('값 : ' + user);
 
         setRoomEnterInfo(location.state.data);
-        getRoomInfo(); //방 정보 조회 api + 모달창에 뿌리기용
+        setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }, []);
 
     return (
