@@ -18,7 +18,7 @@ import RefreshVerification from '../server/RefreshVerification.js';
 
 const BaseURL = 'http://3.17.55.178:3002';
 
-RefreshVerification.verification();
+//RefreshVerification.verification();
 
 // local storage에 있는지 확인 
 let data = localStorage.getItem("token");

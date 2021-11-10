@@ -10,7 +10,7 @@ import {useHistory} from "react-router";
 import { io } from "socket.io-client";
 
 import RefreshVerification from '../server/RefreshVerification';
-RefreshVerification.verification();
+//RefreshVerification.verification();
 
 // local storage에 있는지 확인 
 let data = localStorage.getItem("token");
@@ -74,7 +74,7 @@ const Room = (props) => {
     const reqURL = "http://3.17.55.178:3002/room/idx"; //parameter : 방 타입
     const reqHeaders = {
       headers: {
-        authorization: save_token
+        authorization: 'Bearer ' + save_token,
           //"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY",
       },
     };

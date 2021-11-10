@@ -18,10 +18,7 @@ let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 const socket = io('http://3.17.55.178:3002/', {
     // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
-        // 1번 토큰
-        //token: JSON.parse(typeof localStorage['token'] == "undefined" ? null : localStorage['token']).user_idx,
         token: save_token
-        
     },
 });
 
@@ -36,25 +33,11 @@ const RoomSearchBar = (props) => {
     const inputRef = useRef();
     const [clicked, setClicked] = useState(false);
 
-
-    /* useEffect(() => {
-        const socket = io('http://3.17.55.178:3002/', {
-            auth: {
-                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
-            },
-        });
-
-        socket.on('connect', () => {
-            console.log('Room SearchBar connection server');
-        });
-    }) */
-
     const enterRoom = async () => {
         const reqURL = 'http://3.17.55.178:3002/room/code'; //parameter : 방 타입
         const reqHeaders = {
             headers: {
-                authorization:
-                'Bearer ' + save_token
+                authorization: 'Bearer ' + save_token,
             },
         };
 

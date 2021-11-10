@@ -20,7 +20,7 @@ import { io } from 'socket.io-client';
 
 let total_room_cnt = 0; // 룸 리스트 총 방의 갯수 
 
-RefreshVerification.verification();
+//RefreshVerification.verification();
 
 // local storage에 있는지 확인 
 let data = localStorage.getItem("token");
