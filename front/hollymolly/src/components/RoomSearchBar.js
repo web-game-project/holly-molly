@@ -8,6 +8,17 @@ import { io } from 'socket.io-client';
 
 import {useHistory} from "react-router";
 
+const socket = io('http://3.17.55.178:3002/', {
+    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
+    auth: {
+        // 1번 토큰
+        token: JSON.parse(window.localStorage.getItem("token")).access_token,
+    },
+});
+
+socket.on('connect', () => {
+    console.log('Room SearchBar connection server');
+});
 
 const RoomSearchBar = (props) => {
 
@@ -17,7 +28,7 @@ const RoomSearchBar = (props) => {
     const [clicked, setClicked] = useState(false);
 
 
-    useEffect(() => {
+    /* useEffect(() => {
         const socket = io('http://3.17.55.178:3002/', {
             auth: {
                 token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
@@ -27,14 +38,14 @@ const RoomSearchBar = (props) => {
         socket.on('connect', () => {
             console.log('Room SearchBar connection server');
         });
-    })
+    }) */
 
     const enterRoom = async () => {
         const reqURL = 'http://3.17.55.178:3002/room/code'; //parameter : 방 타입
         const reqHeaders = {
             headers: {
                 authorization:
-                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NiwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.ZnrUNSkD92PD-UV2z2DV4w5lbC2bXIn8GYu05sMb2FQ',
+                'Bearer ' + JSON.parse(window.localStorage.getItem("token")).access_token,
             },
         };
 
