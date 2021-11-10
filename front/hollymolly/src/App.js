@@ -10,6 +10,9 @@ import PlayingRoom from './screens/PlayingRoom.js';
 import InGame from './components/InGameComponent';
 import GameRole from './components/GameRoleComponent';
 
+const htmlTitle = document.querySelector("title");
+htmlTitle.innerHTML = '홀리몰리';
+
 export default function App() {
     return (
         <div>
@@ -23,14 +26,14 @@ export default function App() {
                     <Switch>
                         <Route path="/playingroom/:name" component={PlayingRoom} />
                         <Route path="/playingroom" component={PlayingRoom} />
-                    </Switch>                    
+                    </Switch>
                     <Route path="/roomlist" component={RoomList} />
                     <Route path="/ingame" component={InGame} />
                     <Route path="/role" component={GameRole} />
                     <Switch>
                         <Route path="/waitingroom/:name" component={WaitingRoom} />
                         <Route path="/waitingroom" component={WaitingRoom} />
-                    </Switch>     
+                    </Switch>
 
                 </BrowserRouter>
             </div>
