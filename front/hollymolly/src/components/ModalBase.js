@@ -9,10 +9,16 @@ import { useHistory } from 'react-router';
 import { io } from 'socket.io-client';
 import axios from 'axios';
 
+// local storage에 있는지 확인 
+let data = localStorage.getItem("token");
+let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
+
 const socket = io('http://3.17.55.178:3002/', {
     auth: {
-        // 1번 토큰
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
+        token: save_token,
     },
 });
 
@@ -147,9 +153,8 @@ export default function ModalBase() {
         const restURL = 'http://3.17.55.178:3002/room';
         const reqHeaders = {
             headers: {
-                // 유효기간 없는 1번 토큰
                 authorization:
-                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
+                    'Bearer ' + save_token,
             },
         };
         axios
@@ -181,7 +186,7 @@ export default function ModalBase() {
         const reqHeaders = {
             headers: {
                 authorization:
-                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
+                'Bearer ' + save_token,
             },
         };
 
