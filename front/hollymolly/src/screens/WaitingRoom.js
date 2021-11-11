@@ -46,8 +46,16 @@ socket.on("connect", () => {
 });
 
 console.log('렌더링완료');
+
+//게임 시작 인원 세는 변수 
+let ready_cnt = 0;
+
 //준비 변경 소켓
 socket.on("change member ready", (data) => {
+    if(data.user_ready === true)
+        ready_cnt += 1;
+    else
+        ready_cnt -= 1;        
     alert('socket user_idx : ' + data.user_idx + ' user_ready : ' + data.user_ready);
 });
 
@@ -130,10 +138,7 @@ export default function WaitingRoom({ match }) {
 
     //방장 상태 state 이 변수가 소켓에서 누적된 카운트 값과 동일해야함.
     const [changeStart, setChangeStart] = React.useState(0);
-
-    //게임 시작 인원 세는 변수 
-    const ready_cnt = 0;
-
+ 
     useEffect(() => {
         //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 코드
         console.log('change 유저 인덱스 : ' + changeUserIdx);
@@ -151,13 +156,8 @@ export default function WaitingRoom({ match }) {
             }
         })
 
-        console.log('middle socket: ' + JSON.stringify(middleSocketArr));
-        console.log('unique socket: ' + JSON.stringify(uniqueSelectColor));
-
         uniqueSelectColor = selectColorArr.concat(middleSocketArr);
         uniqueSelectColor = uniqueSelectColor.filter((item, pos) => selectColorArr.indexOf(item) == pos);
-
-        console.log('unique socket 후: ' + JSON.stringify(uniqueSelectColor));      
 
         middleSocketArr = [{}];
 
@@ -193,7 +193,6 @@ export default function WaitingRoom({ match }) {
 
         const restURL = BaseURL + '/waiting-room/user-ready	';
 
-        //1번 토큰
         const reqHeaders = {
             headers: {
                 authorization:
@@ -218,6 +217,32 @@ export default function WaitingRoom({ match }) {
             });
 
         setChangeReady(!changeReady);
+    }
+
+    function startClick() {
+        alert('click start btn!');
+
+        const restURL = BaseURL + '/game/start';
+
+        const reqHeaders = {
+            headers: {
+                authorization:
+                    'Bearer ' + save_token,
+            },
+        };
+
+        axios.post(restURL,
+            {
+                room_idx: room_idx
+            },
+            reqHeaders
+        )
+            .then(function (response) { //response로 jwt token 반환
+                alert('success! 게임시작');
+            })
+            .catch(function (error) {
+                alert(error);
+            })
     }
 
     function colorClick(str) {
@@ -287,13 +312,13 @@ export default function WaitingRoom({ match }) {
 
     useEffect(() => {
         setRoomEnterInfo(location.state.data);
-
+        
         //room index 설정
         room_idx = location.state.data.room_idx; //이렇게 받아오면 number타입으로 api, 소켓 에러 X\
 
         //방장 인덱스 받아오기, save_user_idx 이게 내 인덱스 저장된 변수
         //받아와서 리더인지 아닌지 state 설정
-        if (save_user_idx === location.state.data.leader_idx) {
+        if (location.state.data.leader_idx === save_user_idx) {
             setIsLeader(1); //리더다
         }
 
@@ -303,6 +328,12 @@ export default function WaitingRoom({ match }) {
         //선택된 값과 이전색으로 세팅
         setSelectColor(serverColor);
         setPreviousColor(serverColor);
+
+        
+        //지울 예정
+        console.log('방장 준비 상태는? ' + JSON.stringify(location.state.data.waiting_room_member_list[currentCnt].wrm_user_ready));
+        
+
 
         //userlist로 사용자들이 무슨 색을 할당 받았는지 저장하는 배열
         const user_list = location.state.data.waiting_room_member_list;
@@ -325,17 +356,17 @@ export default function WaitingRoom({ match }) {
         }
 
         uniqueSelectColor = selectColorArr.concat(middleSelectArr);
-
         uniqueSelectColor = uniqueSelectColor.filter((item, pos) => selectColorArr.indexOf(item) == pos);
 
         //게임 시작 인원 받아오기
-        setChangeStart(location.state.data.room_start_member_cnt);
+        setChangeStart(location.state.data.room_start_member_cnt-1);
 
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }, []);
 
     return (
         <Container>
+            {console.log('방장 인덱스 맞지? : ' + isLeader)}
             <SelectDiv>
                 selectDiv
                 <br />
@@ -404,9 +435,9 @@ export default function WaitingRoom({ match }) {
             <RightDiv>
                 {/* <Chatting room_idx={location.state.data.room_idx}>
                 </Chatting> */}
-                
+
                 <Chatting room_idx={location.state.data.room_idx} height="560px"></Chatting>
-                
+
                 <StartDiv>
                     {isLeader === 0 ? ( //방장 아님
                         console.log(style.red),
@@ -417,8 +448,8 @@ export default function WaitingRoom({ match }) {
                         (
                             console.log('방장이야'),
                             changeStart === ready_cnt ?
-                                <BtnDiv isStart="no" >Game Start</BtnDiv> //게임 시작 api 요청 onclick 달기
-                                : <BtnDiv>Game Start</BtnDiv>
+                                <BtnDiv isStart="yes" onClick={startClick}>Game Start</BtnDiv> //게임 시작 api 요청 onclick 달기
+                                : <BtnDiv isStart="no">Game Start</BtnDiv>
                         )
 
                     }
@@ -479,6 +510,10 @@ const BtnDiv = styled.div`
         props.color == 'green'
             ? `background-color: #44A024;`
             : ``}
+     ${(props) =>
+        props.isStart == 'yes'
+            ? ``
+            : `opacity: 0.5;`}
 `;
 const TitleDiv = styled.div`
     width: 625px;
