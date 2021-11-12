@@ -222,7 +222,6 @@ export default function WaitingRoom({ match }) {
 
     function colorClick(str) {
         alert('click: ' + str);
-        setChangeColor(!changeColor); //색이 바꼈다는 상태값 변경
         setPreviousColor(str);
 
         /* if (previousColor == 'RED') setRedColor('#FF0000');
@@ -285,6 +284,8 @@ export default function WaitingRoom({ match }) {
             .catch(function (error) {
                 alert('error ' + error.message);
             });
+            
+        setChangeColor(!changeColor); //색이 바꼈다는 상태값 변경
     }
 
     const getRoomInfo = async () => {
