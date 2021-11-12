@@ -27,6 +27,8 @@ let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
+console.log('내 인덱스 : ' + save_user_idx);
+
 // room_idx 변수 
 let room_idx = 0;
 
@@ -52,10 +54,15 @@ let ready_cnt = 0;
 
 //준비 변경 소켓
 socket.on("change member ready", (data) => {
-    if(data.user_ready === true)
+    if (data.user_ready === true) {
         ready_cnt += 1;
-    else
-        ready_cnt -= 1;        
+        console.log('ready 증가, ready 현재값 : ' + ready_cnt);
+    }
+    else {
+        if(ready_cnt != 0)
+            ready_cnt -= 1;
+        console.log('ready 감소, ready 현재값 : ' + ready_cnt);
+    }
     alert('socket user_idx : ' + data.user_idx + ' user_ready : ' + data.user_ready);
 });
 
@@ -138,7 +145,7 @@ export default function WaitingRoom({ match }) {
 
     //방장 상태 state 이 변수가 소켓에서 누적된 카운트 값과 동일해야함.
     const [changeStart, setChangeStart] = React.useState(0);
- 
+
     useEffect(() => {
         //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 코드
         console.log('change 유저 인덱스 : ' + changeUserIdx);
@@ -186,8 +193,9 @@ export default function WaitingRoom({ match }) {
         } */
     }, [changeColor]);
 
-    function readyClick() {
-        alert('레디!!');
+    function readyClick(readyStatus) {
+
+        setChangeReady(readyStatus);
 
         console.log('rest api 호출');
 
@@ -205,18 +213,16 @@ export default function WaitingRoom({ match }) {
                 restURL,
                 {
                     room_idx: room_idx, //룸 인덱스 넘버여야함.
-                    user_ready: changeReady,
+                    user_ready: readyStatus,
                 },
                 reqHeaders
             )
             .then(function (response) {
-                alert('rest Start ' + changeReady);
+                alert('rest Start ' + readyStatus);
             })
             .catch(function (error) {
                 alert('error Start' + error.message);
             });
-
-        setChangeReady(!changeReady);
     }
 
     function startClick() {
@@ -312,7 +318,7 @@ export default function WaitingRoom({ match }) {
 
     useEffect(() => {
         setRoomEnterInfo(location.state.data);
-        
+
         //room index 설정
         room_idx = location.state.data.room_idx; //이렇게 받아오면 number타입으로 api, 소켓 에러 X\
 
@@ -329,11 +335,8 @@ export default function WaitingRoom({ match }) {
         setSelectColor(serverColor);
         setPreviousColor(serverColor);
 
-        
-        //지울 예정
-        console.log('방장 준비 상태는? ' + JSON.stringify(location.state.data.waiting_room_member_list[currentCnt].wrm_user_ready));
-        
-
+        //내 준비 상태
+        setChangeReady(location.state.data.waiting_room_member_list[currentCnt].wrm_user_ready);
 
         //userlist로 사용자들이 무슨 색을 할당 받았는지 저장하는 배열
         const user_list = location.state.data.waiting_room_member_list;
@@ -359,7 +362,7 @@ export default function WaitingRoom({ match }) {
         uniqueSelectColor = uniqueSelectColor.filter((item, pos) => selectColorArr.indexOf(item) == pos);
 
         //게임 시작 인원 받아오기
-        setChangeStart(location.state.data.room_start_member_cnt-1);
+        setChangeStart(location.state.data.room_start_member_cnt - 1);
 
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }, []);
@@ -395,10 +398,7 @@ export default function WaitingRoom({ match }) {
                                 console.log('셀렉트칼라값: ' + selectColor + ', 인덱스 칼라값 : ' + index.color),
                                 selectColor === index.color ?
                                     <BarColorBox
-                                        color={uniqueSelectColor[key].code}
-                                        onClick={() => {
-                                            colorClick(index.color);
-                                        }}>
+                                        color={uniqueSelectColor[key].code}>
                                         V
                                     </BarColorBox>
                                     :
@@ -412,10 +412,7 @@ export default function WaitingRoom({ match }) {
                                         :
                                         <BarColorBox
                                             data={uniqueSelectColor[key].code}
-                                            color="#8C8C8C"
-                                            onClick={() => {
-                                                colorClick(index.color);
-                                            }} />
+                                            color="#8C8C8C" />
                             ))}
                     </BarInnerDiv>
 
@@ -442,8 +439,12 @@ export default function WaitingRoom({ match }) {
                     {isLeader === 0 ? ( //방장 아님
                         console.log(style.red),
                         changeReady === true ?
-                            <BtnDiv color="green" onClick={readyClick}>Waiting...</BtnDiv> :
-                            <BtnDiv onClick={readyClick}>Game Ready</BtnDiv>
+                            <BtnDiv color="green" onClick={() => {
+                                readyClick(!changeReady)
+                            }}>Waiting...</BtnDiv> :
+                            <BtnDiv onClick={() => {
+                                readyClick(!changeReady)
+                            }}>Game Ready</BtnDiv>
                     ) :  //방장이다. 
                         (
                             console.log('방장이야'),
