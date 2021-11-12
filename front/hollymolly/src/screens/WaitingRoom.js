@@ -100,39 +100,6 @@ const selectColorArr = [ //선택 할 수 있는지 여부 배열, true : 선택
     { 'color': "PINK", 'choose': "true", 'code': "#FF00DD" },
 ];
 
-socket.on("change member color", (data) => {
-    console.log('socket-> index: ' + data.user_idx + ' color: ' + data.user_color);
-
-    const changeUserIdx = data.user_idx;
-    const changeUserColor = data.user_color;
-
-    console.log('change 유저 인덱스 : ' + changeUserIdx);
-
-    let middleSocketArr = [{}];
-
-    //if (changeUserIdx != save_user_idx) {
-    uniqueSelectColor.forEach(element => {
-
-        if (element.color === changeUserColor) {
-            /* if(save_user_idx === changeUserIdx){
-                setSelectColor(changeUserColor);
-            } */
-            console.log('변경된 false : ' + JSON.stringify(element.color));
-            element.choose = "false";
-            middleSocketArr.push(element);
-        }
-    })
-
-    console.log('middle socket arr: ' + JSON.stringify(middleSocketArr));
-    console.log('unique socket arr 합치기 전: ' + JSON.stringify(uniqueSelectColor));
-
-    uniqueSelectColor = uniqueSelectColor.concat(middleSocketArr);
-    uniqueSelectColor = uniqueSelectColor.filter((item, pos) => selectColorArr.indexOf(item) == pos);
-
-    console.log('unique socket arr 합치기 전: ' + JSON.stringify(uniqueSelectColor));
-    //}
-
-});
 export default function WaitingRoom({ match }) {
     let location = useLocation();
 
@@ -161,18 +128,38 @@ export default function WaitingRoom({ match }) {
     const [changeStart, setChangeStart] = React.useState(0);
 
     useEffect(() => {
-        //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 코드
+        //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 부분
+        socket.on("change member color", (data) => {
+            console.log('socket-> index: ' + data.user_idx + ' color: ' + data.user_color);
 
-        /* if (changeUserIdx != save_user_idx) {
-            //지금 내 인덱스값과 비교해서 다른 인덱스들한테만 회색박스처리
-            if (changeUserColor == 'RED') setRedColor('#8C8C8C');
-            else if (changeUserColor == 'ORANGE') setOrangeColor('#8C8C8C');
-            else if (changeUserColor == 'YELLOW') setYellowColor('#8C8C8C');
-            else if (changeUserColor == 'GREEN') setGreenColor('#8C8C8C');
-            else if (changeUserColor == 'BLUE') setBlueColor('#8C8C8C');
-            else if (changeUserColor == 'PURPLE') setPurpleColor('#8C8C8C');
-            else setPinkColor('#8C8C8C');
-        } */
+            const changeUserIdx = data.user_idx;
+            const changeUserColor = data.user_color;
+
+            console.log('change 유저 인덱스 : ' + changeUserIdx);
+
+            let middleSocketArr = [{}];
+
+            //if (changeUserIdx != save_user_idx) {
+            uniqueSelectColor.forEach(element => {
+
+                if (element.color === changeUserColor) {
+                    /* if(save_user_idx === changeUserIdx){
+                        setSelectColor(changeUserColor);
+                    } */
+                    console.log('변경된 false : ' + JSON.stringify(element.color));
+                    element.choose = "false";
+                    middleSocketArr.push(element);
+                }
+            })
+
+            console.log('middle socket arr: ' + JSON.stringify(middleSocketArr));
+            console.log('unique socket arr 합치기 전: ' + JSON.stringify(uniqueSelectColor));
+
+            uniqueSelectColor = uniqueSelectColor.concat(middleSocketArr);
+            uniqueSelectColor = uniqueSelectColor.filter((item, pos) => selectColorArr.indexOf(item) == pos);
+
+            console.log('unique socket arr 합치기 전: ' + JSON.stringify(uniqueSelectColor));
+        });
     }, [changeColor]);
 
     function readyClick(readyStatus) {
