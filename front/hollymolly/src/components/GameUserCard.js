@@ -13,50 +13,50 @@ import RedCharacter from '../assets/red.svg';
 
 const GameUserCard = (props) => {
    
-    const {name, role, color, order, children} = props;
+    const {user_name, user_role, user_color, user_order, user_idx, children} = props;
     
     let isEmpty = false;
     let borderColor = "" // 테두리 색 
     let characterImg = "";
     let fillColor = ""; // 배경 색 
 
-    if (color === 'red') {
+    if (user_color === 'red') {
 
         borderColor = style.red_bg;
         characterImg = RedCharacter;
         fillColor = style.red_fill;
 
-    }else if (color === 'orange') {
+    }else if (user_color === 'orange') {
 
         borderColor = style.orange_bg;
         characterImg = OrangeCharacter;
         fillColor = style.orange_fill;
 
-    }else if (color === 'yellow') {
+    }else if (user_color === 'yellow') {
 
         borderColor = style.yellow_bg;
         characterImg = YellowCharacter;
         fillColor = style.yellow_fill;
 
-    }else if (color === 'green') {
+    }else if (user_color === 'green') {
 
         borderColor = style.green_bg;
         characterImg = GreenCharacter;
         fillColor = style.green_fill;
 
-    }else if (color === 'blue') {
+    }else if (user_color === 'blue') {
 
         borderColor = style.blue_bg;
         characterImg = BlueCharacter;
         fillColor = style.blue_fill;
 
-    }else if (color === 'purple') {
+    }else if (user_color === 'purple') {
 
         borderColor = style.purple_bg;
         characterImg = PurpleCharacter;
         fillColor = style.purple_fill;
 
-    }else if (color === 'pink') {
+    }else if (user_color === 'pink') {
 
         borderColor = style.pink_bg;
         characterImg = PinkCharacter;
@@ -76,12 +76,12 @@ const GameUserCard = (props) => {
         <React.Fragment>
           {isEmpty? null :
               <Container {...styles}>
-                <OrderContainer {...styles}>{order}</OrderContainer>   
+                <OrderContainer {...styles}>{user_order}</OrderContainer>   
                 <UserInfoContainer>
                     <ImgContainer src={characterImg}></ImgContainer>
                     <RoleNameContainer>
-                        <RoleContainer {...styles}>{role}</RoleContainer>
-                        <NameContainer>{name}</NameContainer>
+                        <RoleContainer {...styles}>{user_role}</RoleContainer>
+                        <NameContainer>{user_name}</NameContainer>
                     </RoleNameContainer>
                 </UserInfoContainer>
               </Container> }
