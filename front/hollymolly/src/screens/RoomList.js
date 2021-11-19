@@ -6,7 +6,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import Filter from '../components/Filter';
 import ModalBase from '../components/ModalBase';
-import {useHistory} from "react-router";
+import { useHistory } from 'react-router';
 
 // import Child from '../components/Child';
 import RefreshVerification from '../server/RefreshVerification';
@@ -18,26 +18,26 @@ import rightArrowBtn from '../assets/rightArrowBtn.png';
 // 소켓
 import { io } from 'socket.io-client';
 
-let total_room_cnt = 0; // 룸 리스트 총 방의 갯수 
+let total_room_cnt = 0; // 룸 리스트 총 방의 갯수
 
 //RefreshVerification.verification();
 
-// local storage에 있는지 확인 
-let data = localStorage.getItem("token");
+// local storage에 있는지 확인
+let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
 let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-console.log("save_token: " + save_token);
+console.log('save_token: ' + save_token);
 
 const socket = io('http://3.17.55.178:3002/', {
-            // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
-            auth: {
-                // 1번 토큰
-                token: save_token,
-            },
- });
+    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
+    auth: {
+        // 1번 토큰
+        token: save_token,
+    },
+});
 
 const RoomList = () => {
     const history = useHistory();
@@ -57,8 +57,8 @@ const RoomList = () => {
     const resultArray = result.sort();
 
     useEffect(() => {
-        socket.on("connect", () => {
-            console.log("room list connection server");
+        socket.on('connect', () => {
+            console.log('room list connection server');
         });
 
         socket.on('error', () => {
@@ -74,7 +74,6 @@ const RoomList = () => {
                 socket.connect();
             }
         });
-       
     });
 
     // 페이지 슬라이드
@@ -120,7 +119,7 @@ const RoomList = () => {
                 .then(function (response) {
                     total_room_cnt = response.data.total_room_cnt;
                     setRooms(response.data);
-                    setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length 
+                    setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
                 })
                 .catch(function (error) {
                     console.log(error.data);
@@ -160,161 +159,176 @@ const RoomList = () => {
         return exitedUrl;
     }
 
-    // 빈방 채우기 
+    // 빈방 채우기
     function emptyRoomList() {
-      if (emptyRoomsLength !== 6) {
-        let forArray = [];
-        for (let i = 0; i < emptyRoomsLength; i++) {
-          forArray.push(<Room empty = "true"/>);
+        if (emptyRoomsLength !== 6) {
+            let forArray = [];
+            for (let i = 0; i < emptyRoomsLength; i++) {
+                forArray.push(<Room empty="true" />);
+            }
+            return forArray;
+        } else {
+            return <EmptyText>😲 해당 필터에 맞는 방이 없습니다.😲</EmptyText>;
         }
-        return forArray;
-      } else {
-        return <EmptyText>😲 해당 필터에 맞는 방이 없습니다.😲</EmptyText>;
-      }
     }
-    
-    // 랜덤 입장을 위한 필터 리스트 - 모드 
+
+    // 랜덤 입장을 위한 필터 리스트 - 모드
     function modeFilterList() {
-         let modeFilterArray = [];
-         let easy = resultArray.includes(1);
-         let hard = resultArray.includes(2);
+        let modeFilterArray = [];
+        let easy = resultArray.includes(1);
+        let hard = resultArray.includes(2);
 
-         if(easy){
-            modeFilterArray.push("easy");
-         }
+        if (easy) {
+            modeFilterArray.push('easy');
+        }
 
-         if(hard){
-            modeFilterArray.push("hard");
-         }
+        if (hard) {
+            modeFilterArray.push('hard');
+        }
 
-         return modeFilterArray;
+        return modeFilterArray;
     }
 
-    // 랜덤 입장을 위한 필터 리스트 - 인원 
+    // 랜덤 입장을 위한 필터 리스트 - 인원
     function personFilterList() {
-         let personFilterArray = [];
-         let fourPeople = resultArray.includes(3);
-         let fivePeople = resultArray.includes(4);
-         let sixPeople = resultArray.includes(5);
+        let personFilterArray = [];
+        let fourPeople = resultArray.includes(3);
+        let fivePeople = resultArray.includes(4);
+        let sixPeople = resultArray.includes(5);
 
-         if(fourPeople){
-            personFilterArray.push("4");
-         }
+        if (fourPeople) {
+            personFilterArray.push('4');
+        }
 
-         if(fivePeople){
-            personFilterArray.push("5");
-         }
+        if (fivePeople) {
+            personFilterArray.push('5');
+        }
 
-         if(sixPeople){
-            personFilterArray.push("6");
-         }
+        if (sixPeople) {
+            personFilterArray.push('6');
+        }
 
-         return personFilterArray;
+        return personFilterArray;
     }
 
     const randomEntry = async () => {
-         let modeFilterArray = modeFilterList();
-         let personFilterArray = personFilterList();
+        let modeFilterArray = modeFilterList();
+        let personFilterArray = personFilterList();
 
-         console.log(modeFilterArray);
-         console.log(personFilterArray)
-         const reqURL = 'http://3.17.55.178:3002/room/random'; //parameter : 방 타입
-         const reqHeaders = {
-             headers: {
-                 authorization:
-                    'Bearer ' + save_token,
-             },
-         };
+        console.log(modeFilterArray);
+        console.log(personFilterArray);
+        const reqURL = 'http://3.17.55.178:3002/room/random'; //parameter : 방 타입
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
 
-         axios
-             .post(
-                 reqURL,
-                 {
-                      room_mode: modeFilterArray,
-                      room_start_member_cnt: personFilterArray 
-                 },
-                 reqHeaders
-             )
-             .then(function (response) {
+        axios
+            .post(
+                reqURL,
+                {
+                    room_mode: modeFilterArray,
+                    room_start_member_cnt: personFilterArray,
+                },
+                reqHeaders
+            )
+            .then(function (response) {
                 console.log(response.data);
-                // 대기실로 이동 
+                // 대기실로 이동
                 history.push({
-                    pathname: "/waitingroom/" + response.data.room_idx,
-                    state: {data: response.data}
-                })
-             })
-             .catch(function (error) {
+                    pathname: '/waitingroom/' + response.data.room_idx,
+                    state: { data: response.data },
+                });
+            })
+            .catch(function (error) {
                 console.log(error.response);
-             });
-     };
+            });
+    };
 
     return (
         <React.Fragment>
-            <RoomGrid flexDirection="column" padding="20px" width="1020px" height="620px" bg="#DAD4F6">
-                {/* 검색바 & 버튼 div*/}
-                <RoomGrid is_flex_space width="980px" height="110px" bg="#DAD4F6" border="1px solid #DAD4F6">
-                    <div style={styles.grid}>
-                        <RoomSearchBar />
-                    </div>
-                    {/* 버튼 div*/}
-                    <div
-                        style={{ flexDirection: 'column', width: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    >
-                        {/* 방만들기 모달 */}
-                        <ModalBase />
-                        <br />
-                        <Button onClick={randomEntry}>랜덤 입장</Button>
-                    </div>
-                </RoomGrid>
-
-                {/* 방 & 필터 div*/}
-                <RoomGrid is_flex_space width="980px" height="460px" bg="#DAD4F6" border="1px solid #DAD4F6">
-                    {/* 왼쪽 화살표 div*/}
-                    <PrevBtn onClick={prevPage} />
-                    {/* 방 리스트 슬라이더 div*/}
-                    <div style={styles.sliderContainer}>
-                        <div style={styles.roomListContainer}>
-                            {rooms &&
-                                rooms.room_list.map((values) => {
-                                    return values.room_status == 'waiting' ? (
-                                        <Room
-                                            room_idx={values.room_idx}
-                                            room_name={values.room_name}
-                                            room_current_member={values.room_current_member_cnt}
-                                            room_start_member={values.room_start_member_cnt}
-                                            room_mode={values.room_mode}
-                                            room_status={values.room_status}
-                                            disabled="false"
-                                            textStroke="true"
-                                            cursor="true"
-                                        />
-                                    ) : (
-                                        <Room
-                                            room_idx={values.room_idx}
-                                            room_name={values.room_name}
-                                            room_current_member={values.room_current_member_cnt}
-                                            room_start_member={values.room_start_member_cnt}
-                                            room_mode={values.room_mode}
-                                            room_status={values.room_status}
-                                            disabled="true"
-                                            textStroke="true"
-                                            cursor="false"
-                                        />
-                                    );
-                                })}
-                               {emptyRoomList()}
+            <Background>
+                <RoomGrid flexDirection="column" padding="20px" width="1020px" height="620px" bg="#DAD4F6">
+                    {/* 검색바 & 버튼 div*/}
+                    <RoomGrid is_flex_space width="980px" height="110px" bg="#DAD4F6" border="1px solid #DAD4F6">
+                        <div style={styles.grid}>
+                            <RoomSearchBar />
                         </div>
-                    </div>
-                    {/* 오른쪽 화살표 div*/}
-                    <NextBtn onClick={nextPage} />
-                    {/* 필터 div*/}
-                    <Filter result={result} getResult={getResult} />
+                        {/* 버튼 div*/}
+                        <div
+                            style={{
+                                flexDirection: 'column',
+                                width: '220px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            {/* 방만들기 모달 */}
+                            <ModalBase />
+                            <br />
+                            <Button onClick={randomEntry}>랜덤 입장</Button>
+                        </div>
+                    </RoomGrid>
+
+                    {/* 방 & 필터 div*/}
+                    <RoomGrid is_flex_space width="980px" height="460px" bg="#DAD4F6" border="1px solid #DAD4F6">
+                        {/* 왼쪽 화살표 div*/}
+                        <PrevBtn onClick={prevPage} />
+                        {/* 방 리스트 슬라이더 div*/}
+                        <div style={styles.sliderContainer}>
+                            <div style={styles.roomListContainer}>
+                                {rooms &&
+                                    rooms.room_list.map((values) => {
+                                        return values.room_status == 'waiting' ? (
+                                            <Room
+                                                room_idx={values.room_idx}
+                                                room_name={values.room_name}
+                                                room_current_member={values.room_current_member_cnt}
+                                                room_start_member={values.room_start_member_cnt}
+                                                room_mode={values.room_mode}
+                                                room_status={values.room_status}
+                                                disabled="false"
+                                                textStroke="true"
+                                                cursor="true"
+                                            />
+                                        ) : (
+                                            <Room
+                                                room_idx={values.room_idx}
+                                                room_name={values.room_name}
+                                                room_current_member={values.room_current_member_cnt}
+                                                room_start_member={values.room_start_member_cnt}
+                                                room_mode={values.room_mode}
+                                                room_status={values.room_status}
+                                                disabled="true"
+                                                textStroke="true"
+                                                cursor="false"
+                                            />
+                                        );
+                                    })}
+                                {emptyRoomList()}
+                            </div>
+                        </div>
+                        {/* 오른쪽 화살표 div*/}
+                        <NextBtn onClick={nextPage} />
+                        {/* 필터 div*/}
+                        <Filter result={result} getResult={getResult} />
+                    </RoomGrid>
                 </RoomGrid>
-            </RoomGrid>
+            </Background>
         </React.Fragment>
     );
 };
 
+const Background = styled.div`
+    background-color: #180928;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
 const NextBtn = styled.div`
     width: 40px;
     height: 40px;
@@ -352,7 +366,7 @@ const EmptyText = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    flexDirection: column;
+    flexdirection: column;
     width: 680px;
     height: 410px;
     font-size: 20px;
