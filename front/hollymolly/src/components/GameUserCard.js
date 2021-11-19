@@ -61,10 +61,10 @@ const GameUserCard = (props) => {
         borderColor = style.pink_bg;
         characterImg = PinkCharacter;
         fillColor = style.pink_fill;
-    }else{ // 빈칸 일때 
-        borderColor = "#eeeeee";
+    } else{ // 빈칸 일때 
+        borderColor = 'transparent';
         isEmpty = true;
-        fillColor = "#eeeeee";
+        fillColor = 'transparent';
     }
 
     const styles = {
@@ -74,16 +74,17 @@ const GameUserCard = (props) => {
 
       return (
         <React.Fragment>
+          {isEmpty? null :
               <Container {...styles}>
-                <OrderContainer {...styles}>{order}</OrderContainer>
+                <OrderContainer {...styles}>{order}</OrderContainer>   
                 <UserInfoContainer>
-                    {isEmpty? <EmptyImgContainer></EmptyImgContainer> : <ImgContainer src={characterImg}></ImgContainer>}
+                    <ImgContainer src={characterImg}></ImgContainer>
                     <RoleNameContainer>
                         <RoleContainer {...styles}>{role}</RoleContainer>
-                        {isEmpty? <EmptyNameContainer></EmptyNameContainer> : <NameContainer>{name}</NameContainer>}
+                        <NameContainer>{name}</NameContainer>
                     </RoleNameContainer>
                 </UserInfoContainer>
-              </Container>
+              </Container> }
         </React.Fragment>
       );
   };

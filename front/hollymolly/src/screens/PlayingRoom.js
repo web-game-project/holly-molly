@@ -23,6 +23,7 @@ const PlayingRoom = (props) => {
         <React.Fragment>
             <Background>
                 <Container>
+                    <BackGroundDiv>
                     <UserDiv>
                         {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
                         <MissionWord text={'크리스마스'} role={'ghost'}></MissionWord>
@@ -36,8 +37,11 @@ const PlayingRoom = (props) => {
 
                         <GameUserCard color="gray"></GameUserCard>
                     </UserDiv>
-                    <BackGroundDiv>
+                    {/* 가운데*/}
+                    <DrawDiv/>
+                    <ChatDiv>
                         <Chatting />
+                    </ChatDiv>
                     </BackGroundDiv>
                 </Container>
             </Background>
@@ -73,12 +77,22 @@ const UserDiv = styled.div`
 
 const BackGroundDiv = styled.div`
     background-image: url(${day});
-    background-size: cover;
-    width: 860px;
+    width: 1020px;
     height: 620px;
     flex-direction: row;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
 `;
+
+const ChatDiv = styled.div`
+    margin: 1px;
+`;
+
+const DrawDiv = styled.div`
+    background-color: #ffffff;
+    width: 650px;
+    height: 620px;
+    display: flex;
+`; 
 
 export default PlayingRoom;
