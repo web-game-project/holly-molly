@@ -6,11 +6,24 @@ import night from '../assets/night.svg';
 import day from '../assets/day.svg';
 import Chatting from '../components/Chatting';
 import GameUserCard from '../components/GameUserCard';
+import GameRoleComponent from '../components/GameRoleComponent';
+import { useLocation } from 'react-router';
+//통신
+import axios from 'axios';
+
+// local storage에 있는지 확인
+let data = localStorage.getItem('token');
+let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
+
+console.log('내 인덱스 : ' + save_user_idx);
 
 const socket = io('http://3.17.55.178:3002/', {
     // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
     auth: {
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6NywidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.G1ECMSLaD4UpCo6uc-k6VRv7CxXY0LU_I5M2WZPYGug',
+        token: save_token,
     },
 });
 
@@ -18,30 +31,80 @@ socket.on('connect', () => {
     console.log('chatting connection server');
 });
 
+let userList = [{}];
+
 const PlayingRoom = (props) => {
+    let location = useLocation();   
+
+    const [role, setRole] = React.useState('');
+    const [keyword, setKeyWord] = React.useState('');
+
+    const  [playInfo,setPlayInfo] = React.useState(''); //웨이팅룸에서 넘어온 데이터 저장
+
+    const BaseURL = 'http://3.17.55.178:3002/';
+
+    useEffect(() => {
+        setPlayInfo(location.state.data); 
+        userList = location.state.data.user_list;
+
+        console.log('넘어온 게임 세트 인덱스_playroom' + location.state.data.game_set_idx);
+
+        const reqHeaders = {
+            headers: {
+                authorization:
+                    'Bearer ' + save_token,
+            },
+        };
+        const restURL = BaseURL + 'game/member/' + location.state.data.game_set_idx;
+
+        console.log('url : ' + restURL);
+
+        axios
+            .get(
+                restURL,
+                reqHeaders
+            )
+            .then(function (response) {
+                alert('rest 키워드' + response.data.keyword + ', 역할' + response.data.user_role);
+                setRole(response.data.user_role);
+                setKeyWord(response.data.keyword);
+            })
+            .catch(function (error) {
+                alert('error information : ' + error.message);
+            });
+
+    });
     return (
         <React.Fragment>
             <Background>
                 <Container>
                     <BackGroundDiv>
-                    <UserDiv>
-                        {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
-                        <MissionWord text={'크리스마스'} role={'ghost'}></MissionWord>
-                        {/* 유저 컴포넌트 */}
-                        <GameUserCard color="red" name="인계동 껍데기" role="ghost" order="1"></GameUserCard>
-                        <GameUserCard color="orange" name="돈암동 마라탕" role="ghost" order="2"></GameUserCard>
-                        <GameUserCard color="yellow" name="용두동 쭈꾸미" role="ghost" order="3"></GameUserCard>
-                        <GameUserCard color="blue" name="왕십리 소곱창" role="ghost" order="4"></GameUserCard>
-                        <GameUserCard color="pink" name="매탄동 닭갈비" role="ghost" order="5"></GameUserCard>
-                        {/* <GameUserCard color="purple" name="수유동 케이크" role="ghost" order="6"></GameUserCard> */}
+                        <UserDiv>
+                            {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
+                            <MissionWord text={keyword} role={role}></MissionWord>
+                            {/* 유저 컴포넌트   정희 : 유저 인덱스 props 추가하기!!*/}   
+                            {//let user_list = location.state.data.user_list,
 
-                        <GameUserCard color="gray"></GameUserCard>
-                    </UserDiv>
-                    {/* 가운데*/}
-                    <DrawDiv/>
-                    <ChatDiv>
-                        <Chatting />
-                    </ChatDiv>
+                                userList.map(
+                                    (index, key) => (
+                                        console.log('user 길이' + userList.length),
+                                        console.log('유저 인덱스 값 ' + userList[key].user_idx),
+                                        console.log('순서 : ' + userList[key].game_member_order),
+                                        console.log('칼라 : ' + userList[key].user_color),     
+                                        <GameUserCard user_idx={userList[key].user_idx} user_color={userList[key].user_color} user_name="인계동 껍데기" user_role="ghost" user_order={userList[key].game_member_order}></GameUserCard>
+                                    )
+                                )                                
+                            }                         
+                        </UserDiv>
+                        {/* 가운데*/}
+                        <GameRoleComponent role={role}/>
+                        {/* <DrawDiv>
+
+                            <GameRoleComponent />
+                        </DrawDiv> */}
+                        <ChatDiv>
+                            <Chatting />
+                        </ChatDiv>
                     </BackGroundDiv>
                 </Container>
             </Background>
@@ -93,6 +156,6 @@ const DrawDiv = styled.div`
     width: 650px;
     height: 620px;
     display: flex;
-`; 
+`;
 
 export default PlayingRoom;
