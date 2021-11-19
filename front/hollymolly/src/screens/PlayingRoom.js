@@ -67,19 +67,8 @@ const UserDiv = styled.div`
     height: 620px;
     border-color: transparent;
     background-color: transparent;
-    position: absolute;
-    top: 0;
-    left: 0;
     justify-content: center;
     align-items: center;
-`;
-
-const EachUserDiv = styled.div`
-    text-align: center;
-    width: 160px;
-    height: 85px;
-    margin-bottom: 4px;
-    background-color: #ff0000;
 `;
 
 const BackGroundDiv = styled.div`
@@ -90,13 +79,6 @@ const BackGroundDiv = styled.div`
     flex-direction: row;
     display: flex;
     justify-content: flex-end;
-`;
-
-const ChatDiv = styled.div`
-    width: 220px;
-    height: 620px;
-    background-color: #ffe5e5;
-    opacity: 0.5;
 `;
 
 export default PlayingRoom;

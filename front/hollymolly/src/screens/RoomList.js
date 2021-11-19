@@ -76,9 +76,28 @@ const RoomList = () => {
         });
     });
 
-    // 페이지 슬라이드
-    let TOTAL_SLIDES = Math.floor(total_room_cnt / 7); // 한 페이지 당 6개 방을 가지고 있으므로, 즉, 전체 페이지 개수 =  전체 방의 개수 / 6
+    useEffect(() => {
+        /* 방 생성 시, 마지막 페이지에 방 추가 
+        socket.on("create room", (data) => {
 
+        }); */
+
+        /* 방 상태 변동됨에 따라 방 상태 변동 
+        socket.on("change game status", (data) => {
+
+        }); */
+
+    });
+
+    // 페이지 슬라이드 개수
+    let TOTAL_SLIDES = 0;
+   
+    if(total_room_cnt % 6 === 0){
+        TOTAL_SLIDES = (total_room_cnt / 6) - 1;
+    }else{
+        TOTAL_SLIDES = Math.floor(total_room_cnt / 6);
+    }
+    
     const [currentSlide, setCurrentSlide] = useState(0);
 
     // 다음 페이지 이동
@@ -118,6 +137,7 @@ const RoomList = () => {
                 .get(restURL, reqHeaders)
                 .then(function (response) {
                     total_room_cnt = response.data.total_room_cnt;
+                    console.log(response.data);
                     setRooms(response.data);
                     setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
                 })
@@ -278,6 +298,7 @@ const RoomList = () => {
                         <PrevBtn onClick={prevPage} />
                         {/* 방 리스트 슬라이더 div*/}
                         <div style={styles.sliderContainer}>
+                            {currentSlide}
                             <div style={styles.roomListContainer}>
                                 {rooms &&
                                     rooms.room_list.map((values) => {
