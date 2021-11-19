@@ -20,43 +20,43 @@ const GameUserCard = (props) => {
     let characterImg = "";
     let fillColor = ""; // 배경 색 
 
-    if (user_color === 'red') {
+    if (user_color === 'RED') {
 
         borderColor = style.red_bg;
         characterImg = RedCharacter;
         fillColor = style.red_fill;
 
-    }else if (user_color === 'orange') {
+    }else if (user_color === 'ORANGE') {
 
         borderColor = style.orange_bg;
         characterImg = OrangeCharacter;
         fillColor = style.orange_fill;
 
-    }else if (user_color === 'yellow') {
+    }else if (user_color === 'YELLOW') {
 
         borderColor = style.yellow_bg;
         characterImg = YellowCharacter;
         fillColor = style.yellow_fill;
 
-    }else if (user_color === 'green') {
+    }else if (user_color === 'GREEN') {
 
         borderColor = style.green_bg;
         characterImg = GreenCharacter;
         fillColor = style.green_fill;
 
-    }else if (user_color === 'blue') {
+    }else if (user_color === 'BLUE') {
 
         borderColor = style.blue_bg;
         characterImg = BlueCharacter;
         fillColor = style.blue_fill;
 
-    }else if (user_color === 'purple') {
+    }else if (user_color === 'PURPLE') {
 
         borderColor = style.purple_bg;
         characterImg = PurpleCharacter;
         fillColor = style.purple_fill;
 
-    }else if (user_color === 'pink') {
+    }else if (user_color === 'PINK') {
 
         borderColor = style.pink_bg;
         characterImg = PinkCharacter;

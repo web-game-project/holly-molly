@@ -11,112 +11,76 @@ import axios from 'axios';
 import { io, Socket } from 'socket.io-client';
 import GameStart from '../screens/GameStart';
 
-function GameRoleComponent() {
-    const [gameSetIndex, setGameSetIndex] = React.useState(0);
+// local storage에 있는지 확인
+let data = localStorage.getItem('token');
+let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-    const [startStaus, setStartStatus] = React.useState(false);
-    const [infoStaus, setInfoStatus] = React.useState(false);
+console.log('내 인덱스 : ' + save_user_idx);
 
-    const ghost = "\n현재 뭉게뭉게 왕국은 유령한테 \n 인질로 잡혀 있는 상태입니다.";
+function GameRoleComponent(props) {
 
-    const BaseURL = 'http://3.17.55.178:3002/';
+    const ghost = "\n홀리세계에 원래 살고 있던 외로운 홀리입니다.\n현재 홀리세계에 유령의 탈을 쓰고 \n살고 있는 인간이 있습니다.\n그 인간은 3일 뒤에 본인의 세계로 돌아갑니다.\n함께 친구로서, 같이 살고 싶다면 \n그 인간을 꼭 찾으세요!!!\n당신은 할 수 있습니다. 권투를 빕니다 *^3^*";
+    const human = "\n당신은 홀리세계에 어쩌다보니\n 들어오게된 몰리입니다.\n현재 외로운 홀리들은 당신을 찾고 있어요.\n홀리들은 당신이 인간, 몰리인지 몰라요.\n3일 뒤면 당신의 세계로 돌아갈 수 있어요.\n그 3일 동안 홀리인척하면서 살아가면 된답니다.\n당신은 할 수 있습니다. 권투를 빕니다 *^3^*";
 
-    useEffect(() => {
-        //3번 토큰
-        const reqHeaders_info = {
-            headers: {
-                authorization:
-                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MywidXNlcl9uYW1lIjoiaHkiLCJpYXQiOjE2MzI4MzMwMTd9.-i36Z3KoqzCfgtVNl1-c8h5fZNSZ8Nlhnp4UI41tFxM',
-            },
-        };
-
-        //rest api start
-        const restURL_information = BaseURL + 'game/member?gameSetIdx=' + gameSetIndex;
-        console.log('주소 : ' + restURL_information);
-
-        /* //1번 토큰
-        const reqHeaders = {
-           headers: {
-               authorization:
-                   'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
-           },
-       }; */
-
-        axios
-            .get(
-                restURL_information,
-                reqHeaders_info
-            )
-            .then(function (response) {
-                alert('rest ' + response.data);
-            })
-            .catch(function (error) {
-                alert('error information : ' + error.message);
-            });
-    }, [infoStaus]);
 
     useEffect(() => {
-        //3번 토큰
-        const reqHeaders_start = {
-            headers: {
-                authorization:
-                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MywidXNlcl9uYW1lIjoiaHkiLCJpYXQiOjE2MzI4MzMwMTd9.-i36Z3KoqzCfgtVNl1-c8h5fZNSZ8Nlhnp4UI41tFxM',
-            },
-        };
+        console.log('넘어온 게임 세트 인덱스_gamerole' + props.role);
+        /* var gameSetIdx = props.index;
 
-        //game start rest api
-        const restURL_start = BaseURL + 'game/start';
-
-        axios
-            .post(
-                restURL_start,
-                {
-                    room_idx: 47
+        if (gameSetIdx != '') {
+            const reqHeaders = {
+                headers: {
+                    authorization:
+                        'Bearer ' + save_token,
                 },
-                reqHeaders_start
-            )
-            .then(function (response) {
-                alert('rest game start');
-            })
-            .catch(function (error) {
-                alert('error game start ' + error.message);
-            });
+            };
+            const restURL = BaseURL + 'game/member/' + gameSetIdx;
 
-        setInfoStatus(!infoStaus);
-    }, [startStaus]);
+            console.log('url : ' + restURL);
 
-    useEffect(() => {
-
-        //socket start
-        const socket = io(BaseURL, {
-            auth: {
-                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MywidXNlcl9uYW1lIjoiaHkiLCJpYXQiOjE2MzI4MzMwMTd9.-i36Z3KoqzCfgtVNl1-c8h5fZNSZ8Nlhnp4UI41tFxM',
-            },
-        });
-
-        // 소켓이 서버에 연결되어 있는지 여부
-        // 연결 성공 시 시작
-        socket.on("connect", () => {
-            alert("Game start connection server");
-        });
-
-        socket.on("start game", (data) => {
-            alert('socket-> index: ' + data.game_idx + ' game set index: ' + data.game_set_idx);
-            setGameSetIndex(data.game_set_idx);
-        });
-
-        setStartStatus(!startStaus);
+            axios
+                .get(
+                    restURL,
+                    reqHeaders
+                )
+                .then(function (response) {
+                    alert('rest 키워드' + response.data.keyword + ', 역할' + response.data.user_role);
+                    setRole(response.data.user_role);
+                })
+                .catch(function (error) {
+                    alert('error information : ' + error.message);
+                });
+        } */
     }, []);
 
     return (
         <Container>
             <TxtContainer>
-                <HeadLine>
-                    당신은 정의로운 &nbsp;<b> "시민" </b>&nbsp;입니다.
-                </HeadLine>
-                {ghost.split("\n").map((i, key) => {
-                    return <Content key={key}>{i}</Content>;
-                })}
+                    {
+                        props.role == "human" ?
+                        <HeadLine>
+                                당신은 <RoleTxt ishuman="yes">"인간"</RoleTxt>입니다.
+                                {human.split("\n").map((i, key) => {
+                                    if (key === 3 || key === 5)
+                                        return <Content key={key}><br></br>{i}</Content>;
+                                    else
+                                        return <Content key={key}>{i}</Content>;
+                                })}
+                           </HeadLine>
+                            :
+                            <HeadLine>
+                                당신은 <RoleTxt ishuman="no"> "유령" </RoleTxt>입니다.
+                                {ghost.split("\n").map((i, key) => {
+                                    if (key === 3 || key === 5)
+                                        return <Content key={key}><br></br>{i}</Content>;
+                                    else
+                                        return <Content key={key}>{i}</Content>;
+                                })}
+                            </HeadLine>
+                    }
             </TxtContainer>
         </Container>
 
@@ -124,8 +88,9 @@ function GameRoleComponent() {
 }
 
 const Container = styled.div`
-    width: 560px;
-    height: 560px;
+    width: 450px;
+    height: 450px;
+    margin-top: 85px;
     border-width: thin;
     border-radius: 10px;
     border-color: #000000;
@@ -135,25 +100,29 @@ const Container = styled.div`
 const TxtContainer = styled.div`
     width: 420px;
     height: 400px;
-    padding: 10px;
-    margin-left: 60px;
+    padding: 5px;
+    margin-left: 20px;
     margin-top: 20px;
 `;
 
 const HeadLine = styled.div`
     width: 100%;
-    font-size: 25px;
-    display: flex;
-b{
-    font-size: 32px;
-    color: #FF0000;
-}
+    font-size: 23px;
+    display: flex;  
+    flex-direction: column;
+    //align-items: center;
+    //justify-content: center;
 `;
 
+const RoleTxt = styled.div`
+    font-size: 26px;
+    ${(props) =>
+        props.ishuman == 'yes' ? `color: #FF0000;` : 
+        props.ishuman == 'no' ? `color: #0100FF;` : `color: #000000`}
+`;
 const Content = styled.div`
-width: 100%;
-font-size: 25px;
-display: flex;
-
+    width: 100%;
+    display: flex;    
+    font-size: 23px;
 `;
 export default GameRoleComponent;
