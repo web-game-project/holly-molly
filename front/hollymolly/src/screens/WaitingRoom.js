@@ -11,10 +11,9 @@ import ModalSetting from '../components/ModalSetting.js';
 
 import Chatting from '../components/Chatting.js';
 
-//function component 사용시:
-
-import { useLocation } from 'react-router';
+//import { useLocation } from 'react-router';
 import RefreshVerification from '../server/RefreshVerification.js';
+import { useHistory, useLocation } from 'react-router';
 
 const BaseURL = 'http://3.17.55.178:3002';
 
@@ -35,9 +34,6 @@ let room_idx = 0;
 //1번 토큰 사용
 const socket = io(BaseURL, {
     auth: {
-        //token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
-        //8번
-        //token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw'
         token: save_token,
     },
 });
@@ -51,18 +47,6 @@ console.log('렌더링완료');
 
 //게임 시작 인원 세는 변수
 let ready_cnt = 0;
-
-//준비 변경 소켓
-socket.on('change member ready', (data) => {
-    if (data.user_ready === true) {
-        ready_cnt += 1;
-        console.log('ready 증가, ready 현재값 : ' + ready_cnt);
-    } else {
-        if (ready_cnt != 0) ready_cnt -= 1;
-        console.log('ready 감소, ready 현재값 : ' + ready_cnt);
-    }
-    alert('socket user_idx : ' + data.user_idx + ' user_ready : ' + data.user_ready);
-});
 
 // 색깔 배열, 중복 제거한 배열
 let uniqueSelectColor = [{}];
@@ -79,29 +63,19 @@ const colorArr = [
     { color: 'GRAY', code: '#8C8C8C' },
 ];
 
-/* const selectColorArr = [ //선택 할 수 있는지 여부 배열, true : 선택가능 
-    { 'color': "RED", 'choose': "true" },
-    { 'color': "ORANGE", 'choose': "true" },
-    { 'color': "YELLOW", 'choose': "true" },
-    { 'color': "GREEN", 'choose': "true" },
-    { 'color': "BLUE", 'choose': "true" },
-    { 'color': "PURPLE", 'choose': "true" },
-    { 'color': "PINK", 'choose': "true" },
-];
- */
-const selectColorArr = [
-    //선택 할 수 있는지 여부 배열, true : 선택가능
-    { color: 'RED', choose: 'true', code: '#FF0000' },
-    { color: 'ORANGE', choose: 'true', code: '#FF5E00' },
-    { color: 'YELLOW', choose: 'true', code: '#FFE400' },
-    { color: 'GREEN', choose: 'true', code: '#1DDB16' },
-    { color: 'BLUE', choose: 'true', code: '#0B37D3' },
-    { color: 'PURPLE', choose: 'true', code: '#5F00FF' },
-    { color: 'PINK', choose: 'true', code: '#FF00DD' },
+const selectColorArr = [ //선택 할 수 있는지 여부 배열, true : 선택가능 
+    { 'color': "RED", 'choose': "true", 'code': "#FF0000" },
+    { 'color': "ORANGE", 'choose': "true", 'code': "#FF5E00" },
+    { 'color': "YELLOW", 'choose': "true", 'code': "#FFE400" },
+    { 'color': "GREEN", 'choose': "true", 'code': "#1DDB16" },
+    { 'color': "BLUE", 'choose': "true", 'code': "#0B37D3" },
+    { 'color': "PURPLE", 'choose': "true", 'code': "#5F00FF" },
+    { 'color': "PINK", 'choose': "true", 'code': "#FF00DD" },
 ];
 
 export default function WaitingRoom({ match }) {
-    let location = useLocation();
+    let location = useLocation();    
+    const history = useHistory();
 
     const room_index = match.params.name; // url에 입력해준 방 인덱스
     console.log('방 번호는 ?' + room_index);
@@ -111,7 +85,6 @@ export default function WaitingRoom({ match }) {
     //사람이 색을 변경해서 클릭했을 때 소켓통신을 실행하기 위한 변수
     const [changeColor, setChangeColor] = React.useState(false);
 
-    //내가 무슨 색을 선택했는지 //지워야하는 주석
     //무슨 색을 선택할 수 있는가
     const [selectColor, setSelectColor] = React.useState([]);
 
@@ -125,12 +98,47 @@ export default function WaitingRoom({ match }) {
     const [isLeader, setIsLeader] = React.useState(0);
 
     //방장 상태 state 이 변수가 소켓에서 누적된 카운트 값과 동일해야함.
-    const [changeStart, setChangeStart] = React.useState(0);
+    const [startMember, setStartMember] = React.useState(0);
+
+    const [gameStart, setGameStart] = React.useState(false);
+
+    useEffect(() => {
+        //게임 시작 정보 socket
+        socket.on("start game", (data) => {
+            alert('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
+    
+            //플레잉룸으로 이동, 데이터 전달
+            history.push({
+                pathname: '/playingroom/' + room_idx,
+                state: { data: data },
+            });
+        });
+    }, [gameStart]);
+
+    useEffect(() => {
+        //사용자의 준비 상태 값 변경에 따른 소켓
+        socket.on("change member ready", (data) => {
+            alert('지금 ready 값이야 : ' + ready_cnt);
+
+            if (data.user_idx != save_user_idx) {
+                if (data.user_ready === true) {
+                    ready_cnt += 1;
+                    alert('ready 증가, ready 현재값 : ' + ready_cnt);
+                }
+                else {
+                    if (ready_cnt != 0)
+                        ready_cnt -= 1;
+                    alert('ready 감소, ready 현재값 : ' + ready_cnt);
+                }
+            }
+            alert('socket user_idx : ' + data.user_idx + ' user_ready : ' + data.user_ready);
+        });
+    }, [changeReady]);
 
     useEffect(() => {
         //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 부분
-        socket.on('change member color', (data) => {
-            console.log('socket-> index: ' + data.user_idx + ' color: ' + data.user_color);
+        socket.on("change member color", (data) => {
+            alert('socket-> index: ' + data.user_idx + ' color: ' + data.user_color);
 
             const changeUserIdx = data.user_idx;
             const changeUserColor = data.user_color;
@@ -142,9 +150,6 @@ export default function WaitingRoom({ match }) {
             //if (changeUserIdx != save_user_idx) {
             uniqueSelectColor.forEach((element) => {
                 if (element.color === changeUserColor) {
-                    /* if(save_user_idx === changeUserIdx){
-                        setSelectColor(changeUserColor);
-                    } */
                     console.log('변경된 false : ' + JSON.stringify(element.color));
                     element.choose = 'false';
                     middleSocketArr.push(element);
@@ -162,9 +167,15 @@ export default function WaitingRoom({ match }) {
     }, [changeColor]);
 
     function readyClick(readyStatus) {
+        if (readyStatus === true)
+            ready_cnt += 1;
+        else {
+            if (ready_cnt != 0)
+                ready_cnt -= 1;
+        }
         setChangeReady(readyStatus);
 
-        console.log('rest api 호출');
+        console.log('클릭 시 레디 값 : ' + ready_cnt + '정원 : ' + startMember);
 
         const restURL = BaseURL + '/waiting-room/user-ready	';
 
@@ -213,6 +224,8 @@ export default function WaitingRoom({ match }) {
             .then(function (response) {
                 //response로 jwt token 반환
                 alert('success! 게임시작');
+                //플레잉룸으로 이동 동시에, 게임시장 정보 call 데이터 함께 전달
+                setGameStart(true);
             })
             .catch(function (error) {
                 alert(error);
@@ -222,14 +235,6 @@ export default function WaitingRoom({ match }) {
     function colorClick(str) {
         alert('click: ' + str);
         setPreviousColor(str);
-
-        /* if (previousColor == 'RED') setRedColor('#FF0000');
-        else if (previousColor == 'ORANGE') setOrangeColor('#FF5E00');
-        else if (previousColor == 'YELLOW') setYellowColor('#FFE400');
-        else if (previousColor == 'GREEN') setGreenColor('#1DDB16');
-        else if (previousColor == 'BLUE') setBlueColor('#0B37D3');
-        else if (previousColor == 'PURPLE') setPurpleColor('#5F00FF');
-        else setPinkColor('#FF00DD'); */
 
         let middleSocketArr = [{}];
 
@@ -276,6 +281,7 @@ export default function WaitingRoom({ match }) {
             )
             .then(function (response) {
                 alert('rest ' + response.data);
+                //setChangeColor(!changeColor); //색이 바꼈다는 상태값 변경
             })
             .catch(function (error) {
                 alert('error ' + error.message);
@@ -318,23 +324,13 @@ export default function WaitingRoom({ match }) {
             setIsLeader(1); //리더다
         }
 
-        /* //내가 들어왔을 때 무슨색인가?
-        const currentCnt = location.state.data.room_current_member_cnt - 1; //-1해줘서 내 배열 인덱스 구하기
-        const serverColor = location.state.data.waiting_room_member_list[currentCnt].wrm_user_color;
-        //선택된 값과 이전색으로 세팅
-        setSelectColor(serverColor);
-        setPreviousColor(serverColor);
-
-        //내 준비 상태
-        setChangeReady(location.state.data.waiting_room_member_list[currentCnt].wrm_user_ready); */
-
         //userlist로 사용자들이 무슨 색을 할당 받았는지 저장하는 배열
         const user_list = location.state.data.waiting_room_member_list;
 
         const middleSelectArr = [{}];
 
         for (let i = 0; i < user_list.length; i++) {
-            console.log('user color랑 인덱스 : ' + user_list[i].wrm_user_color + user_list[i].user_idx);
+            console.log('user color랑 인덱스랑 레디값 : ' + user_list[i].wrm_user_color + user_list[i].user_idx + ' ' + user_list[i].wrm_user_ready);
 
             const currentColor = user_list[i].wrm_user_color;
 
@@ -343,6 +339,11 @@ export default function WaitingRoom({ match }) {
                     console.log('변경된 false : ' + JSON.stringify(element.color));
                     element.choose = 'false';
                     middleSelectArr.push(element);
+                    if (user_list[i].wrm_user_ready === true) {
+                        ready_cnt += 1;
+                        console.log('세팅 레디 값 : ' + ready_cnt);
+                    }
+
                     if (save_user_idx == user_list[i].user_idx) {
                         //선택된 값과 이전색으로 세팅
                         setSelectColor(element.color);
@@ -358,7 +359,7 @@ export default function WaitingRoom({ match }) {
         uniqueSelectColor = uniqueSelectColor.filter((item, pos) => selectColorArr.indexOf(item) == pos);
 
         //게임 시작 인원 받아오기
-        setChangeStart(location.state.data.room_start_member_cnt - 1);
+        setStartMember(location.state.data.room_start_member_cnt - 1);
 
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }, []);
@@ -425,39 +426,38 @@ export default function WaitingRoom({ match }) {
                 <RightDiv>
                     {/* <Chatting room_idx={location.state.data.room_idx}>
                 </Chatting> */}
-
                     <Chatting room_idx={location.state.data.room_idx} height="560px"></Chatting>
 
                     <StartDiv>
                         {isLeader === 0 //방장 아님
                             ? (console.log(style.red),
-                              changeReady === true ? (
-                                  <BtnDiv
-                                      color="green"
-                                      onClick={() => {
-                                          readyClick(!changeReady);
-                                      }}
-                                  >
-                                      Waiting...
-                                  </BtnDiv>
-                              ) : (
-                                  <BtnDiv
-                                      onClick={() => {
-                                          readyClick(!changeReady);
-                                      }}
-                                  >
-                                      Game Ready
-                                  </BtnDiv>
-                              ))
+                                changeReady === true ? (
+                                    <BtnDiv
+                                        color="green"
+                                        onClick={() => {
+                                            readyClick(!changeReady);
+                                        }}
+                                    >
+                                        Waiting...
+                                    </BtnDiv>
+                                ) : (
+                                    <BtnDiv
+                                        onClick={() => {
+                                            readyClick(!changeReady);
+                                        }}
+                                    >
+                                        Game Ready
+                                    </BtnDiv>
+                                ))
                             : //방장이다.
-                              (console.log('방장이야'),
-                              changeStart === ready_cnt ? (
-                                  <BtnDiv isStart="yes" onClick={startClick}>
-                                      Game Start
-                                  </BtnDiv> //게임 시작 api 요청 onclick 달기
-                              ) : (
-                                  <BtnDiv isStart="no">Game Start</BtnDiv>
-                              ))}
+                            (console.log('방장이야'),
+                                startMember === ready_cnt ? (
+                                    <BtnDiv isStart="yes" onClick={startClick}>
+                                        Game Start
+                                    </BtnDiv> //게임 시작 api 요청 onclick 달기
+                                ) : (
+                                    <BtnDiv isStart="no">Game Start</BtnDiv>
+                                ))}
                     </StartDiv>
                 </RightDiv>
             </Container>
@@ -521,8 +521,14 @@ const BtnDiv = styled.div`
     box-shadow: 0px 3px 3px #878787;
     font-size: 25px;
     text-align: center;
-    ${(props) => (props.color == 'green' ? `background-color: #44A024;` : ``)}
-    ${(props) => (props.isStart == 'yes' ? `` : `opacity: 0.5;`)}
+    ${(props) =>
+        props.color == 'green'
+            ? `background-color: #44A024;`
+            : ``}
+     ${(props) =>
+        props.isStart == 'yes'
+            ? ``
+            : props.isStart == 'no' ? `opacity: 0.5;` : ``}
 `;
 const TitleDiv = styled.div`
     width: 625px;
@@ -581,8 +587,8 @@ const BarColorBox = styled.div`
         props.color == '#FF0000' || props.data == '#FF0000'
             ? `background-color: ${props.color}; border-top-left-radius: 15px; border-bottom-left-radius: 15px;`
             : props.color == '#FF00DD' || props.data == '#FF00DD'
-            ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
-            : `background-color: ${props.color};`}
+                ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
+                : `background-color: ${props.color};`}
 `;
 
 const Text = styled.text`
