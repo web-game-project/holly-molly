@@ -43,7 +43,8 @@ const RoomList = () => {
     const history = useHistory();
 
     const [emptyRoomsLength, setEmptyRoomsLength] = useState('');
-    const [waitingRoomMemberList, setWaitingRoomMemberList] = useState();
+
+    const [createRoomData, setcreateRoomData] = useState('');
 
     // 방 전체 리스트
     const [rooms, setRooms] = useState();
@@ -77,15 +78,31 @@ const RoomList = () => {
     });
 
     useEffect(() => {
-        /* 방 생성 시, 마지막 페이지에 방 추가 
+        //방 생성 시, 마지막 페이지에 방 추가 
         socket.on("create room", (data) => {
+            setcreateRoomData(data);
+            alert(data);
+        });
+
+        /* 방 삭제 - 대기실 삭제 
+        socket.on("delete room", (data) => {
 
         }); */
 
-        /* 방 상태 변동됨에 따라 방 상태 변동 
-        socket.on("change game status", (data) => {
-
+        //방 정보 수정  - 특정 대기실에서 대기실 정보 수정 시 
+        /* socket.on("edit room", (data) => {
+            alert("data: " + data);
         }); */
+
+        // 방 멤버 변동 - 특정 대기실 사용자 입장/퇴장 시 
+        /* socket.on("change member count", (data) => {
+
+        });  */
+
+        //방 상태 변동 - 특정 게임이 시작할 때 
+        /* socket.on("change game status", (data) => {
+
+        });  */
 
     });
 
@@ -302,7 +319,7 @@ const RoomList = () => {
                             <div style={styles.roomListContainer}>
                                 {rooms &&
                                     rooms.room_list.map((values) => {
-                                        return values.room_status == 'waiting' ? (
+                                        return values.room_status === 'waiting' ? (
                                             <Room
                                                 room_idx={values.room_idx}
                                                 room_name={values.room_name}
@@ -328,6 +345,18 @@ const RoomList = () => {
                                             />
                                         );
                                     })}
+                                {createRoomData &&
+                                <Room
+                                    room_idx={createRoomData.room_idx}
+                                    room_name={createRoomData.room_name}
+                                    room_current_member={createRoomData.room_current_member_cnt}
+                                    room_start_member={createRoomData.room_start_member_cnt}
+                                    room_mode={createRoomData.room_mode}
+                                    room_status={createRoomData.room_status}
+                                    disabled="false"
+                                    textStroke="true"
+                                    cursor="true"
+                                />}
                                 {emptyRoomList()}
                             </div>
                         </div>
