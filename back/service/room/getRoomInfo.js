@@ -17,10 +17,14 @@ module.exports = async (req, res, next) => {
                 where: { room_idx: roomIdx } 
             },
         );
-        console.log('getRoomInfoService Success: ', roomInfo);
+        console.log('getRoomInfo Success: ', roomInfo);
 
         res.status(200).json(roomInfo);
     } catch (error) {
-        console.log('getRoomInfoService Error: ', error);
+        console.log('getRoomInfo Error: ', error);
+        res.status(400).json({
+            meesage: '알 수 없는 에러가 발생했습니다.',
+            error,
+        });
     }
 };
