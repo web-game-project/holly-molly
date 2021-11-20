@@ -1,9 +1,8 @@
 const { Game } = require('../../models');
 const { Keyword } = require('../../models');
-const { WaitingRoomMember } = require('../../models');
+const { WaitingRoomMember, sequelize } = require('../../models');
 const { GameMember } = require('../../models');
 const { GameSet } = require('../../models');
-const sequelize = require('sequelize');
 
 module.exports.startGame = async (req, res, next) => {
     let { room_idx } = req.body;
@@ -110,19 +109,24 @@ const getMemberCountInfo = async (roomIdx) => {
 
 const getMemberIdxInfo = async (roomIdx) => {
     try {
-        const member = await WaitingRoomMember.findAll({
-            attributes: ['wrm_idx', 'user_user_idx', 'wrm_user_color'],
-            where: {
-                room_room_idx: roomIdx,
-            },
-        });
+        let query = "SELECT wrm.wrm_idx, wrm.wrm_user_color, wrm.user_user_idx, User.user_name "
+                  + "FROM WaitingRoomMember as wrm "
+                  + "JOIN User on wrm.user_user_idx = User.user_idx "
+                  + `WHERE wrm.room_room_idx = ${roomIdx}`;
+
+        const member = await sequelize.query(query,
+            {
+                type: sequelize.QueryTypes.SELECT, 
+                raw: true
+            });
 
         let memberIdxList = [];
         for (let i = 0; i < member.length; i++) {
-            let wrm_idx = member[i].dataValues.wrm_idx;
-            let user_user_idx = member[i].dataValues.user_user_idx;
-            let wrm_user_color = member[i].dataValues.wrm_user_color;
-            memberIdxList.push({ wrm_idx, user_user_idx, wrm_user_color });
+            let wrm_idx = member[i].wrm_idx;
+            let user_user_idx = member[i].user_user_idx;
+            let wrm_user_color = member[i].wrm_user_color;
+            let user_name = member[i].user_name;
+            memberIdxList.push({ wrm_idx, user_user_idx, user_name, wrm_user_color });
         }
 
         return memberIdxList;
@@ -166,10 +170,12 @@ const assignRoleAndOrder = async (
             let wrm_wrm_idx = memberIdxList[i].wrm_idx;
             let wrm_user_idx = memberIdxList[i].user_user_idx;
             let user_color = memberIdxList[i].wrm_user_color;
+            let user_name = memberIdxList[i].user_name;
             memberInfoList.push({
                 user_idx: wrm_user_idx,
                 game_member_order: orderList[i],
                 user_color,
+                user_name
             });
 
             await GameMember.create({
