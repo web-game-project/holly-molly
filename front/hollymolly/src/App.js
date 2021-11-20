@@ -7,8 +7,6 @@ import Dialog from './screens/NickNameDialog';
 import { BrowserRouter, Route, Switch } from 'react-router-dom'; //React-Router import
 import WaitingRoom from './screens/WaitingRoom.js';
 import PlayingRoom from './screens/PlayingRoom.js';
-import InGame from './components/InGameComponent';
-import GameRole from './components/GameRoleComponent';
 
 const htmlTitle = document.querySelector("title");
 htmlTitle.innerHTML = '홀리몰리';
@@ -28,8 +26,6 @@ export default function App() {
                         <Route path="/playingroom" component={PlayingRoom} />
                     </Switch>
                     <Route path="/roomlist" component={RoomList} />
-                    <Route path="/ingame" component={InGame} />
-                    <Route path="/role" component={GameRole} />
                     <Switch>
                         <Route path="/waitingroom/:name" component={WaitingRoom} />
                         <Route path="/waitingroom" component={WaitingRoom} />
