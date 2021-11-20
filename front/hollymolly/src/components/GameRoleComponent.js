@@ -25,62 +25,50 @@ function GameRoleComponent(props) {
     const ghost = "\n홀리세계에 원래 살고 있던 외로운 홀리입니다.\n현재 홀리세계에 유령의 탈을 쓰고 \n살고 있는 인간이 있습니다.\n그 인간은 3일 뒤에 본인의 세계로 돌아갑니다.\n함께 친구로서, 같이 살고 싶다면 \n그 인간을 꼭 찾으세요!!!\n당신은 할 수 있습니다. 권투를 빕니다 *^3^*";
     const human = "\n당신은 홀리세계에 어쩌다보니\n 들어오게된 몰리입니다.\n현재 외로운 홀리들은 당신을 찾고 있어요.\n홀리들은 당신이 인간, 몰리인지 몰라요.\n3일 뒤면 당신의 세계로 돌아갈 수 있어요.\n그 3일 동안 홀리인척하면서 살아가면 된답니다.\n당신은 할 수 있습니다. 권투를 빕니다 *^3^*";
 
+    //게임 시작 5초 후, 타이머
+    const [seconds, setSeconds] = useState(5);
 
+    //let timer = 5;
     useEffect(() => {
         console.log('넘어온 게임 세트 인덱스_gamerole' + props.role);
-        /* var gameSetIdx = props.index;
+        ///timer = props.timer;
 
-        if (gameSetIdx != '') {
-            const reqHeaders = {
-                headers: {
-                    authorization:
-                        'Bearer ' + save_token,
-                },
-            };
-            const restURL = BaseURL + 'game/member/' + gameSetIdx;
+        const countdown = setInterval(() => {
+            if (parseInt(seconds) > 0) {
+                setSeconds(parseInt(seconds) - 1);
+            }
+        }, 1000);
 
-            console.log('url : ' + restURL);
-
-            axios
-                .get(
-                    restURL,
-                    reqHeaders
-                )
-                .then(function (response) {
-                    alert('rest 키워드' + response.data.keyword + ', 역할' + response.data.user_role);
-                    setRole(response.data.user_role);
-                })
-                .catch(function (error) {
-                    alert('error information : ' + error.message);
-                });
-        } */
-    }, []);
+        return () => {clearInterval(countdown); console.log('게임 롤 초 끝')} ;
+    }, [seconds]);
 
     return (
         <Container>
             <TxtContainer>
-                    {
-                        props.role == "human" ?
+                {
+                    props.role == "human" ?
                         <HeadLine>
-                                당신은 <RoleTxt ishuman="yes">"인간"</RoleTxt>입니다.
-                                {human.split("\n").map((i, key) => {
-                                    if (key === 3 || key === 5)
-                                        return <Content key={key}><br></br>{i}</Content>;
-                                    else
-                                        return <Content key={key}>{i}</Content>;
-                                })}
-                           </HeadLine>
-                            :
-                            <HeadLine>
-                                당신은 <RoleTxt ishuman="no"> "유령" </RoleTxt>입니다.
-                                {ghost.split("\n").map((i, key) => {
-                                    if (key === 3 || key === 5)
-                                        return <Content key={key}><br></br>{i}</Content>;
-                                    else
-                                        return <Content key={key}>{i}</Content>;
-                                })}
-                            </HeadLine>
-                    }
+                            <p> 당신은 <RoleTxt color={style.blue}>"인간"</RoleTxt> 입니다. </p>
+                            {human.split("\n").map((i, key) => {
+                                if (key === 3 || key === 5)
+                                    return <Content key={key}><br></br>{i}</Content>;
+                                else
+                                    return <Content key={key}>{i}</Content>;
+                            })}
+                        </HeadLine>
+                        :
+                        <HeadLine>
+                            <p> 당신은 <RoleTxt color={style.blue}>"유령"</RoleTxt> 입니다. </p>
+                            {ghost.split("\n").map((i, key) => {
+                                if (key === 3 || key === 5)
+                                    return <Content key={key}><br></br>{i}</Content>;
+                                else
+                                    return <Content key={key}>{i}</Content>;
+                            })}
+                        </HeadLine>
+                }
+
+                <TimerBtnContainer>{seconds}초 후 시작</TimerBtnContainer>
             </TxtContainer>
         </Container>
 
@@ -102,7 +90,21 @@ const TxtContainer = styled.div`
     height: 400px;
     padding: 5px;
     margin-left: 20px;
-    margin-top: 20px;
+    margin-top: 20px;    
+`;
+
+const TimerBtnContainer = styled.div`
+    width: 130px;
+    height: 30px;
+    margin-top: 15px;
+    margin-left: 270px;   
+    font-size: 20px;
+    background-color: #fff;
+    text-align: center;
+    border-width: 1px;
+    border-radius: 15px;
+    border-color: #000;    
+    border-style: solid;
 `;
 
 const HeadLine = styled.div`
@@ -110,16 +112,16 @@ const HeadLine = styled.div`
     font-size: 23px;
     display: flex;  
     flex-direction: column;
-    //align-items: center;
-    //justify-content: center;
+    p{
+        white-space: nowrap;
+    }
 `;
 
-const RoleTxt = styled.div`
+const RoleTxt = styled.text`
     font-size: 26px;
-    ${(props) =>
-        props.ishuman == 'yes' ? `color: #FF0000;` : 
-        props.ishuman == 'no' ? `color: #0100FF;` : `color: #000000`}
+    color: ${(props) => (props.color)};
 `;
+
 const Content = styled.div`
     width: 100%;
     display: flex;    
