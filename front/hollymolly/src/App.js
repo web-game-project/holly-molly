@@ -7,16 +7,17 @@ import Dialog from './screens/NickNameDialog';
 import { BrowserRouter, Route, Switch } from 'react-router-dom'; //React-Router import
 import WaitingRoom from './screens/WaitingRoom.js';
 import PlayingRoom from './screens/PlayingRoom.js';
+import VoteBoard from './components/VoteBoard';
 
-const htmlTitle = document.querySelector("title");
+const htmlTitle = document.querySelector('title');
 htmlTitle.innerHTML = '홀리몰리';
 
 export default function App() {
     return (
         <div>
-            {/* <UserTable /> */}
             <div>
                 <BrowserRouter>
+                    <Route path="/voteboard" component={VoteBoard}></Route>
                     <Route exact path="/" component={GameStart} />
                     <Route path="/inputname" component={Dialog}>
                         <Dialog title="닉네임 입력" confirmText="접속" />
@@ -30,7 +31,6 @@ export default function App() {
                         <Route path="/waitingroom/:name" component={WaitingRoom} />
                         <Route path="/waitingroom" component={WaitingRoom} />
                     </Switch>
-
                 </BrowserRouter>
             </div>
         </div>
