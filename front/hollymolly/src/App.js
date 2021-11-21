@@ -9,6 +9,9 @@ import WaitingRoom from './screens/WaitingRoom.js';
 import PlayingRoom from './screens/PlayingRoom.js';
 import VoteBoard from './components/VoteBoard';
 
+import GameMissionPerformance from './components/GameMissionPerformance';
+
+
 const htmlTitle = document.querySelector('title');
 htmlTitle.innerHTML = '홀리몰리';
 
@@ -17,6 +20,7 @@ export default function App() {
         <div>
             <div>
                 <BrowserRouter>
+                    <Route path="/gameMissionPerformance" component={GameMissionPerformance}></Route>
                     <Route path="/voteboard" component={VoteBoard}></Route>
                     <Route exact path="/" component={GameStart} />
                     <Route path="/inputname" component={Dialog}>
@@ -31,6 +35,7 @@ export default function App() {
                         <Route path="/waitingroom/:name" component={WaitingRoom} />
                         <Route path="/waitingroom" component={WaitingRoom} />
                     </Switch>
+                    
                 </BrowserRouter>
             </div>
         </div>

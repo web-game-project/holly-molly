@@ -4,6 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=East+Sea+Dokdo&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap');
 
 
 * {
@@ -33,4 +34,8 @@
 
 .Gowun_Dodum {
     font-family: 'Gowun Dodum', sans-serif;
+}
+
+.Nanum_Pen_Script {
+    font-family: 'Nanum Pen Script', sans-serif;
 }
