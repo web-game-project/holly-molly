@@ -22,7 +22,7 @@ module.exports = async (req, res, next) => {
         console.log('[error]-login: ', error);
         res.status(400).send({
             message: '알 수 없는 오류가 발생하였습니다.',
-            error,
+            error: error.message,
         });
     }
 };
