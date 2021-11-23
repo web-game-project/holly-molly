@@ -101,6 +101,7 @@ const GameUserCard = (props) => {
     margin-right: 1px;
     background-color: #FFFFFF;
     border: 5px solid;
+    border-radius: 0.3em;
     border-color: ${(props) => (props.borderColor)}; // border 색상 변경 
   `;
 

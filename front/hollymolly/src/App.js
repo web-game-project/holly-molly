@@ -12,6 +12,8 @@ import VoteBoard from './components/VoteBoard';
 // 테스트 끝나면 삭제할거임- 연희
 import GameMissionPerformance from './components/GameMissionPerformance';
 import GameDrawing from './components/GameDrawing';
+import GameMiddleResult from './components/GameMiddleResult';
+import PlayingResult from './screens/PlayingResult';
 // 테스트 끝나면 삭제할거임- 연희
 
 const htmlTitle = document.querySelector('title');
@@ -25,6 +27,8 @@ export default function App() {
                     {/* 테스트 끝나면 삭제할거임- 연희 */}
                     <Route path="/gameMissionPerformance" component={GameMissionPerformance}></Route>
                     <Route path="/gameDrawing" component={GameDrawing}></Route>
+                    <Route path="/gameMiddleResult" component={GameMiddleResult}></Route>
+                    <Route path="/playingresult" component={PlayingResult}></Route>
                     {/* 테스트 끝나면 삭제할거임- 연희 */}
                     <Route path="/voteboard" component={VoteBoard}></Route>
                     <Route exact path="/" component={GameStart} />

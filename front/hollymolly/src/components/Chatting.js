@@ -22,14 +22,13 @@ socket.on('connect', () => {
     console.log('chatting connection server');
 });
 
-const Chatting = (props) => {
-    // 입력된 유저 색깔 
-    // console.log("room_idx : " + parseInt(props.room_idx));
+const Chatting = (props) => { 
+    console.log("room_idx : " + parseInt(props.room_idx));
     // console.log("save_token : " + save_token);
     // console.log("save_user_idx : " +save_user_idx);
     // console.log("save_user_name : " +save_user_name);
 
-    const [userColor, setUserColor] = useState('white');
+    const [recentColor, setRecentColor] = useState('white'); // 기본 화이트 색
     
     // 입력된 채팅 메시지 상태 값
     const [inputMessage, setInputMessage] = useState('');
@@ -109,6 +108,8 @@ const Chatting = (props) => {
     // 서버에서 받은 입력값을 로컬 상태값으로 갱신하는 함수(바로 밑의 함수로 연결된다)
 
     useEffect(() => {
+        setRecentColor(props.color);
+
         socket.on("chat", (data) => {
 
             setRecentChatUserIdx(data.user_idx);
@@ -130,7 +131,7 @@ const Chatting = (props) => {
     useEffect( () => {
         const scrollUpdate = async () => {
         // 새로운 채팅 내용 갱신 
-        (await recentChat.length) > 0 && setChatMonitor([...chatMonitor, {recentChat, recentChatUserName}]); 
+        (await recentChat.length) > 0 && setChatMonitor([...chatMonitor, {recentChat, recentChatUserName, recentColor}]); 
         
         // await 밑에 스크롤 함수 위치
         scrollToBottom();
@@ -139,7 +140,6 @@ const Chatting = (props) => {
 
         scrollUpdate();
     }, [recentChat]);
-  
 
   return (
     <React.Fragment>
@@ -147,18 +147,28 @@ const Chatting = (props) => {
                 <ChatContainer id="chatMonitor">
                     {/* 18개부터 스크롤 생김 */}
                     {chatMonitor.map((values, index) => {          
-                        return (<ChatContext key={index} name={values.recentChatUserName} color={userColor} text={values.recentChat}></ChatContext>);
+                        return (<ChatContext key={index} name={values.recentChatUserName} color={recentColor} text={values.recentChat}></ChatContext>);
                     })}
                 </ChatContainer>
                 <InputMsgContainer>
+                {props.available?
                     <InputMsg
                         type="text"
                         placeholder="채팅 사용 가능 😊"
                         value={inputMessage}
                         onChange={handleInput}
                         onKeyPress={handleEnter}
-                    ></InputMsg>{' '}
-                    {/* 채팅 사용 불가 😧*/}
+                    ></InputMsg> :
+                    <InputMsg
+                        type="text"
+                        placeholder="채팅 사용 불가 😧"
+                        value={inputMessage}
+                        onChange={handleInput}
+                        onKeyPress={handleEnter}
+                        disabled={true}
+                    ></InputMsg>
+
+                }
                     <InputMsgBtn onClick={handleSubmit}>🚀</InputMsgBtn>
                 </InputMsgContainer>
             </Container>
@@ -221,6 +231,7 @@ const InputMsg = styled.textarea`
     margin-right: 7px;
     border: none;
     outline: none !important;
+    resize: none;
 
     ::placeholder {
         color: white;

@@ -424,10 +424,7 @@ export default function WaitingRoom({ match }) {
                     </UserDiv>
                 </SelectDiv>
                 <RightDiv>
-                    {/* <Chatting room_idx={location.state.data.room_idx}>
-                </Chatting> */}
-                    <Chatting room_idx={location.state.data.room_idx} height="560px"></Chatting>
-
+                    <Chatting room_idx={location.state.data.room_idx} height="560px" available={true}></Chatting>
                     <StartDiv>
                         {isLeader === 0 //방장 아님
                             ? (console.log(style.red),
