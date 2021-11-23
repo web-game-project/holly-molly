@@ -32,7 +32,7 @@ const socket = io('http://3.17.55.178:3002/', {
 });
 
 socket.on('connect', () => {
-    console.log('chatting connection server');
+    console.log('playing room connection server');
 });
 
 let userList = [{}];
@@ -96,6 +96,24 @@ const PlayingRoom = (props) => {
             });
 
     });
+
+    // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기 
+    var myIndex = userList.find(x => x.user_idx === save_user_idx);
+    if (myIndex) {
+        myIndex.game_member_order = 0;
+    }
+
+    // 그림 그리기 순서 대로 유저 리스트 재정렬 
+    userList.sort(function(a, b) {
+        return a.game_member_order - b.game_member_order;
+    });
+
+    // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시 
+    var myItem = userList.find(x => x.user_idx === save_user_idx);
+    if (myItem) {
+        myItem.game_member_order = "나";
+    }
+
     return (
         <React.Fragment>
             <Background>
@@ -130,6 +148,7 @@ const PlayingRoom = (props) => {
                         </DrawDiv> */}
                         <ChatDiv>
                             <Chatting />
+                            {/* <Chatting room_idx={location.state.data.room_idx} available={false} color={'RED'}></Chatting> // 룸 인덱스 및 컬러 설정 후, 이걸로 바꿔야 함 */}
                         </ChatDiv>
                     </BackGroundDiv>
                 </Container>
