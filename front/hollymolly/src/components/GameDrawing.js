@@ -24,6 +24,9 @@ socket.on('connect', () => {
 });
 
 const GameDrawing = (props) => {
+
+    //const {user_order, user_color, user_room_index, user_idx, user_member_count} = props;
+
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머 
     const [waitSeconds, setWaitSeconds] = useState(-1); // 순서 받기 타이머, 그림 다 그린 후 타이머 실행되야 하므로 일단 -1 으로 초기화
     const [readyNextOrder, setReadyNextOrder] = useState(false); // 다음 순서 준비 완료 소켓 값을 관리하는 상태 값 
