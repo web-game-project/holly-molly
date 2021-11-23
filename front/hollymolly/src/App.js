@@ -9,8 +9,10 @@ import WaitingRoom from './screens/WaitingRoom.js';
 import PlayingRoom from './screens/PlayingRoom.js';
 import VoteBoard from './components/VoteBoard';
 
+// 테스트 끝나면 삭제할거임- 연희
 import GameMissionPerformance from './components/GameMissionPerformance';
-
+import GameDrawing from './components/GameDrawing';
+// 테스트 끝나면 삭제할거임- 연희
 
 const htmlTitle = document.querySelector('title');
 htmlTitle.innerHTML = '홀리몰리';
@@ -20,7 +22,10 @@ export default function App() {
         <div>
             <div>
                 <BrowserRouter>
+                    {/* 테스트 끝나면 삭제할거임- 연희 */}
                     <Route path="/gameMissionPerformance" component={GameMissionPerformance}></Route>
+                    <Route path="/gameDrawing" component={GameDrawing}></Route>
+                    {/* 테스트 끝나면 삭제할거임- 연희 */}
                     <Route path="/voteboard" component={VoteBoard}></Route>
                     <Route exact path="/" component={GameStart} />
                     <Route path="/inputname" component={Dialog}>
@@ -35,7 +40,6 @@ export default function App() {
                         <Route path="/waitingroom/:name" component={WaitingRoom} />
                         <Route path="/waitingroom" component={WaitingRoom} />
                     </Switch>
-                    
                 </BrowserRouter>
             </div>
         </div>
