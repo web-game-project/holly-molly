@@ -6,7 +6,7 @@ import night from '../assets/night.svg';
 import Chatting from '../components/Chatting';
 import GameUserCard from '../components/GameUserCard';
 import GameMiddleResult from '../components/GameMiddleResult';
-import { useLocation } from 'react-router';
+import { useHistory, useLocation, Prompt } from 'react-router';
 //통신
 import axios from 'axios';
 
@@ -33,9 +33,10 @@ socket.on('connect', () => {
 });
 
 const PlayingResult = (props) => {
-    const [winner, setWinner] = useState(''); // 그림 그리기 타이머
+    let location = useLocation();    
+    const history = useHistory();
 
-    let location = useLocation();
+    const [winner, setWinner] = useState(''); // 중간 결과 승리자 
 
     // ** 더미 데이터 일단 넣어둠, Playing Vote에서 넘어오면 그걸로 바꿔주면 될 듯! // 
     const userList = [
@@ -70,7 +71,6 @@ const PlayingResult = (props) => {
 
         const reqHeaders = {
             headers: {
-                //1번 토큰 이용
                 authorization: 'Bearer ' + save_token,
             },
         };
@@ -85,7 +85,6 @@ const PlayingResult = (props) => {
     };
 
     useEffect(() => {
-        
         //getMiddleResult(); 
 
         // 같은 대기실에 있는 클라이언트들에게 중간 결과 전송 
@@ -95,8 +94,56 @@ const PlayingResult = (props) => {
 
     }, []);
 
+    // 비정상 종료
+    const exit = async () => {	
+        console.log("exit!!!");
+        const restURL = 'http://3.17.55.178:3002/game/exit';
+
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        axios
+            .delete(restURL, reqHeaders)
+            .then(function (response) {
+                alert(response);
+                history.push({
+                    pathname: '/inputname', // 성공하면 닉네임 설정 창으로 이동 
+                });
+            })
+            .catch(function (error) {
+                alert(error);
+            });
+    };
+
+    /* // 게임 중 비정상 종료 감지
+    useEffect(() => {
+        window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
+        window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
+        return () => {
+          window.removeEventListener('beforeunload', alertUser)
+          window.removeEventListener('unload', handleEndConcert)
+        }
+    }, [])
+
+    // 경고창 
+    const alertUser = (e) => {
+        e.preventDefault(); // 페이지가 리프레쉬 되는 고유의 브라우저 동작 막기
+        e.returnValue = "";
+    };
+
+    // 종료시 실행 
+    const handleEndConcert = async () => {
+        exit();
+    } */
+
     return (
         <React.Fragment>
+            {/* <Prompt
+                when={shouldBlockNavigation}
+                message='You have unsaved changes, are you sure you want to leave?'
+            /> */}
             <Background>
                 <Container>
                     <BackGroundDiv>
