@@ -22,8 +22,16 @@ module.exports = async (req, res, next) => {
             },
             group: 'game_game_idx',
         });
-        console.log('getInterimResult Success: ', interimResult);
-        res.status(200).json(interimResult);
+
+        const { human_score, ghost_score } = interimResult.dataValues;
+        let winner = "same";
+
+        if(human_score < ghost_score)
+            winner = "ghost";
+        else if(human_score > ghost_score)
+            winner = "human";
+            
+        res.status(200).json({winner});
     } catch (error) {
         console.log('getInterimResult Error: ', error);
         res.status(400).json({
