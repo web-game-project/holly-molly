@@ -140,10 +140,6 @@ const PlayingResult = (props) => {
 
     return (
         <React.Fragment>
-            {/* <Prompt
-                when={shouldBlockNavigation}
-                message='You have unsaved changes, are you sure you want to leave?'
-            /> */}
             <Background>
                 <Container>
                     <BackGroundDiv>
@@ -162,7 +158,7 @@ const PlayingResult = (props) => {
                             }
                         </UserDiv>
                         {/* 중간 결과*/}
-                        <GameMiddleResult winner={"유령"} /> {/* <GameMiddleResult winner={winner} /> */}
+                        <GameMiddleResult winner={"ghost"} /> {/* <GameMiddleResult winner={winner} /> */}
                         <ChatDiv>
                             {/* <Chatting /> */}
                             {/* <Chatting room_idx={location.state.data.room_idx}></Chatting> */}
