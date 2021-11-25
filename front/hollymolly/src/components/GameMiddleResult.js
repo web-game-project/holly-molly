@@ -13,14 +13,14 @@ const GameMiddleResult = (props) => {
   let engRole = "";
   let draw = false;
 
-  if (winner === "유령") {
+  if (winner === "ghost") { // 유령이 이겼을 때 
     role = "유령";
     engRole = "GHOST";
-  } else if (winner === "인간") {
+  } else if (winner === "human") { // 인간이 이겼을 때 
     // human
     role = "인간";
     engRole = "HUMAN";
-  } else {
+  } else { // 동점일 때 
     draw = true;
   }
 

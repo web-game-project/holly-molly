@@ -14,6 +14,7 @@ import GameMissionPerformance from './components/GameMissionPerformance';
 import GameDrawing from './components/GameDrawing';
 import GameMiddleResult from './components/GameMiddleResult';
 import PlayingResult from './screens/PlayingResult';
+import Loading from './components/Loading';
 // 테스트 끝나면 삭제할거임- 연희
 
 const htmlTitle = document.querySelector('title');
@@ -29,6 +30,7 @@ export default function App() {
                     <Route path="/gameDrawing" component={GameDrawing}></Route>
                     <Route path="/gameMiddleResult" component={GameMiddleResult}></Route>
                     <Route path="/playingresult" component={PlayingResult}></Route>
+                    <Route path="/loading" component={Loading}></Route>
                     {/* 테스트 끝나면 삭제할거임- 연희 */}
                     <Route path="/voteboard" component={VoteBoard}></Route>
                     <Route exact path="/" component={GameStart} />
