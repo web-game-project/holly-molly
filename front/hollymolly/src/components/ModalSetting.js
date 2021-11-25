@@ -7,15 +7,27 @@ import { ReactComponent as SettingIcon } from '../assets/settingIcon.svg'; // �
 // 소켓
 import { io } from 'socket.io-client';
 import axios from 'axios';
+import colors from '../styles/styles';
 
-const socket = io('http://3.17.55.178:3002/', {
+const BaseURL = 'http://3.17.55.178:3002';
+
+//RefreshVerification.verification();
+
+// local storage에 있는지 확인
+let data = localStorage.getItem('token');
+let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
+
+const socket = io(BaseURL, {
     auth: {
         // 1번 토큰
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY',
+        token: save_token,
     },
 });
 
-export default function ModalSetting({ title, mode, member, room_private }) {
+export default function ModalSetting({ title, mode, room_private, member, room_idx }) {
     // 인원수 0 제목 0 난이도
     console.log(title, mode, member, room_private);
     // 방 설정 수정
@@ -26,7 +38,6 @@ export default function ModalSetting({ title, mode, member, room_private }) {
             left: '50%',
             right: 'auto',
             bottom: 'auto',
-            // marginRight: '-50%',
             transform: 'translate(-50%, -50%)',
             width: '430px',
             height: '330px',
@@ -41,7 +52,6 @@ export default function ModalSetting({ title, mode, member, room_private }) {
     };
 
     useEffect(() => {
-        setPeople(m);
         socket.on('error', () => {
             setTimeout(() => {
                 socket.connect();
@@ -58,13 +68,40 @@ export default function ModalSetting({ title, mode, member, room_private }) {
         // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
         socket.on('disconnect', (reason) => {
             if (reason === 'io server disconnect') {
-                // the disconnection was initiated by the server, you need to reconnect manually
                 socket.connect();
             }
-            // else the socket will automatically try to reconnect
         });
-        //}
     }, []);
+
+    const UpdateRoomInfo = async () => {
+        // 대기실 정보 수정 api
+        const restURL = BaseURL + '/room/info/';
+
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        axios
+            .put(
+                restURL,
+                {
+                    room_idx: room_idx,
+                    room_name: inputRef.current.value,
+                    room_mode: roomMode,
+                    room_start_member_cnt: people,
+                },
+                reqHeaders
+            )
+            .then(function (response) {
+                console.log(response.status);
+                console.log('UpdateRoomInfo 성공');
+            })
+            .catch(function (error) {
+                console.log('UpdateRoomInfo 실패');
+                console.log(error.response);
+            });
+    };
 
     const inputRef = useRef();
     let roomMode = '';
@@ -84,33 +121,29 @@ export default function ModalSetting({ title, mode, member, room_private }) {
 
     // 인원 useState
 
-    let m;
-    if (member == 4) {
-        m = 4;
-    } else if (member == 5) {
-        m = 5;
-    } else if (member == 6) {
-        m = 6;
-    }
-    const [people, setPeople] = React.useState(m);
-    // setPeople(m);
+    let clicked;
+    let b;
+    console.log(member);
+    member == 6 ? (b = 6) : member == 5 ? (b = 5) : (b = 4);
+    const [people, setPeople] = useState(b);
     console.log(people);
     console.log('people');
 
-    console.log(m);
-
     const click4 = () => {
         setPeople((people) => (people = 4));
+        clicked = 4;
         console.log('선택) 인원수 4명');
     };
 
     const click5 = () => {
         setPeople((people) => (people = 5));
+        clicked = 5;
         console.log('선택) 인원수 5명');
     };
 
     const click6 = () => {
         setPeople((people) => (people = 6));
+        clicked = 6;
         console.log('선택) 인원수 6명');
     };
 
@@ -126,12 +159,15 @@ export default function ModalSetting({ title, mode, member, room_private }) {
     };
 
     const result = () => {
+        console.log('오케이 눌림');
+        // UpdateRoomInfo();
         console.log(':::최종결과:::');
         console.log('방이름은? ' + inputRef.current.value);
 
         if (inputRef.current.value == null || inputRef.current.value == '') {
             inputRef.current.value = title; // 제목 안적으면 수정 전 디폴트
         }
+
         if (isChecked) {
             // easy
             roomMode = 'easy';
@@ -143,18 +179,13 @@ export default function ModalSetting({ title, mode, member, room_private }) {
 
         console.log('인원수는? ' + people + '명');
 
-        if (ispublic) {
-            // public
-            console.log('공개범위는? public'); // 반대로 나옴
-        } else console.log('공개범위는? private'); // 반대로 나옴
-
-        // roomCreate();
+        UpdateRoomInfo();
         closeModal();
 
-        //방 생성했으면 초기화
-        // if (isChecked === false) setIschecked(!isChecked); // easy로 바꿈
-        // setPeople((people) => (people = 4)); //4명으로 바꿈
-        // if (ispublic == false) setIsPublic(!ispublic); // public으로 바꿈
+        // //방 생성했으면 초기화
+        // // if (isChecked === false) setIschecked(!isChecked); // easy로 바꿈
+        // // setPeople((people) => (people = 4)); //4명으로 바꿈
+        // // if (ispublic == false) setIsPublic(!ispublic); // public으로 바꿈
     };
 
     const roomCreate = async () => {
@@ -257,9 +288,9 @@ export default function ModalSetting({ title, mode, member, room_private }) {
                             </button>
                         </div>
                         <div style={styles.div}>
-                            <text style={styles.text}>공개범위 : </text>
-                            <button style={ispublic ? styles.button_on : styles.button_off}>public</button>
-                            <button style={!ispublic ? styles.button_on : styles.button_off}>private</button>
+                            <text style={styles.range_text}>공개범위 : </text>
+                            <button style={ispublic ? styles.range_button_on : styles.range_button_off}>public</button>
+                            <button style={!ispublic ? styles.range_button_on : styles.range_button_off}>private</button>
                         </div>
                     </div>
                     <p>
@@ -394,5 +425,31 @@ const styles = {
         },
         shadowOpacity: 0.12,
         shadowRadius: 60,
+    },
+    // range
+    range_button_on: {
+        fontSize: 20,
+        color: colors.gray,
+        backgroundColor: 'transparent',
+        borderRadius: 20,
+        border: '2px solid',
+        borderColor: style.gray,
+        paddingLeft: 10,
+        paddingRight: 10,
+        marginLeft: 10,
+    },
+
+    range_button_off: {
+        fontSize: 20,
+        color: colors.gray,
+        backgroundColor: 'transparent',
+        border: style.white,
+        paddingLeft: 10,
+        paddingRight: 10,
+        marginLeft: 10,
+    },
+    range_text: {
+        fontSize: 20,
+        color: colors.black,
     },
 };

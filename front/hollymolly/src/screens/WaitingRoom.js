@@ -3,6 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { io } from 'socket.io-client';
 import style from '../styles/styles.js';
+import exit from '../assets/exit.png';
 
 import UserCard from '../components/UserCard';
 
@@ -14,6 +15,7 @@ import Chatting from '../components/Chatting.js';
 //import { useLocation } from 'react-router';
 import RefreshVerification from '../server/RefreshVerification.js';
 import { useHistory, useLocation } from 'react-router';
+import colors from '../styles/styles.js';
 
 const BaseURL = 'http://3.17.55.178:3002';
 
@@ -63,24 +65,26 @@ const colorArr = [
     { color: 'GRAY', code: '#8C8C8C' },
 ];
 
-const selectColorArr = [ //선택 할 수 있는지 여부 배열, true : 선택가능 
-    { 'color': "RED", 'choose': "true", 'code': "#FF0000" },
-    { 'color': "ORANGE", 'choose': "true", 'code': "#FF5E00" },
-    { 'color': "YELLOW", 'choose': "true", 'code': "#FFE400" },
-    { 'color': "GREEN", 'choose': "true", 'code': "#1DDB16" },
-    { 'color': "BLUE", 'choose': "true", 'code': "#0B37D3" },
-    { 'color': "PURPLE", 'choose': "true", 'code': "#5F00FF" },
-    { 'color': "PINK", 'choose': "true", 'code': "#FF00DD" },
+const selectColorArr = [
+    //선택 할 수 있는지 여부 배열, true : 선택가능
+    { color: 'RED', choose: 'true', code: '#FF0000' },
+    { color: 'ORANGE', choose: 'true', code: '#FF5E00' },
+    { color: 'YELLOW', choose: 'true', code: '#FFE400' },
+    { color: 'GREEN', choose: 'true', code: '#1DDB16' },
+    { color: 'BLUE', choose: 'true', code: '#0B37D3' },
+    { color: 'PURPLE', choose: 'true', code: '#5F00FF' },
+    { color: 'PINK', choose: 'true', code: '#FF00DD' },
 ];
 
 export default function WaitingRoom({ match }) {
-    let location = useLocation();    
+    let location = useLocation();
     const history = useHistory();
 
     const room_index = match.params.name; // url에 입력해준 방 인덱스
     console.log('방 번호는 ?' + room_index);
     const [roomEnterInfo, setRoomEnterInfo] = useState('');
     const [roomInfo, setRoomInfo] = useState('');
+    const [count, setCount] = useState('');
 
     //사람이 색을 변경해서 클릭했을 때 소켓통신을 실행하기 위한 변수
     const [changeColor, setChangeColor] = React.useState(false);
@@ -102,11 +106,14 @@ export default function WaitingRoom({ match }) {
 
     const [gameStart, setGameStart] = React.useState(false);
 
+    //방 정보 수정 useState
+    const [roomUpdate, setRoomUpdate] = useState();
+
     useEffect(() => {
         //게임 시작 정보 socket
-        socket.on("start game", (data) => {
+        socket.on('start game', (data) => {
             alert('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
-    
+
             //플레잉룸으로 이동, 데이터 전달
             history.push({
                 pathname: '/playingroom/' + room_idx,
@@ -117,17 +124,15 @@ export default function WaitingRoom({ match }) {
 
     useEffect(() => {
         //사용자의 준비 상태 값 변경에 따른 소켓
-        socket.on("change member ready", (data) => {
+        socket.on('change member ready', (data) => {
             alert('지금 ready 값이야 : ' + ready_cnt);
 
             if (data.user_idx != save_user_idx) {
                 if (data.user_ready === true) {
                     ready_cnt += 1;
                     alert('ready 증가, ready 현재값 : ' + ready_cnt);
-                }
-                else {
-                    if (ready_cnt != 0)
-                        ready_cnt -= 1;
+                } else {
+                    if (ready_cnt != 0) ready_cnt -= 1;
                     alert('ready 감소, ready 현재값 : ' + ready_cnt);
                 }
             }
@@ -137,7 +142,7 @@ export default function WaitingRoom({ match }) {
 
     useEffect(() => {
         //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 부분
-        socket.on("change member color", (data) => {
+        socket.on('change member color', (data) => {
             alert('socket-> index: ' + data.user_idx + ' color: ' + data.user_color);
 
             const changeUserIdx = data.user_idx;
@@ -166,12 +171,19 @@ export default function WaitingRoom({ match }) {
         });
     }, [changeColor]);
 
+    useEffect(() => {
+        //방 정보 수정 소켓
+
+        socket.on('edit room', (data) => {
+            console.log('수정) 방정보! : ' + data.room_idx + data.room_name + data.room_mode + data.room_start_member_cnt);
+            setRoomUpdate(data);
+        });
+    }, []);
+
     function readyClick(readyStatus) {
-        if (readyStatus === true)
-            ready_cnt += 1;
+        if (readyStatus === true) ready_cnt += 1;
         else {
-            if (ready_cnt != 0)
-                ready_cnt -= 1;
+            if (ready_cnt != 0) ready_cnt -= 1;
         }
         setChangeReady(readyStatus);
 
@@ -304,10 +316,37 @@ export default function WaitingRoom({ match }) {
             .get(restURL, reqHeaders)
             .then(function (response) {
                 setRoomInfo(response.data);
+                console.log('response.data.room_start_member_cnt');
+                console.log(response.data.room_idx);
+                setCount(response.data.room_start_member_cnt);
                 console.log('getRoomInfo 성공');
             })
             .catch(function (error) {
                 console.log('getRoomInfo 실패');
+                console.log(error.response);
+            });
+    };
+
+    const exitWaitingRoom = async () => {
+        // 대기실 정보 조회 api
+        const restURL = BaseURL + '/waiting-room/exit/' + location.state.data.room_idx;
+
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        axios
+            .delete(restURL, reqHeaders)
+            .then(function (response) {
+                console.log(response.status);
+                console.log('exitWaitingRoom 성공');
+                history.push({
+                    pathname: '/roomlist', // 나가기 성공하면 룸리스트로 이동
+                });
+            })
+            .catch(function (error) {
+                console.log('exitWaitingRoom 실패');
                 console.log(error.response);
             });
     };
@@ -330,7 +369,9 @@ export default function WaitingRoom({ match }) {
         const middleSelectArr = [{}];
 
         for (let i = 0; i < user_list.length; i++) {
-            console.log('user color랑 인덱스랑 레디값 : ' + user_list[i].wrm_user_color + user_list[i].user_idx + ' ' + user_list[i].wrm_user_ready);
+            console.log(
+                'user color랑 인덱스랑 레디값 : ' + user_list[i].wrm_user_color + user_list[i].user_idx + ' ' + user_list[i].wrm_user_ready
+            );
 
             const currentColor = user_list[i].wrm_user_color;
 
@@ -371,21 +412,44 @@ export default function WaitingRoom({ match }) {
                 <SelectDiv>
                     selectDiv
                     <br />
-                    <TitleDiv>
-                        TitleDiv {match.params.name}번 방
-                        <br />
-                        <Text>
-                            방제 : {roomEnterInfo.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
-                            {roomEnterInfo.room_current_member_cnt} / {roomEnterInfo.room_start_member_cnt} 명
-                        </Text>
-                        <br />
-                        <ModalSetting
-                            title={roomInfo.room_name}
-                            mode={roomInfo.room_mode}
-                            member={roomInfo.room_start_member_cnt}
-                            room_private={roomInfo.room_private}
-                        />
-                    </TitleDiv>
+                    {roomUpdate ? (
+                        <TitleDiv>
+                            TitleDiv {roomUpdate.room_idx}번 방
+                            <br />
+                            <Text>
+                                방제 : {roomUpdate.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
+                                {roomEnterInfo.room_current_member_cnt} / {roomUpdate.room_start_member_cnt} 명
+                            </Text>
+                            <br />
+                            {isLeader === 1 && (
+                                <ModalSetting
+                                    title={roomUpdate.room_name}
+                                    mode={roomUpdate.room_mode}
+                                    member={roomUpdate.room_start_member_cnt}
+                                    room_private={roomInfo.room_private}
+                                    room_idx={roomUpdate.room_idx}
+                                />
+                            )}
+                        </TitleDiv>
+                    ) : (
+                        <TitleDiv>
+                            TitleDiv {match.params.name}번 방
+                            <br />
+                            <Text>
+                                방제 : {roomEnterInfo.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
+                                {roomEnterInfo.room_current_member_cnt} / {roomEnterInfo.room_start_member_cnt} 명
+                            </Text>
+                            {isLeader === 1 && (
+                                <ModalSetting
+                                    title={roomInfo.room_name}
+                                    mode={roomInfo.room_mode}
+                                    member={count}
+                                    room_private={roomInfo.room_private}
+                                    room_idx={roomInfo.room_idx}
+                                />
+                            )}
+                        </TitleDiv>
+                    )}
                     <BarDiv>
                         <BarInnerDiv>
                             {uniqueSelectColor.map(
@@ -422,39 +486,53 @@ export default function WaitingRoom({ match }) {
                             }}
                         />
                     </UserDiv>
+                    <div
+                        onClick={() => {
+                            console.log('눌림');
+                            exitWaitingRoom();
+                        }}
+                        style={{
+                            width: '100px',
+                            justifyContent: 'space-between',
+                            // backgroundColor: colors.red,
+                        }}
+                    >
+                        <Exit src={exit} />
+                        <ExitText style={{ color: colors.black }}>나가기</ExitText>
+                    </div>
                 </SelectDiv>
                 <RightDiv>
                     <Chatting room_idx={location.state.data.room_idx} height="560px" available={true}></Chatting>
                     <StartDiv>
                         {isLeader === 0 //방장 아님
                             ? (console.log(style.red),
-                                changeReady === true ? (
-                                    <BtnDiv
-                                        color="green"
-                                        onClick={() => {
-                                            readyClick(!changeReady);
-                                        }}
-                                    >
-                                        Waiting...
-                                    </BtnDiv>
-                                ) : (
-                                    <BtnDiv
-                                        onClick={() => {
-                                            readyClick(!changeReady);
-                                        }}
-                                    >
-                                        Game Ready
-                                    </BtnDiv>
-                                ))
+                              changeReady === true ? (
+                                  <BtnDiv
+                                      color="green"
+                                      onClick={() => {
+                                          readyClick(!changeReady);
+                                      }}
+                                  >
+                                      Waiting...
+                                  </BtnDiv>
+                              ) : (
+                                  <BtnDiv
+                                      onClick={() => {
+                                          readyClick(!changeReady);
+                                      }}
+                                  >
+                                      Game Ready
+                                  </BtnDiv>
+                              ))
                             : //방장이다.
-                            (console.log('방장이야'),
-                                startMember === ready_cnt ? (
-                                    <BtnDiv isStart="yes" onClick={startClick}>
-                                        Game Start
-                                    </BtnDiv> //게임 시작 api 요청 onclick 달기
-                                ) : (
-                                    <BtnDiv isStart="no">Game Start</BtnDiv>
-                                ))}
+                              (console.log('방장이야'),
+                              startMember === ready_cnt ? (
+                                  <BtnDiv isStart="yes" onClick={startClick}>
+                                      Game Start
+                                  </BtnDiv> //게임 시작 api 요청 onclick 달기
+                              ) : (
+                                  <BtnDiv isStart="no">Game Start</BtnDiv>
+                              ))}
                     </StartDiv>
                 </RightDiv>
             </Container>
@@ -518,14 +596,8 @@ const BtnDiv = styled.div`
     box-shadow: 0px 3px 3px #878787;
     font-size: 25px;
     text-align: center;
-    ${(props) =>
-        props.color == 'green'
-            ? `background-color: #44A024;`
-            : ``}
-     ${(props) =>
-        props.isStart == 'yes'
-            ? ``
-            : props.isStart == 'no' ? `opacity: 0.5;` : ``}
+    ${(props) => (props.color == 'green' ? `background-color: #44A024;` : ``)}
+    ${(props) => (props.isStart == 'yes' ? `` : props.isStart == 'no' ? `opacity: 0.5;` : ``)}
 `;
 const TitleDiv = styled.div`
     width: 625px;
@@ -584,8 +656,8 @@ const BarColorBox = styled.div`
         props.color == '#FF0000' || props.data == '#FF0000'
             ? `background-color: ${props.color}; border-top-left-radius: 15px; border-bottom-left-radius: 15px;`
             : props.color == '#FF00DD' || props.data == '#FF00DD'
-                ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
-                : `background-color: ${props.color};`}
+            ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
+            : `background-color: ${props.color};`}
 `;
 
 const Text = styled.text`
@@ -594,4 +666,24 @@ const Text = styled.text`
     font-weight: light;
     // -webkit-text-stroke: 1px #c00202;
     margin-top: -5px;
+`;
+
+const Exit = styled.img`
+    // position: absolute;
+    // z-index: 0; // 안되면 30으로 바꿔보기..
+    width: 35px;
+`;
+
+const ExitText = styled.text`
+    color: #c11b1b;
+    font-size: 13px;
+    font-weight: light;
+    // -webkit-text-stroke: 1px #c00202;
+    margin-top: -5px;
+
+    &:hover {
+        background-color: ${style.light_green};
+        border: 1px solid ${style.white};
+        color: ${style.red};
+    }
 `;

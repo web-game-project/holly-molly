@@ -8,10 +8,6 @@ import squareVote from '../assets/squareVote.png';
 
 export default function UserVote({ nick, color }) {
     const [clicked, isClicked] = useState(0);
-    const data = {
-        nick: '성북구 민혁이',
-        color: 'yellow',
-    };
 
     function Click() {
         if (clicked == 1) {
@@ -232,15 +228,6 @@ const GreenInnerContainer = styled.div`
     align-items: center;
     justify-content: center;
     padding-top: 5px;
-
-    .wrap {
-        text-align: center;
-        margin-bottom: 10px;
-    }
-    .ghost {
-        animation: motion 1.5s linear 0s infinite;
-        margin-bottom: 0;
-    }
 `;
 
 const BlueInnerContainer = styled.div`
@@ -261,15 +248,6 @@ const PurpleInnerContainer = styled.div`
     align-items: center;
     justify-content: center;
     padding-top: 5px;
-
-    .wrap {
-        text-align: center;
-        margin-bottom: 10px;
-    }
-    .ghost {
-        animation: motion 1.5s linear 0s infinite;
-        margin-bottom: 0;
-    }
 `;
 
 const PinkInnerContainer = styled.div`
@@ -280,15 +258,6 @@ const PinkInnerContainer = styled.div`
     align-items: center;
     justify-content: center;
     padding-top: 5px;
-
-    .wrap {
-        text-align: center;
-        margin-bottom: 10px;
-    }
-    .ghost {
-        animation: motion 1.5s linear 0s infinite;
-        margin-bottom: 0;
-    }
 `;
 
 const Name = styled.h4`
