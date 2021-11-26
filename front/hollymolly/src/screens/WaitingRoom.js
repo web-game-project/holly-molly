@@ -16,6 +16,8 @@ import Chatting from '../components/Chatting.js';
 import RefreshVerification from '../server/RefreshVerification.js';
 import { useHistory, useLocation } from 'react-router';
 import colors from '../styles/styles.js';
+import InfoSetModal from '../components/InfoSetModal.js';
+import InfoModal from '../components/InfoModal.js';
 
 const BaseURL = 'http://3.17.55.178:3002';
 
@@ -175,7 +177,7 @@ export default function WaitingRoom({ match }) {
         //방 정보 수정 소켓
 
         socket.on('edit room', (data) => {
-            console.log('수정) 방정보! : ' + data.room_idx + data.room_name + data.room_mode + data.room_start_member_cnt);
+            alert('수정) 방정보! : ' + data.room_idx + data.room_name + data.room_mode + data.room_start_member_cnt);
             setRoomUpdate(data);
         });
     }, []);
@@ -339,7 +341,6 @@ export default function WaitingRoom({ match }) {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response.status);
                 console.log('exitWaitingRoom 성공');
                 history.push({
                     pathname: '/roomlist', // 나가기 성공하면 룸리스트로 이동
@@ -413,6 +414,7 @@ export default function WaitingRoom({ match }) {
                     selectDiv
                     <br />
                     {roomUpdate ? (
+                        // 소켓 변경 후 소켓 데이터로 변경
                         <TitleDiv>
                             TitleDiv {roomUpdate.room_idx}번 방
                             <br />
@@ -421,8 +423,17 @@ export default function WaitingRoom({ match }) {
                                 {roomEnterInfo.room_current_member_cnt} / {roomUpdate.room_start_member_cnt} 명
                             </Text>
                             <br />
-                            {isLeader === 1 && (
+                            {isLeader === 1 ? (
+                                // 리더가 변경하는 컴포넌트
                                 <ModalSetting
+                                    title={roomUpdate.room_name}
+                                    mode={roomUpdate.room_mode}
+                                    member={roomUpdate.room_start_member_cnt}
+                                    room_private={roomInfo.room_private}
+                                    room_idx={roomUpdate.room_idx}
+                                />
+                            ) : (
+                                <InfoModal
                                     title={roomUpdate.room_name}
                                     mode={roomUpdate.room_mode}
                                     member={roomUpdate.room_start_member_cnt}
@@ -439,8 +450,18 @@ export default function WaitingRoom({ match }) {
                                 방제 : {roomEnterInfo.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
                                 {roomEnterInfo.room_current_member_cnt} / {roomEnterInfo.room_start_member_cnt} 명
                             </Text>
-                            {isLeader === 1 && (
+                            {isLeader === 1 ? (
                                 <ModalSetting
+                                    // 리더가 변경하는 컴포넌트
+                                    title={roomInfo.room_name}
+                                    mode={roomInfo.room_mode}
+                                    member={count}
+                                    room_private={roomInfo.room_private}
+                                    room_idx={roomInfo.room_idx}
+                                />
+                            ) : (
+                                <InfoModal
+                                    // 리더가 변경하는 컴포넌트
                                     title={roomInfo.room_name}
                                     mode={roomInfo.room_mode}
                                     member={count}

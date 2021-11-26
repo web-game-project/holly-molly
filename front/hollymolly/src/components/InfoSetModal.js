@@ -27,7 +27,7 @@ const socket = io(BaseURL, {
     },
 });
 
-export default function ModalSetting({ title, mode, room_private, member, room_idx }) {
+export default function InfoSetModal({ title, mode, room_private, member, room_idx }) {
     // 인원수 0 제목 0 난이도
     console.log(title, mode, member, room_private);
     // 방 설정 수정
@@ -201,6 +201,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
 
     return (
         <div>
+            {/* <Button onClick={openModal}>방 만들기</Button> */}
             <SettingIcon
                 onClick={() => {
                     openModal();
@@ -218,7 +219,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
                 <CloseButton onClick={closeModal}>X</CloseButton>
                 <br />
                 <div style={styles.container}>
-                    <h1 style={{ textAlign: 'center' }}>방 설정</h1>
+                    <h1 style={{ textAlign: 'center' }}>infosetmodal방 설정</h1>
                     <div style={{ marginLeft: '50px' }}>
                         <div style={styles.div}>
                             <text style={styles.text}>방 이름 : </text>
@@ -252,7 +253,6 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
                         </div>
                     </div>
                     <p>
-                        <text style={styles.notice}>* 방 설정 변경은 방장만 가능합니다.</text>
                         <OKButton onClick={result}>OK</OKButton>
                         <br />
                     </p>
@@ -410,10 +410,5 @@ const styles = {
     range_text: {
         fontSize: 20,
         color: colors.black,
-    },
-    notice: {
-        fontSize: 10,
-        color: colors.red,
-        marginLeft: 70,
     },
 };
