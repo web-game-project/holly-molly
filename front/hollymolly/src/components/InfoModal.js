@@ -27,7 +27,7 @@ const socket = io(BaseURL, {
     },
 });
 
-export default function ModalSetting({ title, mode, room_private, member, room_idx }) {
+export default function InfoModal({ title, mode, room_private, member, room_idx }) {
     // 인원수 0 제목 0 난이도
     console.log(title, mode, member, room_private);
     // 방 설정 수정
