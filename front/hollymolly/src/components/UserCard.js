@@ -13,7 +13,7 @@ import { ReactComponent as PinkCharacter } from '../assets/pink.svg';
 import readyImg from '../assets/ready.png';
 import leaderImg from '../assets/leader.png';
 
-export default function UserCard({ id, nickname, color, ready }) {
+export default function UserCard({ leader, id, nickname, color, ready }) {
     // 유저에게서 넘어올 예상 데이터
     const data = {
         id: 1,
@@ -22,12 +22,13 @@ export default function UserCard({ id, nickname, color, ready }) {
         ready: false,
     };
 
-    const leader_idx = 3; // response에서 넘겨줄 임의의 방장 인덱스 값
+    console.log('유저카드 : ' + leader );
+    let leader_idx = leader; // response에서 넘겨줄 임의의 방장 인덱스 값
 
     return (
         <div>
             {(function () {
-                if (color == 'red') {
+                if (color == 'RED') {
                     return (
                         <RedContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
@@ -38,7 +39,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                             </RedInnerContainer>
                         </RedContainer>
                     );
-                } else if (color == 'orange') {
+                } else if (color == 'ORANGE') {
                     return (
                         <OrangeContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
@@ -49,7 +50,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                             </OrangeInnerContainer>
                         </OrangeContainer>
                     );
-                } else if (color == 'yellow') {
+                } else if (color == 'YELLOW') {
                     return (
                         <YellowContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
@@ -60,7 +61,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                             </YellowInnerContainer>
                         </YellowContainer>
                     );
-                } else if (color == 'green') {
+                } else if (color == 'GREEN') {
                     return (
                         <GreenContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
@@ -71,7 +72,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                             </GreenInnerContainer>
                         </GreenContainer>
                     );
-                } else if (color == 'blue') {
+                } else if (color == 'BLUE') {
                     return (
                         <BlueContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
@@ -82,7 +83,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                             </BlueInnerContainer>
                         </BlueContainer>
                     );
-                } else if (color == 'purple') {
+                } else if (color == 'PURPLE') {
                     return (
                         <PurpleContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
@@ -93,7 +94,7 @@ export default function UserCard({ id, nickname, color, ready }) {
                             </PurpleInnerContainer>
                         </PurpleContainer>
                     );
-                } else if (color == 'pink') {
+                } else if (color == 'PINK') {
                     return (
                         <PinkContainer>
                             {id == leader_idx && <LeaderImg src={leaderImg} />}
