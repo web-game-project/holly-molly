@@ -56,7 +56,7 @@ const RoomSearchBar = (props) => {
                   })
             })
             .catch(function (error) {
-                console.log(error.response);
+                alert(error.response.data.message);
             });
     };
 
