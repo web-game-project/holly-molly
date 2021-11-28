@@ -4,6 +4,13 @@ module.exports.startGame = async (req, res, next) => {
     let { room_idx } = req.body;
 
     try {
+        if (!res.locals.leader) {
+            res.status(403).json({
+                message: '권한이 없습니다.',
+            });
+            return;
+        }
+        
         const io = req.app.get('io');
         await changeGameStatus(io, room_idx);
 
