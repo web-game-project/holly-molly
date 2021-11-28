@@ -33,7 +33,7 @@ module.exports.startTimer = async (io, room_idx, user_idx, member_count, draw_or
     timerResolveMap.delete(room_idx);
     memberCountMap.delete(room_idx);
 
-    io.to(room_idx).emit('get next turn', { message: 'success' });
+    io.to(room_idx).emit('get next turn', { data: 'success' });
     
     if (result == 'time out') {
         exitGameAndRoomAndDeleteUser(io, room_idx, acceptedMemberMap.get(room_idx));

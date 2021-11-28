@@ -14,7 +14,7 @@ module.exports = async (socket, io, data) => {
         let socketId = socket.id;
 
         if(!roomMember) {
-            io.to(socketId).emit('get next turn', {message: '', error: '대기실/게임의 참여자가 아닙니다.'});
+            io.to(socketId).emit('get next turn', {data: '', error: '대기실/게임의 참여자가 아닙니다.'});
             return;
         }
 
