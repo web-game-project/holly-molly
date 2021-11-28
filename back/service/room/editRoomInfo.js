@@ -5,6 +5,8 @@ module.exports = async (req, res, next) => {
         res.status(403).json({
             message: '권한이 없습니다.',
         });
+
+        return;
     }
     
     let { room_idx, room_name, room_mode, room_start_member_cnt } = req.body;

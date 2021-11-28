@@ -63,7 +63,7 @@ const updateWaitingRoomLeader = async (newLeaderIdx, roomIdx) => {
 }
 
 const getMemberCount = async (room_idx) => {
-    const member = await WaitingRoomMember.findAll({
+    const member = await WaitingRoomMember.findOne({
         attributes: [
             [sequelize.fn('count', sequelize.col('wrm_idx')), 'memberCount'],
         ],
