@@ -198,3 +198,5 @@ const assignRoleAndOrder = async (
         console.log('assignRoleAndOrder Error: ', error);
     }
 };
+
+module.exports.getMemberCountInfo = getMemberCountInfo;
