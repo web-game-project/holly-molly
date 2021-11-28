@@ -129,7 +129,7 @@ export default function WaitingRoom({ match }) {
                 //filter로 
                 setUserList(exitUserList);
             }
-            console.log('현재 멤버2 : ' + currentMember);
+            console.log('방 퇴장 시 현재 멤버 더하기 전 : ' + currentMember);
 
             setCurrentMember(currentMember-1);
         });
@@ -146,8 +146,6 @@ export default function WaitingRoom({ match }) {
                 "wrm_user_color": data.user_color,
                 "wrm_user_ready": false
             };
-
-            console.log('현재 멤버1 : ' + currentMember);
            
             const isArr = Array.isArray(userList);
 
@@ -172,6 +170,7 @@ export default function WaitingRoom({ match }) {
 
             setColorList(colorList);
 
+            console.log('방 입장 시 현재 멤버 더하기 전 : ' + currentMember);
             //현재인원 증가
             setCurrentMember(currentMember + 1);
         });
@@ -194,6 +193,28 @@ export default function WaitingRoom({ match }) {
         //사용자의 준비 상태 값 변경에 따른 소켓
         socket.on('change member ready', (data) => {
             alert('지금 ready 값이야 : ' + ready_cnt);
+
+            const user = {
+                "user_idx": data.user_idx,
+                "wrm_user_ready": data.user_ready
+            };
+
+            //userList에 해당 인덱스의 ready값을 변경해줘야함
+            const isArr = Array.isArray(userList);
+            console.log('궁금ㅇ ㅓ레이냐? ' + isArr);
+
+            //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
+            if(isArr === false){
+               // console.log('궁금3 : ' + JSON.stringify(userList.concat(user)));
+               // const readyUser = JSON.stringify(userList.concat(user)); 
+               // const readyUserListSet = JSON.stringify(Array.from(new Set(readyUser)));
+                const readyUserList = userList && userList.map(item => item.user_idx === data.user_idxr4vyt ?
+                    ({...item, user }) : item );
+
+                console.log('궁금 set : ' + JSON.stringify(readyUserList));
+                //concat으로 추가 
+                //setUserList(enterUserList);
+            }           
 
             if (data.user_idx != save_user_idx) {
                 if (data.user_ready === true) {
@@ -388,9 +409,8 @@ export default function WaitingRoom({ match }) {
     };
 
     const deleteRoom = async () => {
-        alert('방인덱스 : ' + room_idx);
         //방 삭제
-        const restURL = BaseURL + '/room/' + location.state.data.room_idx;
+        const restURL = BaseURL + '/room/' + room_idx;
 
         const reqHeaders = {
             headers: {
@@ -411,33 +431,37 @@ export default function WaitingRoom({ match }) {
             });
     }
 
+    const exitRoom = async () => {
+        const restURL = BaseURL + '/waiting-room/exit/' + room_idx;
+
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        axios
+            .delete(restURL, reqHeaders)
+            .then(function (response) {
+                console.log(response.status);
+                console.log('exitWaitingRoom 성공');
+                history.push({
+                    pathname: '/roomlist', // 나가기 성공하면 룸리스트로 이동
+                });
+            })
+            .catch(function (error) {
+                console.log('exitWaitingRoom 실패');
+                console.log(error.response);
+            });        
+    }
+
     const exitWaitingRoom = async () => {
         //현재 인원이 1명이면 방삭제 api call 아니면 대기실 나가기 조회 api call
 
-        if(currentMember == 1)
-            deleteRoom();
-        else{ // 방삭제 api 되는대로 아래 api도 함수로 뺄 예정
-            // 대기실 나가기 조회 api
-            const restURL = BaseURL + '/waiting-room/exit/' + location.state.data.room_idx;
-
-            const reqHeaders = {
-                headers: {
-                    authorization: 'Bearer ' + save_token,
-                },
-            };
-            axios
-                .delete(restURL, reqHeaders)
-                .then(function (response) {
-                    console.log(response.status);
-                    console.log('exitWaitingRoom 성공');
-                    history.push({
-                        pathname: '/roomlist', // 나가기 성공하면 룸리스트로 이동
-                    });
-                })
-                .catch(function (error) {
-                    console.log('exitWaitingRoom 실패');
-                    console.log(error.response);
-                });
+        if(currentMember == 1){
+            deleteRoom(); //방 삭제 api
+        }
+        else{ 
+            exitRoom();   //대기실 나가기 조회 api           
         }
     };
 
