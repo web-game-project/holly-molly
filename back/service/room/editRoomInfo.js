@@ -1,4 +1,5 @@
 const { Room } = require('../../models');
+const { getMemberCountInfo } = require('../game/startGame');
 
 module.exports = async (req, res, next) => {
     if (!res.locals.leader) {
@@ -11,6 +12,15 @@ module.exports = async (req, res, next) => {
     
     let { room_idx, room_name, room_mode, room_start_member_cnt } = req.body;
     room_idx = Number(room_idx);
+    const memberCnt = await getMemberCountInfo(roomIdx);
+
+    if(memberCnt <= room_start_member_cnt){
+        res.status(400).json({
+            message: `${memberCnt} 보다 적은 플레이어 수로는 변경할 수 없습니다`,
+        });
+
+        return;
+    }
 
     try {
         await Room.update(
