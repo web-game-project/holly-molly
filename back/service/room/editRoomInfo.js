@@ -1,6 +1,12 @@
 const { Room } = require('../../models');
 
 module.exports = async (req, res, next) => {
+    if (!res.locals.leader) {
+        res.status(403).json({
+            message: '권한이 없습니다.',
+        });
+    }
+    
     let { room_idx, room_name, room_mode, room_start_member_cnt } = req.body;
     room_idx = Number(room_idx);
 
