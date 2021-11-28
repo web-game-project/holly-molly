@@ -51,31 +51,31 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
         },
     };
 
-    useEffect(() => {
-        socket.on('error', () => {
-            setTimeout(() => {
-                socket.connect();
-                console.log(socket);
-            }, 1000);
-        });
+    // useEffect(() => {
+    //     socket.on('error', () => {
+    //         setTimeout(() => {
+    //             socket.connect();
+    //             console.log(socket);
+    //         }, 1000);
+    //     });
 
-        // 소켓이 서버에 연결되어 있는지 여부
-        // 연결 성공 시 시작
-        socket.on('connect', () => {
-            console.log('room connection server!');
-        });
+    //     // 소켓이 서버에 연결되어 있는지 여부
+    //     // 연결 성공 시 시작
+    //     socket.on('connect', () => {
+    //         console.log('room connection server!');
+    //     });
 
-        // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
-        socket.on('disconnect', (reason) => {
-            if (reason === 'io server disconnect') {
-                socket.connect();
-            }
-        });
-    }, []);
+    //     // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
+    //     socket.on('disconnect', (reason) => {
+    //         if (reason === 'io server disconnect') {
+    //             socket.connect();
+    //         }
+    //     });
+    // }, []);
 
-    const UpdateRoomInfo = async () => {
-        // 대기실 정보 수정 api
-        const restURL = BaseURL + '/room/info/';
+    const RoomInfo = async () => {
+        // 대기실 정보 조회 api
+        const restURL = BaseURL + '/room/info/' + room_idx;
 
         const reqHeaders = {
             headers: {
@@ -83,22 +83,13 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
             },
         };
         axios
-            .put(
-                restURL,
-                {
-                    room_idx: room_idx,
-                    room_name: inputRef.current.value,
-                    room_mode: roomMode,
-                    room_start_member_cnt: people,
-                },
-                reqHeaders
-            )
+            .get(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response.status);
-                console.log('UpdateRoomInfo 성공');
+                console.log(response.data);
+                console.log('RoomInfo 성공');
             })
             .catch(function (error) {
-                console.log('UpdateRoomInfo 실패');
+                console.log('RoomInfo 실패');
                 console.log(error.response);
             });
     };
@@ -110,11 +101,11 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
     mode == 'easy' ? (a = false) : (a = true);
     // 난이도 useState
     const [isChecked, setIschecked] = React.useState(a);
-    const isHard = () => {
+    const isEasy = () => {
         if (isChecked === true) setIschecked(!isChecked);
         console.log('선택) 난이도 상');
     };
-    const isEasy = () => {
+    const isHard = () => {
         if (isChecked === false) setIschecked(!isChecked);
         console.log('선택) 난이도 하');
     };
@@ -160,27 +151,28 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
 
     const result = () => {
         console.log('오케이 눌림');
+        RoomInfo();
+        // // UpdateRoomInfo();
+        // console.log(':::최종결과:::');
+        // console.log('방이름은? ' + inputRef.current.value);
+
+        // if (inputRef.current.value == null || inputRef.current.value == '') {
+        //     inputRef.current.value = title; // 제목 안적으면 수정 전 디폴트
+        // }
+
+        // if (isChecked) {
+        //     // easy
+        //     roomMode = 'easy';
+        //     console.log('모드는? easy');
+        // } else {
+        //     roomMode = 'hard';
+        //     console.log('모드는? hard');
+        // }
+
+        // console.log('인원수는? ' + people + '명');
+
         // UpdateRoomInfo();
-        console.log(':::최종결과:::');
-        console.log('방이름은? ' + inputRef.current.value);
-
-        if (inputRef.current.value == null || inputRef.current.value == '') {
-            inputRef.current.value = title; // 제목 안적으면 수정 전 디폴트
-        }
-
-        if (isChecked) {
-            // easy
-            roomMode = 'easy';
-            console.log('모드는? easy');
-        } else {
-            roomMode = 'hard';
-            console.log('모드는? hard');
-        }
-
-        console.log('인원수는? ' + people + '명');
-
-        UpdateRoomInfo();
-        closeModal();
+        // closeModal();
     };
 
     const [modalIsOpen, setIsOpen] = React.useState(false);

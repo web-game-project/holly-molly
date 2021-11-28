@@ -173,14 +173,19 @@ export default function WaitingRoom({ match }) {
         });
     }, [changeColor]);
 
+    const [result, setResult] = useState(0);
+    const clickedSetting = (result) => {
+        setResult(result);
+    };
+
     useEffect(() => {
         //방 정보 수정 소켓
 
         socket.on('edit room', (data) => {
-            alert('수정) 방정보! : ' + data.room_idx + data.room_name + data.room_mode + data.room_start_member_cnt);
+            alert('수정) 방정보! ');
             setRoomUpdate(data);
         });
-    }, []);
+    }, [result]);
 
     function readyClick(readyStatus) {
         if (readyStatus === true) ready_cnt += 1;
@@ -416,7 +421,7 @@ export default function WaitingRoom({ match }) {
                     {roomUpdate ? (
                         // 소켓 변경 후 소켓 데이터로 변경
                         <TitleDiv>
-                            TitleDiv {roomUpdate.room_idx}번 방
+                            TitleDiv{result} {roomUpdate.room_idx}번 방
                             <br />
                             <Text>
                                 방제 : {roomUpdate.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
@@ -426,6 +431,8 @@ export default function WaitingRoom({ match }) {
                             {isLeader === 1 ? (
                                 // 리더가 변경하는 컴포넌트
                                 <ModalSetting
+                                    resultt={result}
+                                    clickedSetting={clickedSetting}
                                     title={roomUpdate.room_name}
                                     mode={roomUpdate.room_mode}
                                     member={roomUpdate.room_start_member_cnt}
@@ -453,6 +460,8 @@ export default function WaitingRoom({ match }) {
                             {isLeader === 1 ? (
                                 <ModalSetting
                                     // 리더가 변경하는 컴포넌트
+                                    resultt={result}
+                                    clickedSetting={clickedSetting}
                                     title={roomInfo.room_name}
                                     mode={roomInfo.room_mode}
                                     member={count}
