@@ -1,5 +1,7 @@
 const { WaitingRoomMember } = require('../../models');
 const sequelize = require('sequelize');
+const getIOSocket = require('../../socket/getIOSocket');
+const moveRoom = require('../../socket/moveRoom');
 
 module.exports = async (req, res, next) => {
     let { roomIdx } = req.params;
@@ -7,8 +9,21 @@ module.exports = async (req, res, next) => {
     let { user_idx } = res.locals.user.dataValues;
 
     try {
+        const { io, socket } = getIOSocket(req, res);
+        
+        // socket : get socket
+        if (!io || !socket) {
+            console.log('[error]-getRoomList: 소켓 커넥션 에러');
+            res.status(400).json({
+                message: 'socket connection을 다시 해주세요.',
+            });
+            return;
+        }
+        // socket : join room room_idx
+        moveRoom(io, socket, 0);
+
         await destroyWaitingRoom(user_idx, roomIdx);
-        const io = req.app.get('io');
+        //const io = req.app.get('io');
 
         if (res.locals.leader) {
             let newLeaderIdx = await assignNewReader(roomIdx);
@@ -74,7 +89,7 @@ const getMemberCount = async (room_idx) => {
     });
 
     let { memberCount } = member.dataValues;
-    console.log(memberCount);
+
     return memberCount;
 };
 
