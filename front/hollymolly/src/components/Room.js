@@ -19,34 +19,19 @@ let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-
-
 const socket = io("http://3.17.55.178:3002/", {
   // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
   auth: {
     // 1번 토큰
     token: save_token
-      //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY",
   },
 });
 
 const Room = (props) => {
-  console.log("save_token_room: " + save_token);
   const history = useHistory();
-  const [waitingRoomMemberList, setWaitingRoomMemberList] = useState();
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
-    // 연결 실패 시,
-    const socket = io("http://3.17.55.178:3002/", {
-      // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
-      auth: {
-        // 1번 토큰
-        token: save_token
-          //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY",
-      },
-    });
-
     // 오류 시, 수동으로 다시 연결 시도
     socket.on("error", () => {
       setTimeout(() => {
@@ -63,10 +48,8 @@ const Room = (props) => {
     // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
     socket.on("disconnect", (reason) => {
       if (reason === "io server disconnect") {
-        // the disconnection was initiated by the server, you need to reconnect manually
         socket.connect();
       }
-      // else the socket will automatically try to reconnect
     });
   }, [clicked]);
 
@@ -75,7 +58,6 @@ const Room = (props) => {
     const reqHeaders = {
       headers: {
         authorization: 'Bearer ' + save_token,
-          //"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MSwidXNlcl9uYW1lIjoi7YWM7Iqk7Yq4IiwiaWF0IjoxNjMyODMzMDE3fQ.a_6lMSENV4ss6bKvPw9QvydhyIBdr07GsZhFCW-JdrY",
       },
     };
 
@@ -97,14 +79,14 @@ const Room = (props) => {
         
       })
       .catch(function (error) {
-        alert(error);
+        alert(error.response.data.message);
       });
   };
 
   const onClick = () => {
     setClicked(!clicked);
     enterRoom();
-    alert(
+    /* alert(
       "룸 인덱스: " +
         props.room_idx +
         " 제목: " +
@@ -117,7 +99,7 @@ const Room = (props) => {
         props.room_mode +
         " 현재 상태: " +
         props.room_status
-    );
+    ); */
   };
 
   return (
