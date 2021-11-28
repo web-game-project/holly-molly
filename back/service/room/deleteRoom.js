@@ -1,19 +1,31 @@
 const { Room } = require('../../models');
 const { getMemberCountInfo } = require('../game/startGame');
+const { destroyWaitingRoom } = require('../waitingRoom/exitWaitingRoom');
 
 module.exports = async (req, res, next) => {
     let { roomIdx } = req.params;
 
     try {
         const memberCnt = await getMemberCountInfo(roomIdx);
-        
-        if(memberCnt != 0){
+
+        if (!res.locals.leader) {
+            res.status(403).json({
+                message: '권한이 없습니다.',
+            });
+            return;
+        }
+
+        if(memberCnt != 1){
             res.status(400).json({
                 message: '대기방에 플레이어가 남아있습니다.'
             });
+            return;
         }
 
-        await Room.destroy({ where: { room_idx: roomIdx } });
+        let { user_idx } = res.locals.user.dataValues;
+        await destroyWaitingRoom(user_idx, roomIdx);
+
+        await destroyRoom(roomIdx);
 
         const io = req.app.get('io');
         let data = { room_idx: roomIdx };
@@ -28,3 +40,7 @@ module.exports = async (req, res, next) => {
         });
     }
 };
+
+const destroyRoom = async (roomIdx) => {
+    await Room.destroy({ where: { room_idx: roomIdx } });
+}
