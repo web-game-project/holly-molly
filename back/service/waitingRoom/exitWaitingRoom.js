@@ -19,7 +19,8 @@ module.exports = async (req, res, next) => {
 
         let memberCount = await getMemberCount(roomIdx);
         let member_data = { room_idx: roomIdx, room_member_count: memberCount };
-        io.emit('change member count', member_data);
+        io.to(roomIdx).emit('change member count', member_data);
+        io.to(0).emit('change member count', member_data);
         io.to(roomIdx).emit('exit room', { user_idx });
 
         res.status(200).json('success');
