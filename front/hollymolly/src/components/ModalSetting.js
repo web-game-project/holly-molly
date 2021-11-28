@@ -27,11 +27,12 @@ const socket = io(BaseURL, {
     },
 });
 
-export default function ModalSetting({ title, mode, room_private, member, room_idx }) {
+export default function ModalSetting({ title, mode, room_private, member, room_idx, clickedSetting, resultt }) {
     // 인원수 0 제목 0 난이도
     console.log(title, mode, member, room_private);
     // 방 설정 수정
     const [roomdata, setRoomdata] = useState();
+    let count = 1;
     const customStyles = {
         content: {
             top: '50%',
@@ -71,6 +72,8 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
                 socket.connect();
             }
         });
+
+        clickedSetting(0);
     }, []);
 
     const UpdateRoomInfo = async () => {
@@ -107,16 +110,16 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
     let roomMode = '';
 
     let a;
-    mode == 'easy' ? (a = false) : (a = true);
+    mode == 'easy' ? (a = false) : (a = true); //  이지면 false 하드면 true
     // 난이도 useState
     const [isChecked, setIschecked] = React.useState(a);
-    const isHard = () => {
-        if (isChecked === true) setIschecked(!isChecked);
-        console.log('선택) 난이도 상');
-    };
     const isEasy = () => {
-        if (isChecked === false) setIschecked(!isChecked);
+        if (isChecked === true) setIschecked(!isChecked); // 하드면 이지로 만들어라
         console.log('선택) 난이도 하');
+    };
+    const isHard = () => {
+        if (isChecked === false) setIschecked(!isChecked); // 이지면 하드로 만들어라
+        console.log('선택) 난이도 상');
     };
 
     // 인원 useState
@@ -168,7 +171,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
             inputRef.current.value = title; // 제목 안적으면 수정 전 디폴트
         }
 
-        if (isChecked) {
+        if (!isChecked) {
             // easy
             roomMode = 'easy';
             console.log('모드는? easy');
@@ -180,7 +183,13 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
         console.log('인원수는? ' + people + '명');
 
         UpdateRoomInfo();
+        clickedSetting(resultt + 1);
         closeModal();
+
+        //방 생성했으면 초기화
+        // if (isChecked === true) setIschecked(!isChecked); // easy로 바꿈
+        // setPeople((people) => (people = 4)); //4명으로 바꿈
+        // if (ispublic == false) setIsPublic(!ispublic); // public으로 바꿈
     };
 
     const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -226,10 +235,10 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
                         </div>
                         <div style={styles.div}>
                             <text style={styles.text}>MODE : </text>
-                            <button style={isChecked ? styles.button_on : styles.button_off} onClick={isEasy}>
+                            <button style={!isChecked ? styles.button_on : styles.button_off} onClick={isEasy}>
                                 easy
                             </button>
-                            <button style={!isChecked ? styles.button_on : styles.button_off} onClick={isHard}>
+                            <button style={isChecked ? styles.button_on : styles.button_off} onClick={isHard}>
                                 hard
                             </button>
                         </div>
