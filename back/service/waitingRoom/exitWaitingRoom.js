@@ -17,7 +17,7 @@ module.exports = async (req, res, next) => {
             io.to(roomIdx).emit('change host', leader_data);
         }
 
-        let memberCount = getMemberCount(roomIdx);
+        let memberCount = await getMemberCount(roomIdx);
         let member_data = { room_idx: roomIdx, room_member_count: memberCount };
         io.emit('change member count', member_data);
         io.to(roomIdx).emit('exit room', { user_idx });
@@ -72,8 +72,8 @@ const getMemberCount = async (room_idx) => {
         },
     });
 
-    let { memberCount } = member[0].dataValues;
-
+    let { memberCount } = member.dataValues;
+    console.log(memberCount);
     return memberCount;
 };
 
