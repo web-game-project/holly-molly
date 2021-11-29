@@ -125,7 +125,7 @@ const StartBtn = styled.div`
   height: 50px;
   background-image: url(${startBtn});
   margin: -30px auto;  
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;  
 `;
 

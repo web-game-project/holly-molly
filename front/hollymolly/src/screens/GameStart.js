@@ -71,7 +71,7 @@ const TutorialBtn = styled.div`
   height: 50px;
   background-image: url(${tutotrialBtn});
   margin: 40px auto;  
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
 `;
 
