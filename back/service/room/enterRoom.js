@@ -182,6 +182,11 @@ const getWaitingRoomMemberListAndLeader = async (roomIdx) => {
                 room_room_idx: roomIdx,
             },
         });
+
+        for (let memberIndex in waitingRoomMemberList){
+            waitingRoomMemberList[memberIndex].wrm_user_ready = waitingRoomMemberList[memberIndex].wrm_user_ready ? true : false;
+        }
+
         const result = {
             waitingRoomMemberList,
             leader_idx: leader_idx.get('leader_idx'),
