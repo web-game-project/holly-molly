@@ -11,6 +11,11 @@ import axios from 'axios';
 import { io, Socket } from 'socket.io-client';
 import GameStart from '../screens/GameStart';
 
+//인간, 유령
+import { ReactComponent as HumanCharacter } from '../assets/human.svg';
+import { ReactComponent as GhostCharacter } from '../assets/purple.svg';
+import colors from '../styles/styles';
+
 // local storage에 있는지 확인
 let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
@@ -22,8 +27,8 @@ console.log('내 인덱스 : ' + save_user_idx);
 
 function GameRoleComponent(props) {
 
-    const ghost = "\n홀리세계에 원래 살고 있던 외로운 홀리입니다.\n현재 홀리세계에 유령의 탈을 쓰고 \n살고 있는 인간이 있습니다.\n그 인간은 3일 뒤에 본인의 세계로 돌아갑니다.\n함께 친구로서, 같이 살고 싶다면 \n그 인간을 꼭 찾으세요!!!\n당신은 할 수 있습니다. 권투를 빕니다 *^3^*";
-    const human = "\n당신은 홀리세계에 어쩌다보니\n 들어오게된 몰리입니다.\n현재 외로운 홀리들은 당신을 찾고 있어요.\n홀리들은 당신이 인간, 몰리인지 몰라요.\n3일 뒤면 당신의 세계로 돌아갈 수 있어요.\n그 3일 동안 홀리인척하면서 살아가면 된답니다.\n당신은 할 수 있습니다. 권투를 빕니다 *^3^*";
+    const ghost = "유령 친구들과 수다를 떨고 있는 Holly!\n그런데.. 동작 그만! 자꾸 생뚱맞은 이야기를 하는 너, \n대체 누구야?\n아무리 봐도 지금 우리 사이에 인간이 들어 온 것 같다!\n겁없이 유령 사이에 끼어든 인간을 찾아 혼쭐을 내주자.\n동안 유령 친구들과 함께 최선을 다해서 \n인간을 찾아보자구!";
+    const human = "공포영화를 보다가 잠에 빠진 Molly!\n눈 떠보니 유령세계라고?\n을 들키지 않고 지내야 인간세계로 가는 길이 열린다.\n이 유령들 수다떠는 걸 엄청 좋아하는데\n그 사이에서 인간임을 들키지 않아야 산다.\n한 번 유령인척을 열심히 해보자구!";
 
     //게임 시작 5초 후, 타이머
     const [seconds, setSeconds] = useState(5);
@@ -44,48 +49,65 @@ function GameRoleComponent(props) {
 
     return (
         <Container>
-            <TxtContainer>
+            <SubContainer>                
                 {
-                    props.role == "human" ?
-                        <HeadLine>
-                            <p> 당신은 <RoleTxt color={style.blue}>"인간"</RoleTxt> 입니다. </p>
-                            {human.split("\n").map((i, key) => {
-                                if (key === 3 || key === 5)
-                                    return <Content key={key}><br></br>{i}</Content>;
-                                else
-                                    return <Content key={key}>{i}</Content>;
-                            })}
-                        </HeadLine>
+                    props.role == "human" ?                        
+                    <RoleContainer>
+                            <RoleImg>
+                                <HumanCharacter className="ghost" width="80" height="117" />
+                            </RoleImg>
+                            <RoleTitle role="human" color={style.red}> 인간 </RoleTitle>
+                            
+                            <RoleContent role="human">
+                                {human.split("\n").map((i, key) => {
+                                    console.log('key : ' + key)
+                                    console.log('key i : ' + i)
+                                  if (key !== 2)
+                                        return <text key={key}> {i}</text>;
+                                    else
+                                        return <p key={key}><RoleTxt color={style.red}>3일</RoleTxt>{i}</p>;
+                                })}
+                            </RoleContent>
+                        </RoleContainer>
                         :
-                        <HeadLine>
-                            <p> 당신은 <RoleTxt color={style.blue}>"유령"</RoleTxt> 입니다. </p>
-                            {ghost.split("\n").map((i, key) => {
-                                if (key === 3 || key === 5)
-                                    return <Content key={key}><br></br>{i}</Content>;
-                                else
-                                    return <Content key={key}>{i}</Content>;
-                            })}
-                        </HeadLine>
+                        <RoleContainer>
+                            <RoleImg>
+                                <GhostCharacter className="ghost" width="80" height="117" />
+                            </RoleImg>
+                            <RoleTitle role="ghost" color={style.blue}> 유령 </RoleTitle>
+                            
+                            <RoleContent role="ghost" >
+                                {ghost.split("\n").map((i, key) => {
+                                    console.log('key : ' + key)
+                                    console.log('key i : ' + i)
+                                  if (key !== 5)
+                                        return <text key={key}> {i}</text>;
+                                    else
+                                        return <p key={key}><RoleTxt color={style.red}>3일 </RoleTxt>{i}</p>;
+                                })}
+                            </RoleContent>
+                        </RoleContainer>
                 }
 
                 <TimerBtnContainer>{seconds}초 후 시작</TimerBtnContainer>
-            </TxtContainer>
+            </SubContainer>
         </Container>
 
     );
 }
 
 const Container = styled.div`
-    width: 450px;
-    height: 450px;
-    margin-top: 85px;
+    width: 480px;
+    height: 480px;
+    margin-top: 60px;
     border-width: thin;
     border-radius: 10px;
     border-color: #000000;
     border-style: solid;
+    background-color: #ffffff;
 `;
 
-const TxtContainer = styled.div`
+const SubContainer = styled.div`
     width: 420px;
     height: 400px;
     padding: 5px;
@@ -97,7 +119,7 @@ const TimerBtnContainer = styled.div`
     width: 130px;
     height: 30px;
     margin-top: 15px;
-    margin-left: 270px;   
+    margin-left: 300px;   
     font-size: 20px;
     background-color: #fff;
     text-align: center;
@@ -107,24 +129,54 @@ const TimerBtnContainer = styled.div`
     border-style: solid;
 `;
 
-const HeadLine = styled.div`
+const RoleContainer = styled.div`
     width: 100%;
     font-size: 23px;
     display: flex;  
-    flex-direction: column;
+    flex-direction: column;  
+    
     p{
+        margin-top: 5px;
+        margin-bottom: 0px;
         white-space: nowrap;
     }
 `;
 
 const RoleTxt = styled.text`
-    font-size: 26px;
+    font-size: 24px;
     color: ${(props) => (props.color)};
 `;
 
-const Content = styled.div`
+const RoleImg = styled.div `
     width: 100%;
-    display: flex;    
-    font-size: 23px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .ghost {
+        animation: motion 1.5s linear 0s infinite;
+        margin-bottom: 0;
+    }
 `;
+
+const RoleTitle = styled.div`
+    text-align: center;   
+    color: ${(props) => (props.color)};
+    ${(props) => (props.role) === 'ghost' ? ` margin-top: 15px;` : ` margin-top: 20px;`}
+`;
+
+const RoleContent = styled.div`
+    width: 100%;
+    display: flex;     
+    flex-direction: column;    
+   
+    ${(props) => (props.role) === 'ghost' ? `font-size: 20px; margin-top : 20px;` 
+            : `font-size: 21px; margin-top : 30px; `}
+
+    text{
+        margin-top: 5px;
+     }
+`;
+
 export default GameRoleComponent;

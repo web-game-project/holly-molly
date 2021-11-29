@@ -38,6 +38,8 @@ socket.on('connect', () => {
 let userList = [{}];
 
 const PlayingRoom = (props) => {
+    //const room_index = match.params.name; // url에 입력해준 방 인덱스
+    
     let location = useLocation();
 
     const [role, setRole] = React.useState('');
@@ -182,9 +184,10 @@ const PlayingRoom = (props) => {
                         </UserDiv>
                         {/* 가운데*/}
                         {
-                            seconds === 0 ?
-                                <GameVoteComponent />
-                                :
+                            //우선 역할부여 텍스트 테스트하고 주석 풀기!! jh
+                            //seconds === 0 ?
+                               // <GameVoteComponent />
+                                //:
                                 <GameRoleComponent role={role} timer={seconds} />
                         }
                         {/* <DrawDiv>

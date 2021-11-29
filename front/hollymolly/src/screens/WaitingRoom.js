@@ -715,13 +715,16 @@ export default function WaitingRoom({ match }) {
                                     ))
                                 : //방장이다.
                                 (console.log('방장이야'),
-                                    startMember === ready_cnt ? (
+                                //일단 플레잉룸으로 넘어가기 위한 하드코딩 밑에 주석임 지울 예정
+                                   // startMember === ready_cnt ? (
                                         <BtnDiv isStart="yes" onClick={startClick}>
                                             Game Start
                                         </BtnDiv> //게임 시작 api 요청 onclick 달기
-                                    ) : (
-                                        <BtnDiv isStart="no">Game Start</BtnDiv>
-                                    ))}
+                                   // ) : (
+                                       // <BtnDiv isStart="no">Game Start</BtnDiv>
+                                    //)
+                                    )
+                                }
                         </StartDiv>
                     </RightDiv>
                 </Container>
