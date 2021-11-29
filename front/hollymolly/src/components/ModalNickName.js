@@ -10,9 +10,16 @@ import startBtn from '../assets/startBtn.png';
 //페이지 이동
 import { useHistory } from "react-router";
 
+// 리덕스 
+import {useDispatch} from "react-redux";
+import {actionCreators as socketActions} from "../redux/modules/socket"
+
 export default function ModalBase() {
     //history 객체
     const history = useHistory();
+
+     // dispatch를 사용하기 위한 준비
+    const dispatch = useDispatch();
 
     const [nickName, setNickName] = React.useState('');
 
@@ -74,6 +81,10 @@ export default function ModalBase() {
                     user_idx: response.data.user_idx,
                     user_name: nickName,
                 }));
+
+                 // 리덕스 store에 baseURL 넣기 
+                dispatch(socketActions.socketAction( 'http://3.17.55.178:3002/' )); 
+
 
             })
             .catch(function (error) {
