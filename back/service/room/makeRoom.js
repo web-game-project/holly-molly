@@ -17,6 +17,8 @@ module.exports = async (req, res, next) => {
                 user_user_idx: user.user_idx,
             },
         });
+        
+        console.log("########",beforeWaitingRoomMember)
         if (beforeWaitingRoomMember) await exitGameAndRoom(user, io);
 
         let roomCode = await makeRoomCode();
