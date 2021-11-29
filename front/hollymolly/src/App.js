@@ -44,7 +44,7 @@ export default function App() {
                     <Route path="/gameDrawing" component={GameDrawing}></Route>
                     <Route path="/gameMiddleResult" component={GameMiddleResult}></Route>
                     <Route path="/playingresult" component={PlayingResult}></Route>
-                    <Route path="/loading" component={Loading}></Route>
+                    <Route path="/playingloading" component={PlayingLoading}></Route>
                     {/* 테스트 끝나면 삭제할거임- 연희 */}
                     <Route path="/voteboard" component={VoteBoard}></Route>
                     <Route exact path="/" component={GameStart} />
