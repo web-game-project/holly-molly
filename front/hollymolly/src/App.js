@@ -17,6 +17,9 @@ import PlayingResult from './screens/PlayingResult';
 import Loading from './components/Loading';
 // 테스트 끝나면 삭제할거임- 연희
 
+//정희
+import GameRoleComponent from './components/GameRoleComponent';
+
 const htmlTitle = document.querySelector('title');
 htmlTitle.innerHTML = '홀리몰리';
 
@@ -25,6 +28,9 @@ export default function App() {
         <div>
             <div>
                 <BrowserRouter>
+                    {/* 정희 역할부여 테스트 */}
+                    <Route path="/gameRole" component={GameRoleComponent}></Route>
+                    
                     {/* 테스트 끝나면 삭제할거임- 연희 */}
                     <Route path="/gameMissionPerformance" component={GameMissionPerformance}></Route>
                     <Route path="/gameDrawing" component={GameDrawing}></Route>
