@@ -14,9 +14,9 @@ const {
     writeHumanKeyword,
     saveSetImage
 } = require('../service').gameService;
-const { authMiddleware, gameMiddleware } = require('../middleware');
+const { roomMiddleware, gameMiddleware } = require('../middleware');
 
-router.post('/start', startGame);
+router.post('/start', roomMiddleware, startGame);
 router.get('/interim-result/:gameIdx', gameMiddleware, getInterimResult);
 router.delete('/final/:gameIdx', gameMiddleware, getFinalResult);
 router.get('/member/:gameSetIdx', gameMiddleware, getGameMemberInfo);

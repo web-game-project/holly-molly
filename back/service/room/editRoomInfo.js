@@ -12,9 +12,9 @@ module.exports = async (req, res, next) => {
     
     let { room_idx, room_name, room_mode, room_start_member_cnt } = req.body;
     room_idx = Number(room_idx);
-    const memberCnt = await getMemberCountInfo(roomIdx);
+    const memberCnt = await getMemberCountInfo(room_idx);
 
-    if(memberCnt <= room_start_member_cnt){
+    if(memberCnt > room_start_member_cnt){
         res.status(400).json({
             message: `${memberCnt} 보다 적은 플레이어 수로는 변경할 수 없습니다`,
         });
@@ -37,7 +37,7 @@ module.exports = async (req, res, next) => {
         let data = { room_idx, room_name, room_mode, room_start_member_cnt };
         io.to(room_idx).emit('edit room', data);
 
-        res.status(200).json('success');
+        res.status(200).end();
     } catch (error) {
         console.log('editRoom Error: ', error);
         res.status(400).json({

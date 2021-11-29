@@ -35,7 +35,7 @@ module.exports.startGame = async (req, res, next) => {
         let data = {game_idx, game_set_idx, user_list};
         io.to(room_idx).emit('start game', data);
         
-        res.status(200).json("success");
+        res.status(200).end();
     } catch (error) {
         console.log('startGame Error: ', error);
         res.status(400).json({
