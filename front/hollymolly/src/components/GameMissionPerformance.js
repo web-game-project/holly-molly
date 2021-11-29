@@ -13,16 +13,7 @@ let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-const socket = io('http://3.17.55.178:3002/', {
-    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
-    auth: {
-        token: save_token
-    },
-});
 
-socket.on('connect', () => {
-    console.log('GameMissionPerformance connection server');
-});
 
 const GameMissionPerformance = (props) => {
    
@@ -34,6 +25,17 @@ const GameMissionPerformance = (props) => {
 
     let user_role = "ghost";
     useEffect(() => {
+
+        const socket = io('http://3.17.55.178:3002/', {
+            auth: {
+                token: save_token
+            },
+        });
+
+        socket.on('connect', () => {
+            console.log('GameMissionPerformance connection server');
+        });
+
         if(user_role === "human"){ // human 일 때 마피아 미션 수행 
             setIsHuman(true);
         }else{ // ghost 일 때 마피아 미션 수행 기다림 

@@ -18,6 +18,8 @@ import colors from '../styles/styles.js';
 import InfoSetModal from '../components/InfoSetModal.js';
 import InfoModal from '../components/InfoModal.js';
 
+import Loading from "../components/Loading";
+
 const BaseURL = 'http://3.17.55.178:3002';
 
 //RefreshVerification.verification();
@@ -34,18 +36,6 @@ console.log('내 인덱스 : ' + save_user_idx);
 // room_idx 변수
 let room_idx = 0;
 
-//1번 토큰 사용
-const socket = io(BaseURL, {
-    auth: {
-        token: save_token,
-    },
-});
-
-// 연결 성공 시 시작
-socket.on('connect', () => {
-    console.log('Waiting connection server -> gameStart');
-});
-
 //게임 시작 인원 세는 변수
 let ready_cnt = 0;
 
@@ -57,6 +47,211 @@ export default function WaitingRoom({ match }) {
 
     const room_index = match.params.name; // url에 입력해준 방 인덱스
     console.log('방 번호는 ?' + room_index);
+
+    const [currentSocketConnection, setCurrentSocketConnection] = useState();
+
+    useEffect(() => {
+        const socket = io("http://3.17.55.178:3002/", {
+          auth: {
+            token: save_token,
+          },
+        });
+    
+        socket.on("connect", () => {
+          console.log('Waiting connection server -> gameStart');
+          setCurrentSocketConnection(socket.connected);
+        });
+    
+        // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
+        socket.on("disconnect", (reason) => {
+          console.log("disconnect");
+          setCurrentSocketConnection(socket.connected);
+        });
+
+        //방장 변경 leaderIdx
+        socket.on('change host', (data) => {
+            console.log('방장 탈출');
+
+            setLeaderIdx(data.user_idx);
+        });
+
+        //방퇴장
+        socket.on('exit room', (data) => {
+            const exitUserIdx = data.user_idx;
+
+            console.log('어레이냐> : ' + Array.isArray(userList));
+            const isArr = Array.isArray(userList);
+            //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
+            if (isArr === true) {
+                const exitUserList = userList.filter((user) => user.user_idx !== exitUserIdx);
+                //filter로
+                setUserList(exitUserList);
+            }
+            console.log('방 퇴장 시 현재 멤버 더하기 전 : ' + currentMember);
+
+            setCurrentMember(currentMember - 1);
+
+            dataModifiy('퇴장');
+        });
+
+        // 방 입장 소켓
+        socket.on('enter room', (data) => {
+            console.log('입장 data : ' + JSON.stringify(data));
+
+            const user = {
+                user_idx: data.user_idx,
+                user_name: data.user_name,
+                wrm_user_color: data.user_color,
+                wrm_user_ready: false,
+            };
+
+            const isArr = Array.isArray(userList);
+
+            //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
+            if (isArr === true) {
+                const enterUserList = userList.concat(user);
+                //concat으로 추가
+                setUserList(enterUserList);
+            }
+
+            colorList &&
+                colorList.map((element) => {
+                    if (element.color === data.user_color) {
+                        console.log('변경 칼라 : 바꾼 색깔 : ' + JSON.stringify(element.color));
+                        element.choose = 'false';
+                    }
+                });
+
+            setColorList(colorList);
+
+            console.log('수정인데 현재 인원이 넘버냐? : ' + parseInt(currentMember));
+            //현재인원 증가
+            setCurrentMember(parseInt(currentMember) + 1);
+
+            dataModifiy('입장');
+        });
+
+        //사용자의 준비 상태 값 변경에 따른 소켓
+        socket.on('change member ready', (data) => {
+            const changeReadyUserIdx = data.user_idx;
+            const changeReadyResult = data.user_ready;
+
+            //userList에 해당 인덱스의 ready값을 변경해줘야함
+            const isArr = Array.isArray(userList);
+        
+            let middleReadySocket = [{}];
+            
+            console.log('아아아악 : 어레이냐? ' + isArr);
+
+            //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
+            if (isArr === true) {
+                userList.forEach((element) => {
+                    if (changeReadyUserIdx === element.user_idx) {
+                        //element.wrm_user_color = element.wrm_user_color;
+                        //element.user_name = element.user_name;
+                        element.user_idx = changeReadyUserIdx;
+                        element.wrm_user_ready = changeReadyResult;
+                        middleReadySocket.push(element);
+                    }
+                });
+
+                console.log('아아아악: 중간소켓 : ' + JSON.stringify(middleReadySocket));
+
+                const concatUserReady = userList.concat(middleReadySocket);
+                console.log('아아아악: 컨캣 : ' + JSON.stringify(concatUserReady));
+
+                const filterReadyUserList = concatUserReady.filter((item, pos) => userList.indexOf(item) == pos);
+                
+                //filter로
+                setUserList(filterReadyUserList);
+
+                console.log('아아아악 : 유저리스트: ' + JSON.stringify(userList));
+            }
+
+            //방장인덱스가 내인덱스를 비교할 필요가 잇는가?
+                if (changeReadyResult === true) {
+                    ready_cnt += 1;
+                    console.log('악! ready 증가, ready 현재값 : ' + ready_cnt);
+                } else {
+                    if (ready_cnt != 0) ready_cnt -= 1;
+                    console.log('악! ready 감소, ready 현재값 : ' + ready_cnt);
+                }            
+
+            alert('socket user_idx : ' + data.user_idx + ' user_ready : ' + data.user_ready);
+        });
+
+        //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 부분
+        socket.on('change member color', (data) => {
+            alert('socket-> index: ' + data.user_idx + '이전 color: ' + data.before_color + '이후 color: ' + data.current_color);
+
+            const changeColorUserIdx = data.user_idx;
+            const changeUserBeforeColor = data.before_color
+            const changeUserCurrentColor = data.current_color;
+
+            const isArr = Array.isArray(userList);
+            let middleColorSocket = [{}];
+
+            //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
+            if (isArr === true) {
+                userList.forEach((element) => {
+                    if (changeColorUserIdx === element.user_idx) {
+                        element.wrm_user_color = changeUserCurrentColor;
+                        console.log('색깔 유저 변경 엘레먼트? ' + element.wrm_user_color);
+                        //element.user_name = element.user_name;
+                        element.user_idx = changeColorUserIdx;
+                        //element.wrm_user_ready = false;
+                        middleColorSocket.push(element);
+                    }
+                });
+    
+                console.log('색깔 유저 : middle socket arr: ' + JSON.stringify(middleColorSocket));
+    
+                const concatUserColor = userList.concat(middleColorSocket);
+                const filterColorUserList = concatUserColor.filter((item, pos) => userList.indexOf(item) == pos);
+                
+                //filter로
+                setUserList(filterColorUserList);
+
+                console.log('색깔 필터했다? : ' + JSON.stringify(filterColorUserList));
+            }
+
+            colorList &&
+                colorList.map((element) => {
+                    if (element.color === changeUserCurrentColor) {
+                        element.choose = 'false';
+                    }
+                    setColorList(colorList);
+
+                    if (element.color === changeUserBeforeColor) {
+                        element.choose = 'true';
+                    }
+                    
+                    setColorList(colorList);
+                });
+
+            console.log('색깔 유저리스트 칼라리스트 후 : ' + JSON.stringify(colorList));
+
+            dataModifiy('색깔');
+        });
+
+        //방 정보 수정 소켓
+        socket.on('edit room', (data) => {
+            alert('수정) 방정보! ');
+            setRoomUpdate(data);
+        });
+
+        //게임 시작 정보 socket
+        socket.on('start game', (data) => {
+            alert('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
+
+            //플레잉룸으로 이동, 데이터 전달
+            history.push({
+                pathname: '/playingroom/' + room_idx,
+                state: { data: data },
+            });
+        });
+    
+      }, []);
 
     //유저 리스트
     const [userList, setUserList] = useState();
@@ -124,207 +319,10 @@ export default function WaitingRoom({ match }) {
         setRoomEnterInfo(modifyRoomEnterInfo);
     }
 
-    useEffect(() => {
-        //방장 변경 leaderIdx
-        socket.on('change host', (data) => {
-            console.log('방장 탈출');
-
-            setLeaderIdx(data.user_idx);
-        });
-    });
-
-    useEffect(() => {
-        //방퇴장
-        socket.on('exit room', (data) => {
-            const exitUserIdx = data.user_idx;
-
-            console.log('어레이냐> : ' + Array.isArray(userList));
-            const isArr = Array.isArray(userList);
-            //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
-            if (isArr === true) {
-                const exitUserList = userList.filter((user) => user.user_idx !== exitUserIdx);
-                //filter로
-                setUserList(exitUserList);
-            }
-            console.log('방 퇴장 시 현재 멤버 더하기 전 : ' + currentMember);
-
-            setCurrentMember(currentMember - 1);
-
-            dataModifiy('퇴장');
-        });
-    });
-
-    useEffect(() => {
-        // 방 입장 소켓
-        socket.on('enter room', (data) => {
-            console.log('입장 data : ' + JSON.stringify(data));
-
-            const user = {
-                user_idx: data.user_idx,
-                user_name: data.user_name,
-                wrm_user_color: data.user_color,
-                wrm_user_ready: false,
-            };
-
-            const isArr = Array.isArray(userList);
-
-            //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
-            if (isArr === true) {
-                const enterUserList = userList.concat(user);
-                //concat으로 추가
-                setUserList(enterUserList);
-            }
-
-            colorList &&
-                colorList.map((element) => {
-                    if (element.color === data.user_color) {
-                        console.log('변경 칼라 : 바꾼 색깔 : ' + JSON.stringify(element.color));
-                        element.choose = 'false';
-                    }
-                });
-
-            setColorList(colorList);
-
-            console.log('수정인데 현재 인원이 넘버냐? : ' + parseInt(currentMember));
-            //현재인원 증가
-            setCurrentMember(parseInt(currentMember) + 1);
-
-            dataModifiy('입장');
-        });
-    });
-
-    useEffect(() => {
-        //게임 시작 정보 socket
-        socket.on('start game', (data) => {
-            alert('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
-
-            //플레잉룸으로 이동, 데이터 전달
-            history.push({
-                pathname: '/playingroom/' + room_idx,
-                state: { data: data },
-            });
-        });
-    }, [gameStart]);
-
-    useEffect(() => {
-        //사용자의 준비 상태 값 변경에 따른 소켓
-        socket.on('change member ready', (data) => {
-            const changeReadyUserIdx = data.user_idx;
-            const changeReadyResult = data.user_ready;
-
-            //userList에 해당 인덱스의 ready값을 변경해줘야함
-            const isArr = Array.isArray(userList);
-        
-            let middleReadySocket = [{}];
-            
-            console.log('아아아악 : 어레이냐? ' + isArr);
-
-            //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
-            if (isArr === true) {
-                userList.forEach((element) => {
-                    if (changeReadyUserIdx === element.user_idx) {
-                        //element.wrm_user_color = element.wrm_user_color;
-                        //element.user_name = element.user_name;
-                        element.user_idx = changeReadyUserIdx;
-                        element.wrm_user_ready = changeReadyResult;
-                        middleReadySocket.push(element);
-                    }
-                });
-
-                console.log('아아아악: 중간소켓 : ' + JSON.stringify(middleReadySocket));
-
-                const concatUserReady = userList.concat(middleReadySocket);
-                console.log('아아아악: 컨캣 : ' + JSON.stringify(concatUserReady));
-
-                const filterReadyUserList = concatUserReady.filter((item, pos) => userList.indexOf(item) == pos);
-                
-                //filter로
-                setUserList(filterReadyUserList);
-
-                console.log('아아아악 : 유저리스트: ' + JSON.stringify(userList));
-            }
-
-            //방장인덱스가 내인덱스를 비교할 필요가 잇는가?
-                if (changeReadyResult === true) {
-                    ready_cnt += 1;
-                    console.log('악! ready 증가, ready 현재값 : ' + ready_cnt);
-                } else {
-                    if (ready_cnt != 0) ready_cnt -= 1;
-                    console.log('악! ready 감소, ready 현재값 : ' + ready_cnt);
-                }            
-
-            alert('socket user_idx : ' + data.user_idx + ' user_ready : ' + data.user_ready);
-        });
-    });
-
-    useEffect(() => {
-        //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 부분
-        socket.on('change member color', (data) => {
-            alert('socket-> index: ' + data.user_idx + '이전 color: ' + data.before_color + '이후 color: ' + data.current_color);
-
-            const changeColorUserIdx = data.user_idx;
-            const changeUserBeforeColor = data.before_color
-            const changeUserCurrentColor = data.current_color;
-
-            const isArr = Array.isArray(userList);
-            let middleColorSocket = [{}];
-
-            //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
-            if (isArr === true) {
-                userList.forEach((element) => {
-                    if (changeColorUserIdx === element.user_idx) {
-                        element.wrm_user_color = changeUserCurrentColor;
-                        console.log('색깔 유저 변경 엘레먼트? ' + element.wrm_user_color);
-                        //element.user_name = element.user_name;
-                        element.user_idx = changeColorUserIdx;
-                        //element.wrm_user_ready = false;
-                        middleColorSocket.push(element);
-                    }
-                });
-    
-                console.log('색깔 유저 : middle socket arr: ' + JSON.stringify(middleColorSocket));
-    
-                const concatUserColor = userList.concat(middleColorSocket);
-                const filterColorUserList = concatUserColor.filter((item, pos) => userList.indexOf(item) == pos);
-                
-                //filter로
-                setUserList(filterColorUserList);
-
-                console.log('색깔 필터했다? : ' + JSON.stringify(filterColorUserList));
-            }
-
-            colorList &&
-                colorList.map((element) => {
-                    if (element.color === changeUserCurrentColor) {
-                        element.choose = 'false';
-                    }
-                    setColorList(colorList);
-
-                    if (element.color === changeUserBeforeColor) {
-                        element.choose = 'true';
-                    }
-                    
-                    setColorList(colorList);
-                });
-
-            console.log('색깔 유저리스트 칼라리스트 후 : ' + JSON.stringify(colorList));
-
-            dataModifiy('색깔');
-        });
-    });
-
     const [result, setResult] = useState(0);
     const clickedSetting = (result) => {
         setResult(result);
     };
-
-    useEffect(() => {
-        //방 정보 수정 소켓
-        socket.on('edit room', (data) => {
-            alert('수정) 방정보! ');
-            setRoomUpdate(data);
-        });
-    }, [result]);
 
     function readyClick(readyStatus) {
 
@@ -568,6 +566,7 @@ export default function WaitingRoom({ match }) {
         console.log('방장 인덱스 : ' + leaderIdx),
         (
             <Background>
+                {currentSocketConnection ? (
                 <Container>
                     {console.log('방장 인덱스 맞지? : ' + isLeader)}
                     <SelectDiv>
@@ -728,6 +727,7 @@ export default function WaitingRoom({ match }) {
                         </StartDiv>
                     </RightDiv>
                 </Container>
+                ): ( <Loading />)}
             </Background>
         )
     );

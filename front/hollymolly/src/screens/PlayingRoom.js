@@ -24,17 +24,6 @@ let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 console.log('내 인덱스 : ' + save_user_idx);
 
-const socket = io('http://3.17.55.178:3002/', {
-    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
-    auth: {
-        token: save_token,
-    },
-});
-
-socket.on('connect', () => {
-    console.log('playing room connection server');
-});
-
 let userList = [{}];
 
 const PlayingRoom = (props) => {
@@ -51,6 +40,18 @@ const PlayingRoom = (props) => {
     const [playInfo, setPlayInfo] = React.useState(''); //웨이팅룸에서 넘어온 데이터 저장
 
     const BaseURL = 'http://3.17.55.178:3002/';
+
+    useEffect(() => {
+        const socket = io(BaseURL, {
+            auth: {
+                token: save_token,
+            },
+        });
+
+        socket.on('connect', () => {
+            console.log('playing room connection server');
+        });
+    }, []);
 
     useEffect(() => {
         if (playInfo != null) { //데이터 전달 받은게 세팅되기 전까지는 타이머가 돌아가면 안됨.
