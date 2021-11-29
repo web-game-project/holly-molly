@@ -7,6 +7,8 @@ import gameBackground from '../assets/night.png';
 import startBtn from '../assets/startBtn.png';
 import tutotrialBtn from '../assets/tutorialBtn.png';
 
+import Modal from '../components/ModalNickName';
+
 function GameStart() {
 
   function tutorialClick() {
@@ -19,9 +21,9 @@ function GameStart() {
 
         <Logo />
 
-        <Link to='/InputName'>
-          <StartBtn />
-        </Link>
+        <StartDiv>
+          <Modal />
+        </StartDiv>
 
         <TutorialBtn onClick={tutorialClick} />
 
@@ -58,13 +60,10 @@ const Backgroundimg = styled.div`
   background-repeat: no-repeat;
 `;
 
-const StartBtn = styled.div`
+const StartDiv = styled.div`
   width: 250px;  
   height: 50px;
-  background-image: url(${startBtn});
   margin: -30px auto;  
-  background-size: cover;
-  background-repeat: no-repeat;
 `;
 
 const TutorialBtn = styled.div`

@@ -30,5 +30,7 @@ const colors = {
     green: '#1DDB16',
     purple: '#5F00FF',
     pink: '#FF00DD',
+
+    dark_purple: '#351B41',
 };
 export default colors;
