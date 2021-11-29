@@ -6,7 +6,7 @@ const db = require('../../models');
 const { exitGameAndRoom } = require('../game/exitGame');
 const {printErrorLog} = require('../../util/log');
 
-module.exports = async (req, res, next) => {
+const enterRoom = async (req, res, next) => {
     try {
         const user = res.locals.user;
         const { io, socket } = getIOSocket(req, res);
@@ -45,6 +45,7 @@ module.exports = async (req, res, next) => {
             await getWaitingRoomMemberListAndLeader(room.room_idx);
 
         if (!waitingRoomMemberList || !leader_idx) {
+            printErrorLog('getRoom', room.room_idx+'번방 방원/방장이 존재하지 않음');
             res.status(400).json({
                 message: '알 수 없는 오류가 발생했습니다.',
             });
@@ -96,15 +97,7 @@ module.exports = async (req, res, next) => {
             room_member_count: waitingRoomMemberList.length,
         });
 
-        res.status(201).json({
-            room_idx: room.room_idx,
-            room_name: room.room_name,
-            room_code: room.room_code,
-            room_start_member_cnt: room.room_start_member_cnt,
-            room_current_member_cnt: waitingRoomMemberList.length,
-            leader_idx,
-            waiting_room_member_list: waitingRoomMemberList,
-        });
+        res.status(201).json({});
     } catch (error) {
         printErrorLog('enterRoom', error);
         res.status(400).json({
@@ -264,3 +257,8 @@ const getWaitingRoomMember = async (userIdx) => {
     });
     return roomMember;
 };
+
+module.exports = {
+    enterRoom,
+    getWaitingRoomMemberListAndLeader,
+}
