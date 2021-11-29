@@ -9,8 +9,8 @@ import { useHistory } from 'react-router';
 import { io } from 'socket.io-client';
 import axios from 'axios';
 
-// local storage에 있는지 확인 
-let data = localStorage.getItem("token");
+// local storage에 있는지 확인
+let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
 let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
@@ -137,7 +137,7 @@ export default function ModalBase() {
         } else console.log('공개범위는? private'); // 반대로 나옴
 
         roomCreate();
-        setTimeout(() => enterRoom(), 1000);
+        // setTimeout(() => enterRoomInfo(), 1000);
         // enterRoom();
         closeModal();
 
@@ -153,8 +153,7 @@ export default function ModalBase() {
         const restURL = 'http://3.17.55.178:3002/room';
         const reqHeaders = {
             headers: {
-                authorization:
-                    'Bearer ' + save_token,
+                authorization: 'Bearer ' + save_token,
             },
         };
         axios
@@ -171,6 +170,11 @@ export default function ModalBase() {
             .then(function (response) {
                 idx = response.data.room_idx;
                 // console.log(response.data);
+
+                // 대기실로 이동
+                history.push({
+                    pathname: '/waitingroom/' + idx,
+                });
             })
             .catch(function (error) {
                 console.log('생성 실패');
@@ -180,39 +184,31 @@ export default function ModalBase() {
 
     // 방 생성 후에 방 접속까지 해줌
 
-    const enterRoom = async () => {
-        // 방 접속
-        const reqURL = 'http://3.17.55.178:3002/room/idx'; //parameter : 방 타입
-        const reqHeaders = {
-            headers: {
-                authorization:
-                'Bearer ' + save_token,
-            },
-        };
+    // const enterRoomInfo = async () => {
+    //     // 방 접속
+    //     const reqURL = 'http://3.17.55.178:3002/room/' + idx; //parameter : 방 타입
+    //     const reqHeaders = {
+    //         headers: {
+    //             authorization: 'Bearer ' + save_token,
+    //         },
+    //     };
 
-        axios
-            .post(
-                reqURL,
-                {
-                    room_idx: idx,
-                },
-                reqHeaders
-            )
-            .then(function (response) {
-                console.log('방 접속 성공');
+    //     axios
+    //         .get(reqURL, reqHeaders)
+    //         .then(function (response) {
+    //             console.log('방 정보 조회 성공');
 
-                // 대기실로 이동
-                history.push({
-                    pathname: '/waitingroom/' + response.data.room_idx,
-                    state: { data: response.data },
-                });
-            })
-            .catch(function (error) {
-                // alert(error);
-                console.log('방 접속 실패');
-                console.log(error.response);
-            });
-    };
+    //             // 대기실로 이동
+    //             history.push({
+    //                 pathname: '/waitingroom/' + idx,
+    //             });
+    //         })
+    //         .catch(function (error) {
+    //             // alert(error);
+    //             console.log('방 접속 실패');
+    //             console.log(error.response);
+    //         });
+    // };
 
     const [modalIsOpen, setIsOpen] = React.useState(false);
 
