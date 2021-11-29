@@ -37,8 +37,8 @@ socket.on('connect', () => {
 
 let userList = [{}];
 
-const PlayingRoom = ({ match }) => {
-    const room_index = match.params.name; // url에 입력해준 방 인덱스
+const PlayingRoom = (props) => {
+    //const room_index = match.params.name; // url에 입력해준 방 인덱스
     
     let location = useLocation();
 

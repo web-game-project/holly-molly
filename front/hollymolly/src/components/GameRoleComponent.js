@@ -99,11 +99,12 @@ function GameRoleComponent(props) {
 const Container = styled.div`
     width: 480px;
     height: 480px;
-    margin-top: 85px;
+    margin-top: 60px;
     border-width: thin;
     border-radius: 10px;
     border-color: #000000;
     border-style: solid;
+    background-color: #ffffff;
 `;
 
 const SubContainer = styled.div`
