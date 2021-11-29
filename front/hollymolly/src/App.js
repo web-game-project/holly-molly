@@ -3,7 +3,6 @@ import './App.css';
 
 import RoomList from '../src/screens/RoomList';
 import GameStart from './screens/GameStart';
-import Dialog from './screens/NickNameDialog';
 import { BrowserRouter, Route, Switch } from 'react-router-dom'; //React-Router import
 import WaitingRoom from './screens/WaitingRoom.js';
 import PlayingRoom from './screens/PlayingRoom.js';
@@ -19,6 +18,7 @@ import Loading from './components/Loading';
 
 //정희
 import GameRoleComponent from './components/GameRoleComponent';
+import ModalNickName from './components/ModalNickName';
 
 const htmlTitle = document.querySelector('title');
 htmlTitle.innerHTML = '홀리몰리';
@@ -30,6 +30,7 @@ export default function App() {
                 <BrowserRouter>
                     {/* 정희 역할부여 테스트 */}
                     <Route path="/gameRole" component={GameRoleComponent}></Route>
+                    <Route path="/nickname" component={ModalNickName}></Route>
                     
                     {/* 테스트 끝나면 삭제할거임- 연희 */}
                     <Route path="/gameMissionPerformance" component={GameMissionPerformance}></Route>
@@ -40,9 +41,6 @@ export default function App() {
                     {/* 테스트 끝나면 삭제할거임- 연희 */}
                     <Route path="/voteboard" component={VoteBoard}></Route>
                     <Route exact path="/" component={GameStart} />
-                    <Route path="/inputname" component={Dialog}>
-                        <Dialog title="닉네임 입력" confirmText="접속" />
-                    </Route>
                     <Switch>
                         <Route path="/playingroom/:name" component={PlayingRoom} />
                         <Route path="/playingroom" component={PlayingRoom} />
