@@ -1,19 +1,18 @@
-const { Game } = require('../../models');
-const { Keyword } = require('../../models');
-const { WaitingRoomMember, sequelize } = require('../../models');
-const { GameMember } = require('../../models');
-const { GameSet } = require('../../models');
+const { Game, Keyword, Room, WaitingRoomMember, sequelize, GameMember, GameSet } = require('../../models');
 
 module.exports.startGame = async (req, res, next) => {
     let { room_idx } = req.body;
 
     try {
+        if (!res.locals.leader) {
+            res.status(403).json({
+                message: '권한이 없습니다.',
+            });
+            return;
+        }
+        
         const io = req.app.get('io');
-        // socket : change game status
-        io.to(0).emit('change game status', {
-            room_idx: room_idx,
-            room_status: 'playing',
-        });
+        await changeGameStatus(io, room_idx);
 
         let { game_idx } = await createAndGetGameInfo(room_idx);
         let { keyword_idx } = await getKeywordIdx();
@@ -41,10 +40,24 @@ module.exports.startGame = async (req, res, next) => {
         console.log('startGame Error: ', error);
         res.status(400).json({
             meesage: '알 수 없는 에러가 발생했습니다.',
-            error,
+            error: error.message,
         });
     }
 };
+
+const changeGameStatus = async (io, roomIdx) => {
+    Room.update(
+        {
+            room_status: 'playing',
+        },
+        { where: { room_idx: roomIdx } }
+    );
+
+    io.to(0).emit('change game status', {
+        room_idx: roomIdx,
+        room_status: 'playing',
+    });
+}
 
 const createAndGetGameInfo = async (roomIdx) => {
     try {
@@ -192,3 +205,5 @@ const assignRoleAndOrder = async (
         console.log('assignRoleAndOrder Error: ', error);
     }
 };
+
+module.exports.getMemberCountInfo = getMemberCountInfo;

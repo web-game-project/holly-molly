@@ -1,5 +1,4 @@
-const { GameSet, GameMember, Game } = require('../../models');
-const sequelize = require('sequelize');
+const { GameSet, GameMember, Game, sequelize } = require('../../models');
 const { deleteAllAboutGame, updateRoomStatus } = require('./exitGame');
 
 module.exports = async (req, res, next) => {
@@ -9,50 +8,78 @@ module.exports = async (req, res, next) => {
         res.status(403).json({
             message: '권한이 없습니다.',
         });
+
+        return;
     }
 
     try {
-        const finalResult = await GameSet.findOne({
-            attributes: [
-                [
-                    sequelize.fn('sum', sequelize.col('game_set_human_score')),
-                    'human_score',
-                ],
-                [
-                    sequelize.fn('sum', sequelize.col('game_set_ghost_score')),
-                    'ghost_score',
-                ],
-            ],
-            where: {
-                game_game_idx: gameIdx,
-            },
-            group: 'game_game_idx',
-        });
-        console.log('getFinalResult Success: ', finalResult);
+        const io = req.app.get('io');
+
+        // get room_idx using gameIdx
+        const game = await getGame(gameIdx);
+        let room_idx = game.get('room_room_idx');
+
+        // get final result
+        const finalResult = await selectFinalResult(gameIdx);
+        let result = await makeTotalScoreData(finalResult);
+        io.to(room_idx).emit('get final result', result);
 
         // finishGame
         const gameMembers = await getGameMemberIndex(gameIdx);
-        const game = await getGame(gameIdx);
         await deleteAllAboutGame(gameMembers, gameIdx);
-        await updateRoomStatus(game.get('room_room_idx'), 'waiting');
+        await updateRoomStatus(room_idx, 'waiting');
 
         // socket : change game status
-        const io = req.app.get('io');
         io.to(0).emit('change game status', {
             room_idx: game.get('room_room_idx'),
             room_status: 'waiting',
         });
+        
 
         res.status(204).end();
-        //res.status(200).json(finalResult);
     } catch (error) {
         console.log('getFinalResult Error: ', error);
         res.status(400).json({
             meesage: '알 수 없는 에러가 발생했습니다.',
-            error,
+            error: error.message,
         });
     }
 };
+
+const selectFinalResult = async (gameIdx) => {
+    const finalResult = await GameSet.findAll({
+        attributes: [
+            'game_set_human_score',
+            'game_set_ghost_score'
+        ],
+        where: {
+            game_game_idx: gameIdx,
+        },
+        order: ['game_set_no']
+    });
+
+    return finalResult;
+};
+
+const makeTotalScoreData = async (finalResult) => {
+    let result = {};
+    result.one_game_set_human_score = finalResult[0].dataValues.game_set_human_score;
+    result.two_game_set_human_score = finalResult[1].dataValues.game_set_human_score;
+    result.three_game_set_human_score = finalResult[2].dataValues.game_set_human_score;
+    result.total_game_set_human_score = 0;
+    for(let i in finalResult){
+        result.total_game_set_human_score += finalResult[i].dataValues.game_set_human_score;
+    }
+    result.one_game_set_ghost_score = finalResult[0].dataValues.game_set_ghost_score;
+    result.two_game_set_ghost_score = finalResult[1].dataValues.game_set_ghost_score;
+    result.three_game_set_ghost_score = finalResult[2].dataValues.game_set_ghost_score;
+    result.total_game_set_ghost_score = 0;
+    for(let i in finalResult){
+        result.total_game_set_ghost_score += finalResult[i].dataValues.game_set_ghost_score;
+    }
+
+    return result;
+}
 
 const getGameMemberIndex = async (gameIdx) => {
     return await GameMember.findAll({
@@ -62,6 +89,7 @@ const getGameMemberIndex = async (gameIdx) => {
         },
     });
 };
+
 const getGame = async (gameIdx) => {
     return await Game.findOne({
         where: {
@@ -69,3 +97,5 @@ const getGame = async (gameIdx) => {
         },
     });
 };
+
+module.exports.getGame = getGame;

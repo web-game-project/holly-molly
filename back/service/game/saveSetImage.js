@@ -12,12 +12,12 @@ module.exports = async (req, res, next) => {
             { where: { game_set_idx: gameSetIdx } }
         );
 
-        res.status(200).json({message: "success"});
+        res.status(200);
     } catch (error) {
         console.log('saveSetImage Error: ', error);
         res.status(400).json({
             meesage: '알 수 없는 에러가 발생했습니다.',
-            error,
+            error: error.message,
         });
     }
 };
