@@ -32,7 +32,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
     console.log(title, mode, member, room_private);
     // 방 설정 수정
     const [roomdata, setRoomdata] = useState();
-    let count = 1;
+    // let count = 0;
     const customStyles = {
         content: {
             top: '50%',
@@ -183,7 +183,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
         console.log('인원수는? ' + people + '명');
 
         UpdateRoomInfo();
-        clickedSetting(resultt + 1);
+        // clickedSetting(resultt + 1);
         closeModal();
 
         //방 생성했으면 초기화
