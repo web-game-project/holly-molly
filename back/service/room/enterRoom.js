@@ -97,7 +97,9 @@ const enterRoom = async (req, res, next) => {
             room_member_count: waitingRoomMemberList.length,
         });
 
-        res.status(201).json({});
+        res.status(201).json({
+            room_idx: room.room_idx,
+        });
     } catch (error) {
         printErrorLog('enterRoom', error);
         res.status(400).json({
