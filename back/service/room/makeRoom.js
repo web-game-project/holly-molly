@@ -11,7 +11,6 @@ module.exports = async (req, res, next) => {
             req.body;
         const user = res.locals.user;
         const { io, socket } = getIOSocket(req, res);
-        console.log("*****", socket.id);
 
         const beforeWaitingRoomMember = await WaitingRoomMember.findOne({
             where: {
@@ -63,7 +62,6 @@ module.exports = async (req, res, next) => {
 
         res.status(201).json({
             room_idx: room.room_idx,
-            room_code: room.room_code,
         });
     } catch (error) {
         printErrorLog('makeRoom', error);
