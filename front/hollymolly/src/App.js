@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'; //React-Router 
 import WaitingRoom from './screens/WaitingRoom.js';
 import PlayingRoom from './screens/PlayingRoom.js';
 import VoteBoard from './components/VoteBoard';
+import Tutorial from './screens/Tutorial.js';
 
 // 테스트 끝나면 삭제할거임- 연희
 import GameMissionPerformance from './components/GameMissionPerformance';
@@ -28,10 +29,12 @@ export default function App() {
         <div>
             <div>
                 <BrowserRouter>
+                    <Route path="/tutorial" component={Tutorial}></Route>
+
                     {/* 정희 역할부여 테스트 */}
                     <Route path="/gameRole" component={GameRoleComponent}></Route>
                     <Route path="/nickname" component={ModalNickName}></Route>
-                    
+
                     {/* 테스트 끝나면 삭제할거임- 연희 */}
                     <Route path="/gameMissionPerformance" component={GameMissionPerformance}></Route>
                     <Route path="/gameDrawing" component={GameDrawing}></Route>
