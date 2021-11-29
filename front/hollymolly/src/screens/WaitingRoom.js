@@ -270,7 +270,7 @@ export default function WaitingRoom({ match }) {
             //플레잉룸으로 이동, 데이터 전달
             history.push({
                 pathname: "/playingroom/" + room_idx,
-                state: { data: data },
+                state: { data: data, room : room_idx },
             });
         });
     }, []);
@@ -518,6 +518,7 @@ export default function WaitingRoom({ match }) {
                 //방장 인덱스 받아오기, save_user_idx 이게 내 인덱스 저장된 변수
                 //받아와서 리더인지 아닌지 state 설정
                 if (response.data.leader_idx === save_user_idx) {
+                    console.log('방장 오케이');
                     setIsLeader(1); //리더다
                 }
 
@@ -579,13 +580,11 @@ export default function WaitingRoom({ match }) {
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }, []);
 
-    return (
-        console.log("입장 유저 리스트 " + JSON.stringify(userList)),
-        console.log("현재 멤버 세팅 값 : " + currentMember),
-        console.log("방장 인덱스 : " + leaderIdx),
+    return (        
         (
             <Background>
-                {currentSocketConnection ? (
+                {currentSocketConnection ? ( 
+                    roomEnterInfo && roomEnterInfo ? (
                     <div>
                         <Header />
                         <Container>
@@ -662,7 +661,7 @@ export default function WaitingRoom({ match }) {
                                 <BarDiv>
                                     <BarInnerDiv>
                                         {
-                                            (console.log("변경 칼라 selectcolor : " + selectColor),
+                                            (
                                                 colorList &&
                                                 colorList.map((element, key) =>
                                                     //console.log('변경 칼라 값 ' + JSON.stringify(element.color)),
@@ -759,6 +758,10 @@ export default function WaitingRoom({ match }) {
                             </RightDiv>
                         </Container>
                     </div>
+                )
+                : (
+                    <Loading />
+                )
                 ) : (
                     <Loading />
                 )}
