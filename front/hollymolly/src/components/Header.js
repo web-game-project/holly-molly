@@ -26,6 +26,8 @@ const Container = styled.div`
     height: 100px;
     justify-content: space-between;
     align-items: center;
+    border-top-left-radius: 1.5rem;
+    border-top-right-radius: 1.5rem;
 `;
 
 // 로고
