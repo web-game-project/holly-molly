@@ -12,12 +12,17 @@ import { useHistory } from 'react-router';
 // import Child from '../components/Child';
 import RefreshVerification from '../server/RefreshVerification';
 
+
 // 이미지
 import leftArrowBtn from '../assets/leftArrowBtn.png';
 import rightArrowBtn from '../assets/rightArrowBtn.png';
 
 // 소켓
 import { io } from 'socket.io-client';
+
+// 리덕스 & 로딩
+import { useSelector } from "react-redux";
+import Loading from "../components/Loading";
 
 let total_room_cnt = 0; // 룸 리스트 총 방의 갯수
 
@@ -33,22 +38,18 @@ let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 console.log('save_token: ' + save_token);
 console.log('save_user_name: ' + save_user_name);
 
-const socket = io('http://3.17.55.178:3002/', {
-    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
-    auth: {
-        // 1번 토큰
-        token: save_token,
-    },
-});
-
 const RoomList = () => {
     const history = useHistory();
 
-    const [emptyRoomsLength, setEmptyRoomsLength] = useState('');
+  // 리덕스에 저장된 값
+  const isLogin = useSelector((state) => state.socket.is_login);
+  const baseURL = useSelector((state) => state.socket.base_url);
 
-    const [createRoomData, setcreateRoomData] = useState('');
+  const [emptyRoomsLength, setEmptyRoomsLength] = useState("");
+  const [createRoomData, setcreateRoomData] = useState("");
+  const [isSocket, setIsSocket] = useState(false);
+  const [currentSocketConnection, setCurrentSocketConnection] = useState();
 
-    const [isSocket, setIsSocket] = useState(false);
 
     // 방 전체 리스트
     const [rooms, setRooms] = useState();
@@ -61,37 +62,62 @@ const RoomList = () => {
 
     const resultArray = result.sort();
 
-    useEffect(() => {
-        socket.on('connect', () => {
-            console.log('room list connection server');
-        });
-
-        socket.on('error', () => {
-            setTimeout(() => {
-                socket.connect();
-                console.log(socket);
-            }, 1000);
-        });
-
-        // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
-        socket.on('disconnect', (reason) => {
-            if (reason === 'io server disconnect') {
-                socket.connect();
-            }
-        });
+  useEffect(() => {
+    const socket = io("http://3.17.55.178:3002/", {
+      auth: {
+        token: save_token,
+      },
     });
 
-    // 맨 처음에 첫 페이지 부름
-    useEffect(() => {
-        roomListCheckPage(0);
-    }, []);
+    socket.on("connect", () => {
+      console.log("room list connection server");
+      setCurrentSocketConnection(socket.connected);
+    });
 
-    // 소켓 이벤트 발생 시 부름
-    useEffect(() => {
-        /* for (let i = 0; i < TOTAL_SLIDES; i++) {
-                roomListCheckPage(i);
-        } */
-    }, [isSocket]);
+    // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
+    socket.on("disconnect", (reason) => {
+      console.log("disconnect");
+      setCurrentSocketConnection(socket.connected);
+    });
+
+    //방 생성 시, 마지막 페이지에 방 추가
+    socket.on("create room", (data) => {
+      //setcreateRoomData(data);
+      console.log("create room");
+      setIsSocket(!isSocket);
+    });
+
+    // 방 삭제 - 대기실 삭제
+    socket.on("delete room", (data) => {
+      console.log("delete room");
+      setIsSocket(!isSocket);
+    });
+
+    //방 정보 수정  - 특정 대기실에서 대기실 정보 수정 시
+    socket.on("edit room", (data) => {
+      console.log("edit room");
+      setIsSocket(!isSocket);
+    });
+
+    // 방 멤버 변동 - 특정 대기실 사용자 입장/퇴장 시
+    socket.on("change member count", (data) => {
+      console.log("change member count");
+      setIsSocket(!isSocket);
+    });
+
+    //방 상태 변동 - 특정 게임이 시작할 때
+    socket.on("change game status", (data) => {
+      console.log("change game status");
+      setIsSocket(!isSocket);
+    });
+  }, []);
+
+  // 소켓 이벤트 발생 시 모든 페이지 다시 부름
+  useEffect(() => {
+     for (let i = 0; i < TOTAL_SLIDES; i++) {
+        roomListCheckPage(i);
+      } 
+  }, [isSocket]);
 
     // 페이지 슬라이드 개수
     let TOTAL_SLIDES = 0;
@@ -122,36 +148,6 @@ const RoomList = () => {
             setCurrentSlide(currentSlide - 1);
         }
     };
-
-    useEffect(() => {
-        //방 생성 시, 마지막 페이지에 방 추가
-        socket.on('create room', (data) => {
-            setcreateRoomData(data);
-            console.log('create room');
-        });
-
-        // 방 삭제 - 대기실 삭제
-        socket.on('delete room', (data) => {
-            console.log('delete room');
-        });
-
-        //방 정보 수정  - 특정 대기실에서 대기실 정보 수정 시
-        socket.on('edit room', (data) => {
-            console.log('edit room');
-        });
-
-        // 방 멤버 변동 - 특정 대기실 사용자 입장/퇴장 시
-        socket.on('change member count', (data) => {
-            console.log('change member count');
-            //console.log(data);
-            //setIsSocket(!isSocket);
-        });
-
-        //방 상태 변동 - 특정 게임이 시작할 때
-        socket.on('change game status', (data) => {
-            console.log('change game status');
-        });
-    });
 
     // 페이지별 룸 리스트 조회
     const roomListCheckPage = async (currentPage) => {
@@ -329,6 +325,7 @@ const RoomList = () => {
         <React.Fragment>
             <Background>
                 <Header />
+                {currentSocketConnection ? (
                 <RoomGrid flexDirection="column" padding="20px" width="1020px" height="620px" bg="#DAD4F6">
                     {/* 검색바 & 버튼 div*/}
                     <RoomGrid is_flex_space width="980px" height="110px" bg="#DAD4F6" border="1px solid #DAD4F6">
@@ -401,18 +398,30 @@ const RoomList = () => {
                                     />
                                 )}
                                 {emptyRoomList()}
-                            </div>
-                            <div style={styles.pageContainer}>
-                                {currentSlide + 1}/ {TOTAL_SLIDES + 1}
-                            </div>
-                        </div>
-                        {/* 오른쪽 화살표 div*/}
-                        <NextBtn onClick={nextPage} />
-                        {/* 필터 div*/}
-                        <Filter result={result} getResult={getResult} />
-                    </RoomGrid>
-                </RoomGrid>
-            </Background>
+                </div>
+              </div>
+              {/* 오른쪽 화살표 div*/}
+              <NextBtn onClick={nextPage} />
+              {/* 필터 div*/}
+              <Filter result={result} getResult={getResult} />
+            </RoomGrid>
+            <div style={styles.pageContainer}>
+                  {currentSlide + 1}/ {TOTAL_SLIDES + 1}
+                </div>
+          </RoomGrid>
+        ) : (
+          <RoomGrid
+            is_flex_center
+            flexDirection="row"
+            padding="20px"
+            width="1020px"
+            height="620px"
+            bg="#DAD4F6"
+          >
+            <Loading />
+          </RoomGrid>
+        )}
+      </Background>
         </React.Fragment>
     );
 };
@@ -472,37 +481,39 @@ const EmptyText = styled.div`
 export default RoomList;
 
 const styles = {
-    grid: {
-        width: '220px',
-        height: '110px',
-        background: '#DAD4F6',
-        marginLeft: '42px',
-    },
-    roomListContainer: {
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        flexDirection: 'column',
-        width: '680px',
-        height: '410px',
-        flexFlow: 'row wrap',
-    },
-    sliderContainer: {
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        flexDirection: 'column',
-        width: '680px',
-        height: '430px',
-        overflow: 'hidden',
-    },
-    pageContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row',
-        width: '680px',
-        height: '15px',
-        color: '#ffffff',
-    },
+  grid: {
+    width: "220px",
+    height: "110px",
+    background: "#DAD4F6",
+    marginLeft: "42px",
+  },
+  roomListContainer: {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    flexDirection: "column",
+    width: "680px",
+    height: "410px",
+    flexFlow: "row wrap",
+  },
+  sliderContainer: {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    flexDirection: "column",
+    width: "680px",
+    height: "410px",
+    overflow: "hidden",
+  },
+  pageContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    width: "770px",
+    height: "15px",
+    color: "#ffffff",
+    fontSize: "20px",
+  },
+
 };

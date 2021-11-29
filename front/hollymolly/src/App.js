@@ -1,5 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './App.css';
+import { ConnectedRouter } from "connected-react-router";
+import { history } from "./redux/configureStore";
 
 import RoomList from '../src/screens/RoomList';
 import GameStart from './screens/GameStart';
@@ -14,7 +16,7 @@ import GameMissionPerformance from './components/GameMissionPerformance';
 import GameDrawing from './components/GameDrawing';
 import GameMiddleResult from './components/GameMiddleResult';
 import PlayingResult from './screens/PlayingResult';
-import Loading from './components/Loading';
+import PlayingLoading from './components/PlayingLoading';
 // 테스트 끝나면 삭제할거임- 연희
 
 //정희
@@ -25,10 +27,12 @@ const htmlTitle = document.querySelector('title');
 htmlTitle.innerHTML = '홀리몰리';
 
 export default function App() {
+  
     return (
         <div>
             <div>
                 <BrowserRouter>
+                    <ConnectedRouter history={history}>
                     <Route path="/tutorial" component={Tutorial}></Route>
 
                     {/* 정희 역할부여 테스트 */}
@@ -53,6 +57,7 @@ export default function App() {
                         <Route path="/waitingroom/:name" component={WaitingRoom} />
                         <Route path="/waitingroom" component={WaitingRoom} />
                     </Switch>
+                  </ConnectedRouter>
                 </BrowserRouter>
             </div>
         </div>

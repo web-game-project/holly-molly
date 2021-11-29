@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const ChatContext = (props) => {
-    const {name, text, color, children} = props;
+    const {name, text, color} = props;
     const styles = {
       color: color,
      };

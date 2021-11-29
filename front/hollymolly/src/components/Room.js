@@ -84,30 +84,18 @@ const Room = (props) => {
   };
 
   const onClick = () => {
-    setClicked(!clicked);
-    enterRoom();
-    /* alert(
-      "룸 인덱스: " +
-        props.room_idx +
-        " 제목: " +
-        props.room_name +
-        " 현재 인원: " +
-        props.room_current_member +
-        " 총 인원: " +
-        props.room_start_member +
-        " 모드 : " +
-        props.room_mode +
-        " 현재 상태: " +
-        props.room_status
-    ); */
-  };
+    if(props.disabled === "false"){
+      setClicked(!clicked);
+      enterRoom();
+    }
+  }
 
   return (
     <React.Fragment>
       {props.empty !== "true" ? (
         <RoomGridDiv
           disabled={props.disabled}
-          onClick={props.disabled === "false" ? onClick : undefined}
+          onClick={onClick}
           boxShadow
           cursor={props.cursor}
           padding="10px"
