@@ -6,18 +6,16 @@ import axios from 'axios';
 // 소켓
 import { io } from 'socket.io-client';
 
-import {useHistory} from "react-router";
+import { useHistory } from 'react-router';
 
-// local storage에 있는지 확인 
-let data = localStorage.getItem("token");
+// local storage에 있는지 확인
+let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
 let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-
 const RoomSearchBar = (props) => {
-
     const history = useHistory();
 
     const inputRef = useRef();
@@ -26,15 +24,14 @@ const RoomSearchBar = (props) => {
     useEffect(() => {
         const socket = io('http://3.17.55.178:3002/', {
             auth: {
-                token: save_token
+                token: save_token,
             },
         });
 
         socket.on('connect', () => {
             console.log('Room SearchBar connection server');
         });
-    
-      }, []);
+    }, []);
 
     const enterRoom = async () => {
         const reqURL = 'http://3.17.55.178:3002/room/code'; //parameter : 방 타입
@@ -54,8 +51,8 @@ const RoomSearchBar = (props) => {
             )
             .then(function (response) {
                 history.push({
-                    pathname: "/waitingroom/" + response.data.room_idx,
-                  })
+                    pathname: '/waitingroom/' + response.data.room_idx,
+                });
             })
             .catch(function (error) {
                 alert(error.response.data.message);
@@ -69,10 +66,10 @@ const RoomSearchBar = (props) => {
 
     return (
         <React.Fragment>
-            <RoomGrid is_flex_space padding="10px" width="410px" height="40px" border="" bg="white">
+            <RoomGrid borderRadius is_flex_space padding="10px" width="410px" height="40px" border="" bg="white">
                 <input style={styles.input} type="text" placeholder="입력하세요..." ref={inputRef} />
                 {/* 검색 버튼 */}
-                <RoomGrid onClick={onClick} is_flex_center width="160px" height="32px" border="1px solid white" bg="#4D1596">
+                <RoomGrid borderRadius onClick={onClick} is_flex_center width="160px" height="32px" border="1px solid white" bg="#4D1596">
                     <RoomText size="17px" color={style.white}>
                         코드로 입장하기
                     </RoomText>
