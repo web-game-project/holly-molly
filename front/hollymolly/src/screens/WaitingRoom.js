@@ -17,6 +17,7 @@ import { useHistory, useLocation } from 'react-router';
 import colors from '../styles/styles.js';
 import InfoSetModal from '../components/InfoSetModal.js';
 import InfoModal from '../components/InfoModal.js';
+import Header from '../components/Header.js';
 
 const BaseURL = 'http://3.17.55.178:3002';
 
@@ -71,7 +72,7 @@ export default function WaitingRoom({ match }) {
         { color: 'BLUE', choose: 'true', code: '#0B37D3' },
         { color: 'PURPLE', choose: 'true', code: '#5F00FF' },
         { color: 'PINK', choose: 'true', code: '#FF00DD' },
-    ]);   
+    ]);
 
     const [roomEnterInfo, setRoomEnterInfo] = useState(location.state.data);
     const [roomInfo, setRoomInfo] = useState('');
@@ -115,14 +116,14 @@ export default function WaitingRoom({ match }) {
         modifyRoomEnterInfo.room_current_member_cnt = 2;
 
         console.log('수정 현재 인원 리스트 안 값: ' + modifyRoomEnterInfo.room_current_member_cnt);
-        
+
         //리더인덱스 변경
         modifyRoomEnterInfo.leader_idx = leaderIdx;
-        console.log('수정인데 리더 인덱스는> : ' + modifyRoomEnterInfo.leader_idx );
+        console.log('수정인데 리더 인덱스는> : ' + modifyRoomEnterInfo.leader_idx);
 
         //세팅!
         setRoomEnterInfo(modifyRoomEnterInfo);
-    }
+    };
 
     useEffect(() => {
         //방장 변경 leaderIdx
@@ -214,9 +215,9 @@ export default function WaitingRoom({ match }) {
 
             //userList에 해당 인덱스의 ready값을 변경해줘야함
             const isArr = Array.isArray(userList);
-        
+
             let middleReadySocket = [{}];
-            
+
             console.log('아아아악 : 어레이냐? ' + isArr);
 
             //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
@@ -237,7 +238,7 @@ export default function WaitingRoom({ match }) {
                 console.log('아아아악: 컨캣 : ' + JSON.stringify(concatUserReady));
 
                 const filterReadyUserList = concatUserReady.filter((item, pos) => userList.indexOf(item) == pos);
-                
+
                 //filter로
                 setUserList(filterReadyUserList);
 
@@ -245,13 +246,13 @@ export default function WaitingRoom({ match }) {
             }
 
             //방장인덱스가 내인덱스를 비교할 필요가 잇는가?
-                if (changeReadyResult === true) {
-                    ready_cnt += 1;
-                    console.log('악! ready 증가, ready 현재값 : ' + ready_cnt);
-                } else {
-                    if (ready_cnt != 0) ready_cnt -= 1;
-                    console.log('악! ready 감소, ready 현재값 : ' + ready_cnt);
-                }            
+            if (changeReadyResult === true) {
+                ready_cnt += 1;
+                console.log('악! ready 증가, ready 현재값 : ' + ready_cnt);
+            } else {
+                if (ready_cnt != 0) ready_cnt -= 1;
+                console.log('악! ready 감소, ready 현재값 : ' + ready_cnt);
+            }
 
             alert('socket user_idx : ' + data.user_idx + ' user_ready : ' + data.user_ready);
         });
@@ -263,7 +264,7 @@ export default function WaitingRoom({ match }) {
             alert('socket-> index: ' + data.user_idx + '이전 color: ' + data.before_color + '이후 color: ' + data.current_color);
 
             const changeColorUserIdx = data.user_idx;
-            const changeUserBeforeColor = data.before_color
+            const changeUserBeforeColor = data.before_color;
             const changeUserCurrentColor = data.current_color;
 
             const isArr = Array.isArray(userList);
@@ -281,12 +282,12 @@ export default function WaitingRoom({ match }) {
                         middleColorSocket.push(element);
                     }
                 });
-    
+
                 console.log('색깔 유저 : middle socket arr: ' + JSON.stringify(middleColorSocket));
-    
+
                 const concatUserColor = userList.concat(middleColorSocket);
                 const filterColorUserList = concatUserColor.filter((item, pos) => userList.indexOf(item) == pos);
-                
+
                 //filter로
                 setUserList(filterColorUserList);
 
@@ -303,7 +304,7 @@ export default function WaitingRoom({ match }) {
                     if (element.color === changeUserBeforeColor) {
                         element.choose = 'true';
                     }
-                    
+
                     setColorList(colorList);
                 });
 
@@ -327,7 +328,6 @@ export default function WaitingRoom({ match }) {
     }, [result]);
 
     function readyClick(readyStatus) {
-
         setChangeReady(readyStatus);
 
         console.log('클릭 시 레디 값 : ' + ready_cnt + '정원 : ' + startMember);
@@ -409,7 +409,7 @@ export default function WaitingRoom({ match }) {
             )
             .then(function (response) {
                 alert('rest ' + response.data);
-                setSelectColor(str); //내가 선택한 색 
+                setSelectColor(str); //내가 선택한 색
             })
             .catch(function (error) {
                 alert('error ' + error.message);
@@ -515,10 +515,10 @@ export default function WaitingRoom({ match }) {
         for (let i = 0; i < locationUserList.length; i++) {
             console.log(
                 'user color랑 인덱스랑 레디값 : ' +
-                locationUserList[i].wrm_user_color +
-                locationUserList[i].user_idx +
-                ' ' +
-                locationUserList[i].wrm_user_ready
+                    locationUserList[i].wrm_user_color +
+                    locationUserList[i].user_idx +
+                    ' ' +
+                    locationUserList[i].wrm_user_ready
             );
 
             const currentColor = locationUserList[i].wrm_user_color;
@@ -555,9 +555,9 @@ export default function WaitingRoom({ match }) {
     };
 
     useEffect(() => {
-       // setRoomEnterInfo(location.state.data);
+        // setRoomEnterInfo(location.state.data);
 
-        settingRoom();        
+        settingRoom();
 
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }, []);
@@ -568,6 +568,7 @@ export default function WaitingRoom({ match }) {
         console.log('방장 인덱스 : ' + leaderIdx),
         (
             <Background>
+                <Header />
                 <Container>
                     {console.log('방장 인덱스 맞지? : ' + isLeader)}
                     <SelectDiv>
@@ -638,27 +639,24 @@ export default function WaitingRoom({ match }) {
                         <BarDiv>
                             <BarInnerDiv>
                                 {
-                                    (
-                                        console.log('변경 칼라 selectcolor : ' + selectColor),
-                                        colorList &&
-                                        colorList.map(
-                                            (element, key) => (
-                                                //console.log('변경 칼라 값 ' + JSON.stringify(element.color)),
-                                                //console.log('변경 선택? : ' + element.choose),
-                                                //console.log('변경 코드 값 : ' + element.code),
-                                                element.choose === 'true' ? (
-                                                    <BarColorBox
-                                                        data={element.code}
-                                                        color={element.code}
-                                                        onClick={() => {
-                                                            colorClick(element.color);
-                                                        }}
-                                                    />
-                                                ) : selectColor === element.color ? (
-                                                    <BarColorBox color={element.code}>V</BarColorBox>
-                                                ) : (
-                                                    <BarColorBox data={element.code} color="#8C8C8C" />
-                                                )
+                                    (console.log('변경 칼라 selectcolor : ' + selectColor),
+                                    colorList &&
+                                        colorList.map((element, key) =>
+                                            //console.log('변경 칼라 값 ' + JSON.stringify(element.color)),
+                                            //console.log('변경 선택? : ' + element.choose),
+                                            //console.log('변경 코드 값 : ' + element.code),
+                                            element.choose === 'true' ? (
+                                                <BarColorBox
+                                                    data={element.code}
+                                                    color={element.code}
+                                                    onClick={() => {
+                                                        colorClick(element.color);
+                                                    }}
+                                                />
+                                            ) : selectColor === element.color ? (
+                                                <BarColorBox color={element.code}>V</BarColorBox>
+                                            ) : (
+                                                <BarColorBox data={element.code} color="#8C8C8C" />
                                             )
                                         ))
                                 }
@@ -667,12 +665,15 @@ export default function WaitingRoom({ match }) {
                         <UserDiv>
                             <div style={styles.userListContainer}>
                                 {userList &&
-                                    userList.map(
-                                        (element) => (
-                                            <UserCard  leader={leaderIdx} id={element.user_idx} nickname={element.user_name} color={element.wrm_user_color}  ready={element.wrm_user_ready}
+                                    userList.map((element) => (
+                                        <UserCard
+                                            leader={leaderIdx}
+                                            id={element.user_idx}
+                                            nickname={element.user_name}
+                                            color={element.wrm_user_color}
+                                            ready={element.wrm_user_ready}
                                         />
-                                        )
-                                    )}
+                                    ))}
                             </div>
                         </UserDiv>
                         <div
@@ -693,38 +694,40 @@ export default function WaitingRoom({ match }) {
                     <RightDiv>
                         <Chatting room_idx={location.state.data.room_idx} height="560px" available={true}></Chatting>
                         <StartDiv>
-                            {isLeader === 0 //방장 아님
-                                ? (console.log(style.red),
-                                    changeReady === true ? (
-                                        <BtnDiv
-                                            color="green"
-                                            onClick={() => {
-                                                readyClick(!changeReady);
-                                            }}
-                                        >
-                                            Waiting...
-                                        </BtnDiv>
-                                    ) : (
-                                        <BtnDiv
-                                            onClick={() => {
-                                                readyClick(!changeReady);
-                                            }}
-                                        >
-                                            Game Ready
-                                        </BtnDiv>
-                                    ))
-                                : //방장이다.
-                                (console.log('방장이야'),
-                                //일단 플레잉룸으로 넘어가기 위한 하드코딩 밑에 주석임 지울 예정
-                                   // startMember === ready_cnt ? (
-                                        <BtnDiv isStart="yes" onClick={startClick}>
-                                            Game Start
-                                        </BtnDiv> //게임 시작 api 요청 onclick 달기
-                                   // ) : (
-                                       // <BtnDiv isStart="no">Game Start</BtnDiv>
-                                    //)
-                                    )
-                                }
+                            {
+                                isLeader === 0 //방장 아님
+                                    ? (console.log(style.red),
+                                      changeReady === true ? (
+                                          <BtnDiv
+                                              color="green"
+                                              onClick={() => {
+                                                  readyClick(!changeReady);
+                                              }}
+                                          >
+                                              Waiting...
+                                          </BtnDiv>
+                                      ) : (
+                                          <BtnDiv
+                                              onClick={() => {
+                                                  readyClick(!changeReady);
+                                              }}
+                                          >
+                                              Game Ready
+                                          </BtnDiv>
+                                      ))
+                                    : //방장이다.
+                                      (console.log('방장이야'),
+                                      (
+                                          //일단 플레잉룸으로 넘어가기 위한 하드코딩 밑에 주석임 지울 예정
+                                          // startMember === ready_cnt ? (
+                                          <BtnDiv isStart="yes" onClick={startClick}>
+                                              Game Start
+                                          </BtnDiv>
+                                      )) //게임 시작 api 요청 onclick 달기
+                                // ) : (
+                                // <BtnDiv isStart="no">Game Start</BtnDiv>
+                                //)
+                            }
                         </StartDiv>
                     </RightDiv>
                 </Container>
@@ -750,6 +753,7 @@ const Background = styled.div`
     width: 100vw;
     height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 `;
@@ -861,8 +865,8 @@ const BarColorBox = styled.div`
         props.color == '#FF0000' || props.data == '#FF0000'
             ? `background-color: ${props.color}; border-top-left-radius: 15px; border-bottom-left-radius: 15px;`
             : props.color == '#FF00DD' || props.data == '#FF00DD'
-                ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
-                : `background-color: ${props.color};`}
+            ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
+            : `background-color: ${props.color};`}
 `;
 
 const Text = styled.text`

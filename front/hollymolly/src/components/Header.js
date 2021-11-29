@@ -11,7 +11,7 @@ export default function Header() {
             <Link to="/roomlist">
                 <Logo src={LogoSVG}></Logo>
             </Link>
-            <Link to="/loading">
+            <Link to="/tutorial">
                 <Tutorial src={tutorial_btn} />
             </Link>
         </Container>
@@ -22,7 +22,7 @@ const Container = styled.div`
     width: 1020px;
     flex-direction: row;
     display: flex;
-    // background-color: red;
+    background-color: white;
     height: 100px;
     justify-content: space-between;
     align-items: center;
@@ -34,9 +34,7 @@ const Logo = styled.img`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 80px;
-    // margin: 10px;
-    margin-left: 10px;
+    height: 70px;
     width: 450px;
 `;
 
@@ -47,5 +45,5 @@ const Tutorial = styled.img`
     align-items: center;
     height: 80px;
     width: 200px;
-    margin-right: 10px;
+    margin-right: 20px;
 `;

@@ -7,7 +7,7 @@ import day from '../assets/day.svg';
 import Chatting from '../components/Chatting';
 import GameUserCard from '../components/GameUserCard';
 import GameRoleComponent from '../components/GameRoleComponent';
-import GameVoteComponent from '../components/GameVoteComponent';
+import Header from '../components/Header';
 import { useLocation } from 'react-router';
 //통신
 import axios from 'axios';
@@ -39,7 +39,7 @@ let userList = [{}];
 
 const PlayingRoom = (props) => {
     //const room_index = match.params.name; // url에 입력해준 방 인덱스
-    
+
     let location = useLocation();
 
     const [role, setRole] = React.useState('');
@@ -53,7 +53,8 @@ const PlayingRoom = (props) => {
     const BaseURL = 'http://3.17.55.178:3002/';
 
     useEffect(() => {
-        if (playInfo != null) { //데이터 전달 받은게 세팅되기 전까지는 타이머가 돌아가면 안됨.
+        if (playInfo != null) {
+            //데이터 전달 받은게 세팅되기 전까지는 타이머가 돌아가면 안됨.
             const countdown = setInterval(() => {
                 if (parseInt(seconds) > 0) {
                     setSeconds(parseInt(seconds) - 1);
@@ -62,7 +63,7 @@ const PlayingRoom = (props) => {
 
             return () => {
                 clearInterval(countdown);
-                console.log('플레잉 룸 초 끝')
+                console.log('플레잉 룸 초 끝');
             };
         }
     }, [seconds]);
@@ -75,8 +76,7 @@ const PlayingRoom = (props) => {
 
         const reqHeaders = {
             headers: {
-                authorization:
-                    'Bearer ' + save_token,
+                authorization: 'Bearer ' + save_token,
             },
         };
         const restURL = BaseURL + 'game/member/' + location.state.data.game_set_idx;
@@ -84,10 +84,7 @@ const PlayingRoom = (props) => {
         console.log('url : ' + restURL);
 
         axios
-            .get(
-                restURL,
-                reqHeaders
-            )
+            .get(restURL, reqHeaders)
             .then(function (response) {
                 //alert('rest 키워드' + response.data.keyword + ', 역할' + response.data.user_role);
                 setRole(response.data.user_role);
@@ -96,24 +93,23 @@ const PlayingRoom = (props) => {
             .catch(function (error) {
                 alert('error information : ' + error.message);
             });
-
     });
 
-    // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기 
-    var myIndex = userList.find(x => x.user_idx === save_user_idx);
+    // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+    var myIndex = userList.find((x) => x.user_idx === save_user_idx);
     if (myIndex) {
         myIndex.game_member_order = 0;
     }
 
-    // 그림 그리기 순서 대로 유저 리스트 재정렬 
-    userList.sort(function(a, b) {
+    // 그림 그리기 순서 대로 유저 리스트 재정렬
+    userList.sort(function (a, b) {
         return a.game_member_order - b.game_member_order;
     });
 
-    // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시 
-    var myItem = userList.find(x => x.user_idx === save_user_idx);
+    // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+    var myItem = userList.find((x) => x.user_idx === save_user_idx);
     if (myItem) {
-        myItem.game_member_order = "나";
+        myItem.game_member_order = '나';
     }
 
     /* // 비정상 종료
@@ -163,13 +159,15 @@ const PlayingRoom = (props) => {
     return (
         <React.Fragment>
             <Background>
+                <Header />
                 <Container>
                     <BackGroundDiv>
                         <UserDiv>
                             {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
                             <MissionWord text={keyword} role={role}></MissionWord>
                             {/* 유저 컴포넌트 */}
-                            {//let user_list = location.state.data.user_list,
+                            {
+                                //let user_list = location.state.data.user_list,
 
                                 userList.map(
                                     (index, key) => (
@@ -177,7 +175,15 @@ const PlayingRoom = (props) => {
                                         console.log('유저 인덱스 값 ' + userList[key].user_idx),
                                         console.log('순서 : ' + userList[key].game_member_order),
                                         console.log('칼라 : ' + userList[key].user_color),
-                                        <GameUserCard user_idx={userList[key].user_idx} user_color={userList[key].user_color} user_name={userList[key].user_name} user_role="ghost" user_order={userList[key].game_member_order}></GameUserCard>
+                                        (
+                                            <GameUserCard
+                                                user_idx={userList[key].user_idx}
+                                                user_color={userList[key].user_color}
+                                                user_name={userList[key].user_name}
+                                                user_role="ghost"
+                                                user_order={userList[key].game_member_order}
+                                            ></GameUserCard>
+                                        )
                                     )
                                 )
                             }
@@ -186,9 +192,9 @@ const PlayingRoom = (props) => {
                         {
                             //우선 역할부여 텍스트 테스트하고 주석 풀기!! jh
                             //seconds === 0 ?
-                               // <GameVoteComponent />
-                                //:
-                                <GameRoleComponent role={role} timer={seconds} />
+                            // <GameVoteComponent />
+                            //:
+                            <GameRoleComponent role={role} timer={seconds} />
                         }
                         {/* <DrawDiv>
                             <GameRoleComponent />
@@ -205,6 +211,7 @@ const PlayingRoom = (props) => {
 };
 
 const Background = styled.div`
+    flex-direction: column;
     background-color: #180928;
     width: 100vw;
     height: 100vh;
