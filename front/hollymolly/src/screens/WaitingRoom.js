@@ -71,20 +71,14 @@ export default function WaitingRoom({ match }) {
         { color: 'BLUE', choose: 'true', code: '#0B37D3' },
         { color: 'PURPLE', choose: 'true', code: '#5F00FF' },
         { color: 'PINK', choose: 'true', code: '#FF00DD' },
-    ]);
+    ]);   
 
-    const [roomEnterInfo, setRoomEnterInfo] = useState('');
+    const [roomEnterInfo, setRoomEnterInfo] = useState(location.state.data);
     const [roomInfo, setRoomInfo] = useState('');
     const [count, setCount] = useState('');
 
-    //사람이 색을 변경해서 클릭했을 때 소켓통신을 실행하기 위한 변수
-    const [changeColor, setChangeColor] = React.useState(false);
-
     //무슨 색을 선택할 수 있는가
     const [selectColor, setSelectColor] = React.useState([]);
-
-    //내 이전 색이 무엇인지, 서버에서 색깔 지정해준 색도 이 변수에 넣기
-    const [previousColor, setPreviousColor] = React.useState('');
 
     //팀원 레디 상태 state
     const [changeReady, setChangeReady] = React.useState(false);
@@ -106,6 +100,30 @@ export default function WaitingRoom({ match }) {
     //방장 인덱스
     const [leaderIdx, setLeaderIdx] = useState();
 
+    const dataModifiy = async (str) => {
+        console.log('================수정인데 나 이때 불림! ' + str);
+
+        //유저리스트, 현재인원, 리더 인덱스 변경해주기
+
+        let modifyRoomEnterInfo = roomEnterInfo;
+
+        //유저리스트 변경
+        modifyRoomEnterInfo.waiting_room_member_list = userList && userList;
+
+        //하드코딩 했을 때 잘 변경됨, 여기에 currentMember가 들어오면 됨.
+        //현재인원 변경
+        modifyRoomEnterInfo.room_current_member_cnt = 2;
+
+        console.log('수정 현재 인원 리스트 안 값: ' + modifyRoomEnterInfo.room_current_member_cnt);
+        
+        //리더인덱스 변경
+        modifyRoomEnterInfo.leader_idx = leaderIdx;
+        console.log('수정인데 리더 인덱스는> : ' + modifyRoomEnterInfo.leader_idx );
+
+        //세팅!
+        setRoomEnterInfo(modifyRoomEnterInfo);
+    }
+
     useEffect(() => {
         //방장 변경 leaderIdx
         socket.on('change host', (data) => {
@@ -124,7 +142,6 @@ export default function WaitingRoom({ match }) {
             const isArr = Array.isArray(userList);
             //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
             if (isArr === true) {
-                console.log('궁금 : ' + JSON.stringify(userList.filter((user) => user.user_idx !== exitUserIdx)));
                 const exitUserList = userList.filter((user) => user.user_idx !== exitUserIdx);
                 //filter로
                 setUserList(exitUserList);
@@ -132,6 +149,8 @@ export default function WaitingRoom({ match }) {
             console.log('방 퇴장 시 현재 멤버 더하기 전 : ' + currentMember);
 
             setCurrentMember(currentMember - 1);
+
+            dataModifiy('퇴장');
         });
     });
 
@@ -151,13 +170,10 @@ export default function WaitingRoom({ match }) {
 
             //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
             if (isArr === true) {
-                console.log('궁금2 : ' + JSON.stringify(userList.concat(user)));
                 const enterUserList = userList.concat(user);
                 //concat으로 추가
                 setUserList(enterUserList);
             }
-
-            console.log('입장 유저리스트 칼라리스트 전 : ' + JSON.stringify(colorList));
 
             colorList &&
                 colorList.map((element) => {
@@ -167,13 +183,13 @@ export default function WaitingRoom({ match }) {
                     }
                 });
 
-            console.log('입장 유저리스트 칼라리스트 후 : ' + JSON.stringify(colorList));
-
             setColorList(colorList);
 
-            console.log('방 입장 시 현재 멤버 더하기 전 : ' + currentMember);
+            console.log('수정인데 현재 인원이 넘버냐? : ' + parseInt(currentMember));
             //현재인원 증가
-            setCurrentMember(currentMember + 1);
+            setCurrentMember(parseInt(currentMember) + 1);
+
+            dataModifiy('입장');
         });
     });
 
@@ -193,90 +209,109 @@ export default function WaitingRoom({ match }) {
     useEffect(() => {
         //사용자의 준비 상태 값 변경에 따른 소켓
         socket.on('change member ready', (data) => {
-            alert('지금 ready 값이야 : ' + ready_cnt);
-
-            const user = {
-                user_idx: data.user_idx,
-                wrm_user_ready: data.user_ready,
-            };
+            const changeReadyUserIdx = data.user_idx;
+            const changeReadyResult = data.user_ready;
 
             //userList에 해당 인덱스의 ready값을 변경해줘야함
             const isArr = Array.isArray(userList);
-            console.log('궁금ㅇ ㅓ레이냐? ' + isArr);
+        
+            let middleReadySocket = [{}];
+            
+            console.log('아아아악 : 어레이냐? ' + isArr);
 
             //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
-            if (isArr === false) {
-                // console.log('궁금3 : ' + JSON.stringify(userList.concat(user)));
-                // const readyUser = JSON.stringify(userList.concat(user));
-                // const readyUserListSet = JSON.stringify(Array.from(new Set(readyUser)));
-                const readyUserList = userList && userList.map((item) => (item.user_idx === data.user_idxr4vyt ? { ...item, user } : item));
+            if (isArr === true) {
+                userList.forEach((element) => {
+                    if (changeReadyUserIdx === element.user_idx) {
+                        //element.wrm_user_color = element.wrm_user_color;
+                        //element.user_name = element.user_name;
+                        element.user_idx = changeReadyUserIdx;
+                        element.wrm_user_ready = changeReadyResult;
+                        middleReadySocket.push(element);
+                    }
+                });
 
-                console.log('궁금 set : ' + JSON.stringify(readyUserList));
-                //concat으로 추가
-                //setUserList(enterUserList);
+                console.log('아아아악: 중간소켓 : ' + JSON.stringify(middleReadySocket));
+
+                const concatUserReady = userList.concat(middleReadySocket);
+                console.log('아아아악: 컨캣 : ' + JSON.stringify(concatUserReady));
+
+                const filterReadyUserList = concatUserReady.filter((item, pos) => userList.indexOf(item) == pos);
+                
+                //filter로
+                setUserList(filterReadyUserList);
+
+                console.log('아아아악 : 유저리스트: ' + JSON.stringify(userList));
             }
 
-            if (data.user_idx != save_user_idx) {
-                if (data.user_ready === true) {
+            //방장인덱스가 내인덱스를 비교할 필요가 잇는가?
+                if (changeReadyResult === true) {
                     ready_cnt += 1;
-                    alert('ready 증가, ready 현재값 : ' + ready_cnt);
+                    console.log('악! ready 증가, ready 현재값 : ' + ready_cnt);
                 } else {
                     if (ready_cnt != 0) ready_cnt -= 1;
-                    alert('ready 감소, ready 현재값 : ' + ready_cnt);
-                }
-            }
+                    console.log('악! ready 감소, ready 현재값 : ' + ready_cnt);
+                }            
+
             alert('socket user_idx : ' + data.user_idx + ' user_ready : ' + data.user_ready);
         });
-    }, [changeReady]);
+    });
 
     useEffect(() => {
         //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 부분
         socket.on('change member color', (data) => {
-            alert('socket-> index: ' + data.user_idx + ' color: ' + data.user_color);
+            alert('socket-> index: ' + data.user_idx + '이전 color: ' + data.before_color + '이후 color: ' + data.current_color);
 
-            const changeUserIdx = data.user_idx;
-            const changeUserColor = data.user_color;
+            const changeColorUserIdx = data.user_idx;
+            const changeUserBeforeColor = data.before_color
+            const changeUserCurrentColor = data.current_color;
 
-            console.log('===========구분서===========');
-            console.log('색깔 현재 멤버 : ' + currentMember);
+            const isArr = Array.isArray(userList);
+            let middleColorSocket = [{}];
 
-            console.log('색깔 유저리스트 함수 안 전:  ' + JSON.stringify(userList));
+            //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
+            if (isArr === true) {
+                userList.forEach((element) => {
+                    if (changeColorUserIdx === element.user_idx) {
+                        element.wrm_user_color = changeUserCurrentColor;
+                        console.log('색깔 유저 변경 엘레먼트? ' + element.wrm_user_color);
+                        //element.user_name = element.user_name;
+                        element.user_idx = changeColorUserIdx;
+                        //element.wrm_user_ready = false;
+                        middleColorSocket.push(element);
+                    }
+                });
+    
+                console.log('색깔 유저 : middle socket arr: ' + JSON.stringify(middleColorSocket));
+    
+                const concatUserColor = userList.concat(middleColorSocket);
+                const filterColorUserList = concatUserColor.filter((item, pos) => userList.indexOf(item) == pos);
+                
+                //filter로
+                setUserList(filterColorUserList);
 
-            for (let i = 0; i < currentMember; i++) {
-                if (changeUserIdx === userList[i].user_idx) {
-                    //변경된 유저의 인덱스랑 유저리스트에 인덱스가 같다면
-                    userList[i].wrm_user_color = data.user_color;
-                    console.log('색깔 유저 변경 엘레먼트? ' + userList[i].wrm_user_color);
-                }
-                setUserList(userList);
+                console.log('색깔 필터했다? : ' + JSON.stringify(filterColorUserList));
             }
-
-            console.log('색깔 유저리스트 함수 안 후: ' + JSON.stringify(userList));
-
-            console.log('색깔 유저리스트 칼라리스트 전 : ' + JSON.stringify(colorList));
 
             colorList &&
                 colorList.map((element) => {
-                    if (element.color === changeUserColor) {
-                        console.log('변경 칼라 : 바꾼 색깔 : ' + JSON.stringify(element.color));
+                    if (element.color === changeUserCurrentColor) {
                         element.choose = 'false';
                     }
+                    setColorList(colorList);
 
-                    if (data.user_idx === save_user_idx) {
-                        console.log('변경 칼라 : 내가 바꿈');
-                        if (element.color === previousColor) {
-                            console.log('변경 칼라 : 이전 색깔 : ' + JSON.stringify(element.color));
-                            element.choose = 'true';
-                        }
-                        setPreviousColor(changeUserColor);
-                        setSelectColor(changeUserColor);
+                    if (element.color === changeUserBeforeColor) {
+                        element.choose = 'true';
                     }
+                    
                     setColorList(colorList);
                 });
 
             console.log('색깔 유저리스트 칼라리스트 후 : ' + JSON.stringify(colorList));
+
+            dataModifiy('색깔');
         });
-    }, [changeColor]);
+    });
 
     const [result, setResult] = useState(0);
     const clickedSetting = (result) => {
@@ -285,7 +320,6 @@ export default function WaitingRoom({ match }) {
 
     useEffect(() => {
         //방 정보 수정 소켓
-
         socket.on('edit room', (data) => {
             alert('수정) 방정보! ');
             setRoomUpdate(data);
@@ -293,10 +327,7 @@ export default function WaitingRoom({ match }) {
     }, [result]);
 
     function readyClick(readyStatus) {
-        if (readyStatus === true) ready_cnt += 1;
-        else {
-            if (ready_cnt != 0) ready_cnt -= 1;
-        }
+
         setChangeReady(readyStatus);
 
         console.log('클릭 시 레디 값 : ' + ready_cnt + '정원 : ' + startMember);
@@ -358,9 +389,6 @@ export default function WaitingRoom({ match }) {
 
     function colorClick(str) {
         alert('click: ' + str);
-        // setPreviousColor(str);
-
-        //s etSelectColor(str);
 
         const restURL = BaseURL + '/waiting-room/user-color';
 
@@ -381,13 +409,11 @@ export default function WaitingRoom({ match }) {
             )
             .then(function (response) {
                 alert('rest ' + response.data);
-                //setChangeColor(!changeColor); //색이 바꼈다는 상태값 변경
+                setSelectColor(str); //내가 선택한 색 
             })
             .catch(function (error) {
                 alert('error ' + error.message);
             });
-
-        setChangeColor(!changeColor); //색이 바꼈다는 상태값 변경
     }
 
     const getRoomInfo = async () => {
@@ -471,30 +497,28 @@ export default function WaitingRoom({ match }) {
         }
     };
 
-    useEffect(() => {
-        setRoomEnterInfo(location.state.data);
-
+    const settingRoom = async () => {
         //room index 설정
-        room_idx = location.state.data.room_idx; //이렇게 받아오면 number타입으로 api, 소켓 에러 X\
+        room_idx = roomEnterInfo.room_idx; //이렇게 받아오면 number타입으로 api, 소켓 에러 X\
 
         //방장 인덱스 받아오기, save_user_idx 이게 내 인덱스 저장된 변수
         //받아와서 리더인지 아닌지 state 설정
-        if (location.state.data.leader_idx === save_user_idx) {
+        if (roomEnterInfo.leader_idx === save_user_idx) {
             setIsLeader(1); //리더다
         }
 
         //userlist로 사용자들이 무슨 색을 할당 받았는지 저장하는 배열
-        locationUserList = location.state.data.waiting_room_member_list;
+        locationUserList = roomEnterInfo.waiting_room_member_list;
         //setUserList(location.state.data);
         setUserList(locationUserList);
 
         for (let i = 0; i < locationUserList.length; i++) {
             console.log(
                 'user color랑 인덱스랑 레디값 : ' +
-                    locationUserList[i].wrm_user_color +
-                    locationUserList[i].user_idx +
-                    ' ' +
-                    locationUserList[i].wrm_user_ready
+                locationUserList[i].wrm_user_color +
+                locationUserList[i].user_idx +
+                ' ' +
+                locationUserList[i].wrm_user_ready
             );
 
             const currentColor = locationUserList[i].wrm_user_color;
@@ -509,9 +533,8 @@ export default function WaitingRoom({ match }) {
                         }
 
                         if (save_user_idx == locationUserList[i].user_idx) {
-                            //선택된 값과 이전색으로 세팅
+                            //선택된 값 세팅
                             setSelectColor(element.color);
-                            setPreviousColor(element.color);
                             //내 준비 상태
                             setChangeReady(locationUserList[i].wrm_user_ready);
                         }
@@ -521,13 +544,20 @@ export default function WaitingRoom({ match }) {
         }
 
         //햔재 인원 받아오기
-        setCurrentMember(location.state.data.room_current_member_cnt);
+        console.log('수정인데 세팅룸함수 안에 현재 인원 값 : ' + roomEnterInfo.room_current_member_cnt);
+        setCurrentMember(roomEnterInfo.room_current_member_cnt);
 
         //게임 시작 인원 받아오기
-        setStartMember(location.state.data.room_start_member_cnt - 1);
+        setStartMember(roomEnterInfo.room_start_member_cnt - 1);
 
         //방장 인덱스 받아오기
-        setLeaderIdx(location.state.data.leader_idx);
+        setLeaderIdx(roomEnterInfo.leader_idx);
+    };
+
+    useEffect(() => {
+       // setRoomEnterInfo(location.state.data);
+
+        settingRoom();        
 
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }, []);
@@ -608,14 +638,14 @@ export default function WaitingRoom({ match }) {
                         <BarDiv>
                             <BarInnerDiv>
                                 {
-                                    (console.log('변경 칼라 previous : ' + previousColor),
-                                    console.log('변경 칼라 selectcolor : ' + selectColor),
-                                    colorList &&
+                                    (
+                                        console.log('변경 칼라 selectcolor : ' + selectColor),
+                                        colorList &&
                                         colorList.map(
                                             (element, key) => (
-                                                console.log('변경 칼라 값 ' + JSON.stringify(element.color)),
-                                                console.log('변경 선택? : ' + element.choose),
-                                                console.log('변경 코드 값 : ' + element.code),
+                                                //console.log('변경 칼라 값 ' + JSON.stringify(element.color)),
+                                                //console.log('변경 선택? : ' + element.choose),
+                                                //console.log('변경 코드 값 : ' + element.code),
                                                 element.choose === 'true' ? (
                                                     <BarColorBox
                                                         data={element.code}
@@ -639,27 +669,8 @@ export default function WaitingRoom({ match }) {
                                 {userList &&
                                     userList.map(
                                         (element) => (
-                                            console.log('유저리스트 인덱스 ' + element.user_idx),
-                                            console.log('유저리스트 닉네임: ' + element.user_name),
-                                            console.log('유저리스트 칼라: ' + element.wrm_user_color),
-                                            console.log('유저리스트 레디: ' + element.wrm_user_ready),
-                                            element.user_idx === save_user_idx ? (
-                                                <UserCard
-                                                    leader={leaderIdx}
-                                                    id={element.user_idx}
-                                                    nickname={element.user_name}
-                                                    color={selectColor}
-                                                    ready={changeReady}
-                                                />
-                                            ) : (
-                                                <UserCard
-                                                    leader={leaderIdx}
-                                                    id={element.user_idx}
-                                                    nickname={element.user_name}
-                                                    color={element.wrm_user_color}
-                                                    ready={element.wrm_user_ready}
-                                                />
-                                            )
+                                            <UserCard  leader={leaderIdx} id={element.user_idx} nickname={element.user_name} color={element.wrm_user_color}  ready={element.wrm_user_ready}
+                                        />
                                         )
                                     )}
                             </div>
@@ -684,33 +695,33 @@ export default function WaitingRoom({ match }) {
                         <StartDiv>
                             {isLeader === 0 //방장 아님
                                 ? (console.log(style.red),
-                                  changeReady === true ? (
-                                      <BtnDiv
-                                          color="green"
-                                          onClick={() => {
-                                              readyClick(!changeReady);
-                                          }}
-                                      >
-                                          Waiting...
-                                      </BtnDiv>
-                                  ) : (
-                                      <BtnDiv
-                                          onClick={() => {
-                                              readyClick(!changeReady);
-                                          }}
-                                      >
-                                          Game Ready
-                                      </BtnDiv>
-                                  ))
+                                    changeReady === true ? (
+                                        <BtnDiv
+                                            color="green"
+                                            onClick={() => {
+                                                readyClick(!changeReady);
+                                            }}
+                                        >
+                                            Waiting...
+                                        </BtnDiv>
+                                    ) : (
+                                        <BtnDiv
+                                            onClick={() => {
+                                                readyClick(!changeReady);
+                                            }}
+                                        >
+                                            Game Ready
+                                        </BtnDiv>
+                                    ))
                                 : //방장이다.
-                                  (console.log('방장이야'),
-                                  startMember === ready_cnt ? (
-                                      <BtnDiv isStart="yes" onClick={startClick}>
-                                          Game Start
-                                      </BtnDiv> //게임 시작 api 요청 onclick 달기
-                                  ) : (
-                                      <BtnDiv isStart="no">Game Start</BtnDiv>
-                                  ))}
+                                (console.log('방장이야'),
+                                    startMember === ready_cnt ? (
+                                        <BtnDiv isStart="yes" onClick={startClick}>
+                                            Game Start
+                                        </BtnDiv> //게임 시작 api 요청 onclick 달기
+                                    ) : (
+                                        <BtnDiv isStart="no">Game Start</BtnDiv>
+                                    ))}
                         </StartDiv>
                     </RightDiv>
                 </Container>
@@ -847,8 +858,8 @@ const BarColorBox = styled.div`
         props.color == '#FF0000' || props.data == '#FF0000'
             ? `background-color: ${props.color}; border-top-left-radius: 15px; border-bottom-left-radius: 15px;`
             : props.color == '#FF00DD' || props.data == '#FF00DD'
-            ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
-            : `background-color: ${props.color};`}
+                ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
+                : `background-color: ${props.color};`}
 `;
 
 const Text = styled.text`
