@@ -27,9 +27,13 @@ console.log('내 인덱스 : ' + save_user_idx);
 let userList = [{}];
 
 const PlayingRoom = (props) => {
+//const PlayingRoom = ({ match }) => {
     //const room_index = match.params.name; // url에 입력해준 방 인덱스
-
+    
+    
     let location = useLocation();
+    
+    alert('룸 인덱스 : ' + location.state.room);
 
     const [role, setRole] = React.useState('');
     const [keyword, setKeyWord] = React.useState('');
