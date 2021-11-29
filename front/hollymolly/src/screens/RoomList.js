@@ -150,7 +150,7 @@ const RoomList = () => {
   // 페이지별 룸 리스트 조회
   const roomListCheckPage = async (currentPage) => {
     currentPage = currentSlide + 1;
-    var restURL = "http://3.17.55.178:3002/room?page=" + currentPage;
+    var restURL = baseURL + "room?page=" + currentPage;
     restURL = filterUrl(restURL, resultArray);
 
     const reqHeaders = {
@@ -176,7 +176,7 @@ const RoomList = () => {
     // 룸 리스트 조회
     const roomListCheck = async () => {
       const currentPage = currentSlide + 1;
-      var restURL = "http://3.17.55.178:3002/room?page=" + currentPage;
+      var restURL = baseURL + "room?page=" + currentPage;
       restURL = filterUrl(restURL, resultArray);
 
       const reqHeaders = {
@@ -290,7 +290,7 @@ const RoomList = () => {
 
     console.log(modeFilterArray);
     console.log(personFilterArray);
-    const reqURL = "http://3.17.55.178:3002/room/random"; //parameter : 방 타입
+    const reqURL = baseURL + "room/random"; //parameter : 방 타입
     const reqHeaders = {
       headers: {
         authorization: "Bearer " + save_token,
@@ -311,7 +311,6 @@ const RoomList = () => {
         // 대기실로 이동
         history.push({
           pathname: "/waitingroom/" + response.data.room_idx,
-          state: { data: response.data },
         });
       })
       .catch(function (error) {

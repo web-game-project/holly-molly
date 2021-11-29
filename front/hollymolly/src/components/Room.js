@@ -70,11 +70,9 @@ const Room = (props) => {
         reqHeaders
       )
       .then(function (response) {
-        //response로 jwt token 반환
         
         history.push({
-          pathname: "/waitingroom/" + response.data.room_idx,
-          state: {data: response.data}
+          pathname: "/waitingroom/" + props.room_idx,
         })
         
       })
