@@ -1,5 +1,6 @@
 const signJWT = require('../../util/jwt/signJWT');
 const verifyJWT = require('../../util/jwt/verifyJWT');
+const {printErrorLog} = require('../../util/log');
 
 module.exports = async (req, res, next) => {
     try {
@@ -21,7 +22,7 @@ module.exports = async (req, res, next) => {
             access_token: accessToken,
         });
     } catch (error) {
-        console.log(error);
+        printErrorLog('login', error);
         res.status(401).json({
             message: '로그인 후 다시 이용하세요.',
         });

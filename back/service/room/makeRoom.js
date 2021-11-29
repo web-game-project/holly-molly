@@ -3,6 +3,7 @@ const moveRoom = require('../../socket/moveRoom');
 const getIOSocket = require('../../socket/getIOSocket');
 const makeRandomCode = require('../../util/makeRandomCode');
 const { exitGameAndRoom } = require('../game/exitGame');
+const {printErrorLog} = require('../../util/log');
 
 module.exports = async (req, res, next) => {
     try {
@@ -65,7 +66,7 @@ module.exports = async (req, res, next) => {
             room_code: room.room_code,
         });
     } catch (error) {
-        console.log('[error]-makeRoom: ', error);
+        printErrorLog('makeRoom', error);
         res.status(400).json({
             meesage: '알 수 없는 에러가 발생했습니다.',
             error: error.message,
@@ -132,7 +133,7 @@ const exitRoom = async (io, roomMember, roomIdx) => {
             });
         }
     } catch (error) {
-        console.log('makeRoom-방 퇴장 중 에러 발생', error); //게임 시작한 경우 에러 발생 가능
+        printErrorLog('makeRoom', '방 퇴장 중 에러 발생 - 게임 시작한 경우 에러 발생');
     }
 };
 

@@ -8,6 +8,7 @@ const {
 var Sequelize = require('sequelize');
 var fs = require('fs');
 const shuffleList = require('../../util/shuffleList');
+const {printErrorLog} = require('../../util/log');
 
 module.exports = async (req, res, next) => {
     try {
@@ -91,8 +92,7 @@ module.exports = async (req, res, next) => {
         ).emit('start set', setInfo);
         res.status(201).json({});
     } catch (error) {
-        console.log('[error]-startSet: ', error);
-        
+        printErrorLog('startSet', error);
         res.status(400).json({
             meesage: '알 수 없는 에러가 발생했습니다.',
             error: error.message,
@@ -191,6 +191,7 @@ const getImageSync = (imageLocation) => {
         const image = fs.readFileSync(imageLocation);
         return image.toString('base64');
     } catch (error) {
+        printErrorLog('startSet-getImageSync', error);
         return undefined;
     }
 };
@@ -202,6 +203,7 @@ const getUserName = async (userIdx) => {
         });
         return user.user_name;
     } catch (error) {
+        printErrorLog('startSet-getUserName', error);
         return undefined;
     }
 };

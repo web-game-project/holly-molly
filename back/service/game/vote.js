@@ -1,6 +1,7 @@
 const { User, Game, GameMember, GameSet, GameVote } = require('../../models');
 const db = require('../../models');
 const { getVoteList, calculateVoteResult, } = require('./getVoteResult');
+const {printErrorLog} = require('../../util/log');
 
 const vote = async (req, res, next) => {
     try {
@@ -53,7 +54,7 @@ const vote = async (req, res, next) => {
 
         checkNumberOfVoters(res.locals.gameIdx, game_set_idx);
     } catch (error) {
-        console.log('[error]-vote: ', error);
+        printErrorLog('vote', error);
         res.status(400).json({
             meesage: '알 수 없는 에러가 발생했습니다.',
             error: error.message,
@@ -83,7 +84,7 @@ const timer = async (mapKey, time, afterFunction, functionParameterList) => {
         afterFunction(...functionParameterList);
         return result;
     } catch (error) {
-        console.log(error);
+        printErrorLog('vote-timer', error);
     }
 };
 const checkNumberOfVoters = async (gameIdx, gameSetIdx) => {
