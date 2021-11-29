@@ -54,6 +54,7 @@ const RoomList = () => {
     // Filter 선택값 결과 배열 list
     const [result, setResult] = useState([]);
 
+    // <<<<<<< HEAD
     const getResult = (result) => {
         setResult(result);
     };
@@ -65,6 +66,65 @@ const RoomList = () => {
             auth: {
                 token: save_token,
             },
+            // =======
+            //   // 이전 페이지 이동
+            //   const prevPage = () => {
+            //     if (currentSlide === 0) {
+            //       setCurrentSlide(TOTAL_SLIDES);
+            //     } else {
+            //       setCurrentSlide(currentSlide - 1);
+            //     }
+            //   };
+
+            //   // 페이지별 룸 리스트 조회
+            //   const roomListCheckPage = async (currentPage) => {
+            //     currentPage = currentSlide + 1;
+            //     var restURL = baseURL + "room?page=" + currentPage;
+            //     restURL = filterUrl(restURL, resultArray);
+
+            //     const reqHeaders = {
+            //       headers: {
+            //         authorization: "Bearer " + save_token,
+            //       },
+            //     };
+
+            //     axios
+            //       .get(restURL, reqHeaders)
+            //       .then(function (response) {
+            //         total_room_cnt = response.data.total_room_cnt;
+            //         console.log(response.data);
+            //         setRooms(response.data);
+            //         setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
+            //       })
+            //       .catch(function (error) {
+            //         console.log(error.data);
+            //       });
+            //   };
+
+            //   useEffect(() => {
+            //     // 룸 리스트 조회
+            //     const roomListCheck = async () => {
+            //       const currentPage = currentSlide + 1;
+            //       var restURL = baseURL + "room?page=" + currentPage;
+            //       restURL = filterUrl(restURL, resultArray);
+
+            //       const reqHeaders = {
+            //         headers: {
+            //           authorization: "Bearer " + save_token,
+            //         },
+            //       };
+
+            //       axios
+            //         .get(restURL, reqHeaders)
+            //         .then(function (response) {
+            //           total_room_cnt = response.data.total_room_cnt;
+            //           console.log(response.data);
+            //           setRooms(response.data);
+            //           setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
+            //         })
+            //         .catch(function (error) {
+            //           console.log(error.data);
+            // >>>>>>> front
         });
 
         socket.on('connect', () => {
@@ -277,6 +337,7 @@ const RoomList = () => {
             personFilterArray.push('5');
         }
 
+        // <<<<<<< HEAD
         if (sixPeople) {
             personFilterArray.push('6');
         }
@@ -422,6 +483,154 @@ const RoomList = () => {
             </Background>
         </React.Fragment>
     );
+    // =======
+    //     console.log(modeFilterArray);
+    //     console.log(personFilterArray);
+    //     const reqURL = baseURL + "room/random"; //parameter : 방 타입
+    //     const reqHeaders = {
+    //       headers: {
+    //         authorization: "Bearer " + save_token,
+    //       },
+    //     };
+
+    //     axios
+    //       .post(
+    //         reqURL,
+    //         {
+    //           room_mode: modeFilterArray,
+    //           room_start_member_cnt: personFilterArray,
+    //         },
+    //         reqHeaders
+    //       )
+    //       .then(function (response) {
+    //         console.log(response.data);
+    //         // 대기실로 이동
+    //         history.push({
+    //           pathname: "/waitingroom/" + response.data.room_idx,
+    //         });
+    //       })
+    //       .catch(function (error) {
+    //         console.log(error.response);
+    //       });
+    //   };
+
+    //   return (
+    //     <React.Fragment>
+    //       <Background>
+    //         {currentSocketConnection ? (
+    //           <div>
+    //             <Header />
+    //             <RoomGrid
+    //               flexDirection="column"
+    //               padding="20px"
+    //               width="1020px"
+    //               height="620px"
+    //               bg="#DAD4F6"
+    //             >
+    //               {/* 검색바 & 버튼 div*/}
+    //               <RoomGrid
+    //                 is_flex_space
+    //                 width="980px"
+    //                 height="110px"
+    //                 bg="#DAD4F6"
+    //                 border="1px solid #DAD4F6"
+    //               >
+    //                 <div style={styles.grid}>
+    //                   <RoomSearchBar />
+    //                 </div>
+    //                 {/* 버튼 div*/}
+    //                 <div
+    //                   style={{
+    //                     flexDirection: "column",
+    //                     width: "220px",
+    //                     display: "flex",
+    //                     alignItems: "center",
+    //                     justifyContent: "center",
+    //                   }}
+    //                 >
+    //                   {/* 방만들기 모달 */}
+    //                   <ModalBase />
+    //                   <br />
+    //                   <Button onClick={randomEntry}>랜덤 입장</Button>
+    //                 </div>
+    //               </RoomGrid>
+
+    //               {/* 방 & 필터 div*/}
+    //               <RoomGrid
+    //                 is_flex_space
+    //                 width="980px"
+    //                 height="460px"
+    //                 bg="#DAD4F6"
+    //                 border="1px solid #DAD4F6"
+    //               >
+    //                 {/* 왼쪽 화살표 div*/}
+    //                 <PrevBtn onClick={prevPage} />
+    //                 {/* 방 리스트 슬라이더 div*/}
+    //                 <div style={styles.sliderContainer}>
+    //                   <div style={styles.roomListContainer}>
+    //                     {rooms &&
+    //                       rooms.room_list.map((values) => {
+    //                         return values.room_status === "waiting" ? (
+    //                           <Room
+    //                             room_idx={values.room_idx}
+    //                             room_name={values.room_name}
+    //                             room_current_member={values.room_current_member_cnt}
+    //                             room_start_member={values.room_start_member_cnt}
+    //                             room_mode={values.room_mode}
+    //                             room_status={values.room_status}
+    //                             disabled="false"
+    //                             textStroke="true"
+    //                             cursor="true"
+    //                           />
+    //                         ) : (
+    //                           <Room
+    //                             room_idx={values.room_idx}
+    //                             room_name={values.room_name}
+    //                             room_current_member={values.room_current_member_cnt}
+    //                             room_start_member={values.room_start_member_cnt}
+    //                             room_mode={values.room_mode}
+    //                             room_status={values.room_status}
+    //                             disabled="true"
+    //                             textStroke="true"
+    //                             cursor="false"
+    //                           />
+    //                         );
+    //                       })}
+    //                     {createRoomData && (
+    //                       <Room
+    //                         room_idx={createRoomData.room_idx}
+    //                         room_name={createRoomData.room_name}
+    //                         room_current_member={
+    //                           createRoomData.room_current_member_cnt
+    //                         }
+    //                         room_start_member={createRoomData.room_start_member_cnt}
+    //                         room_mode={createRoomData.room_mode}
+    //                         room_status={createRoomData.room_status}
+    //                         disabled="false"
+    //                         textStroke="true"
+    //                         cursor="true"
+    //                       />
+    //                     )}
+    //                     {emptyRoomList()}
+    //                   </div>
+    //                 </div>
+    //                 {/* 오른쪽 화살표 div*/}
+    //                 <NextBtn onClick={nextPage} />
+    //                 {/* 필터 div*/}
+    //                 <Filter result={result} getResult={getResult} />
+    //               </RoomGrid>
+    //               <div style={styles.pageContainer}>
+    //                 {currentSlide + 1}/ {TOTAL_SLIDES + 1}
+    //               </div>
+    //             </RoomGrid>
+    //           </div>
+    //         ) : (
+    //           <Loading />
+    //         )}
+    //       </Background>
+    //     </React.Fragment>
+    //   );
+    // >>>>>>> front
 };
 
 const Background = styled.div`

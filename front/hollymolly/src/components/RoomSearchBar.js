@@ -52,7 +52,6 @@ const RoomSearchBar = (props) => {
             .then(function (response) {
                 history.push({
                     pathname: '/waitingroom/' + response.data.room_idx,
-                    state: { data: response.data },
                 });
             })
             .catch(function (error) {
