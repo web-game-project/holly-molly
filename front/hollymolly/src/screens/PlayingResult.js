@@ -5,7 +5,9 @@ import MissionWord from '../components/MissionWord';
 import night from '../assets/night.svg';
 import Chatting from '../components/Chatting';
 import GameUserCard from '../components/GameUserCard';
+import Header from '../components/Header';
 import GameMiddleResult from '../components/GameMiddleResult';
+
 import { useHistory, useLocation, Prompt } from 'react-router';
 //통신
 import axios from 'axios';
@@ -152,6 +154,7 @@ const PlayingResult = (props) => {
     return (
         <React.Fragment>
             <Background>
+                <Header />
                 <Container>
                     <BackGroundDiv>
                         <UserDiv>
@@ -198,6 +201,7 @@ const Background = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
 `;
 
 const Container = styled.div`

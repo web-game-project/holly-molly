@@ -9,6 +9,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'; //React-Router 
 import WaitingRoom from './screens/WaitingRoom.js';
 import PlayingRoom from './screens/PlayingRoom.js';
 import VoteBoard from './components/VoteBoard';
+import Tutorial from './screens/Tutorial.js';
 
 // 테스트 끝나면 삭제할거임- 연희
 import GameMissionPerformance from './components/GameMissionPerformance';
@@ -32,28 +33,31 @@ export default function App() {
             <div>
                 <BrowserRouter>
                     <ConnectedRouter history={history}>
-                        {/* 정희 역할부여 테스트 */}
-                        <Route path="/gameRole" component={GameRoleComponent}></Route>
-                        <Route path="/nickname" component={ModalNickName}></Route>
-                        {/* 테스트 끝나면 삭제할거임- 연희 */}
-                        <Route path="/gameMissionPerformance" component={GameMissionPerformance}></Route>
-                        <Route path="/gameDrawing" component={GameDrawing}></Route>
-                        <Route path="/gameMiddleResult" component={GameMiddleResult}></Route>
-                        <Route path="/playingresult" component={PlayingResult}></Route>
-                        <Route path="/playingloading" component={PlayingLoading}></Route>
-                        {/* 테스트 끝나면 삭제할거임- 연희 */}
-                        <Route path="/voteboard" component={VoteBoard}></Route>
-                        <Route exact path="/" component={GameStart} />
-                        <Switch>
-                            <Route path="/playingroom/:name" component={PlayingRoom} />
-                            <Route path="/playingroom" component={PlayingRoom} />
-                        </Switch>
-                        <Route path="/roomlist" component={RoomList} />
-                        <Switch>
-                            <Route path="/waitingroom/:name" component={WaitingRoom} />
-                            <Route path="/waitingroom" component={WaitingRoom} />
-                        </Switch>
-                    </ConnectedRouter>
+                    <Route path="/tutorial" component={Tutorial}></Route>
+
+                    {/* 정희 역할부여 테스트 */}
+                    <Route path="/gameRole" component={GameRoleComponent}></Route>
+                    <Route path="/nickname" component={ModalNickName}></Route>
+
+                    {/* 테스트 끝나면 삭제할거임- 연희 */}
+                    <Route path="/gameMissionPerformance" component={GameMissionPerformance}></Route>
+                    <Route path="/gameDrawing" component={GameDrawing}></Route>
+                    <Route path="/gameMiddleResult" component={GameMiddleResult}></Route>
+                    <Route path="/playingresult" component={PlayingResult}></Route>
+                    <Route path="/loading" component={Loading}></Route>
+                    {/* 테스트 끝나면 삭제할거임- 연희 */}
+                    <Route path="/voteboard" component={VoteBoard}></Route>
+                    <Route exact path="/" component={GameStart} />
+                    <Switch>
+                        <Route path="/playingroom/:name" component={PlayingRoom} />
+                        <Route path="/playingroom" component={PlayingRoom} />
+                    </Switch>
+                    <Route path="/roomlist" component={RoomList} />
+                    <Switch>
+                        <Route path="/waitingroom/:name" component={WaitingRoom} />
+                        <Route path="/waitingroom" component={WaitingRoom} />
+                    </Switch>
+                  </ConnectedRouter>
                 </BrowserRouter>
             </div>
         </div>
