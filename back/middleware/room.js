@@ -1,4 +1,5 @@
 const { WaitingRoomMember } = require('../models');
+const {printErrorLog} = require('../util/log')
 
 module.exports = async (req, res, next) => {
     // room_idx와 user 정보 가지고 방장/방원 체크
@@ -28,7 +29,7 @@ module.exports = async (req, res, next) => {
         res.locals.leader = roomMember.wrm_leader ? true : false; // or false
         next();
     } catch (error) {
-        console.log(error);
+        printErrorLog('RoomMiddleware', error);
         res.status(400).send({
             message: '알 수 없는 에러가 발생하였습니다.',
         });

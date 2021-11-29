@@ -5,6 +5,7 @@ const chat = require('./chat');
 const draw = require('./draw');
 const sendNextTurn = require('./sendNextTurn');
 const { User, WaitingRoomMember } = require('../models');
+const {printErrorLog, printLog} = require('../util/log');
 var fs = require('fs');
 
 module.exports = (server, app) => {
@@ -36,7 +37,7 @@ module.exports = (server, app) => {
                     );
                 }
             } catch (error) {
-                console.log("[error]-socket-socketUse: ",error);
+                printErrorLog('socket-socketUse', error);
                 return next(new Error('unauthorized event'));
             }
            
@@ -76,17 +77,19 @@ const saveSocketId = async (socket) => {
         });
         if(roomMember){
             socket.join(roomMember.get('room_room_idx'));
-            console.log(socket.id ,socket.rooms)
+            printLog('socket', `${tokenValue.user_idx}USER{${socket.id}, ${roomMember.get('room_room_idx')}방}`);
+        }else{
+            socket.join(0);
+            printLog('socket', `${tokenValue.user_idx}USER{${socket.id}, 대기실 리스트}`);
         }
-
     } catch (error) {
-        console.log("[error]-socket-saveSocketId: ",error);
+        printErrorLog('socket-saveSocketId', error);
         socket.disconnect(true);
     }
 };
 
 const errorEvent = (socket, err) => {
-    console.log("[error]-socket-errorEvent: ",err);
+    printErrorLog('socket-errorEvent', err);
     const isNotAuth =
         err &&
         (err.message === 'unauthorized event' || err.message === 'not user');
