@@ -1,5 +1,6 @@
 const { GameSet, Game, Keyword } = require('../../models');
 const moveRoom = require('../../socket/moveRoom');
+const {printErrorLog} = require('../../util/log');
 
 module.exports = async (req, res, next) => {
     try {
@@ -62,7 +63,7 @@ module.exports = async (req, res, next) => {
 
         res.status(201).json({});
     } catch (error) {
-        console.log('[error]-writeHumanKeyword: ', error);
+        printErrorLog('writeHumanKeyword', error);
         res.status(400).json({
             meesage: '알 수 없는 에러가 발생했습니다.',
             error: error.message,

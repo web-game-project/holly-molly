@@ -1,4 +1,5 @@
 const { Room, Game, GameSet, GameMember, GameVote, WaitingRoomMember, User } = require('../../models');
+const {printErrorLog} = require('../../util/log');
 
 const exitGame = async (req, res, next) => {
     try {
@@ -11,7 +12,7 @@ const exitGame = async (req, res, next) => {
 
         res.status(204).end();
     } catch (error) {
-        console.log('[error]-exitGame: ', error);
+        printErrorLog('exitGame', error);
         res.status(400).json({
             meesage: '알 수 없는 에러가 발생했습니다.',
             error: error.message,
@@ -85,7 +86,7 @@ const exitGameAndRoom = async (user, io) => {
 
         return true;
     } catch (error) {
-        console.log(error);
+        printErrorLog('exitGame-exitGameAndRoom', error);
         return false;
     }
 };

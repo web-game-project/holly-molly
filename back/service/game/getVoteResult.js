@@ -1,4 +1,5 @@
 const { User, Game, GameMember, GameVote } = require('../../models');
+const {printErrorLog} = require('../../util/log');
 
 const getVoteResult = async (req, res, next) => {
     try {
@@ -17,7 +18,7 @@ const getVoteResult = async (req, res, next) => {
         const io = req.app.get('io');
         io.to(game.get('room_room_idx')).emit('votesubmit human answer', { human_submit: true });
     } catch (error) {
-        console.log('[error]-getVoteResult: ', error);
+        printErrorLog('getVoteResult', error);
         res.status(400).json({
             meesage: '알 수 없는 에러가 발생했습니다.',
             error: error.message,

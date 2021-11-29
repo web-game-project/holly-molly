@@ -1,6 +1,7 @@
 const db = require('../../models');
 const moveRoom = require('../../socket/moveRoom');
 const getIOSocket = require('../../socket/getIOSocket');
+const {printErrorLog} = require('../../util/log');
 
 module.exports = async (req, res, next) => {
     try {
@@ -24,7 +25,7 @@ module.exports = async (req, res, next) => {
         // socket : get socket
         const { io, socket } = getIOSocket(req, res);
         if (!io || !socket) {
-            console.log('[error]-getRoomList: 소켓 커넥션 에러');
+            printErrorLog('getRoomList', '소켓 연결이 안되어있음');
             res.status(400).json({
                 message: 'socket connection을 다시 해주세요.',
             });
@@ -38,7 +39,7 @@ module.exports = async (req, res, next) => {
             room_list: rooms.roomList,
         });
     } catch (error) {
-        console.log('[error]-getRoomList: ', error);
+        printErrorLog('getRoomList', error);
         res.status(400).json({
             meesage: '알 수 없는 에러가 발생했습니다.',
             error: error.message,

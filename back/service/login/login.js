@@ -1,5 +1,6 @@
 const signJWT = require('../../util/jwt/signJWT');
 const { User } = require('../../models');
+const {printErrorLog} = require('../../util/log')
 
 module.exports = async (req, res, next) => {
     try {
@@ -19,7 +20,7 @@ module.exports = async (req, res, next) => {
             user_idx: user.user_idx,
         });
     } catch (error) {
-        console.log('[error]-login: ', error);
+        printErrorLog('login', error);
         res.status(400).send({
             message: '알 수 없는 오류가 발생하였습니다.',
             error: error.message,

@@ -4,6 +4,7 @@ const getIOSocket = require('../../socket/getIOSocket');
 const moveRoom = require('../../socket/moveRoom');
 const db = require('../../models');
 const { exitGameAndRoom } = require('../game/exitGame');
+const {printErrorLog} = require('../../util/log');
 
 module.exports = async (req, res, next) => {
     try {
@@ -105,7 +106,7 @@ module.exports = async (req, res, next) => {
             waiting_room_member_list: waitingRoomMemberList,
         });
     } catch (error) {
-        console.log('[error]-enterRoom: ', error);
+        printErrorLog('enterRoom', error);
         res.status(400).json({
             meesage: '알 수 없는 에러가 발생했습니다.',
             error: error.message,
@@ -162,7 +163,7 @@ const findRoom = async (req, res) => {
         }
         return room;
     } catch (error) {
-        console.log(error);
+        printErrorLog('enterRoom-findRoom', error);
         res.status(400).json({ message: '알 수 없는 오류가 발생했습니다.' });
         return undefined;
     }
@@ -192,7 +193,7 @@ const getWaitingRoomMemberListAndLeader = async (roomIdx) => {
         };
         return result;
     } catch (error) {
-        console.log(error);
+        printErrorLog('enterRoom-getWaitingRoomMemberListAndLeader', error);
         return { undefined, undefined };
     }
 };
@@ -243,7 +244,7 @@ const insertWaitingRoomMember = async (
 
         return insertedMember;
     } catch (error) {
-        console.log(error);
+        printErrorLog('enterRoom-insertWaitingRoomMember', error);
         return undefined;
     }
 };
