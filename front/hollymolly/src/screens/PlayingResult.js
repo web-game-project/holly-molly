@@ -7,11 +7,13 @@ import Chatting from '../components/Chatting';
 import GameUserCard from '../components/GameUserCard';
 import Header from '../components/Header';
 import GameMiddleResult from '../components/GameMiddleResult';
+import GameFinalResult from '../components/GameFinalResult';
+import GameOpenResult from '../components/GameOpenResult';
 
+//페이지 이동
 import { useHistory, useLocation, Prompt } from 'react-router';
 //통신
 import axios from 'axios';
-import GameFinalResult from '../components/GameFinalResult';
 
 //import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
@@ -48,6 +50,11 @@ const PlayingResult = (props) => {
         two_game_set_ghost_score: 2,
         three_game_set_ghost_score: 0,
         total_game_set_ghost_score: 4,
+    };
+
+    const dummyOpenResultTest = {
+        human_user_name: '나는 1번',
+        human_user_color: 'RED',
     };
     // **
 
@@ -181,7 +188,11 @@ const PlayingResult = (props) => {
                         {/* <GameMiddleResult winner={winner} />  */}
 
                         {/* 최종 결과 출력이라면?*/}
-                        <GameFinalResult data={dummyTest} />
+                         {/* <GameFinalResult data={dummyTest} /> */}
+
+                        {/* 최종 결과 공개라면? */}
+                        <GameOpenResult data={dummyOpenResultTest} />
+
                         <ChatDiv>
                             {/* <Chatting /> */}
                             {/* <Chatting room_idx={location.state.data.room_idx}></Chatting> */}
