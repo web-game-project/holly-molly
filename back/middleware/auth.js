@@ -1,5 +1,6 @@
 const verifyJWT = require('../util/jwt/verifyJWT');
 const { User } = require('../models');
+const {printErrorLog} = require('../util/log')
 
 module.exports = (req, res, next) => {
     try {
@@ -39,7 +40,7 @@ module.exports = (req, res, next) => {
                 }
             } catch (error) {}
         }
-        console.log(decodedToken);
+      
         User.findByPk(decodedToken.user_idx).then((user) => {
             if (!user) {
                 res.status(401).send({
@@ -52,7 +53,7 @@ module.exports = (req, res, next) => {
             next();
         });
     } catch (error) {
-        console.log(error);
+        printErrorLog('authMiddleware', error);
         res.status(401).send({
             message: '로그인 후 이용해주세요.',
         });

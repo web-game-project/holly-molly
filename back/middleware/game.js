@@ -1,4 +1,5 @@
 const { GameSet, GameMember, WaitingRoomMember } = require('../models');
+const {printErrorLog} = require('../util/log')
 
 module.exports = async (req, res, next) => {
     // game_set_idx, game_idx와 user 정보 가지고 방장/방원/인간/유령인지 체크
@@ -56,7 +57,7 @@ module.exports = async (req, res, next) => {
         
         next();
     } catch (error) {
-        console.log(error);
+        printErrorLog('gameMiddleware', error);
         res.status(400).send({
             message: '알 수 없는 에러가 발생하였습니다.',
         });
