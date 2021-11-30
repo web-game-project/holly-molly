@@ -6,6 +6,8 @@ import molly from '../assets/molly.png';
 import holly from '../assets/holly.png';
 import { Link } from 'react-router-dom';
 import tutorial_btn from '../assets/tutorial_btn.svg';
+import Start_button from '../assets/start_button.svg';
+import Modal from '../components/ModalNickName';
 
 // import tutorial_btn from '../assets/tutorial_btn.svg';
 // import start_btn from '../assets/start_btn.svg';
@@ -15,7 +17,7 @@ import PurpleCharacter from '../assets/purple.svg';
 export default function TutorialWorldview({}) {
     return (
         <Container>
-            {/* 인간 div */}
+            {/* 인간 유령 설명 페이지로 연결해주면 됨div */}
             <HumanDiv>
                 <Div>
                     <MollyCharacter src={molly}></MollyCharacter>
@@ -24,8 +26,9 @@ export default function TutorialWorldview({}) {
                     </MollyTitle>
                     <MollyText>
                         공포영화를 보다가 잠에 빠진 Molly! 눈 떠보니 유령세계라고? <text style={{ ...style, color: style.red }}>3일</text>을
-                        들키지 않고 지내야 인간세계로 가는 길이 열린다. 이 유령들 수다떠는 걸 엄청 좋아하는데 그 사이에서 인간임을 들키지
-                        않아야 산다. 한 번 유령인척을 열심히 해보자구!
+                        들키지 않고 지내야 인간세계로 가는 길이 열린다.
+                        <br /> 이 유령들 수다떠는 걸 엄청 좋아하는데 그 사이에서 인간임을 들키지 않아야 산다. 한 번 유령인척을 열심히
+                        해보자구!
                     </MollyText>
                     <br />
                 </Div>
@@ -39,7 +42,7 @@ export default function TutorialWorldview({}) {
                 </Link>
             </HumanDiv>
 
-            {/* 유령 설명 페이지로 div */}
+            {/* 유령 설명 페이지로 연결해주면 됨 div */}
             <GhostDiv>
                 <Link to="/">
                     <CardContainer>
@@ -54,14 +57,15 @@ export default function TutorialWorldview({}) {
                         당신의 역할이 <text style={{ ...style, color: style.red }}>유령</text>이라면?
                     </HollyTitle>
                     <HollyText>
-                        유령 친구들과 수다를 떨고 있는 Holly! 그런데.. 동작 그만! 자꾸 생뚱맞은 이야기를 하는 너, 대체 누구야? 아무리 봐도
-                        지금 우리 사이에 인간이 들어 온 것 같다! 겁없이 유령 사이에 끼어든 인간을 찾아 혼쭐을 내주자.{' '}
-                        <text style={{ ...style, color: style.red }}>3일</text>동안 유령 친구들과 함께 최선을 다해서 인간을 찾아보자구!
+                        유령 친구들과 수다를 떨고 있는 Holly! 그런데.. 동작 그만! <br />
+                        자꾸 생뚱맞은 이야기를 하는 너, 대체 누구야? 아무리 봐도 지금 우리 사이에 인간이 들어 온 것 같다! 겁없이 유령 사이에
+                        끼어든 인간을 찾아 혼쭐을 내주자. <text style={{ ...style, color: style.red }}>3일</text>동안 유령 친구들과 함께
+                        최선을 다해서 인간을 찾아보자구!
                     </HollyText>
                     <br />
                 </Div>
             </GhostDiv>
-            {/* <GameStart src={start_btn} /> */}
+            <Modal tutorial />
         </Container>
     );
 }
@@ -118,9 +122,6 @@ const MollyCharacter = styled.img`
     width: 200px;
     margin-bottom: 20px;
     margin-right: 10px;
-    &:hover {
-        cursor: grab;
-    }
 `;
 
 const HollyCharacter = styled.img`
@@ -132,9 +133,6 @@ const HollyCharacter = styled.img`
     width: 200px;
     margin-bottom: 20px;
     margin-right: 10px;
-    &:hover {
-        cursor: grab;
-    }
 `;
 
 const MollyTitle = styled.text`
@@ -229,6 +227,9 @@ const CardContainer = styled.div`
 
     &:hover {
         cursor: grab;
+
+        border: 2px solid yellow;
+        box-shadow: 0px 0px 10px 10px rgba(255, 255, 255, 0.4); /* offset-x | offset-y | blur-radius | spread-radius | color */
     }
 `;
 
@@ -267,17 +268,18 @@ const GhostCharacter = styled.div`
     height: 230px;
 `;
 
-// // 튜토리얼
-// const GameStart = styled.img`
-//     // background-color: ${style.yellow};
-//     justify-content: center;
-//     align-items: center;
-//     height: 90px;
-//     width: 180px;
-//     margin-right: 30px;
-//     margin-top: 20px;
-
-//     &:hover {
-//         cursor: grab;
-//     }
-// `;
+// 게임시작
+const GameStart = styled.img`
+    // background-color: ${style.yellow};
+    justify-content: center;
+    align-items: center;
+    // height: 90px;
+    width: 200px;
+    margin-right: 30px;
+    margin-top: -50px;
+    align-self: end;
+    &:hover {
+        cursor: grab;
+        box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.4); /* offset-x | offset-y | blur-radius | spread-radius | color */
+    }
+`;
