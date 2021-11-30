@@ -25,7 +25,7 @@ import Loading from '../components/Loading';
 
 let total_room_cnt = 0; // 룸 리스트 총 방의 갯수
 
-//RefreshVerification.verification();
+RefreshVerification.verification();
 
 const RoomList = () => {
     const history = useHistory();
@@ -60,6 +60,8 @@ const RoomList = () => {
     console.log('delete 후 save_token: ' + save_token);
     console.log('delete 후 save_user_name: ' + save_user_name);
 
+    RefreshVerification.verification();
+    
   /*   useEffect(() => {
         // local storage에 있는지 확인
         data = localStorage.getItem('token');
