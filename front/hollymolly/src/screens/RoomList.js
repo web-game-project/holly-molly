@@ -385,97 +385,92 @@ const RoomList = () => {
             <Background>
                 {currentSocketConnection ? (
                     <div>
-                        <Header />
-                        <RoomGrid
-                            is_top_left={true}
-                            is_top_right={true}
-                            flexDirection="column"
-                            padding="20px"
-                            width="1020px"
-                            height="620px"
-                            bg="#DAD4F6"
-                        >
-                            {/* 검색바 & 버튼 div*/}
-                            <RoomGrid is_top_left is_flex_space width="980px" height="110px" bg="#DAD4F6" border="1px solid #DAD4F6">
-                                <div style={styles.grid}>
-                                    <RoomSearchBar />
-                                </div>
-                                <div
-                                    style={{
-                                        flexDirection: 'column',
-                                        width: '220px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    {/* 방만들기 모달 */}
-                                    <ModalBase />
-                                    <br />
-                                    <Button onClick={randomEntry}>랜덤 입장</Button>
-                                </div>
-                            </RoomGrid>
-
-                            {/* 방 & 필터 div*/}
-                            <RoomGrid is_flex_space width="980px" height="460px" bg="#DAD4F6" border="1px solid #DAD4F6">
-                                {/* 왼쪽 화살표 div*/}
-                                <PrevBtn onClick={prevPage} />
-                                {/* 방 리스트 슬라이더 div*/}
-                                <div style={styles.sliderContainer}>
-                                    <div style={styles.roomListContainer}>
-                                        {rooms &&
-                                            rooms.room_list.map((values) => {
-                                                return values.room_status === 'waiting' ? (
-                                                    <Room
-                                                        room_idx={values.room_idx}
-                                                        room_name={values.room_name}
-                                                        room_current_member={values.room_current_member_cnt}
-                                                        room_start_member={values.room_start_member_cnt}
-                                                        room_mode={values.room_mode}
-                                                        room_status={values.room_status}
-                                                        disabled="false"
-                                                        textStroke="true"
-                                                        cursor="true"
-                                                    />
-                                                ) : (
-                                                    <Room
-                                                        room_idx={values.room_idx}
-                                                        room_name={values.room_name}
-                                                        room_current_member={values.room_current_member_cnt}
-                                                        room_start_member={values.room_start_member_cnt}
-                                                        room_mode={values.room_mode}
-                                                        room_status={values.room_status}
-                                                        disabled="true"
-                                                        textStroke="true"
-                                                        cursor="false"
-                                                    />
-                                                );
-                                            })}
-                                        {createRoomData && (
-                                            <Room
-                                                room_idx={createRoomData.room_idx}
-                                                room_name={createRoomData.room_name}
-                                                room_current_member={createRoomData.room_current_member_cnt}
-                                                room_start_member={createRoomData.room_start_member_cnt}
-                                                room_mode={createRoomData.room_mode}
-                                                room_status={createRoomData.room_status}
-                                                disabled="false"
-                                                textStroke="true"
-                                                cursor="true"
-                                            />
-                                        )}
-                                        {emptyRoomList()}
+                        <Header goMain tutorial />
+                        <Container>
+                            <RoomGrid flexDirection="column" padding="20px" width="1020px" height="620px" bg="#DAD4F6">
+                                {/* 검색바 & 버튼 div*/}
+                                <RoomGrid is_flex_space width="980px" height="110px" bg="#DAD4F6" border="1px solid #DAD4F6">
+                                    <div style={styles.grid}>
+                                        <RoomSearchBar />
                                     </div>
+                                    <div
+                                        style={{
+                                            flexDirection: 'column',
+                                            width: '220px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        {/* 방만들기 모달 */}
+                                        <ModalBase />
+                                        <br />
+                                        <Button onClick={randomEntry}>랜덤 입장</Button>
+                                    </div>
+                                </RoomGrid>
+
+                                {/* 방 & 필터 div*/}
+                                <RoomGrid is_flex_space width="980px" height="460px" bg="#DAD4F6" border="1px solid #DAD4F6">
+                                    {/* 왼쪽 화살표 div*/}
+                                    <PrevBtn onClick={prevPage} />
+                                    {/* 방 리스트 슬라이더 div*/}
+                                    <div style={styles.sliderContainer}>
+                                        <div style={styles.roomListContainer}>
+                                            {rooms &&
+                                                rooms.room_list.map((values) => {
+                                                    return values.room_status === 'waiting' ? (
+                                                        <Room
+                                                            room_idx={values.room_idx}
+                                                            room_name={values.room_name}
+                                                            room_current_member={values.room_current_member_cnt}
+                                                            room_start_member={values.room_start_member_cnt}
+                                                            room_mode={values.room_mode}
+                                                            room_status={values.room_status}
+                                                            disabled="false"
+                                                            textStroke="true"
+                                                            cursor="true"
+                                                        />
+                                                    ) : (
+                                                        <Room
+                                                            room_idx={values.room_idx}
+                                                            room_name={values.room_name}
+                                                            room_current_member={values.room_current_member_cnt}
+                                                            room_start_member={values.room_start_member_cnt}
+                                                            room_mode={values.room_mode}
+                                                            room_status={values.room_status}
+                                                            disabled="true"
+                                                            textStroke="true"
+                                                            cursor="false"
+                                                        />
+                                                    );
+                                                })}
+                                            {createRoomData && (
+                                                <Room
+                                                    borderRadius
+                                                    room_idx={createRoomData.room_idx}
+                                                    room_name={createRoomData.room_name}
+                                                    room_current_member={createRoomData.room_current_member_cnt}
+                                                    room_start_member={createRoomData.room_start_member_cnt}
+                                                    room_mode={createRoomData.room_mode}
+                                                    room_status={createRoomData.room_status}
+                                                    disabled="false"
+                                                    textStroke="true"
+                                                    cursor="true"
+                                                />
+                                            )}
+                                            {emptyRoomList()}
+                                        </div>
+                                    </div>
+                                    {/* 오른쪽 화살표 div*/}
+                                    <NextBtn onClick={nextPage} />
+                                    {/* 필터 div*/}
+                                    <Filter result={result} getResult={getResult} />
+                                </RoomGrid>
+                                <div style={styles.pageContainer}>
+                                    {currentSlide + 1} / {TOTAL_SLIDES + 1}
                                 </div>
-                                {/* 오른쪽 화살표 div*/}
-                                <NextBtn onClick={nextPage} />
-                                {/* 필터 div*/}
-                                <Filter result={result} getResult={getResult} />
                             </RoomGrid>
-                            <div style={styles.pageContainer}>
-                                {currentSlide + 1}/ {TOTAL_SLIDES + 1}
-                            </div>
-                        </RoomGrid>
+                        </Container>
                     </div>
                 ) : (
                     <Loading />
@@ -632,6 +627,18 @@ const RoomList = () => {
     //   );
     // >>>>>>> front
 };
+//성아
+const Container = styled.div`
+    width: 1020px;
+    height: 620px;
+    // border: 1px solid #000;
+    background-color: red;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    border-bottom-left-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
+`;
 
 const Background = styled.div`
     background-color: #180928;
@@ -647,6 +654,10 @@ const NextBtn = styled.div`
     height: 40px;
     background-size: contain;
     background-image: url(${rightArrowBtn});
+
+    &:hover {
+        cursor: grab;
+    }
 `;
 
 const PrevBtn = styled.div`
@@ -654,6 +665,10 @@ const PrevBtn = styled.div`
     height: 40px;
     background-size: contain;
     background-image: url(${leftArrowBtn});
+
+    &:hover {
+        cursor: grab;
+    }
 `;
 
 const Button = styled.button`
@@ -672,6 +687,7 @@ const Button = styled.button`
         background: palevioletred;
         color: white;
         border: white;
+        cursor: grab;
     }
 `;
 

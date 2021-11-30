@@ -226,6 +226,8 @@ const Container = styled.div`
     height: 620px;
     display: flex;
     flex-direction: row;
+    border-bottom-left-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
 `;
 
 const UserDiv = styled.div`

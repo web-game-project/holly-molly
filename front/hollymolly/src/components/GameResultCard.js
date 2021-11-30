@@ -82,7 +82,7 @@ const CharacterFinalGhost = styled.div`
     background-image: url(${PurpleCharacter});
     background-size: cover;
     width: 100px;
-    height: 150px;
+    height: 140px;
 `;
 
 const CardContainer = styled.div`

@@ -47,7 +47,7 @@ const PlayingResult = (props) => {
         one_game_set_ghost_score: 1,
         two_game_set_ghost_score: 2,
         three_game_set_ghost_score: 0,
-        total_game_set_ghost_score: 4,
+        total_game_set_ghost_score: 2,
     };
     // **
 
@@ -177,11 +177,11 @@ const PlayingResult = (props) => {
                         </UserDiv>
                         {/* 중간 결과 출력이라면? */}
 
-                        {/* <GameMiddleResult winner={'ghost'} /> */}
+                        <GameMiddleResult winner={'ghost'} />
                         {/* <GameMiddleResult winner={winner} />  */}
 
                         {/* 최종 결과 출력이라면?*/}
-                        <GameFinalResult data={dummyTest} />
+                        {/* <GameFinalResult data={dummyTest} /> */}
                         <ChatDiv>
                             {/* <Chatting /> */}
                             {/* <Chatting room_idx={location.state.data.room_idx}></Chatting> */}
