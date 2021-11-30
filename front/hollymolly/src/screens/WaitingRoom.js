@@ -546,182 +546,180 @@ export default function WaitingRoom({ match }) {
         <Background>
             {currentSocketConnection ? (
                 roomEnterInfo && roomEnterInfo ? (
-                    RefreshVerification.verification(),
-                    <div>
-                        <Header />
-                        <Container>
-                            {console.log('방장 인덱스 맞지? : ' + isLeader)}
-                            <SelectDiv>
-                                <br />
-                                {roomUpdate ? (
-                                    // 소켓 변경 후 소켓 데이터로 변경
-                                    <TitleDiv>
-                                       <div style={styles.roomInfoContainer}>
-                                            <div style={styles.codeContainer}>
-                                                {roomEnterInfo.room_code}
+                    (RefreshVerification.verification(),
+                    (
+                        <div>
+                            <Header />
+                            <Container>
+                                {console.log('방장 인덱스 맞지? : ' + isLeader)}
+                                <SelectDiv>
+                                    <br />
+                                    {roomUpdate ? (
+                                        // 소켓 변경 후 소켓 데이터로 변경
+                                        <TitleDiv>
+                                            <div style={styles.roomInfoContainer}>
+                                                <div style={styles.codeContainer}>{roomEnterInfo.room_code}</div>
+                                                <NameContainer>{roomEnterInfo.room_name}</NameContainer>
+                                                {isLeader === 1 ? (
+                                                    // 리더가 변경하는 컴포넌트
+                                                    <ModalSetting
+                                                        resultt={result}
+                                                        clickedSetting={clickedSetting}
+                                                        title={roomUpdate.room_name}
+                                                        mode={roomUpdate.room_mode}
+                                                        member={roomUpdate.room_start_member_cnt}
+                                                        room_private={roomInfo.room_private}
+                                                        room_idx={roomUpdate.room_idx}
+                                                    />
+                                                ) : (
+                                                    <InfoModal
+                                                        style={{ marginTop: '30px' }}
+                                                        title={roomUpdate.room_name}
+                                                        mode={roomUpdate.room_mode}
+                                                        member={roomUpdate.room_start_member_cnt}
+                                                        room_private={roomInfo.room_private}
+                                                        room_idx={roomUpdate.room_idx}
+                                                    />
+                                                )}
                                             </div>
-                                            <NameContainer>{roomEnterInfo.room_name}</NameContainer>
-                                        {isLeader === 1 ? (
-                                            // 리더가 변경하는 컴포넌트
-                                            <ModalSetting
-                                                resultt={result}
-                                                clickedSetting={clickedSetting}
-                                                title={roomUpdate.room_name}
-                                                mode={roomUpdate.room_mode}
-                                                member={roomUpdate.room_start_member_cnt}
-                                                room_private={roomInfo.room_private}
-                                                room_idx={roomUpdate.room_idx}
-                                            />
-                                        ) : (
-                                            <InfoModal
-                                                title={roomUpdate.room_name}
-                                                mode={roomUpdate.room_mode}
-                                                member={roomUpdate.room_start_member_cnt}
-                                                room_private={roomInfo.room_private}
-                                                room_idx={roomUpdate.room_idx}
-                                            />
-                                        )}
-                                        </div>
-                                        {/* TitleDiv{result} {roomUpdate.room_idx}번 방 */}
-                                        {/* <br />
+                                            {/* TitleDiv{result} {roomUpdate.room_idx}번 방 */}
+                                            {/* <br />
                                         <Text>
                                             방제 : {roomUpdate.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
                                             {roomEnterInfo.room_current_member_cnt} / {roomUpdate.room_start_member_cnt} 명
                                         </Text>
                                         <br /> */}
-                                    </TitleDiv>
-                                ) : (
-                                    <TitleDiv>
-                                        <div style={styles.roomInfoContainer}>
-                                            <div style={styles.codeContainer}>
-                                                {roomEnterInfo.room_code}
-                                            </div>
-                                            <NameContainer>{roomEnterInfo.room_name}</NameContainer>
+                                        </TitleDiv>
+                                    ) : (
+                                        <TitleDiv>
+                                            <div style={styles.roomInfoContainer}>
+                                                <div style={styles.codeContainer}>{roomEnterInfo.room_code}</div>
+                                                <NameContainer>{roomEnterInfo.room_name}</NameContainer>
 
-                                            {isLeader === 1 ? (
-                                            <ModalSetting
-                                                // 리더가 변경하는 컴포넌트
-                                                resultt={result}
-                                                clickedSetting={clickedSetting}
-                                                title={roomInfo.room_name}
-                                                mode={roomInfo.room_mode}
-                                                member={count}
-                                                room_private={roomInfo.room_private}
-                                                room_idx={roomInfo.room_idx}
-                                            />
-                                            ) : (
-                                                <InfoModal
-                                                    // 리더가 변경하는 컴포넌트
-                                                    title={roomInfo.room_name}
-                                                    mode={roomInfo.room_mode}
-                                                    member={count}
-                                                    room_private={roomInfo.room_private}
-                                                    room_idx={roomInfo.room_idx}
-                                                />
-                                            )}
-                                        </div>
-                                        {/* TitleDiv {match.params.name}번 방 */}
-                                        {/*  <br /> */}
-                                        {/*  <Text>
+                                                {isLeader === 1 ? (
+                                                    <ModalSetting
+                                                        // 리더가 변경하는 컴포넌트
+                                                        resultt={result}
+                                                        clickedSetting={clickedSetting}
+                                                        title={roomInfo.room_name}
+                                                        mode={roomInfo.room_mode}
+                                                        member={count}
+                                                        room_private={roomInfo.room_private}
+                                                        room_idx={roomInfo.room_idx}
+                                                    />
+                                                ) : (
+                                                    <InfoModal
+                                                        // 리더가 변경하는 컴포넌트
+                                                        title={roomInfo.room_name}
+                                                        mode={roomInfo.room_mode}
+                                                        member={count}
+                                                        room_private={roomInfo.room_private}
+                                                        room_idx={roomInfo.room_idx}
+                                                    />
+                                                )}
+                                            </div>
+                                            {/* TitleDiv {match.params.name}번 방 */}
+                                            {/*  <br /> */}
+                                            {/*  <Text>
                                             방제 : {roomEnterInfo.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
                                             {roomEnterInfo.room_current_member_cnt} / {roomEnterInfo.room_start_member_cnt} 명
                                         </Text> */}
-                                    </TitleDiv>
-                                )}
-                                <BarContainer>
-                                    <BarDiv>
-                                        <BarInnerDiv>
-                                            {colorList &&
-                                                colorList.map((element, key) =>
-                                                    
-                                                    element.choose === 'true' ? (
-                                                        <BarColorBox
-                                                            data={element.code}
-                                                            color={element.code}
-                                                            onClick={() => {
-                                                                colorClick(element.color);
-                                                            }}
-                                                        />
-                                                    ) : selectColor === element.color ? (
-                                                        <BarColorBox color={element.code}>V</BarColorBox>
-                                                    ) : (
-                                                        <BarColorBox data={element.code} color="#8C8C8C" />
-                                                    )
-                                                )}
-                                        </BarInnerDiv>
-                                    </BarDiv>
-                                </BarContainer>
-                                <UserDiv>
-                                    <div style={styles.userListContainer}>
-                                        {userList &&
-                                            userList.map((element) => (
-                                                <UserCard
-                                                    leader={leaderIdx}
-                                                    id={element.user_idx}
-                                                    nickname={element.user_name}
-                                                    color={element.wrm_user_color}
-                                                    ready={element.wrm_user_ready}
-                                                />
-                                            ))}
+                                        </TitleDiv>
+                                    )}
+                                    <BarContainer>
+                                        <BarDiv>
+                                            <BarInnerDiv>
+                                                {colorList &&
+                                                    colorList.map((element, key) =>
+                                                        element.choose === 'true' ? (
+                                                            <BarColorBox
+                                                                data={element.code}
+                                                                color={element.code}
+                                                                onClick={() => {
+                                                                    colorClick(element.color);
+                                                                }}
+                                                            />
+                                                        ) : selectColor === element.color ? (
+                                                            <BarColorBox color={element.code}>V</BarColorBox>
+                                                        ) : (
+                                                            <BarColorBox data={element.code} color="#8C8C8C" />
+                                                        )
+                                                    )}
+                                            </BarInnerDiv>
+                                        </BarDiv>
+                                    </BarContainer>
+                                    <UserDiv>
+                                        <div style={styles.userListContainer}>
+                                            {userList &&
+                                                userList.map((element) => (
+                                                    <UserCard
+                                                        leader={leaderIdx}
+                                                        id={element.user_idx}
+                                                        nickname={element.user_name}
+                                                        color={element.wrm_user_color}
+                                                        ready={element.wrm_user_ready}
+                                                    />
+                                                ))}
+                                        </div>
+                                    </UserDiv>
+                                    <div
+                                        onClick={() => {
+                                            console.log('눌림');
+                                            exitWaitingRoom();
+                                        }}
+                                        style={{
+                                            width: '100px',
+                                            justifyContent: 'space-between',
+                                            marginTop: '-40px',
+                                        }}
+                                    >
+                                        <Exit src={exit} />
+                                        <ExitText>나가기</ExitText>
                                     </div>
-                                </UserDiv>
-                                <div
-                                    onClick={() => {
-                                        console.log('눌림');
-                                        exitWaitingRoom();
-                                    }}
-                                    style={{
-                                        width: '100px',
-                                        justifyContent: 'space-between',
-                                        marginTop: '-40px'
-                                    }}
-                                >
-                                    <Exit src={exit} />
-                                    <ExitText>나가기</ExitText>
-                                </div>
-                            </SelectDiv>
-                            <RightDiv>
-                                <Chatting room_idx={room_idx} height="520px" available={true}></Chatting>
-                                <StartDiv>
-                                    {
-                                        isLeader === 0 //방장 아님
-                                            ? (console.log(style.red),
-                                              changeReady === true ? (
-                                                  <BtnDiv
-                                                      color="waiting"
-                                                      onClick={() => {
-                                                          readyClick(!changeReady);
-                                                      }}
-                                                  >
-                                                      준비 완료
-                                                  </BtnDiv>
-                                              ) : (
-                                                  <BtnDiv
-                                                      color="ready"
-                                                      onClick={() => {
-                                                          readyClick(!changeReady);
-                                                      }}
-                                                  >
-                                                      게임 준비
-                                                  </BtnDiv>
-                                              ))
-                                            : //방장이다.
-                                              (console.log('방장이야'),
-                                              (
-                                                  //일단 플레잉룸으로 넘어가기 위한 하드코딩 밑에 주석임 지울 예정
-                                                  // startMember === ready_cnt ? (
-                                                  <BtnDiv isStart="yes" onClick={startClick}>
-                                                      게임 시작
-                                                  </BtnDiv>
-                                              )) //게임 시작 api 요청 onclick 달기
-                                        // ) : (
-                                        // <BtnDiv isStart="no">Game Start</BtnDiv>
-                                        //)
-                                    }
-                                </StartDiv>
-                            </RightDiv>
-                        </Container>
-                    </div>
+                                </SelectDiv>
+                                <RightDiv>
+                                    <Chatting room_idx={room_idx} height="520px" available={true}></Chatting>
+                                    <StartDiv>
+                                        {
+                                            isLeader === 0 //방장 아님
+                                                ? (console.log(style.red),
+                                                  changeReady === true ? (
+                                                      <BtnDiv
+                                                          color="waiting"
+                                                          onClick={() => {
+                                                              readyClick(!changeReady);
+                                                          }}
+                                                      >
+                                                          준비 완료
+                                                      </BtnDiv>
+                                                  ) : (
+                                                      <BtnDiv
+                                                          color="ready"
+                                                          onClick={() => {
+                                                              readyClick(!changeReady);
+                                                          }}
+                                                      >
+                                                          게임 준비
+                                                      </BtnDiv>
+                                                  ))
+                                                : //방장이다.
+                                                  (console.log('방장이야'),
+                                                  (
+                                                      //일단 플레잉룸으로 넘어가기 위한 하드코딩 밑에 주석임 지울 예정
+                                                      // startMember === ready_cnt ? (
+                                                      <BtnDiv isStart="yes" onClick={startClick}>
+                                                          게임 시작
+                                                      </BtnDiv>
+                                                  )) //게임 시작 api 요청 onclick 달기
+                                            // ) : (
+                                            // <BtnDiv isStart="no">Game Start</BtnDiv>
+                                            //)
+                                        }
+                                    </StartDiv>
+                                </RightDiv>
+                            </Container>
+                        </div>
+                    ))
                 ) : (
                     <Loading />
                 )
@@ -757,27 +755,27 @@ const styles = {
         backgroundColor: '#A274D5',
         color: '#ffffff',
         fontFamily: 'Jua',
-        borderRadius: '20px', 
+        borderRadius: '20px',
         fontSize: '13px',
         textAlign: 'center',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        marginTop: '15px',
     },
-    
 };
 
 const NameContainer = styled.text`
-  font-size: 45px;
-  font-family: Black Han Sans;
-  -webkit-text-stroke: 1px #000000; // 53305e
-  font-weight: bold;
-  color: #ffffff;
-  text-shadow: 4px 4px 0px #000000; 
-  height: 50px;
-  text-align: center;
-  margin-left: 15px;
-  margin-right: 15px;
+    font-size: 45px;
+    font-family: Black Han Sans;
+    -webkit-text-stroke: 1px #000000; // 53305e
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 4px 4px 0px #000000;
+    height: 50px;
+    text-align: center;
+    margin-left: 15px;
+    margin-right: 15px;
 `;
 
 const Background = styled.div`
@@ -828,10 +826,10 @@ const BtnDiv = styled.div`
     width: 210px;
     height: 38px;
     margin-top: 20px;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     border-radius: 18px;
-    border: 3px solid #A274D5; 
-    color: #A274D5;
+    border: 3px solid #a274d5;
+    color: #a274d5;
     box-shadow: 2px 2px 2px #878787, 4px 4px 4px #878787;
     font-size: 27px;
     text-align: center;
@@ -840,9 +838,9 @@ const BtnDiv = styled.div`
     justify-content: center;
 
     &:hover {
-        background: #A274D5;
+        background: #a274d5;
         color: white;
-        border: 3px solid #A274D5;
+        border: 3px solid #a274d5;
         cursor: grab;
     }
     //${(props) => (props.color == 'waiting' ? `background-color: #FFFFFF; color: #B7A8FB; border: 3px solid #B7A8FB;` : ``)}
@@ -851,13 +849,14 @@ const BtnDiv = styled.div`
 `;
 const TitleDiv = styled.div`
     width: 625px;
-    height: 50px;
+    height: 55px;
     //margin-top: 25px;
     margin-bottom: 20px;
     //background-color: #fff3ca;
     text-align: center;
     display: inline-block;
     overflow: hidden;
+    align-item: center;
 `;
 
 const BarContainer = styled.div`

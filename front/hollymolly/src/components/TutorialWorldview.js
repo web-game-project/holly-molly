@@ -6,6 +6,8 @@ import molly from '../assets/molly.png';
 import holly from '../assets/holly.png';
 import { Link } from 'react-router-dom';
 import tutorial_btn from '../assets/tutorial_btn.svg';
+
+// import tutorial_btn from '../assets/tutorial_btn.svg';
 // import start_btn from '../assets/start_btn.svg';
 import Human from '../assets/human.svg';
 import PurpleCharacter from '../assets/purple.svg';
