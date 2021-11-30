@@ -55,10 +55,10 @@ module.exports = async (req, res, next) => {
             },
         });
 
-        // 소켓 submit mafia answer , mafia_submit:true
+        // 소켓 submit mafia answer , human_submit:true
         const io = req.app.get('io');
         io.to(game.get('room_room_idx')).emit('submit human answer', {
-            mafia_submit: true,
+            human_submit: true,
         });
 
         res.status(201).json({});
