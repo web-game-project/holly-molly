@@ -1,10 +1,10 @@
 const { Room } = require('../../models');
 
-module.exports = async (req, res, next) => {
+const getRoomInfo = async (req, res, next) => {
     let { roomIdx } = req.params;
 
     try {
-        const roomInfo = await getRoomInfo(roomIdx);
+        const roomInfo = await selectRoomInfo(roomIdx);
         res.status(200).json(roomInfo);
     } catch (error) {
         console.log('getRoomInfo Error: ', error);
@@ -15,7 +15,7 @@ module.exports = async (req, res, next) => {
     }
 };
 
-const getRoomInfo = async (roomIdx) => {
+const selectRoomInfo = async (roomIdx) => {
     const roomInfo = await Room.findOne(
         {
             attributes: [
@@ -31,4 +31,9 @@ const getRoomInfo = async (roomIdx) => {
     );
 
     return roomInfo;
+}
+
+module.exports = {
+    getRoomInfo,
+    selectRoomInfo,
 }
