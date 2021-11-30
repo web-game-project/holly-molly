@@ -18,11 +18,17 @@ const RefreshVerification = {
     let save_user_name = JSON.parse(data) && JSON.parse(data).user_name; */
 
     const BaseURL = 'http://3.17.55.178:3002/';
-    const save_token = JSON.parse(window.localStorage.getItem("token")).access_token;                
-    const save_refreshToken = JSON.parse(window.localStorage.getItem("token")).refresh_token;
-    const save_userIdx = JSON.parse(window.localStorage.getItem("token")).user_idx;
-    const save_userName = JSON.parse(window.localStorage.getItem("token")).user_name;
 
+    //이중 장치 : 로컬스토리지 삭제
+    localStorage.removeItem("token");
+    console.log('내 refresh delete 후 : ' + JSON.stringify(localStorage.getItem("token")));
+
+    let data = localStorage.getItem('token');
+    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    let save_refreshToken = JSON.parse(data) && JSON.parse(data).refresh_token;
+    let save_userIdx = JSON.parse(data) && JSON.parse(data).user_idx;
+    let save_userName = JSON.parse(data) && JSON.parse(data).user_name;
+    
     const socket = io(BaseURL, {
       auth: {
         // 토큰 값
@@ -45,8 +51,9 @@ const RefreshVerification = {
         'Bearer ' + save_token,
       },
     };
-
-    axios
+    
+    //로컬스토리지에 데이터가 있다면, 방접속 api 요청
+    JSON.parse(data) && axios
       .get(restURL_room, reqHeaders_room)
       .then(function (response) {
         //alert("rest api 성공");
