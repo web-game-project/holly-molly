@@ -22,7 +22,7 @@ export default function UserCard({ leader, id, nickname, color, ready }) {
         ready: false,
     };
 
-    console.log('유저카드 : ' + leader );
+    console.log('유저카드 : ' + leader);
     let leader_idx = leader; // response에서 넘겨줄 임의의 방장 인덱스 값
 
     return (
@@ -283,7 +283,7 @@ const RedInnerContainer = styled.div`
 const OrangeInnerContainer = styled.div`
     width: 160px;
     height: 130px;
-    background-color: ${style.orange_fill};
+    background-color: ${style.yellow_fill};
     display: flex;
     align-items: center;
     justify-content: center;
