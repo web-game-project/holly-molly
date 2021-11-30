@@ -184,7 +184,7 @@ const PlayingResult = (props) => {
                         </UserDiv>
                         {/* 중간 결과 출력이라면? */}
 
-                        <GameMiddleResult winner={'ghost'} />
+                        {/* <GameMiddleResult winner={'ghost'} /> */}
                         {/* <GameMiddleResult winner={winner} />  */}
 
                         {/* 최종 결과 출력이라면?*/}
