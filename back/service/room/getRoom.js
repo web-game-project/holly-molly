@@ -1,12 +1,12 @@
-const { Room } = require('../../models');
 const {printErrorLog} = require('../../util/log');
 const {getWaitingRoomMemberListAndLeader} = require('./enterRoom');
+const {selectRoomInfo} = require('./getRoomInfo');
 
 module.exports = async (req, res, next) => {
     try {
         const {roomIdx} = req.params;
 
-        let room = await getRoomInfo(roomIdx);
+        let room = await selectRoomInfo(roomIdx);
 
         const { waitingRoomMemberList, leader_idx } =
             await getWaitingRoomMemberListAndLeader(roomIdx);
@@ -37,22 +37,3 @@ module.exports = async (req, res, next) => {
         });
     }
 };
-
-// 추후에 getRoomInfo.js에 있는거로 대체
-const getRoomInfo = async (roomIdx) => {
-    const roomInfo = await Room.findOne(
-        {
-            attributes: [
-                'room_idx',
-                'room_name',
-                'room_code',
-                'room_private',
-                'room_mode',
-                'room_start_member_cnt',
-            ],
-            where: { room_idx: roomIdx } 
-        },
-    );
-
-    return roomInfo;
-}
