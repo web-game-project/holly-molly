@@ -23,14 +23,14 @@ const GameVoteResult = (props) => {
         { user_rank: "1", user_name: "동선동살쾡이", wrm_user_color: "RED", vote_cnt: "2" },
         { user_rank: "2", user_name: "수유동살쾡이", wrm_user_color: "ORANGE", vote_cnt: "2" },
         { user_rank: "3", user_name: "수선동살쾡이", wrm_user_color: "YELLOW", vote_cnt: "2" },
-      //  { user_rank: "4", user_name: "방배동살쾡이", wrm_user_color: "GREEN", vote_cnt: "2" },
-      //  { user_rank: "5", user_name: "진월동살쾡이", wrm_user_color: "PURPLE", vote_cnt: "2" },
-      //  { user_rank: "6", user_name: "봉선동살쾡이", wrm_user_color: "PINK", vote_cnt: "2" },
+        { user_rank: "4", user_name: "방배동살쾡이", wrm_user_color: "GREEN", vote_cnt: "2" },
+    //    { user_rank: "5", user_name: "진월동살쾡이", wrm_user_color: "PURPLE", vote_cnt: "2" },
+    //    { user_rank: "6", user_name: "봉선동살쾡이", wrm_user_color: "PINK", vote_cnt: "2" },
     ];
 
-    let arrSize = 3; //넘어온 유저 리스트 길이 값
+    let arrSize = 4; //넘어온 유저 리스트 길이 값
 
-    let role = "human"; //역할
+    let role = "human"; //역할 (human or ghost)
 
     return (
         <Container>
@@ -73,8 +73,17 @@ const GameVoteResult = (props) => {
                 </TotalTitle>
                 {
                     role === "ghost" ? <></> :<div style={{ display: 'flex', flexDirection: 'row', marginLeft: '60px' }}>
-                    {userList && userList.map((element, key) =>
-                        <UserTotalVoteCard nickname={element.user_name} color={element.wrm_user_color} vote_cnt={element.vote_cnt} />)
+                    {
+                        arrSize <= 4 ?
+                        userList && userList.map((element, key) =>
+                            <UserTotalVoteCard nickname={element.user_name} color={element.wrm_user_color} vote_cnt={element.vote_cnt} width="120px" height="125px" innerHeight="90px" size="30px"/>)
+                    :
+                        arrSize === 5 ? 
+                        userList && userList.map((element, key) =>
+                            <UserTotalVoteCard nickname={element.user_name} color={element.wrm_user_color} vote_cnt={element.vote_cnt} width="90px" height="95px" innerHeight="60px" size="20px"/>)
+                        : 
+                        userList && userList.map((element, key) =>
+                            <UserTotalVoteCard nickname={element.user_name} color={element.wrm_user_color} vote_cnt={element.vote_cnt} width="70px" height="75px" innerHeight="40px" size="14px"/>)
                     }
                 </div>
                 }
@@ -140,7 +149,7 @@ const ResultTable = styled.div`
     border-radius: 30px;
     border:  4px solid #9978AD; //#963773
     ${(props) => props.cnt === 2 ? `width: 560px; height: 110px; margin-top: 70px; font-size: 28px;` :
-        props.cnt === 3 ? `width: 560px; height: 170px; margin-top: 70px; font-size: 28px;` : props.cnt === 4 ? `width: 560px; height: 205px; margin-top: 70px; font-size: 25px;`
+        props.cnt === 3 ? `width: 560px; height: 170px; margin-top: 70px; font-size: 28px;` : props.cnt === 4 ? `width: 560px; height: 205px; margin-top: 40px; font-size: 25px;`
        : props.cnt === 5 ? `width: 560px; height: 260px; margin-top: 40px; font-size: 25px;`
             : ` width: 560px; height: 290px; margin-top: 30px; font-size: 22px;  `} 
 `;

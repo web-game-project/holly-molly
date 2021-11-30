@@ -2,70 +2,70 @@ import style from '../styles/styles';
 import styled from 'styled-components';
 import '../assets/font.css';
 
-export default function UserTotalVoteCard({ nickname, color, vote_cnt }) {
+export default function UserTotalVoteCard({ nickname, color, vote_cnt, width, height, innerHeight, size }) {
     return (
         <div>
             {(function () {            
                 if (color == 'RED') {
                     return (
-                        <RedContainer>
+                        <RedContainer width = {width} height = {height}>
                             <Name>{nickname}</Name>
-                            <RedInnerContainer>
-                                <text style={{ marginTop: '-10px', color: style.black, fontSize: '14px'}}>{vote_cnt}표</text>
+                            <RedInnerContainer width = {width} height = {innerHeight}>
+                                <text style={{ marginTop: '-10px', color: style.black, fontSize: size}}>{vote_cnt}표</text>
                             </RedInnerContainer>
                         </RedContainer>
                     );
                 } else if (color == 'ORANGE') {
                     return (
-                        <OrangeContainer>
+                        <OrangeContainer width = {width} height = {height}>
                             <Name>{nickname}</Name>
-                            <OrangeInnerContainer>
-                            <text style={{ marginTop: '-10px', color: style.black, fontSize: '14px'}}>{vote_cnt}표</text>
+                            <OrangeInnerContainer width = {width} height = {innerHeight}>
+                            <text style={{ marginTop: '-10px', color: style.black, fontSize: size}}>{vote_cnt}표</text>
                             </OrangeInnerContainer>
                         </OrangeContainer>
                     );
                 } else if (color == 'YELLOW') {
                     return (
-                        <YellowContainer>
+                        <YellowContainer width = {width} height = {height}>
                             <Name>{nickname}</Name>
-                            <YellowInnerContainer>
-                            <text style={{ marginTop: '-10px', color: style.black, fontSize: '14px'}}>{vote_cnt}표</text>
+                            <YellowInnerContainer width = {width} height = {innerHeight}>
+                            <text style={{ marginTop: '-10px', color: style.black, fontSize: size}}>{vote_cnt}표</text>
                             </YellowInnerContainer>
                         </YellowContainer>
                     );
                 } else if (color == 'GREEN') {
                     return (
-                        <GreenContainer>
+                        <GreenContainer width = {width} height = {height}>
                             <Name>{nickname}</Name>
-                            <GreenInnerContainer>
-                            <text style={{ marginTop: '-10px', color: style.black, fontSize: '14px'}}>{vote_cnt}표</text>
+                            <GreenInnerContainer width = {width} height = {innerHeight}>
+                            <text style={{ marginTop: '-10px', color: style.black, fontSize: size}}>{vote_cnt}표</text>
                             </GreenInnerContainer>
                         </GreenContainer>
                     );
                 } else if (color == 'BLUE') {
                     return (
-                        <BlueContainer>
+                        <BlueContainer width = {width} height = {height}>
                             <Name>{nickname}</Name>
-                            <BlueInnerContainer>
-                            <text style={{ marginTop: '-10px', color: style.black, fontSize: '14px'}}>{vote_cnt}표</text>
+                            <BlueInnerContainer width = {width} height = {innerHeight}>
+                            <text style={{ marginTop: '-10px', color: style.black, fontSize: size}}>{vote_cnt}표</text>
                             </BlueInnerContainer>
                         </BlueContainer>
                     );
                 } else if (color == 'PURPLE') {
                     return (
-                        <PurpleContainer>
+                        <PurpleContainer width = {width} height = {height}>
                             <Name>{nickname}</Name>
-                            <PurpleInnerContainer>
-                            <text style={{ marginTop: '-10px', color: style.black, fontSize: '14px'}}>{vote_cnt}표</text>
+                            <PurpleInnerContainer width = {width} height = {innerHeight}>
+                            <text style={{ marginTop: '-10px', color: style.black, fontSize: size}}>{vote_cnt}표</text>
                             </PurpleInnerContainer>
                         </PurpleContainer>
                     );
                 } else if (color == 'PINK') {
                     return (
-                        <PinkContainer>
+                        <PinkContainer width = {width} height = {height}>
                             <Name>{nickname}</Name>
-                            <PinkInnerContainer>
-                            <text style={{ marginTop: '-10px', color: style.black, fontSize: '14px'}}>{vote_cnt}표</text>
+                            <PinkInnerContainer width = {width} height = {innerHeight}>
+                            <text style={{ marginTop: '-10px', color: style.black, fontSize: size}}>{vote_cnt}표</text>
                             </PinkInnerContainer>
                         </PinkContainer>
                     );
@@ -79,8 +79,8 @@ export default function UserTotalVoteCard({ nickname, color, vote_cnt }) {
 }
 
 const RedContainer = styled.div`
-    width: 70px;
-    height: 75px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};
     background-color: ${style.red_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -97,8 +97,8 @@ const RedContainer = styled.div`
 `;
 
 const OrangeContainer = styled.div`
-    width: 70px;
-    height: 75px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};
     background-color: ${style.orange_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -113,8 +113,8 @@ const OrangeContainer = styled.div`
 `;
 
 const YellowContainer = styled.div`
-    width: 70px;
-    height: 75px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};
     background-color: ${style.yellow_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -129,8 +129,8 @@ const YellowContainer = styled.div`
 `;
 
 const GreenContainer = styled.div`
-    width: 70px;
-    height: 75px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};
     background-color: ${style.green_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -145,8 +145,8 @@ const GreenContainer = styled.div`
 `;
 
 const BlueContainer = styled.div`
-    width: 70px;
-    height: 75px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};
     background-color: ${style.blue_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -161,8 +161,8 @@ const BlueContainer = styled.div`
 `;
 
 const PurpleContainer = styled.div`
-    width: 70px;
-    height: 75px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};
     background-color: ${style.purple_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -177,8 +177,8 @@ const PurpleContainer = styled.div`
 `;
 
 const PinkContainer = styled.div`
-    width: 70px;
-    height: 75px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};
     background-color: ${style.pink_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -193,8 +193,8 @@ const PinkContainer = styled.div`
 `;
 
 const RedInnerContainer = styled.div`
-    width: 70px;
-    height: 40px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};
     background-color: ${style.red_fill};
     display: flex;
     align-items: center;
@@ -212,8 +212,8 @@ const RedInnerContainer = styled.div`
 `;
 
 const OrangeInnerContainer = styled.div`
-    width: 70px;
-    height: 40px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};
     background-color: ${style.orange_fill};
     display: flex;
     align-items: center;
@@ -231,8 +231,8 @@ const OrangeInnerContainer = styled.div`
 `;
 
 const YellowInnerContainer = styled.div`
-    width: 70px;
-    height: 40px;   
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};  
     background-color: ${style.yellow_fill};
     display: flex;
     align-items: center;
@@ -250,8 +250,8 @@ const YellowInnerContainer = styled.div`
 `;
 
 const GreenInnerContainer = styled.div`
-    width: 70px;
-    height: 40px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};  
     background-color: ${style.green_fill};
     display: flex;
     align-items: center;
@@ -269,8 +269,8 @@ const GreenInnerContainer = styled.div`
 `;
 
 const BlueInnerContainer = styled.div`
-    width: 70px;
-    height: 40px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};  
     background-color: ${style.blue_fill};
     display: flex;
     align-items: center;
@@ -288,8 +288,8 @@ const BlueInnerContainer = styled.div`
 `;
 
 const PurpleInnerContainer = styled.div`
-    width: 70px;
-    height: 40px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};  
     background-color: ${style.purple_fill};
     display: flex;
     align-items: center;
@@ -307,8 +307,8 @@ const PurpleInnerContainer = styled.div`
 `;
 
 const PinkInnerContainer = styled.div`
-    width: 70px;
-    height: 40px;
+    width: ${(props) => props.width};
+    height: ${(props) => props.height};  
     background-color: ${style.pink_fill};
     display: flex;
     align-items: center;
