@@ -11,12 +11,9 @@ const getVoteResult = async (req, res, next) => {
         }
 
         const { gameSetIdx } = req.params;
-        const { game, topVoteRankList } =await calculateVoteResult(res.locals.gameIdx, gameSetIdx, undefined);
+        const { voteResultList } =await calculateVoteResultIncludedCnt(res.locals.gameIdx, gameSetIdx);
     
-        res.json({ vote_rank: topVoteRankList });
-
-        const io = req.app.get('io');
-        io.to(game.get('room_room_idx')).emit('votesubmit human answer', { human_submit: true });
+        res.json({ vote_result: voteResultList });
     } catch (error) {
         printErrorLog('getVoteResult', error);
         res.status(400).json({
@@ -100,6 +97,36 @@ const calculateVoteResult = async (gameIdx, gameSetIdx, numberLimit) => {
     }
     console.log("[***********]",topVoteRankList, score, voteCntOrderList);
     return { game, topVoteRankList, score };
+};
+
+const calculateVoteResultIncludedCnt = async (gameIdx, gameSetIdx) => {
+    const game = await Game.findOne({
+        where: { game_idx: gameIdx },
+    });
+    const gameVotes = await getVoteList(gameSetIdx);
+
+    if(!gameVotes){
+        return {game, voteResultList:[]};
+    }
+
+    let voteResultList = []; //user_idx, user_name, game_rank_no
+
+    for (const vote of gameVotes) {
+        const user = await User.findOne({
+            attributes: ['user_idx', 'user_name'],
+            where: {
+                user_idx: vote
+                    .get('game_member_game_member_idx_GameMember')
+                    .get('wrm_user_idx'),
+            },
+        });
+        voteResultList.push({
+            user_idx: user.user_idx,
+            user_name: user.user_name,
+            vote_cnt: vote.get('game_vote_cnt'),
+        });
+    }
+    return { game, voteResultList};
 };
 
 module.exports = {
