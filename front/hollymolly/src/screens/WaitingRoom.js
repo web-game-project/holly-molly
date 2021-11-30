@@ -23,17 +23,6 @@ import Loading from '../components/Loading';
 
 const BaseURL = 'http://3.17.55.178:3002';
 
-//RefreshVerification.verification();
-
-// local storage에 있는지 확인
-let data = localStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
-
-console.log('내 인덱스 : ' + save_user_idx);
-
 // room_idx 변수
 let room_idx = 0;
 
@@ -48,6 +37,13 @@ export default function WaitingRoom({ match }) {
 
     let room_index = parseInt(match.params.name); // url에 입력해준 방 인덱스
     console.log('방 번호는 ?' + room_index);
+
+    // local storage에 있는지 확인
+    let data = localStorage.getItem('token');
+    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+    let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+    let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
     const [currentSocketConnection, setCurrentSocketConnection] = useState();
 
@@ -254,12 +250,12 @@ export default function WaitingRoom({ match }) {
     const [colorList, setColorList] = useState([
         //선택 할 수 있는지 여부 배열, true : 선택가능
         { color: 'RED', choose: 'true', code: '#FF0000' },
-        { color: 'ORANGE', choose: 'true', code: '#FF5E00' },
-        { color: 'YELLOW', choose: 'true', code: '#FFE400' },
-        { color: 'GREEN', choose: 'true', code: '#1DDB16' },
-        { color: 'BLUE', choose: 'true', code: '#0B37D3' },
-        { color: 'PURPLE', choose: 'true', code: '#5F00FF' },
-        { color: 'PINK', choose: 'true', code: '#FF00DD' },
+        { color: 'ORANGE', choose: 'true', code: '#FF5C00' },
+        { color: 'YELLOW', choose: 'true', code: '#FFB800' },
+        { color: 'GREEN', choose: 'true', code: '#95DB3B' },
+        { color: 'BLUE', choose: 'true', code: '#3B8EDB' },
+        { color: 'PURPLE', choose: 'true', code: '#823BDB' },
+        { color: 'PINK', choose: 'true', code: '#CE3BDB' },
     ]);
 
     const [roomEnterInfo, setRoomEnterInfo] = useState();
@@ -550,23 +546,21 @@ export default function WaitingRoom({ match }) {
         <Background>
             {currentSocketConnection ? (
                 roomEnterInfo && roomEnterInfo ? (
+                    RefreshVerification.verification(),
                     <div>
                         <Header />
                         <Container>
                             {console.log('방장 인덱스 맞지? : ' + isLeader)}
                             <SelectDiv>
-                                selectDiv
                                 <br />
                                 {roomUpdate ? (
                                     // 소켓 변경 후 소켓 데이터로 변경
                                     <TitleDiv>
-                                        TitleDiv{result} {roomUpdate.room_idx}번 방
-                                        <br />
-                                        <Text>
-                                            방제 : {roomUpdate.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
-                                            {roomEnterInfo.room_current_member_cnt} / {roomUpdate.room_start_member_cnt} 명
-                                        </Text>
-                                        <br />
+                                       <div style={styles.roomInfoContainer}>
+                                            <div style={styles.codeContainer}>
+                                                {roomEnterInfo.room_code}
+                                            </div>
+                                            <NameContainer>{roomEnterInfo.room_name}</NameContainer>
                                         {isLeader === 1 ? (
                                             // 리더가 변경하는 컴포넌트
                                             <ModalSetting
@@ -587,16 +581,24 @@ export default function WaitingRoom({ match }) {
                                                 room_idx={roomUpdate.room_idx}
                                             />
                                         )}
+                                        </div>
+                                        {/* TitleDiv{result} {roomUpdate.room_idx}번 방 */}
+                                        {/* <br />
+                                        <Text>
+                                            방제 : {roomUpdate.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
+                                            {roomEnterInfo.room_current_member_cnt} / {roomUpdate.room_start_member_cnt} 명
+                                        </Text>
+                                        <br /> */}
                                     </TitleDiv>
                                 ) : (
                                     <TitleDiv>
-                                        TitleDiv {match.params.name}번 방
-                                        <br />
-                                        <Text>
-                                            방제 : {roomEnterInfo.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
-                                            {roomEnterInfo.room_current_member_cnt} / {roomEnterInfo.room_start_member_cnt} 명
-                                        </Text>
-                                        {isLeader === 1 ? (
+                                        <div style={styles.roomInfoContainer}>
+                                            <div style={styles.codeContainer}>
+                                                {roomEnterInfo.room_code}
+                                            </div>
+                                            <NameContainer>{roomEnterInfo.room_name}</NameContainer>
+
+                                            {isLeader === 1 ? (
                                             <ModalSetting
                                                 // 리더가 변경하는 컴포넌트
                                                 resultt={result}
@@ -607,41 +609,48 @@ export default function WaitingRoom({ match }) {
                                                 room_private={roomInfo.room_private}
                                                 room_idx={roomInfo.room_idx}
                                             />
-                                        ) : (
-                                            <InfoModal
-                                                // 리더가 변경하는 컴포넌트
-                                                title={roomInfo.room_name}
-                                                mode={roomInfo.room_mode}
-                                                member={count}
-                                                room_private={roomInfo.room_private}
-                                                room_idx={roomInfo.room_idx}
-                                            />
-                                        )}
+                                            ) : (
+                                                <InfoModal
+                                                    // 리더가 변경하는 컴포넌트
+                                                    title={roomInfo.room_name}
+                                                    mode={roomInfo.room_mode}
+                                                    member={count}
+                                                    room_private={roomInfo.room_private}
+                                                    room_idx={roomInfo.room_idx}
+                                                />
+                                            )}
+                                        </div>
+                                        {/* TitleDiv {match.params.name}번 방 */}
+                                        {/*  <br /> */}
+                                        {/*  <Text>
+                                            방제 : {roomEnterInfo.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
+                                            {roomEnterInfo.room_current_member_cnt} / {roomEnterInfo.room_start_member_cnt} 명
+                                        </Text> */}
                                     </TitleDiv>
                                 )}
-                                <BarDiv>
-                                    <BarInnerDiv>
-                                        {colorList &&
-                                            colorList.map((element, key) =>
-                                                //console.log('변경 칼라 값 ' + JSON.stringify(element.color)),
-                                                //console.log('변경 선택? : ' + element.choose),
-                                                //console.log('변경 코드 값 : ' + element.code),
-                                                element.choose === 'true' ? (
-                                                    <BarColorBox
-                                                        data={element.code}
-                                                        color={element.code}
-                                                        onClick={() => {
-                                                            colorClick(element.color);
-                                                        }}
-                                                    />
-                                                ) : selectColor === element.color ? (
-                                                    <BarColorBox color={element.code}>V</BarColorBox>
-                                                ) : (
-                                                    <BarColorBox data={element.code} color="#8C8C8C" />
-                                                )
-                                            )}
-                                    </BarInnerDiv>
-                                </BarDiv>
+                                <BarContainer>
+                                    <BarDiv>
+                                        <BarInnerDiv>
+                                            {colorList &&
+                                                colorList.map((element, key) =>
+                                                    
+                                                    element.choose === 'true' ? (
+                                                        <BarColorBox
+                                                            data={element.code}
+                                                            color={element.code}
+                                                            onClick={() => {
+                                                                colorClick(element.color);
+                                                            }}
+                                                        />
+                                                    ) : selectColor === element.color ? (
+                                                        <BarColorBox color={element.code}>V</BarColorBox>
+                                                    ) : (
+                                                        <BarColorBox data={element.code} color="#8C8C8C" />
+                                                    )
+                                                )}
+                                        </BarInnerDiv>
+                                    </BarDiv>
+                                </BarContainer>
                                 <UserDiv>
                                     <div style={styles.userListContainer}>
                                         {userList &&
@@ -664,35 +673,36 @@ export default function WaitingRoom({ match }) {
                                     style={{
                                         width: '100px',
                                         justifyContent: 'space-between',
-                                        // backgroundColor: colors.red,
+                                        marginTop: '-40px'
                                     }}
                                 >
                                     <Exit src={exit} />
-                                    <ExitText style={{ color: colors.black }}>나가기</ExitText>
+                                    <ExitText>나가기</ExitText>
                                 </div>
                             </SelectDiv>
                             <RightDiv>
-                                <Chatting room_idx={room_idx} height="560px" available={true}></Chatting>
+                                <Chatting room_idx={room_idx} height="520px" available={true}></Chatting>
                                 <StartDiv>
                                     {
                                         isLeader === 0 //방장 아님
                                             ? (console.log(style.red),
                                               changeReady === true ? (
                                                   <BtnDiv
-                                                      color="green"
+                                                      color="waiting"
                                                       onClick={() => {
                                                           readyClick(!changeReady);
                                                       }}
                                                   >
-                                                      Waiting...
+                                                      준비 완료
                                                   </BtnDiv>
                                               ) : (
                                                   <BtnDiv
+                                                      color="ready"
                                                       onClick={() => {
                                                           readyClick(!changeReady);
                                                       }}
                                                   >
-                                                      Game Ready
+                                                      게임 준비
                                                   </BtnDiv>
                                               ))
                                             : //방장이다.
@@ -701,7 +711,7 @@ export default function WaitingRoom({ match }) {
                                                   //일단 플레잉룸으로 넘어가기 위한 하드코딩 밑에 주석임 지울 예정
                                                   // startMember === ready_cnt ? (
                                                   <BtnDiv isStart="yes" onClick={startClick}>
-                                                      Game Start
+                                                      게임 시작
                                                   </BtnDiv>
                                               )) //게임 시작 api 요청 onclick 달기
                                         // ) : (
@@ -726,13 +736,49 @@ const styles = {
     userListContainer: {
         display: 'flex',
         alignItems: 'flex-start',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         flexDirection: 'column',
-        width: '590px',
+        width: '570px',
         height: '410px',
         flexFlow: 'row wrap',
     },
+
+    roomInfoContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '625px',
+        height: '50px',
+    },
+
+    codeContainer: {
+        width: '70px',
+        height: '20px',
+        backgroundColor: '#A274D5',
+        color: '#ffffff',
+        fontFamily: 'Jua',
+        borderRadius: '20px', 
+        fontSize: '13px',
+        textAlign: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    
 };
+
+const NameContainer = styled.text`
+  font-size: 45px;
+  font-family: Black Han Sans;
+  -webkit-text-stroke: 1px #000000; // 53305e
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 4px 4px 0px #000000; 
+  height: 50px;
+  text-align: center;
+  margin-left: 15px;
+  margin-right: 15px;
+`;
 
 const Background = styled.div`
     background-color: #180928;
@@ -758,59 +804,77 @@ const Container = styled.div`
 
 const SelectDiv = styled.div`
     text-align: center;
-    width: 800px;
-    height: 620px;
-    background-color: #ffe5e5;
+    width: 780px;
+    height: 600px;
+    //background-color: #ffe5e5;
     justify-content: center;
     align-items: center;
 `;
 
 const RightDiv = styled.div`
     width: 220px;
-    height: 620px;
-    overflow: hidden;
-`;
-
-const ChatDiv = styled.div`
-    width: 220px;
-    height: 560px;
-    background-color: #ffe7a8;
+    height: 600px;
+    padding: 10px;
     overflow: hidden;
 `;
 
 const StartDiv = styled.div`
     width: 220px;
-    height: 60px;
+    height: 75px;
     overflow: hidden;
 `;
 
 const BtnDiv = styled.div`
-    width: 220px;
-    height: 40px;
-    margin-top: 10px;
-    background-color: #ff0000;
-    border-radius: 10px;
-    box-shadow: 0px 3px 3px #878787;
-    font-size: 25px;
+    width: 210px;
+    height: 38px;
+    margin-top: 20px;
+    background-color: #FFFFFF;
+    border-radius: 18px;
+    border: 3px solid #A274D5; 
+    color: #A274D5;
+    box-shadow: 2px 2px 2px #878787, 4px 4px 4px #878787;
+    font-size: 27px;
     text-align: center;
-    ${(props) => (props.color == 'green' ? `background-color: #44A024;` : ``)}
+    display: flow;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background: #A274D5;
+        color: white;
+        border: 3px solid #A274D5;
+        cursor: grab;
+    }
+    //${(props) => (props.color == 'waiting' ? `background-color: #FFFFFF; color: #B7A8FB; border: 3px solid #B7A8FB;` : ``)}
+    //${(props) => (props.color == 'ready' ? `background-color: #FFFFFF; color: #B7A8FB; border: 3px solid #B7A8FB;` : ``)}
     ${(props) => (props.isStart == 'yes' ? `` : props.isStart == 'no' ? `opacity: 0.5;` : ``)}
 `;
 const TitleDiv = styled.div`
     width: 625px;
-    height: 70px;
-    margin-top: 25px;
-    background-color: #ffffff;
+    height: 50px;
+    //margin-top: 25px;
+    margin-bottom: 20px;
+    //background-color: #fff3ca;
     text-align: center;
     display: inline-block;
     overflow: hidden;
 `;
 
+const BarContainer = styled.div`
+    width: 625px;
+    text-align: center;
+    display: inline-block;
+    overflow: hidden;
+    margin-left: 49px;
+`;
+
 const UserDiv = styled.div`
-    width: 590px;
-    height: 390px;
+    width: 600px;
+    padding: 5px;
+    height: 420px;
     margin-top: 10px;
-    background-color: #fff3ca;
+    margin-left: 80px;
+    //background-color: #fff3ca;
     display: inline-block;
     overflow: hidden;
     align-items: center;
@@ -820,7 +884,7 @@ const UserDiv = styled.div`
 
 const BarDiv = styled.div`
     width: 450px;
-    height: 35px;
+    height: 50px;
     //background-color: #6880fb;
     display: inline-block;
     overflow: hidden;
@@ -832,7 +896,7 @@ const BarInnerDiv = styled.div`
     background-size: contain;
     margin-left: 15px;
     margin-top: 3px;
-    //border-width:1;
+    border: 3px solid black;
     //border-style: solid;
     display: flex;
     flex-direction: row;
@@ -852,7 +916,7 @@ const BarColorBox = styled.div`
     ${(props) =>
         props.color == '#FF0000' || props.data == '#FF0000'
             ? `background-color: ${props.color}; border-top-left-radius: 15px; border-bottom-left-radius: 15px;`
-            : props.color == '#FF00DD' || props.data == '#FF00DD'
+            : props.color == '#CE3BDB' || props.data == '#CE3BDB'
             ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
             : `background-color: ${props.color};`}
 `;
@@ -872,15 +936,13 @@ const Exit = styled.img`
 `;
 
 const ExitText = styled.text`
-    color: #c11b1b;
+    color: #000000;
     font-size: 13px;
     font-weight: light;
     // -webkit-text-stroke: 1px #c00202;
     margin-top: -5px;
 
     &:hover {
-        background-color: ${style.light_green};
-        border: 1px solid ${style.white};
-        color: ${style.red};
+        color: #ff0000;
     }
 `;
