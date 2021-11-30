@@ -56,6 +56,7 @@ const Backgroundimg = styled.div`
     background-size: contain;
     background-position: center center;
     background-repeat: no-repeat;
+    border-radius: 1.5rem;
 `;
 
 const StartDiv = styled.div`

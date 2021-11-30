@@ -307,6 +307,7 @@ const Button = styled.button`
         background: palevioletred;
         color: white;
         border: white;
+        cursor: grab;
     }
 `;
 
