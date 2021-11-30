@@ -4,6 +4,8 @@ import Modal from 'react-modal';
 import styled from 'styled-components';
 import style from '../styles/styles';
 import { ReactComponent as SettingIcon } from '../assets/settingIcon.svg'; // 방 세팅 버튼
+import { ReactComponent as SettingsIcon } from '../assets/SettingsIcon.svg';
+
 // 소켓
 import { io } from 'socket.io-client';
 import axios from 'axios';
@@ -210,7 +212,8 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
 
     return (
         <div>
-            <SettingIcon
+            <SettingsIcon
+                style={{ marginTop: '25px' }}
                 onClick={() => {
                     openModal();
                 }}
