@@ -27,16 +27,6 @@ let total_room_cnt = 0; // 룸 리스트 총 방의 갯수
 
 //RefreshVerification.verification();
 
-// local storage에 있는지 확인
-let data = localStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
-
-console.log('save_token: ' + save_token);
-console.log('save_user_name: ' + save_user_name);
-
 const RoomList = () => {
     const history = useHistory();
 
@@ -60,6 +50,27 @@ const RoomList = () => {
     };
 
     const resultArray = result.sort();
+
+    let data = localStorage.getItem('token');
+    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+    let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+    let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
+
+    console.log('delete 후 save_token: ' + save_token);
+    console.log('delete 후 save_user_name: ' + save_user_name);
+
+  /*   useEffect(() => {
+        // local storage에 있는지 확인
+        data = localStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+        save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+        save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+        save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
+
+        console.log('save_token: ' + save_token);
+        console.log('save_user_name: ' + save_user_name);
+    }); */
 
     useEffect(() => {
         const socket = io('http://3.17.55.178:3002/', {
