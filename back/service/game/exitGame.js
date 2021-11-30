@@ -22,7 +22,6 @@ const exitGame = async (req, res, next) => {
 
 const exitGameAndRoom = async (user, io) => {
     try {
-        console.log("#######exitGameAndRoom");
         const { game, gameMember } = await getGameAndMember(user.user_idx);
         const { room, roomMember } = await getRoomAndMember(user.user_idx);
         if(!gameMember && !roomMember)  return true;
