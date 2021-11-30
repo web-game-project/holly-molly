@@ -22,6 +22,7 @@ import PlayingLoading from './components/PlayingLoading';
 //정희
 import GameRoleComponent from './components/GameRoleComponent';
 import ModalNickName from './components/ModalNickName';
+import PlayingVote from './screens/PlayingVote';
 
 const htmlTitle = document.querySelector('title');
 htmlTitle.innerHTML = '홀리몰리';
@@ -38,6 +39,7 @@ export default function App() {
                     {/* 정희 역할부여 테스트 */}
                     <Route path="/gameRole" component={GameRoleComponent}></Route>
                     <Route path="/nickname" component={ModalNickName}></Route>
+                    <Route path="/vote" component={PlayingVote}></Route>
 
                     {/* 테스트 끝나면 삭제할거임- 연희 */}
                     <Route path="/gameMissionPerformance" component={GameMissionPerformance}></Route>

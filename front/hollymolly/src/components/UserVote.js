@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import '../assets/font.css';
 
 import roundVote from '../assets/roundVote.png';
-import squareVote from '../assets/squareVote.png';
 
 export default function UserVote({ nick, color }) {
     const [clicked, isClicked] = useState(0);
@@ -260,7 +259,7 @@ const PinkInnerContainer = styled.div`
     padding-top: 5px;
 `;
 
-const Name = styled.h4`
+const Name = styled.div`
     color: white;
     text-align: center;
     margin-top: 7px;
@@ -269,16 +268,10 @@ const Name = styled.h4`
     align-items: center;
     justify-content: center;
     align-self: center;
+    font-size: 20px;
     // background-color: blue;
     // font-family: 'Hahmlet', serif;
     // @import url('https://fonts.googleapis.com/css2?family=East+Sea+Dokdo&display=swap');
-`;
-
-const SquareVote = styled.img`
-    // position: absolute;
-    margin-top: -10px;
-    z-index: 0; // 안되면 30으로 바꿔보기..
-    width: 200px;
 `;
 
 const RoundVote = styled.img`
