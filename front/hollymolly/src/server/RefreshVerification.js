@@ -20,8 +20,8 @@ const RefreshVerification = {
     const BaseURL = 'http://3.17.55.178:3002/';
 
     //이중 장치 : 로컬스토리지 삭제
-    localStorage.removeItem("token");
-    console.log('내 refresh delete 후 : ' + JSON.stringify(localStorage.getItem("token")));
+    /* localStorage.removeItem("token");
+    console.log('내 refresh delete 후 : ' + JSON.stringify(localStorage.getItem("token"))); */
 
     let data = localStorage.getItem('token');
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
@@ -73,8 +73,11 @@ const RefreshVerification = {
               //response로 access token 반환
               alert("success! " + response.data.access_token);
 
+              localStorage.removeItem("token");
+              console.log('내 refresh delete 후 : ' + JSON.stringify(localStorage.getItem("token")));
+
               //받은 access_token이랑 유저 인덱스로 다시 저장
-              window.localStorage.setItem(
+              localStorage.setItem(
                 "token",
                 JSON.stringify({
                   access_token: response.data.access_token,

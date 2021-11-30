@@ -59,8 +59,6 @@ const RoomList = () => {
 
     console.log('delete 후 save_token: ' + save_token);
     console.log('delete 후 save_user_name: ' + save_user_name);
-
-    RefreshVerification.verification();
     
   /*   useEffect(() => {
         // local storage에 있는지 확인
@@ -396,7 +394,8 @@ const RoomList = () => {
     return (
         <React.Fragment>
             <Background>
-                {currentSocketConnection ? (
+                {currentSocketConnection ? (                    
+                        RefreshVerification.verification(),                    
                     <div>
                         <Header goMain tutorial />
                         <Container>
