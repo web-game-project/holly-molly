@@ -189,11 +189,10 @@ const PlayingResult = (props) => {
 
                         {/* 최종 결과 출력이라면?*/}
 
-                         {/* <GameFinalResult data={dummyTest} /> */}
+                        <GameFinalResult data={dummyTest} />
 
                         {/* 최종 결과 공개라면? */}
-                        <GameOpenResult data={dummyOpenResultTest} />
-
+                        {/* <GameOpenResult data={dummyOpenResultTest} /> */}
 
                         <ChatDiv>
                             {/* <Chatting /> */}
