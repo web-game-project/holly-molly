@@ -57,12 +57,15 @@ export default function ModalBase() {
         setIsOpen(false);
     }
 
-    let subtitle;
-
     function afterOpenModal() {
         // references are now sync'd and can be accessed.
         // subtitle.style.color = '#f00';
     }
+
+    useEffect(()=> {
+        localStorage.removeItem("token");
+        console.log('내 인덱스 delete 후 : ' + JSON.stringify(localStorage.getItem("token")));
+    });
 
     const createNickname = async () => {
         //alert('페이지 이동 고고'+ nickName);
@@ -73,9 +76,10 @@ export default function ModalBase() {
             name: nickName
         })
             .then(function (response) { //response로 jwt token 반환
-                alert('success! ' + response.data.access_token);
+                alert('success!' + response.data.user_idx);
+              //  alert('success! ' + response.data.access_token);
 
-                window.localStorage.setItem("token", JSON.stringify({
+                localStorage.setItem("token", JSON.stringify({
                     access_token: response.data.access_token,
                     refresh_token: response.data.refresh_token,
                     user_idx: response.data.user_idx,
@@ -84,15 +88,15 @@ export default function ModalBase() {
 
                  // 리덕스 store에 baseURL 넣기 
                 dispatch(socketActions.socketAction( 'http://3.17.55.178:3002/' )); 
-
-
+                //history.push("/roomlist");
+                window.location.replace("/roomlist")
             })
             .catch(function (error) {
                 alert(error);
             })
 
         //window.location.href = '/roomlist';
-        history.push("/roomlist");
+        //history.push("/roomlist");
     }
 
     const onChange = (e) => {

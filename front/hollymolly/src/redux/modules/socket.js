@@ -18,7 +18,7 @@ const initialState = {
 const socketAction = (base_url) => {
     return function (dispatch, getState, {history}) {
         dispatch(receiveSocket(base_url));
-        history.push("/roomlist");
+        //history.push("/roomlist");
     }
 }
 
