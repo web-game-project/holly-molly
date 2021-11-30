@@ -12,7 +12,7 @@ module.exports = async (req, res, next) => {
         if (!page) {
             offset = 0;
         } else {
-            offset = 6 * (page - 1);
+            offset = 6 * (page - 1); //0,6,12,18,...
         }
 
         const rooms = await getRoomList(
@@ -74,7 +74,7 @@ const getRoomList = async (offset, roomMode, startMember, isWaiting) => {
     );
     const roomList = await db.sequelize.query(
         `SELECT room_idx, room_name, room_mode, room_start_member_cnt, count(room_idx) as room_current_member_cnt, room_status FROM Room
-        LEFT OUTER JOIN WaitingRoomMember as wrm
+        INNER JOIN WaitingRoomMember as wrm
         ON room_idx = room_room_idx
         WHERE room_mode IN ${room_mode} AND room_start_member_cnt IN ${room_start_member_cnt} AND room_status IN ${room_status} AND room_private != 1
         GROUP BY room_idx
