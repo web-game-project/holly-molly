@@ -21,7 +21,6 @@ import Header from '../components/Header.js';
 
 import Loading from '../components/Loading';
 
-
 const BaseURL = 'http://3.17.55.178:3002';
 
 // local storage에 있는지 확인
@@ -47,7 +46,7 @@ export default function WaitingRoom({ match }) {
     console.log('방 번호는 ?' + room_index);
 
     const [currentSocketConnection, setCurrentSocketConnection] = useState();
-    
+
     useEffect(() => {
         const socket = io('http://3.17.55.178:3002/', {
             auth: {
@@ -56,7 +55,7 @@ export default function WaitingRoom({ match }) {
         });
 
         socket.on('connect', () => {
-            console.log(socket.connected)
+            console.log(socket.connected);
             setCurrentSocketConnection(socket.connected);
             //alert(socket.connected);
         });
@@ -362,7 +361,7 @@ export default function WaitingRoom({ match }) {
 
     function colorClick(str) {
         alert('click: ' + str);
-        
+
         const restURL = BaseURL + '/waiting-room/user-color';
 
         const reqHeaders = {
@@ -383,7 +382,6 @@ export default function WaitingRoom({ match }) {
             .then(function (response) {
                 alert('rest ' + response.data);
                 setSelectColor(str); //내가 선택한 색
-                
             })
             .catch(function (error) {
                 alert('error ' + error.message);
@@ -487,6 +485,7 @@ export default function WaitingRoom({ match }) {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
+                console.log(response.data);
                 setRoomEnterInfo(response.data);
                 console.log('대기실 데이터 성공');
                 //room index 설정
@@ -570,7 +569,7 @@ export default function WaitingRoom({ match }) {
                                         <TitleDiv>
                                             <div style={styles.roomInfoContainer}>
                                                 <div style={styles.codeContainer}>{roomEnterInfo.room_code}</div>
-                                                <NameContainer>{roomEnterInfo.room_name}</NameContainer>
+                                                <NameContainer>{roomUpdate.room_name}</NameContainer>
                                                 {isLeader === 1 ? (
                                                     // 리더가 변경하는 컴포넌트
                                                     <ModalSetting
@@ -863,7 +862,8 @@ const TitleDiv = styled.div`
     height: 55px;
     //margin-top: 25px;
     margin-bottom: 20px;
-    //background-color: #fff3ca;
+    margin-left: 30px;
+    // background-color: #fff3ca;
     text-align: center;
     display: inline-block;
     overflow: hidden;

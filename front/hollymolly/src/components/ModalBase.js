@@ -46,42 +46,19 @@ export default function ModalBase() {
         },
     };
 
-    useEffect(() => {
-        socket.on('error', () => {
-            setTimeout(() => {
-                socket.connect();
-                console.log(socket);
-            }, 1000);
-        });
-
-        // 소켓이 서버에 연결되어 있는지 여부
-        // 연결 성공 시 시작
-        socket.on('connect', () => {
-            console.log('room connection server!');
-        });
-
-        // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
-        socket.on('disconnect', (reason) => {
-            if (reason === 'io server disconnect') {
-                // the disconnection was initiated by the server, you need to reconnect manually
-                socket.connect();
-            }
-            // else the socket will automatically try to reconnect
-        });
-        //}
-    }, []);
-
     const inputRef = useRef();
     let roomMode = '';
 
     // 난이도 useState
-    const [isChecked, setIschecked] = React.useState(true);
+    const [isChecked, setIschecked] = React.useState(true); // 디폴트 이지 -> true
     const isHard = () => {
-        if (isChecked === true) setIschecked(!isChecked);
+        // 하드로 만들어라
+        if (isChecked === true) setIschecked(!isChecked); // 이지면 하드로 만들어라
         console.log('선택) 난이도 상');
     };
     const isEasy = () => {
-        if (isChecked === false) setIschecked(!isChecked);
+        //이지로 만들어라
+        if (isChecked === false) setIschecked(!isChecked); //하드면 이지로 만들어라
         console.log('선택) 난이도 하');
     };
 
@@ -121,6 +98,7 @@ export default function ModalBase() {
             inputRef.current.value = '어서들어오세요! 기본방'; // 제목 안적으면 디폴트
         }
         if (isChecked) {
+            // 이지면
             // easy
             roomMode = 'easy';
             console.log('모드는? easy');
