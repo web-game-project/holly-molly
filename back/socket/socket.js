@@ -40,7 +40,7 @@ module.exports = (server, app) => {
                 printErrorLog('socket-socketUse', error);
                 return next(new Error('unauthorized event'));
             }
-           
+            
             next();
         });
     });
@@ -66,8 +66,10 @@ const saveSocketId = async (socket) => {
             },
             { where: { user_idx: tokenValue.user_idx } }
         );
-
-        //socket.user_idx = tokenValue.user_idx;
+        
+        socket.user_idx = tokenValue.user_idx;
+        socket.user_name = tokenValue.user_name;
+        
         // Join to room based on db
         const roomMember = await WaitingRoomMember.findOne({
             attribute: ['room_room_idx'],
