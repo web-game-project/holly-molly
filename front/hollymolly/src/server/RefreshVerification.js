@@ -36,12 +36,6 @@ const RefreshVerification = {
       },
     });
 
-    // 소켓이 서버에 연결되어 있는지 여부
-    // 연결 성공 시 시작
-    socket.on("connect", () => {
-      console.log("success refresh");
-    });
-
     var restURL_room = BaseURL + "room";
 
     const reqHeaders_room = {
@@ -62,13 +56,14 @@ const RefreshVerification = {
         var errTxt = '"로그인 후 이용해주세요."';
         // alert(JSON.stringify(error.response.data.message));
         // 로그인 후 이용해주세요 텍스트와 같다면 refresh api 요청
+        //alert(JSON.stringify(error.response.data.message))
         if (errTxt === JSON.stringify(error.response.data.message)) {
           const restURL_refresh = BaseURL + "login/refresh";
 
           axios
             .post(restURL_refresh, {
               refresh_token: save_refreshToken,
-            })
+            }, reqHeaders_room)
             .then(function (response) {
               //response로 access token 반환
               alert("success! " + response.data.access_token);
@@ -90,7 +85,7 @@ const RefreshVerification = {
             .catch(function (error) {
               alert(error);
             });
-        } else alert("네트워크가 불안정합니다. 새로고침 부탁드립니다.");
+        }
       });
     },
 };
