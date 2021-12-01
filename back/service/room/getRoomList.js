@@ -48,7 +48,7 @@ module.exports = async (req, res, next) => {
 };
 
 const getRoomList = async (offset, roomMode, startMember, isWaiting) => {
-    console.log(typeof roomMode, typeof startMember, typeof isWaiting);
+    console.log("getRoomList",typeof roomMode, typeof startMember, typeof isWaiting);
 
     let room_mode = '("easy","hard")';
     let room_start_member_cnt = '(4, 5, 6)';
