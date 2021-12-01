@@ -68,37 +68,47 @@ export default function ModalBase({ tutorial }) {
     });
 
     const createNickname = async () => {
-        //alert('페이지 이동 고고'+ nickName);
+        const regex = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]*$/; // 한글, 영어, 숫자, 공백 허용
 
-        const url = 'http://3.17.55.178:3002/login';
+        const str = nickName; // str 변수에 저장
 
-        axios
-            .post(url, {
-                name: nickName,
-            })
-            .then(function (response) {
-                //response로 jwt token 반환
-                alert('success!' + response.data.user_idx);
-                //  alert('success! ' + response.data.access_token);
+        const usable = regex.test(str); // 정규식 테스트
 
-                localStorage.setItem(
-                    'token',
-                    JSON.stringify({
-                        access_token: response.data.access_token,
-                        refresh_token: response.data.refresh_token,
-                        user_idx: response.data.user_idx,
-                        user_name: nickName,
-                    })
-                );
+        if (str.length < 2 || str.length > 10 || usable === false) {
+            setNickName('');
+            alert('2~10자의 한글, 영문, 숫자만 사용할 수 있습니다.');
+        }
+        else if (usable === true) {
+            const url = 'http://3.17.55.178:3002/login';
 
-                // 리덕스 store에 baseURL 넣기
-                dispatch(socketActions.socketAction('http://3.17.55.178:3002/'));
-                //history.push("/roomlist");
-                window.location.replace('/roomlist');
-            })
-            .catch(function (error) {
-                alert(error);
-            });
+            axios
+                .post(url, {
+                    name: nickName,
+                })
+                .then(function (response) {
+                    //response로 jwt token 반환
+                    alert('success!' + response.data.user_idx);
+                    //  alert('success! ' + response.data.access_token);
+
+                    localStorage.setItem(
+                        'token',
+                        JSON.stringify({
+                            access_token: response.data.access_token,
+                            refresh_token: response.data.refresh_token,
+                            user_idx: response.data.user_idx,
+                            user_name: nickName,
+                        })
+                    );
+
+                    // 리덕스 store에 baseURL 넣기
+                    dispatch(socketActions.socketAction('http://3.17.55.178:3002/'));
+                    //history.push("/roomlist");
+                    window.location.replace('/roomlist');
+                })
+                .catch(function (error) {
+                    alert(error);
+                });
+        }
 
         //window.location.href = '/roomlist';
         //history.push("/roomlist");
@@ -142,11 +152,11 @@ export default function ModalBase({ tutorial }) {
                     <input
                         style={styles.input}
                         type="text"
-                        placeholder="              닉네임을 입력해주세요."
+                        placeholder="           닉네임을 입력해주세요."
                         onChange={onChange}
                         value={nickName}
                     ></input>
-                    <text style={styles.usable}>＊한글2~8자 또는 영문2~16자, 특수문자 입력 불가능 </text>
+                    <text style={styles.usable}>＊한글, 영문, 숫자 2~10자까지 가능, 특수문자 입력 불가능 </text>
 
                     <BtnDiv>
                         <Button color="purple" onClick={createNickname}>
@@ -220,28 +230,27 @@ const Button = styled.div`
 
     ${(props) =>
         props.color == 'red'
-            ? `
-                                        background-color: ${style.red}; 
-                                        margin-left: 10px; 
-                                        margin-right: 25px;
-                                        border: 2px solid ${style.red};
-                                        &:hover { 
-                                            background-color: ${style.white};
-                                            color: ${style.red};
-                                            border: 2px solid ${style.red};
-                                            cursor: grab;
-                                        }`
+            ? `background-color: ${style.red}; 
+                margin-left: 10px; 
+                margin-right: 25px;
+                border: 2px solid ${style.red};
+                &:hover { 
+                    background-color: ${style.white};
+                    color: ${style.red};
+                    border: 2px solid ${style.red};
+                    cursor: grab;
+                }`
             : `
-                                        background: linear-gradient(to right, #5c258f, #4389a2);
-                                        color: ${style.white};                                                                    
-                                        border: 2px solid #4389a2;                 
-                                        &:hover { 
-                                            color:  ${style.white}; 
-                                            border-image: linear-gradient(to right, #5c258d, #4389a2);
-                                            border-image-slice: 2;                                                                        
-                                            border: 2px solid;
-                                            cursor: grab;
-                                        }`}
+                background: linear-gradient(to right, #5c258f, #4389a2);
+                color: ${style.white};                                                                    
+                border: 2px solid #4389a2;                 
+                &:hover { 
+                    color:  ${style.white}; 
+                    border-image: linear-gradient(to right, #5c258d, #4389a2);
+                    border-image-slice: 2;                                                                        
+                    border: 2px solid;
+                    cursor: grab;
+                }`}
 `;
 
 const styles = {
@@ -255,13 +264,13 @@ const styles = {
         borderRadius: 10,
     },
     usable: {
-        fontSize: 12,
+        fontSize: 14,
         color: style.white,
         display: 'flex',
         alignitems: 'center',
         justifycontent: 'center',
         marginTop: '10px',
-        marginLeft: '25%',
+        marginLeft: '18%',
         // color: '#FF0000',
         textAlign: 'center',
         width: '100%',
