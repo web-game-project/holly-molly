@@ -52,11 +52,11 @@ const GameDrawing = (props) => {
     const drawingTime = useRef(true); // 그릴 수 있는 시간을 관리하는 변수  
 
     // ** 넘어온 props 값 & save_token 값으로 바꾸기 
-   /*  let user_order = 2;
-    let user_color = "ORANGE"; // RED, ORANGE, YELLOW, GREEN, BLUE, PINK, PURPLE 
-    let user_room_index = 53;
-    let user_idx = 3;
-    let user_member_count = 2; */
+    /*  let user_order = 2;
+     let user_color = "ORANGE"; // RED, ORANGE, YELLOW, GREEN, BLUE, PINK, PURPLE 
+     let user_room_index = 53;
+     let user_idx = 3;
+     let user_member_count = 2; */
     // ** 
     //8번
     let user_order = 1;
@@ -171,7 +171,7 @@ const GameDrawing = (props) => {
                 setPossible(false);
                 if (orderCount.current === user_member_count) {
                     clearInterval(countdown);
-                    console.log("모든 순서 끝!");                    
+                    console.log("모든 순서 끝!");
                     //여기서 투표로 넘어가기
                 } else {
                     // 다음 순서 받을 준비 완료 
@@ -232,31 +232,40 @@ const GameDrawing = (props) => {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // 그림 초기화 
     }
 
-    let ImgUrl ;
+    let ImgUrl;
 
     return (
         <React.Fragment>
-            {
-                
-                console.log('가능? ' + possible),
-                    possible === true?(
-                    ImgUrl = "../assets/timer_" + seconds + ".png",
-                    //dia = "../assets/timer_1.png",
-                    console.log('얌? ' + ImgUrl),
-                    seconds > 0 ?                    
-                    <img src = {require("../assets/timer_" + seconds + ".png").default} style={{width: '130px', height: '50px', backgroundSize: 'contain', marginTop: '20px',marginLeft: '570px', zIndex: '1'}}/>
-                    : ''
-                    ): 
-                        ''
-                }      
             그림그리기 시간 : {seconds}
             <br />순서 기다리는 시간 : {waitSeconds}
             <br />내 순서 : {user_order}
             <br />내 색깔 : {user_color}
             <br />현재 순서 : {orderCount.current}
             <Container>
-                          
-                <canvas ref={canvasRef} width="650" height={"620"} />
+                {
+                    (console.log('가능? ' + possible),
+                        // possible === true
+                        // ?
+                        ((ImgUrl = '../assets/timer_' + seconds + '.png'),
+                            //dia = "../assets/timer_1.png",
+                            console.log('얌? ' + ImgUrl),
+                            seconds > 0 ? (
+                                <img
+                                    src={require('../assets/timer_' + seconds + '.png').default}
+                                    style={{
+                                        width: '130px',
+                                        height: '50px',
+                                        backgroundSize: 'contain',
+                                        marginTop: '20px',
+                                        marginLeft: '570px',
+                                        zIndex: '2',
+                                    }}
+                                />
+                            ) : (
+                                ''
+                            )))
+                }
+                <canvas ref={canvasRef} width="650" height={'620'} />
             </Container>
             <button onClick={onClick}>초기화</button>
         </React.Fragment>
