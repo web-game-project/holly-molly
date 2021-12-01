@@ -42,18 +42,19 @@ export default function WaitingRoom({ match }) {
     let location = useLocation();
     const history = useHistory();
 
+    const socket = io('http://3.17.55.178:3002/', {
+            auth: {
+                token: save_token,
+            },
+            transports: ['websocket']
+    });
+
     let room_index = parseInt(match.params.name); // url에 입력해준 방 인덱스
     console.log('방 번호는 ?' + room_index);
 
     const [currentSocketConnection, setCurrentSocketConnection] = useState();
 
     useEffect(() => {
-        const socket = io('http://3.17.55.178:3002/', {
-            auth: {
-                token: save_token,
-            },
-        });
-
         socket.on('connect', () => {
             console.log(socket.connected);
             setCurrentSocketConnection(socket.connected);

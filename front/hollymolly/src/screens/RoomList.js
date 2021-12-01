@@ -56,16 +56,14 @@ const RoomList = () => {
     let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-    //console.log('delete 후 save_token: ' + save_token);
-    //console.log('delete 후 save_user_name: ' + save_user_name);
-
-    useEffect(() => {
-        const socket = io('http://3.17.55.178:3002/', {
+    const socket = io('http://3.17.55.178:3002/', {
             auth: {
                 token: save_token,
             },
-        });
+            transports: ['websocket']
+    });
 
+    useEffect(() => {
         socket.on('connect', () => {
             console.log('room list connection server');
             setCurrentSocketConnection(socket.connected);
