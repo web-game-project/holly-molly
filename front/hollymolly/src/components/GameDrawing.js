@@ -16,9 +16,9 @@ let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const socket = io('http://3.17.55.178:3002/', {
     auth: {
-        //token: save_token, props
+        token: save_token,
         // 3번 토큰 edge
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MywidXNlcl9uYW1lIjoiaHkiLCJpYXQiOjE2MzI4MzMwMTd9.-i36Z3KoqzCfgtVNl1-c8h5fZNSZ8Nlhnp4UI41tFxM"
+        //token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MywidXNlcl9uYW1lIjoiaHkiLCJpYXQiOjE2MzI4MzMwMTd9.-i36Z3KoqzCfgtVNl1-c8h5fZNSZ8Nlhnp4UI41tFxM"
         // 8번 토큰
         //token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
     },
@@ -29,7 +29,7 @@ socket.on('connect', () => {
 });
 
 const GameDrawing = (props) => {
-    //const {user_order, user_color, user_room_index, user_idx, user_member_count} = props;
+    const {order, color, room_idx, idx, member_count} = props;
 
     const [possible, setPossible] = useState(true);
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머
@@ -41,12 +41,13 @@ const GameDrawing = (props) => {
     const drawingTime = useRef(true); // 그릴 수 있는 시간을 관리하는 변수
 
     // ** 넘어온 props 값 & save_token 값으로 바꾸기
-     let user_order = 2;
-    let user_color = "ORANGE"; // RED, ORANGE, YELLOW, GREEN, BLUE, PINK, PURPLE 
-    let user_room_index = 53;
-    let user_idx = 3;
-    let user_member_count = 2;
+    let user_order = parseInt(order);
+    let user_color = color; // RED, ORANGE, YELLOW, GREEN, BLUE, PINK, PURPLE 
+    let user_room_index = parseInt(room_idx);
+    let user_idx = parseInt(idx);
+    let user_member_count = parseInt(member_count);
     // **
+    
     //8번
    /*  let user_order = 1;
     let user_color = 'RED'; // RED, ORANGE, YELLOW, GREEN, BLUE, PINK, PURPLE
@@ -158,6 +159,9 @@ const GameDrawing = (props) => {
                 // 타이머 종료,
                 console.log('그림 그리기 시간 끝');
 
+                // 순서 증가 
+                orderCount.current += 1;
+
                 drawingTime.current = false; // 그림 그리기 시간 끝
                 setPossible(false);
                 if (orderCount.current === user_member_count) {
@@ -172,6 +176,7 @@ const GameDrawing = (props) => {
                         room_idx: user_room_index,
                         user_idx: user_idx,
                         member_count: user_member_count,
+                        draw_order: orderCount.current
                     });
 
                     // 다음 순서 받을 준비 완료 소켓 보내고 3초 시간 잼
@@ -200,7 +205,7 @@ const GameDrawing = (props) => {
                     console.log('다음 순서 받기');
                     setWaitSeconds(-1);
                     setReadyNextOrder(false); // 다시 다음 순서 받을 준비
-                    orderCount.current += 1; // 순서 바꾸기
+                    //orderCount.current += 1; // 순서 바꾸기
                     setReDraw(!reDraw); // 그리기 준비
                     drawingTime.current = true;
                     setPossible(true);
@@ -255,16 +260,16 @@ const GameDrawing = (props) => {
 
     return (
         <React.Fragment>
-            그림그리기 시간 : {seconds}
+            {/* 그림그리기 시간 : {seconds}
             <br />
             순서 기다리는 시간 : {waitSeconds}
             <br />내 순서 : {user_order}
             <br />내 색깔 : {user_color}
             <br />
-            현재 순서 : {orderCount.current}
+            현재 순서 : {orderCount.current} */}
             <Container>                
-                <div style={{backgroundColor: style.white}}>
-                    <canvas id = "draw" ref={canvasRef} width="650" height={'620'}>
+                <div style={{backgroundColor: style.white, borderRadius: '15px'}}>
+                    <canvas id = "draw" ref={canvasRef} width="610" height={'600'}>
                     </canvas>
                 </div>
                 {
@@ -292,8 +297,8 @@ const GameDrawing = (props) => {
                     // : ''
                 }
             </Container>
-            <button onClick={onClick}>초기화</button>
-            <button onClick={Save}>저장</button>
+            {/* <button onClick={onClick}>초기화</button>
+            <button onClick={Save}>저장</button> */}
         </React.Fragment>
     );
 };
@@ -308,10 +313,11 @@ const TimerSubContainer = styled.div`
 
 const Container = styled.div`
     background-color: #ffffff;
-    border: 1px solid red;
-    width: 650px;
-    height: 620px;
+    width: 610px;
+    height: 600px;
     display: flex;
+    border-radius: 15px;
+    
 `;
 
 export default GameDrawing;

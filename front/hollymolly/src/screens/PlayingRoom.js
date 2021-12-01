@@ -7,6 +7,8 @@ import day from '../assets/day.svg';
 import Chatting from '../components/Chatting';
 import GameUserCard from '../components/GameUserCard';
 import GameRoleComponent from '../components/GameRoleComponent';
+import GameDrawing from '../components/GameDrawing';
+import PlayingLoading from '../components/PlayingLoading';
 import Header from '../components/Header';
 import { useLocation } from 'react-router';
 //통신
@@ -28,12 +30,11 @@ let userList = [{}];
 
 const PlayingRoom = (props) => {
 //const PlayingRoom = ({ match }) => {
-    //const room_index = match.params.name; // url에 입력해준 방 인덱스
-    
-    
     let location = useLocation();
     
-    alert('룸 인덱스 : ' + location.state.room);
+    //alert('룸 인덱스 : ' + location.state.room);
+    //let room_idx = location.state.room;
+    let room_idx = 175;
 
     const [role, setRole] = React.useState('');
     const [keyword, setKeyWord] = React.useState('');
@@ -43,19 +44,49 @@ const PlayingRoom = (props) => {
 
     const [playInfo, setPlayInfo] = React.useState(''); //웨이팅룸에서 넘어온 데이터 저장
 
+    const [isDrawReady, setIsDrawReady] = React.useState(true); // 나중에 false로 바꿔놓아야 함 
+    const [waitSeconds, setWaitSeconds] = useState(-1); // 게임 시작 전 10초 기다리는 타이머, 
+
     const BaseURL = 'http://3.17.55.178:3002/';
 
-    useEffect(() => {
-        const socket = io(BaseURL, {
-            auth: {
-                token: save_token,
-            },
-        });
+    const socket = io(BaseURL, {
+        auth: {
+            token: save_token,
+        },
+    });
 
+    useEffect(() => {
         socket.on('connect', () => {
             console.log('playing room connection server');
         });
+
+        socket.on('get next turn', (data) => {
+            console.log(data.message); // success 메시지
+            setIsDrawReady(true);
+        });
     }, []);
+
+    useEffect(() => {
+        const waitcountdown = setInterval(() => {
+            if (parseInt(waitSeconds) > 0) {
+                setWaitSeconds(parseInt(waitSeconds) - 1);
+            } else if (parseInt(waitSeconds) === 0) {
+                // 10초가 지나도 받지 못하면 네트워크 에러 및 서버에서 강제 퇴장 처리
+                if (isDrawReady) { // 받음 
+                    setWaitSeconds(-1);
+                } else { // 못받음 
+                    console.log('순서 받기 시간 끝');
+                    console.log('네트워크가 불안정합니다.');
+
+                    setWaitSeconds(-1);
+                }
+            }
+        }, 1000);
+
+        return () => {
+            clearInterval(waitcountdown);
+        };
+    }, [waitSeconds]);
 
     useEffect(() => {
         if (playInfo != null) {
@@ -63,6 +94,17 @@ const PlayingRoom = (props) => {
             const countdown = setInterval(() => {
                 if (parseInt(seconds) > 0) {
                     setSeconds(parseInt(seconds) - 1);
+                }
+
+                if (parseInt(seconds) === 0){
+                    socket.emit('send next turn', {
+                        room_idx: room_idx,
+                        user_idx: save_user_idx,
+                        member_count: 2,
+                        draw_order: 1
+                    }); 
+                    setWaitSeconds(10); // 10초 기다림 
+                    //setSeconds(-1);
                 }
             }, 1000);
 
@@ -111,12 +153,21 @@ const PlayingRoom = (props) => {
         return a.game_member_order - b.game_member_order;
     });
 
+    // 유저 리스트 중 내 정보 배열 및 내 순서 저장 
+    let user_order;
+    var myList = userList.find((x) => x.user_idx === save_user_idx);
+    if(myList){
+        user_order = myList.game_member_order;
+    }
+
     // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
     var myItem = userList.find((x) => x.user_idx === save_user_idx);
     if (myItem) {
         myItem.game_member_order = '나';
     }
 
+    
+    
     /* // 비정상 종료
     const exit = async () => {	
         console.log("exit!!!");
@@ -165,6 +216,7 @@ const PlayingRoom = (props) => {
         <React.Fragment>
             <Background>
                 <Header />
+                {isDrawReady? 
                 <Container>
                     <BackGroundDiv>
                         <UserDiv>
@@ -196,20 +248,20 @@ const PlayingRoom = (props) => {
                         {/* 가운데*/}
                         {
                             //우선 역할부여 텍스트 테스트하고 주석 풀기!! jh
-                            //seconds === 0 ?
-                            // <GameVoteComponent />
-                            //:
+                            seconds === 0 ?
+                            <DrawDiv>
+                             {myList && <GameDrawing order={user_order} color={myList.user_color} room_idx={room_idx} idx={save_user_idx} member_count={userList.length}/> }
+                            </DrawDiv> 
+                            :
                             <GameRoleComponent role={role} timer={seconds} />
                         }
-                        {/* <DrawDiv>
-                            <GameRoleComponent />
-                        </DrawDiv> */}
                         <ChatDiv>
-                            <Chatting />
-                            {/* <Chatting room_idx={location.state.data.room_idx} available={false} color={'RED'}></Chatting> // 룸 인덱스 및 컬러 설정 후, 이걸로 바꿔야 함 */}
+                            {/* <Chatting /> */}
+                            <Chatting room_idx={room_idx} height="615px" available={false} color={'RED'}></Chatting> 
                         </ChatDiv>
                     </BackGroundDiv>
-                </Container>
+                </Container> : <PlayingLoading/>
+                }
             </Background>
         </React.Fragment>
     );
@@ -255,13 +307,18 @@ const BackGroundDiv = styled.div`
 
 const ChatDiv = styled.div`
     margin: 1px;
+    width: 220px;
+    height: 620px;
+    display: flex;
+    align-items: center;
 `;
 
 const DrawDiv = styled.div`
-    background-color: #ffffff;
-    width: 650px;
+    width: 640px;
     height: 620px;
     display: flex;
+    align-items: center;
+    justify-content: center;
 `;
 
 export default PlayingRoom;
