@@ -13,7 +13,7 @@ import colors from '../styles/styles';
 
 const BaseURL = 'http://3.17.55.178:3002';
 
-//RefreshVerification.verification();
+// RefreshVerification.verification();
 
 // local storage에 있는지 확인
 let data = localStorage.getItem('token');
@@ -22,18 +22,12 @@ let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-const socket = io(BaseURL, {
-    auth: {
-        // 1번 토큰
-        token: save_token,
-    },
-});
-
 export default function ModalSetting({ title, mode, room_private, member, room_idx, clickedSetting, resultt }) {
     // 인원수 0 제목 0 난이도
     console.log(title, mode, member, room_private);
     // 방 설정 수정
     const [roomdata, setRoomdata] = useState();
+    const [roomInfo, setRoomInfo] = useState('');
     // let count = 0;
     const customStyles = {
         content: {
@@ -55,27 +49,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
     };
 
     useEffect(() => {
-        socket.on('error', () => {
-            setTimeout(() => {
-                socket.connect();
-                console.log(socket);
-            }, 1000);
-        });
-
-        // 소켓이 서버에 연결되어 있는지 여부
-        // 연결 성공 시 시작
-        socket.on('connect', () => {
-            console.log('room connection server!');
-        });
-
-        // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
-        socket.on('disconnect', (reason) => {
-            if (reason === 'io server disconnect') {
-                socket.connect();
-            }
-        });
-
-        clickedSetting(0);
+        // getRoomInfo();
     }, []);
 
     const UpdateRoomInfo = async () => {
@@ -108,19 +82,43 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
             });
     };
 
+    const getRoomInfo = async () => {
+        // 대기실 정보 조회 api
+        const restURL = BaseURL + '/room/info/' + room_idx;
+
+        const reqHeaders = {
+            headers: {
+                //1번 토큰 이용
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        axios
+            .get(restURL, reqHeaders)
+            .then(function (response) {
+                setRoomInfo(response.data);
+                console.log(response.data);
+                console.log('getRoomInfo 성공 in madal');
+            })
+            .catch(function (error) {
+                console.log('getRoomInfo 실패 in madal');
+                console.log(error.response);
+            });
+    };
+
     const inputRef = useRef();
     let roomMode = '';
 
     let a;
-    mode == 'easy' ? (a = false) : (a = true); //  이지면 false 하드면 true
+    mode == 'easy' ? (a = true) : (a = false); //  이지면 true 하드면 false
+    console.log('넘오온' + a);
     // 난이도 useState
-    const [isChecked, setIschecked] = React.useState(a);
+    const [isChecked, setIschecked] = React.useState(true);
     const isEasy = () => {
-        if (isChecked === true) setIschecked(!isChecked); // 하드면 이지로 만들어라
+        if (isChecked === false) setIschecked(!isChecked); // 하드면 이지로 만들어라
         console.log('선택) 난이도 하');
     };
     const isHard = () => {
-        if (isChecked === false) setIschecked(!isChecked); // 이지면 하드로 만들어라
+        if (isChecked === true) setIschecked(!isChecked); // 이지면 하드로 만들어라
         console.log('선택) 난이도 상');
     };
 
@@ -130,7 +128,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
     let b;
     console.log(member);
     member == 6 ? (b = 6) : member == 5 ? (b = 5) : (b = 4);
-    const [people, setPeople] = useState(b);
+    const [people, setPeople] = useState(4);
     console.log(people);
     console.log('people');
 
@@ -173,7 +171,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
             inputRef.current.value = title; // 제목 안적으면 수정 전 디폴트
         }
 
-        if (!isChecked) {
+        if (isChecked) {
             // easy
             roomMode = 'easy';
             console.log('모드는? easy');
@@ -185,10 +183,11 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
         console.log('인원수는? ' + people + '명');
 
         UpdateRoomInfo();
+        setIsOpen(false);
         // clickedSetting(resultt + 1);
-        closeModal();
+        //closeModal();
 
-        //방 생성했으면 초기화
+        // 방 생성했으면 초기화
         // if (isChecked === true) setIschecked(!isChecked); // easy로 바꿈
         // setPeople((people) => (people = 4)); //4명으로 바꿈
         // if (ispublic == false) setIsPublic(!ispublic); // public으로 바꿈
@@ -198,10 +197,42 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
 
     function openModal() {
         setIsOpen(true);
+
+        if (member == 4) {
+            setPeople((people) => (people = 4));
+        }
+        if (member == 5) {
+            setPeople((people) => (people = 5));
+        }
+
+        if (member == 6) {
+            setPeople((people) => (people = 6));
+        }
+
+        if (mode == 'easy') {
+            setIschecked(true);
+        }
+        if (mode == 'hard') {
+            setIschecked(false);
+        }
+
+        if (room_private == 1) {
+            // 프라이빗
+            setIsPublic(false);
+        }
+        if (room_private == 0) {
+            // 퍼블릭
+            setIsPublic(true);
+        }
     }
 
     function closeModal() {
         setIsOpen(false);
+        if (isChecked === true) setIschecked(!isChecked); // easy로 바꿈
+        setPeople((people) => (people = 4)); //4명으로 바꿈
+        if (ispublic == false) setIsPublic(!ispublic); // public으로 바꿈
+
+        // setIsOpen(false);
     }
 
     let subtitle;
@@ -230,7 +261,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
                 <CloseButton onClick={closeModal}>X</CloseButton>
                 <br />
                 <div style={styles.container}>
-                    <h1 style={{ textAlign: 'center' }}>방 설정</h1>
+                    <h1 style={{ textAlign: 'center' }}>방 설정 변경</h1>
                     <div style={{ marginLeft: '50px' }}>
                         <div style={styles.div}>
                             <text style={styles.text}>방 이름 : </text>
@@ -238,10 +269,10 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
                         </div>
                         <div style={styles.div}>
                             <text style={styles.text}>MODE : </text>
-                            <button style={!isChecked ? styles.button_on : styles.button_off} onClick={isEasy}>
+                            <button style={isChecked ? styles.button_on : styles.button_off} onClick={isEasy}>
                                 easy
                             </button>
-                            <button style={isChecked ? styles.button_on : styles.button_off} onClick={isHard}>
+                            <button style={!isChecked ? styles.button_on : styles.button_off} onClick={isHard}>
                                 hard
                             </button>
                         </div>

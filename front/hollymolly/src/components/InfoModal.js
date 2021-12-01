@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import style from '../styles/styles';
 import { ReactComponent as SettingIcon } from '../assets/settingIcon.svg'; // 방 세팅 버튼
 import { ReactComponent as SettingsIcon } from '../assets/SettingsIcon.svg';
+
 // 소켓
 import { io } from 'socket.io-client';
 import axios from 'axios';
@@ -12,7 +13,7 @@ import colors from '../styles/styles';
 
 const BaseURL = 'http://3.17.55.178:3002';
 
-//RefreshVerification.verification();
+// RefreshVerification.verification();
 
 // local storage에 있는지 확인
 let data = localStorage.getItem('token');
@@ -21,18 +22,13 @@ let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-const socket = io(BaseURL, {
-    auth: {
-        // 1번 토큰
-        token: save_token,
-    },
-});
-
 export default function InfoModal({ title, mode, room_private, member, room_idx }) {
     // 인원수 0 제목 0 난이도
     console.log(title, mode, member, room_private);
     // 방 설정 수정
     const [roomdata, setRoomdata] = useState();
+    const [roomInfo, setRoomInfo] = useState('');
+    // let count = 0;
     const customStyles = {
         content: {
             top: '50%',
@@ -52,31 +48,13 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
         },
     };
 
-    // useEffect(() => {
-    //     socket.on('error', () => {
-    //         setTimeout(() => {
-    //             socket.connect();
-    //             console.log(socket);
-    //         }, 1000);
-    //     });
+    useEffect(() => {
+        // getRoomInfo();
+    }, []);
 
-    //     // 소켓이 서버에 연결되어 있는지 여부
-    //     // 연결 성공 시 시작
-    //     socket.on('connect', () => {
-    //         console.log('room connection server!');
-    //     });
-
-    //     // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
-    //     socket.on('disconnect', (reason) => {
-    //         if (reason === 'io server disconnect') {
-    //             socket.connect();
-    //         }
-    //     });
-    // }, []);
-
-    const RoomInfo = async () => {
-        // 대기실 정보 조회 api
-        const restURL = BaseURL + '/room/info/' + room_idx;
+    const UpdateRoomInfo = async () => {
+        // 대기실 정보 수정 api
+        const restURL = BaseURL + '/room/info/';
 
         const reqHeaders = {
             headers: {
@@ -84,13 +62,45 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
             },
         };
         axios
-            .get(restURL, reqHeaders)
+            .put(
+                restURL,
+                {
+                    room_idx: room_idx,
+                    room_name: inputRef.current.value,
+                    room_mode: roomMode,
+                    room_start_member_cnt: people,
+                },
+                reqHeaders
+            )
             .then(function (response) {
-                console.log(response.data);
-                console.log('RoomInfo 성공');
+                console.log(response.status);
+                console.log('UpdateRoomInfo 성공');
             })
             .catch(function (error) {
-                console.log('RoomInfo 실패');
+                console.log('UpdateRoomInfo 실패');
+                console.log(error.response);
+            });
+    };
+
+    const getRoomInfo = async () => {
+        // 대기실 정보 조회 api
+        const restURL = BaseURL + '/room/info/' + room_idx;
+
+        const reqHeaders = {
+            headers: {
+                //1번 토큰 이용
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        axios
+            .get(restURL, reqHeaders)
+            .then(function (response) {
+                setRoomInfo(response.data);
+                console.log(response.data);
+                console.log('getRoomInfo 성공 in madal');
+            })
+            .catch(function (error) {
+                console.log('getRoomInfo 실패 in madal');
                 console.log(error.response);
             });
     };
@@ -99,25 +109,17 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
     let roomMode = '';
 
     let a;
-    mode == 'easy' ? (a = false) : (a = true);
+    mode == 'easy' ? (a = true) : (a = false); //  이지면 true 하드면 false
+    console.log('넘오온' + a);
     // 난이도 useState
-    const [isChecked, setIschecked] = React.useState(a);
-    const isEasy = () => {
-        if (isChecked === true) setIschecked(!isChecked);
-        console.log('선택) 난이도 상');
-    };
-    const isHard = () => {
-        if (isChecked === false) setIschecked(!isChecked);
-        console.log('선택) 난이도 하');
-    };
+    const [isChecked, setIschecked] = React.useState(true);
 
     // 인원 useState
-
     let clicked;
     let b;
     console.log(member);
     member == 6 ? (b = 6) : member == 5 ? (b = 5) : (b = 4);
-    const [people, setPeople] = useState(b);
+    const [people, setPeople] = useState(true);
     console.log(people);
     console.log('people');
 
@@ -152,37 +154,73 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
 
     const result = () => {
         console.log('오케이 눌림');
-        RoomInfo();
-        // // UpdateRoomInfo();
-        // console.log(':::최종결과:::');
-        // console.log('방이름은? ' + inputRef.current.value);
-
-        // if (inputRef.current.value == null || inputRef.current.value == '') {
-        //     inputRef.current.value = title; // 제목 안적으면 수정 전 디폴트
-        // }
-
-        // if (isChecked) {
-        //     // easy
-        //     roomMode = 'easy';
-        //     console.log('모드는? easy');
-        // } else {
-        //     roomMode = 'hard';
-        //     console.log('모드는? hard');
-        // }
-
-        // console.log('인원수는? ' + people + '명');
-
         // UpdateRoomInfo();
-        // closeModal();
+        console.log(':::최종결과:::');
+        console.log('방이름은? ' + inputRef.current.value);
+
+        if (inputRef.current.value == null || inputRef.current.value == '') {
+            inputRef.current.value = title; // 제목 안적으면 수정 전 디폴트
+        }
+
+        if (isChecked) {
+            // easy
+            roomMode = 'easy';
+            console.log('모드는? easy');
+        } else {
+            roomMode = 'hard';
+            console.log('모드는? hard');
+        }
+
+        console.log('인원수는? ' + people + '명');
+
+        UpdateRoomInfo();
+        // clickedSetting(resultt + 1);
+        closeModal();
+
+        // 방 생성했으면 초기화
+        // if (isChecked === true) setIschecked(!isChecked); // easy로 바꿈
+        // setPeople((people) => (people = 4)); //4명으로 바꿈
+        // if (ispublic == false) setIsPublic(!ispublic); // public으로 바꿈
     };
 
     const [modalIsOpen, setIsOpen] = React.useState(false);
 
     function openModal() {
         setIsOpen(true);
+
+        if (member == 4) {
+            setPeople((people) => (people = 4));
+        }
+        if (member == 5) {
+            setPeople((people) => (people = 5));
+        }
+
+        if (member == 6) {
+            setPeople((people) => (people = 6));
+        }
+
+        if (mode == 'hard') {
+            setIschecked(false);
+        }
+        if (mode == 'easy') {
+            setIschecked(true);
+        }
+
+        if (room_private == 1) {
+            // 프라이빗
+            setIsPublic(false);
+        }
+        if (room_private == 0) {
+            // 퍼블릭
+            setIsPublic(true);
+        }
     }
 
     function closeModal() {
+        // if (isChecked === true) setIschecked(!isChecked); // easy로 바꿈
+        // setPeople((people) => (people = 4)); //4명으로 바꿈
+        // if (ispublic == false) setIsPublic(!ispublic); // public으로 바꿈
+
         setIsOpen(false);
     }
 
@@ -212,42 +250,32 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
                 <CloseButton onClick={closeModal}>X</CloseButton>
                 <br />
                 <div style={styles.container}>
-                    <h1 style={{ textAlign: 'center' }}>방 설정</h1>
+                    <h1 style={{ textAlign: 'center' }}>방 세부 설정</h1>
                     <div style={{ marginLeft: '50px' }}>
                         <div style={styles.div}>
                             <text style={styles.text}>방 이름 : </text>
-                            <input style={styles.input} type="text" placeholder={title} ref={inputRef} />
+                            <input style={styles.input} type="text" placeholder={title} ref={inputRef} disabled />
                         </div>
                         <div style={styles.div}>
                             <text style={styles.text}>MODE : </text>
-                            <button style={isChecked ? styles.button_on : styles.button_off} onClick={isEasy}>
-                                easy
-                            </button>
-                            <button style={!isChecked ? styles.button_on : styles.button_off} onClick={isHard}>
-                                hard
-                            </button>
+                            <button style={isChecked ? styles.button_on : styles.button_off}>easy</button>
+                            <button style={!isChecked ? styles.button_on : styles.button_off}>hard</button>
                         </div>
                         <div style={styles.div}>
                             <text style={styles.text}>인원 수 : </text>
-                            <button style={people == 4 ? styles.button_on : styles.button_off} onClick={click4}>
-                                4명
-                            </button>
-                            <button style={people == 5 ? styles.button_on : styles.button_off} onClick={click5}>
-                                5명
-                            </button>
-                            <button style={people == 6 ? styles.button_on : styles.button_off} onClick={click6}>
-                                6명
-                            </button>
+                            <button style={people == 4 ? styles.button_on : styles.button_off}>4명</button>
+                            <button style={people == 5 ? styles.button_on : styles.button_off}>5명</button>
+                            <button style={people == 6 ? styles.button_on : styles.button_off}>6명</button>
                         </div>
                         <div style={styles.div}>
                             <text style={styles.range_text}>공개범위 : </text>
-                            <button style={ispublic ? styles.range_button_on : styles.range_button_off}>public</button>
-                            <button style={!ispublic ? styles.range_button_on : styles.range_button_off}>private</button>
+                            <button style={ispublic ? styles.button_on : styles.button_off}>public</button>
+                            <button style={!ispublic ? styles.button_on : styles.button_off}>private</button>
                         </div>
                     </div>
                     <p>
                         <text style={styles.notice}>* 방 설정 변경은 방장만 가능합니다.</text>
-                        <OKButton onClick={result}>OK</OKButton>
+                        {/* <OKButton onClick={result}>OK</OKButton> */}
                         <br />
                     </p>
                 </div>
