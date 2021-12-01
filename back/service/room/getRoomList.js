@@ -1,13 +1,14 @@
 const db = require('../../models');
 const moveRoom = require('../../socket/moveRoom');
 const getIOSocket = require('../../socket/getIOSocket');
-const {printErrorLog} = require('../../util/log');
+const {printErrorLog, printLog} = require('../../util/log');
 
 module.exports = async (req, res, next) => {
     try {
         const { page, room_mode, room_start_member_cnt, is_waiting } =
             req.query;
 
+        printLog("getRoomList", res.locals.user.user_idx+" "+typeof room_mode+" "+typeof room_start_member_cnt+" "+typeof is_waiting);
         let offset;
         if (!page) {
             offset = 0;
@@ -48,8 +49,6 @@ module.exports = async (req, res, next) => {
 };
 
 const getRoomList = async (offset, roomMode, startMember, isWaiting) => {
-    console.log("getRoomList",typeof roomMode, typeof startMember, typeof isWaiting);
-
     let room_mode = '("easy","hard")';
     let room_start_member_cnt = '(4, 5, 6)';
     let room_status = '("waiting","playing")';
