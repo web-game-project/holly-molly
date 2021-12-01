@@ -21,7 +21,15 @@ import Header from '../components/Header.js';
 
 import Loading from '../components/Loading';
 
+
 const BaseURL = 'http://3.17.55.178:3002';
+
+// local storage에 있는지 확인
+let data = localStorage.getItem('token');
+let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 // room_idx 변수
 let room_idx = 0;
@@ -38,15 +46,8 @@ export default function WaitingRoom({ match }) {
     let room_index = parseInt(match.params.name); // url에 입력해준 방 인덱스
     console.log('방 번호는 ?' + room_index);
 
-    // local storage에 있는지 확인
-    let data = localStorage.getItem('token');
-    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-    let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-    let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-    let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
-
     const [currentSocketConnection, setCurrentSocketConnection] = useState();
-
+    
     useEffect(() => {
         const socket = io('http://3.17.55.178:3002/', {
             auth: {
@@ -55,14 +56,23 @@ export default function WaitingRoom({ match }) {
         });
 
         socket.on('connect', () => {
-            console.log('Waiting connection server -> gameStart');
+            console.log(socket.connected)
             setCurrentSocketConnection(socket.connected);
+            //alert(socket.connected);
         });
 
         // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
         socket.on('disconnect', (reason) => {
             console.log('disconnect');
             setCurrentSocketConnection(socket.connected);
+            socket.connect();
+        });
+
+        // 오류 시, 수동으로 다시 연결 시도
+        socket.on('error', () => {
+            setTimeout(() => {
+                socket.connect();
+            }, 1000);
         });
 
         //방장 변경 leaderIdx
@@ -307,7 +317,7 @@ export default function WaitingRoom({ match }) {
             .patch(
                 restURL,
                 {
-                    room_idx: room_idx, //룸 인덱스 넘버여야함.
+                    room_idx: parseInt(room_idx), //룸 인덱스 넘버여야함.
                     user_ready: readyStatus,
                 },
                 reqHeaders
@@ -335,7 +345,7 @@ export default function WaitingRoom({ match }) {
             .post(
                 restURL,
                 {
-                    room_idx: room_idx,
+                    room_idx: parseInt(room_idx),
                 },
                 reqHeaders
             )
@@ -352,7 +362,7 @@ export default function WaitingRoom({ match }) {
 
     function colorClick(str) {
         alert('click: ' + str);
-
+        
         const restURL = BaseURL + '/waiting-room/user-color';
 
         const reqHeaders = {
@@ -365,7 +375,7 @@ export default function WaitingRoom({ match }) {
             .patch(
                 restURL,
                 {
-                    room_idx: room_idx, //룸 인덱스 변수로 들어가야함.
+                    room_idx: parseInt(room_idx), //룸 인덱스 변수로 들어가야함.
                     user_color: str, //클릭했을 때 해당 색
                 },
                 reqHeaders
@@ -373,6 +383,7 @@ export default function WaitingRoom({ match }) {
             .then(function (response) {
                 alert('rest ' + response.data);
                 setSelectColor(str); //내가 선택한 색
+                
             })
             .catch(function (error) {
                 alert('error ' + error.message);
