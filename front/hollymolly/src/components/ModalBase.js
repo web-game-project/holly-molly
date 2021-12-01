@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import styled from 'styled-components';
 import style from '../styles/styles';
 import { useHistory } from 'react-router';
+import colors from '../styles/styles';
 
 // 소켓
 import { io } from 'socket.io-client';
@@ -16,15 +17,10 @@ let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-const socket = io('http://3.17.55.178:3002/', {
-    auth: {
-        token: save_token,
-    },
-});
-
 export default function ModalBase() {
     const history = useHistory();
     const [roomdata, setRoomdata] = useState();
+    const [notice, setNotice] = useState(false);
     let idx;
     const customStyles = {
         content: {
@@ -91,73 +87,83 @@ export default function ModalBase() {
     };
 
     const result = () => {
-        console.log(':::최종결과:::');
-        console.log('방이름은? ' + inputRef.current.value);
-
-        if (inputRef.current.value == null || inputRef.current.value == '') {
-            inputRef.current.value = '어서들어오세요! 기본방'; // 제목 안적으면 디폴트
-        }
-        if (isChecked) {
-            // 이지면
-            // easy
-            roomMode = 'easy';
-            console.log('모드는? easy');
+        if ((inputRef.current.value.length > 0 && inputRef.current.value.length < 2) || inputRef.current.value.length > 12) {
+            // alert('방 제목은 2~12글자 이내여야 합니다.');
+            setNotice(true);
         } else {
-            roomMode = 'hard';
-            console.log('모드는? hard');
+            setNotice(false);
+            console.log(':::최종결과:::');
+            console.log('방이름은? ' + inputRef.current.value);
+
+            if (inputRef.current.value == null || inputRef.current.value == '') {
+                inputRef.current.value = '홀리-몰리! 기본방'; // 제목 안적으면 디폴트
+            }
+            if (isChecked) {
+                // 이지면
+                // easy
+                roomMode = 'easy';
+                console.log('모드는? easy');
+            } else {
+                roomMode = 'hard';
+                console.log('모드는? hard');
+            }
+
+            console.log('인원수는? ' + people + '명');
+
+            if (ispublic) {
+                // public
+                console.log('공개범위는? public'); // 반대로 나옴
+            } else console.log('공개범위는? private'); // 반대로 나옴
+
+            roomCreate();
+            // setTimeout(() => enterRoomInfo(), 1000);
+            // enterRoom();
+            setIsOpen(false);
+            //방 생성했으면 초기화
+            if (isChecked === false) setIschecked(!isChecked); // easy로 바꿈
+            setPeople((people) => (people = 4)); //4명으로 바꿈
+            if (ispublic == false) setIsPublic(!ispublic); // public으로 바꿈
         }
-
-        console.log('인원수는? ' + people + '명');
-
-        if (ispublic) {
-            // public
-            console.log('공개범위는? public'); // 반대로 나옴
-        } else console.log('공개범위는? private'); // 반대로 나옴
-
-        roomCreate();
-        // setTimeout(() => enterRoomInfo(), 1000);
-        // enterRoom();
-        closeModal();
-
-        //방 생성했으면 초기화
-        if (isChecked === false) setIschecked(!isChecked); // easy로 바꿈
-        setPeople((people) => (people = 4)); //4명으로 바꿈
-        if (ispublic == false) setIsPublic(!ispublic); // public으로 바꿈
     };
 
     const roomCreate = async () => {
         //방 생성
-        console.log('방 생성 api 시작');
-        const restURL = 'http://3.17.55.178:3002/room';
-        const reqHeaders = {
-            headers: {
-                authorization: 'Bearer ' + save_token,
-            },
-        };
-        axios
-            .post(
-                restURL,
-                {
-                    room_name: inputRef.current.value,
-                    room_mode: roomMode,
-                    room_private: !ispublic, // false면 공개
-                    room_start_member_cnt: people,
+        if (inputRef.current.value.length < 2 || inputRef.current.value.length > 12) {
+            // alert('방 제목은 2~12글자 이내여야 합니다.');
+            notice = true;
+        } else {
+            console.log('방 생성 api 시작');
+            const restURL = 'http://3.17.55.178:3002/room';
+            const reqHeaders = {
+                headers: {
+                    authorization: 'Bearer ' + save_token,
                 },
-                reqHeaders
-            )
-            .then(function (response) {
-                idx = response.data.room_idx;
-                // console.log(response.data);
+            };
+            axios
+                .post(
+                    restURL,
+                    {
+                        room_name: inputRef.current.value,
+                        room_mode: roomMode,
+                        room_private: !ispublic, // false면 공개
+                        room_start_member_cnt: people,
+                    },
+                    reqHeaders
+                )
+                .then(function (response) {
+                    idx = response.data.room_idx;
+                    // console.log(response.data);
 
-                // 대기실로 이동
-                history.push({
-                    pathname: '/waitingroom/' + idx,
+                    // 대기실로 이동
+                    history.push({
+                        pathname: '/waitingroom/' + idx,
+                    });
+                })
+                .catch(function (error) {
+                    console.log('생성 실패');
+                    console.log(error.response);
                 });
-            })
-            .catch(function (error) {
-                console.log('생성 실패');
-                console.log(error.response);
-            });
+        }
     };
 
     // 방 생성 후에 방 접속까지 해줌
@@ -195,6 +201,7 @@ export default function ModalBase() {
     }
 
     function closeModal() {
+        setNotice(false);
         setIsOpen(false);
     }
 
@@ -225,6 +232,7 @@ export default function ModalBase() {
                             <text style={styles.text}>방 이름 : </text>
                             <input style={styles.input} type="text" placeholder="입력하세요..." ref={inputRef} />
                         </div>
+
                         <div style={styles.div}>
                             <text style={styles.text}>MODE : </text>
                             <button style={isChecked ? styles.button_on : styles.button_off} onClick={isEasy}>
@@ -260,6 +268,8 @@ export default function ModalBase() {
                         </div>
                     </div>
                     <p>
+                        {notice && <text style={styles.notice}>* 방 제목은 2 ~ 12글자 이내여야 합니다.</text>}
+
                         <OKButton onClick={result}>OK</OKButton>
                         <br />
                     </p>
@@ -302,7 +312,15 @@ const CloseButton = styled.button`
         color: ${style.red};
     }
 `;
-
+const Text = styled.text`
+    font-size: 15px;
+    font-family: Black Han Sans;
+    color: #ffffff;
+    text-align: center;
+    margin-top: -10px;
+    margin-left: 15px;
+    margin-right: 15px;
+`;
 const OKButton = styled.button`
     float: right;
     font-size: 20px;
@@ -391,5 +409,10 @@ const styles = {
         },
         shadowOpacity: 0.12,
         shadowRadius: 60,
+    },
+    notice: {
+        fontSize: 10,
+        color: colors.red,
+        marginLeft: 70,
     },
 };
