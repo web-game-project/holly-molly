@@ -17,6 +17,8 @@ import axios from 'axios';
 //import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
 
+
+import Loading from '../components/Loading';
 // local storage에 있는지 확인
 let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
@@ -215,8 +217,11 @@ const PlayingRoom = (props) => {
     return (
         <React.Fragment>
             <Background>
-                <Header />
+                
                 {isDrawReady? 
+                role !== ""?
+                <div>
+                <Header />
                 <Container>
                     <BackGroundDiv>
                         <UserDiv>
@@ -260,7 +265,7 @@ const PlayingRoom = (props) => {
                             <Chatting room_idx={room_idx} height="615px" available={false} color={'RED'}></Chatting> 
                         </ChatDiv>
                     </BackGroundDiv>
-                </Container> : <PlayingLoading/>
+                </Container> </div> : <Loading/> : <PlayingLoading/>
                 }
             </Background>
         </React.Fragment>
