@@ -4,19 +4,9 @@ import styled from 'styled-components';
 import style from '../styles/styles';
 import RefreshVerification from '../server/RefreshVerification';
 
-//타이머 이미지
-import timerOne from '../assets/timer_1.png';
-import timerTwo from '../assets/timer_2.png';
-import timerThree from '../assets/timer_3.png';
-import timerFour from '../assets/timer_4.png';
-import timerFive from '../assets/timer_5.png';
-import timerSix from '../assets/timer_6.png';
-import timerSeven from '../assets/timer_7.png';
-import timerEight from '../assets/timer_8.png';
-import timerNine from '../assets/timer_9.png';
-import timerTen from '../assets/timer_10.png';
-
 //RefreshVerification.verification();
+
+import html2canvas from 'html2canvas';
 
 let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
@@ -28,9 +18,9 @@ const socket = io('http://3.17.55.178:3002/', {
     auth: {
         //token: save_token, props
         // 3번 토큰 edge
-        //token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MywidXNlcl9uYW1lIjoiaHkiLCJpYXQiOjE2MzI4MzMwMTd9.-i36Z3KoqzCfgtVNl1-c8h5fZNSZ8Nlhnp4UI41tFxM"
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MywidXNlcl9uYW1lIjoiaHkiLCJpYXQiOjE2MzI4MzMwMTd9.-i36Z3KoqzCfgtVNl1-c8h5fZNSZ8Nlhnp4UI41tFxM"
         // 8번 토큰
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
+        //token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
     },
 });
 
@@ -51,18 +41,18 @@ const GameDrawing = (props) => {
     const drawingTime = useRef(true); // 그릴 수 있는 시간을 관리하는 변수
 
     // ** 넘어온 props 값 & save_token 값으로 바꾸기
-    /*  let user_order = 2;
+     let user_order = 2;
     let user_color = "ORANGE"; // RED, ORANGE, YELLOW, GREEN, BLUE, PINK, PURPLE 
     let user_room_index = 53;
     let user_idx = 3;
-    let user_member_count = 2; */
+    let user_member_count = 2;
     // **
     //8번
-    let user_order = 1;
+   /*  let user_order = 1;
     let user_color = 'RED'; // RED, ORANGE, YELLOW, GREEN, BLUE, PINK, PURPLE
     let user_room_index = 53;
     let user_idx = 8;
-    let user_member_count = 2;
+    let user_member_count = 2; */
 
     let canvas;
     let canvasRef = createRef();
@@ -173,6 +163,8 @@ const GameDrawing = (props) => {
                 if (orderCount.current === user_member_count) {
                     clearInterval(countdown);
                     console.log('모든 순서 끝!');
+                    //세트 이미지 저장 api 요청
+
                     //여기서 투표로 넘어가기
                 } else {
                     // 다음 순서 받을 준비 완료
@@ -186,7 +178,7 @@ const GameDrawing = (props) => {
                     setWaitSeconds(3);
                     //여기야, 내가 바꾼 코드
                     setSeconds(-1);
-                    //setPossible(false);
+                    setPossible(false);
                 }
             }
         }, 1000);
@@ -231,7 +223,35 @@ const GameDrawing = (props) => {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // 그림 초기화
     };
 
-    let ImgUrl;
+    //downloadURI, Save 는 지울 예정 정희
+    function downloadURI(uri, name){
+        var link = document.createElement("a")
+        link.download = name;
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+    }
+
+    const Save = () => {
+        const canvas = document.getElementById('draw');
+        
+        const imgBase64 = canvas.toDataURL('image/png', 'image/octet-stream');
+        /* const decodImg = atob(imgBase64.split(',')[1]);
+      
+        let array = [];
+        for (let i = 0; i < decodImg .length; i++) {
+          array.push(decodImg .charCodeAt(i));
+        }
+      
+        const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
+        const fileName = 'canvas_img_' + new Date().getMilliseconds() + '.png';
+        let formData = new FormData();
+        formData.append('file', file, fileName); */
+
+        downloadURI(imgBase64, "예스")
+    }
+
+    let ImgUrl; //타이머 이미지 URL이 들어갈 곳
 
     return (
         <React.Fragment>
@@ -243,8 +263,8 @@ const GameDrawing = (props) => {
             <br />
             현재 순서 : {orderCount.current}
             <Container>                
-                <div>
-                    <canvas ref={canvasRef} width="650" height={'620'}>
+                <div style={{backgroundColor: style.white}}>
+                    <canvas id = "draw" ref={canvasRef} width="650" height={'620'}>
                     </canvas>
                 </div>
                 {
@@ -273,6 +293,7 @@ const GameDrawing = (props) => {
                 }
             </Container>
             <button onClick={onClick}>초기화</button>
+            <button onClick={Save}>저장</button>
         </React.Fragment>
     );
 };
