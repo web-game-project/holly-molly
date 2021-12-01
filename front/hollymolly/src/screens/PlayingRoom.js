@@ -250,7 +250,7 @@ const PlayingRoom = (props) => {
                             //우선 역할부여 텍스트 테스트하고 주석 풀기!! jh
                             seconds === 0 ?
                             <DrawDiv>
-                             {myList && <GameDrawing order={user_order} color={myList.user_color} room_idx={room_idx} idx={save_user_idx} member_count={userList.length}/> }
+                             {myList && <GameDrawing role={role} order={user_order} color={myList.user_color} room_idx={room_idx} idx={save_user_idx} member_count={userList.length}/> }
                             </DrawDiv> 
                             :
                             <GameRoleComponent role={role} timer={seconds} />

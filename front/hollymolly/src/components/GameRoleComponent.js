@@ -98,7 +98,7 @@ function GameRoleComponent(props) {
 
 const Container = styled.div`
     width: 480px;
-    height: 480px;
+    height: 500px;
     margin-top: 60px;
     border-width: thin;
     border-radius: 10px;
@@ -127,6 +127,7 @@ const TimerBtnContainer = styled.div`
     border-radius: 15px;
     border-color: #000;    
     border-style: solid;
+    margin-bottom: 20px;
 `;
 
 const RoleContainer = styled.div`

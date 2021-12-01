@@ -29,7 +29,9 @@ socket.on('connect', () => {
 });
 
 const GameDrawing = (props) => {
-    const {order, color, room_idx, idx, member_count} = props;
+    const {order, color, room_idx, idx, member_count, role} = props;
+
+    //console.log('역할 잘 왓는가? ' + role);
 
     const [possible, setPossible] = useState(true);
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머
