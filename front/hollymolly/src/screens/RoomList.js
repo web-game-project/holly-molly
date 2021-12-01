@@ -75,6 +75,7 @@ const RoomList = () => {
         socket.on('disconnect', (reason) => {
             console.log('disconnect');
             setCurrentSocketConnection(socket.connected);
+            socket.connect();
         });
 
         //방 생성 시, 마지막 페이지에 방 추가
