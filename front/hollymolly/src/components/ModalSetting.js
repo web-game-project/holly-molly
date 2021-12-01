@@ -28,6 +28,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
     // 방 설정 수정
     const [roomdata, setRoomdata] = useState();
     const [roomInfo, setRoomInfo] = useState('');
+    const [notice, setNotice] = useState(false);
     // let count = 0;
     const customStyles = {
         content: {
@@ -162,35 +163,41 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
     };
 
     const result = () => {
-        console.log('오케이 눌림');
-        // UpdateRoomInfo();
-        console.log(':::최종결과:::');
-        console.log('방이름은? ' + inputRef.current.value);
-
-        if (inputRef.current.value == null || inputRef.current.value == '') {
-            inputRef.current.value = title; // 제목 안적으면 수정 전 디폴트
-        }
-
-        if (isChecked) {
-            // easy
-            roomMode = 'easy';
-            console.log('모드는? easy');
+        if ((inputRef.current.value.length > 0 && inputRef.current.value.length < 2) || inputRef.current.value.length > 12) {
+            // alert('방 제목은 2~12글자 이내여야 합니다.');
+            setNotice(true);
         } else {
-            roomMode = 'hard';
-            console.log('모드는? hard');
+            setNotice(false);
+            console.log('오케이 눌림');
+            // UpdateRoomInfo();
+            console.log(':::최종결과:::');
+            console.log('방이름은? ' + inputRef.current.value);
+
+            if (inputRef.current.value == null || inputRef.current.value == '') {
+                inputRef.current.value = title; // 제목 안적으면 수정 전 디폴트
+            }
+
+            if (isChecked) {
+                // easy
+                roomMode = 'easy';
+                console.log('모드는? easy');
+            } else {
+                roomMode = 'hard';
+                console.log('모드는? hard');
+            }
+
+            console.log('인원수는? ' + people + '명');
+
+            UpdateRoomInfo();
+            setIsOpen(false);
+            // clickedSetting(resultt + 1);
+            //closeModal();
+
+            // 방 생성했으면 초기화
+            // if (isChecked === true) setIschecked(!isChecked); // easy로 바꿈
+            // setPeople((people) => (people = 4)); //4명으로 바꿈
+            // if (ispublic == false) setIsPublic(!ispublic); // public으로 바꿈
         }
-
-        console.log('인원수는? ' + people + '명');
-
-        UpdateRoomInfo();
-        setIsOpen(false);
-        // clickedSetting(resultt + 1);
-        //closeModal();
-
-        // 방 생성했으면 초기화
-        // if (isChecked === true) setIschecked(!isChecked); // easy로 바꿈
-        // setPeople((people) => (people = 4)); //4명으로 바꿈
-        // if (ispublic == false) setIsPublic(!ispublic); // public으로 바꿈
     };
 
     const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -227,6 +234,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
     }
 
     function closeModal() {
+        setNotice(false);
         setIsOpen(false);
         if (isChecked === true) setIschecked(!isChecked); // easy로 바꿈
         setPeople((people) => (people = 4)); //4명으로 바꿈
@@ -295,7 +303,8 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
                         </div>
                     </div>
                     <p>
-                        <text style={styles.notice}>* 방 설정 변경은 방장만 가능합니다.</text>
+                        {notice && <text style={styles.notice}>* 방 제목은 2 ~ 12글자 이내여야 합니다.</text>}
+
                         <OKButton onClick={result}>OK</OKButton>
                         <br />
                     </p>
