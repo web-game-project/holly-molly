@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 import tutorial_btn from '../assets/tutorial_btn.svg';
 import Start_button from '../assets/start_button.svg';
 import Modal from '../components/ModalNickName';
+import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
 
 // import tutorial_btn from '../assets/tutorial_btn.svg';
 // import start_btn from '../assets/start_btn.svg';
@@ -15,9 +17,17 @@ import Human from '../assets/human.svg';
 import PurpleCharacter from '../assets/purple.svg';
 
 export default function TutorialWorldview({}) {
+    const isLogin = useSelector((state) => state.socket.is_login);
+
+    const history = useHistory();
+    function goRoomList() {
+        history.push({
+            pathname: '/roomlist', // 나가기 성공하면 룸리스트로 이동
+        });
+    }
     return (
         <Container>
-            {/* 인간 유령 설명 페이지로 연결해주면 됨div */}
+            {/* 인간 유령 설명 페이지로 연결해주면 됨 div */}
             <HumanDiv>
                 <Div>
                     <MollyCharacter src={molly}></MollyCharacter>
@@ -65,7 +75,7 @@ export default function TutorialWorldview({}) {
                     <br />
                 </Div>
             </GhostDiv>
-            <Modal tutorial />
+            {isLogin ? <GameStart src={Start_button} onClick={goRoomList} /> : <Modal tutorial />}
         </Container>
     );
 }
@@ -120,7 +130,7 @@ const MollyCharacter = styled.img`
     align-items: center;
     height: auto;
     width: 200px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     margin-right: 10px;
 `;
 
@@ -131,7 +141,7 @@ const HollyCharacter = styled.img`
     align-items: center;
     height: auto;
     width: 200px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     margin-right: 10px;
 `;
 
@@ -258,7 +268,7 @@ const HumanCharacter = styled.div`
     background-image: url(${Human});
     background-size: cover;
     width: 150px;
-    height: 230px;
+    height: 220px;
 `;
 
 const GhostCharacter = styled.div`
