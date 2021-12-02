@@ -17,18 +17,6 @@ let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-const socket = io('http://3.17.55.178:3002/', {
-    auth: {
-        token: save_token,
-        // 8번 토큰
-        //token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
-    },
-});
-
-socket.on('connect', () => {
-    console.log('game drawing connection server');
-});
-
 const GameDrawing = (props) => {
     const history = useHistory();
 
@@ -42,6 +30,34 @@ const GameDrawing = (props) => {
 
     const orderCount = useRef(1); // orderCount
     const drawingTime = useRef(true); // 그릴 수 있는 시간을 관리하는 변수
+
+    const socket = io('http://3.17.55.178:3002/', {
+            auth: {
+                token: save_token,
+            },
+            transports: ['websocket']
+    });
+
+    useEffect(() => {
+        
+        socket.on('connect', () => {
+            console.log('game drawing connection server');
+        });
+
+        // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
+        socket.on('disconnect', (reason) => {
+            console.log('disconnect');
+            socket.connect();
+        });
+
+        // 오류 시, 수동으로 다시 연결 시도
+        socket.on('error', () => {
+            setTimeout(() => {
+                socket.connect();
+            }, 1000);
+        });
+
+    }, []);
 
     let user_order = parseInt(order);
     let user_color = color; 
