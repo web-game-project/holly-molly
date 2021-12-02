@@ -100,6 +100,7 @@ const PlayingRoom = (props) => {
 
                 if (parseInt(seconds) === 0) {
                     //그림판 시작 되기 전 다음 순서 준비
+
                     socket.emit('send next turn', {
                         room_idx: parseInt(room_idx),
                         user_idx: parseInt(save_user_idx),
@@ -109,6 +110,7 @@ const PlayingRoom = (props) => {
                     });
                     alert(isDrawReady);
                     setWaitSeconds(10); // 10초 기다림
+
                     setSeconds(-1);
                 }
             }, 1000);
@@ -258,6 +260,7 @@ const PlayingRoom = (props) => {
                                     ) : (
                                         <GameRoleComponent role={role} timer={seconds} />
                                     )}
+
                                     <ChatDiv>
                                         <Chatting room_idx={room_idx} height="615px" available={true} color={myList.user_color}></Chatting>
                                     </ChatDiv>
