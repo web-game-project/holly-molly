@@ -22,9 +22,18 @@ import axios from 'axios';
 //RefreshVerification.verification();
 
 const PlayingVote = (props) => {
+
     let location = useLocation();
     const history = useHistory();
 
+    let gameSetIdx = location.state.gameSetIdx; //그림판에서 넘어온 게임 세트 인덱스
+    let userList = location.state.userList; //그림판에서 넘어온 유저리스트
+    let roomIdx = location.state.roomIdx; //그림판에서 넘어온 룸인덱스
+    let role =  location.state.role; //그림판에서 넘어온 역할
+    let keyword =   location.state.keyword; //그림판에서 넘어온 키워드
+
+    console.log('data 잘 받았냐? ' + gameSetIdx + '/' + userList + '/' +  roomIdx + '/' +  role + '/' + keyword);
+    
     // local storage에 있는지 확인
     let data = localStorage.getItem('token');
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
@@ -35,14 +44,14 @@ const PlayingVote = (props) => {
 
     const [winner, setWinner] = useState(''); // 중간 결과 승리자
 
-    // ** 더미 데이터 일단 넣어둠, Playing Vote에서 넘어오면 그걸로 바꿔주면 될 듯! //
+    /* // ** 더미 데이터 일단 넣어둠, Playing Vote에서 넘어오면 그걸로 바꿔주면 될 듯! //
     const userList = [
         { user_idx: 2, user_name: '가나다라마바사아자차', game_member_order: 2, user_color: 'GREEN' },
         { user_idx: 1, user_name: '나는 1번', game_member_order: 1, user_color: 'RED' },
         { user_idx: 3, user_name: '나는 3번', game_member_order: 3, user_color: 'BLUE' },
     ];
     const role = 'human';
-    const keyword = '크리스마스';
+    const keyword = '크리스마스'; */
 
     const dummyTest = {
         one_game_set_human_score: 1,
@@ -142,13 +151,13 @@ const PlayingVote = (props) => {
                             }
                         </UserDiv>
                         {/* 투표 */}
-                        <GameVoteComponent data={user_list} gameSet={1} /> {/* gameSet -> 숫자만 들어가면 됨, 임의의 숫자 넣어둠 */}
+                        <GameVoteComponent data={userList} gameSet={gameSetIdx} /> {/* gameSet -> 숫자만 들어가면 됨, 임의의 숫자 넣어둠 */}
                         {/* 투표 결과 */}
                         {/* <GameVoteResult/> */}
                         <ChatDiv>
                             {/* <Chatting /> */}
                             {/* <Chatting room_idx={location.state.data.room_idx}></Chatting> */}
-                            <Chatting room_idx={53} available={false}></Chatting> {/* 채팅 비활성화 */}
+                            <Chatting room_idx={roomIdx} available={false}></Chatting> {/* 채팅 비활성화 */}
                         </ChatDiv>
                     </BackGroundDiv>
                 </Container>

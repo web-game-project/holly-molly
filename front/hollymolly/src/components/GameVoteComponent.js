@@ -24,10 +24,37 @@ const GameVoteComponent = (props) => {
     const [voteIndex, setVoteIndex] = useState(-1); // 내가 투표한 사람의 인덱스
     const baseURL = useSelector((state) => state.socket.base_url);
 
+    //투표 10초 타이머
+    const [seconds, setSeconds] = useState(10);
+
+    /* useEffect(() => {
+        setClicked(false);
+        setVoteWho('');
+    }, []); */
+
     useEffect(() => {
         setClicked(false);
         setVoteWho('');
-    }, []);
+
+        if (props != null) {
+            //데이터 전달 받은게 세팅되기 전까지는 타이머가 돌아가면 안됨.
+            const countdown = setInterval(() => {
+                if (parseInt(seconds) > 0) {
+                    setSeconds(parseInt(seconds) - 1);
+                }
+
+                if (parseInt(seconds) === 0) {
+                    setSeconds(0);
+                    //postVote();
+                }
+            }, 1000);
+
+            return () => {
+                clearInterval(countdown);
+                console.log('투표 룸 초 끝');
+            };
+        }
+    }, [seconds]);
 
     const postVote = async () => {
         //  타이머 카운트 주고 시간 다 되면 이 api 불러주면 됨
@@ -80,9 +107,18 @@ const GameVoteComponent = (props) => {
                         </Div>
                     ))}
             </div>
-            <Info>
-                투표 시간이 끝난 즉시<InfoYeLLOW> 선택된 유령 </InfoYeLLOW> 이 투표됩니다.
-            </Info>
+
+            {
+                seconds === 0 ?
+                    <Info>
+                        투표 시간이 <InfoRed> 마감 </InfoRed>되었습니다. 
+                    </Info>
+                    :
+                    <Info>
+                        투표 시간이 <InfoRed> {seconds} </InfoRed> 초 남았습니다.
+                    </Info>
+            }
+
         </Container>
     );
 };
@@ -132,11 +168,11 @@ const Info = styled.text`
     font-family: Black Han Sans;
 `;
 
-const InfoYeLLOW = styled.text`
+const InfoRed = styled.text`
     font-family: Hahmlet;
-    -webkit-text-stroke: 1px ${style.yellow};
-    color: ${style.yellow};
-    text-shadow: 4px 4px 0px #53305e, 7px 7px 0px #2a132e; //#2A132E
+    -webkit-text-stroke: 1px ${style.red};
+    color: ${style.red};
+    3px 3px #980000
 `;
 
 const styles = {

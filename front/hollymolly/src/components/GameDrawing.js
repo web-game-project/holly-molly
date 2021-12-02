@@ -9,6 +9,7 @@ import axios from 'axios';
 //RefreshVerification.verification();
 
 import html2canvas from 'html2canvas';
+import { useHistory, useLocation } from 'react-router';
 
 let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
@@ -29,7 +30,9 @@ socket.on('connect', () => {
 });
 
 const GameDrawing = (props) => {
-    const {order, color, room_idx, idx, member_count, role,  setIdx} = props;
+    const history = useHistory();
+
+    const {order, color, room_idx, idx, member_count, role,  setIdx, userList, keyword} = props;
 
     const [possible, setPossible] = useState(true);
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머
@@ -175,7 +178,11 @@ const GameDrawing = (props) => {
                     console.log('모든 순서 끝!');
                     //세트 이미지 저장 api 요청
                     saveCanvas();
-                    //여기서 투표로 넘어가기
+                     //투표로 이동, 데이터 전달
+                    history.push({
+                        pathname: '/playingvote/' + room_idx,
+                        state: { userList: userList, room: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
+                    });
                 } else {
                     // 다음 순서 받을 준비 완료
                     socket.emit('send next turn', {
