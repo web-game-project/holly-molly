@@ -120,20 +120,9 @@ const ImgContainer = styled.img`
     flex-direction: column;
     justify-content: center;
     margin: 3px;
-    width: 48px;
+    width: 40px;
     height: 68px;
     //background-color: ${style.red_fill};
-`;
-
-const EmptyImgContainer = styled.div`
-    font-family: 'Jua';
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: 3px;
-    width: 48px;
-    height: 68px;
-    background-color: #eeeeee;
 `;
 
 const RoleNameContainer = styled.div`
@@ -167,22 +156,8 @@ const NameContainer = styled.div`
     display: flex;
     justify-content: center;
     font-size: 10px;
-    width: 75px;
+    width: 45px; //90px
     height: 30px;
-`;
-
-const EmptyNameContainer = styled.div`
-    text-align: center;
-    font-family: 'Jua';
-    flex-direction: column;
-    display: flex;
-    justify-content: center;
-    font-size: 10px;
-    margin-top: 10px;
-    width: 60px;
-    height: 20px;
-    border-radius: 0.5rem;
-    background-color: #eeeeee;
 `;
 
 export default GameUserCard;
