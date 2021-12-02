@@ -9,6 +9,7 @@ import BlueCharacter from '../assets/blue.svg';
 import PurpleCharacter from '../assets/purple.svg';
 import PinkCharacter from '../assets/pink.svg';
 import RedCharacter from '../assets/red.svg';
+import Human from "../assets/human.svg";
 
 const GameUserCard = (props) => {
     const { user_name, user_role, user_color, user_order, user_idx, children } = props;
@@ -20,31 +21,59 @@ const GameUserCard = (props) => {
 
     if (user_color === 'RED') {
         borderColor = style.red_bg;
-        characterImg = RedCharacter;
+        if(user_role === "human"){
+            characterImg = Human;
+        }else{
+            characterImg = RedCharacter;
+        }
         fillColor = style.red_fill;
     } else if (user_color === 'ORANGE') {
         borderColor = style.orange_bg;
-        characterImg = OrangeCharacter;
+        if(user_role === "human"){
+            characterImg = Human;
+        }else{
+            characterImg = OrangeCharacter;
+        }
         fillColor = style.orange_fill;
     } else if (user_color === 'YELLOW') {
         borderColor = style.yellow_bg;
-        characterImg = YellowCharacter;
+        if(user_role === "human"){
+            characterImg = Human;
+        }else{
+            characterImg = YellowCharacter;
+        }
         fillColor = style.yellow_fill;
     } else if (user_color === 'GREEN') {
         borderColor = style.green_bg;
-        characterImg = GreenCharacter;
+        if(user_role === "human"){
+            characterImg = Human;
+        }else{
+            characterImg = GreenCharacter;
+        }
         fillColor = style.green_fill;
     } else if (user_color === 'BLUE') {
         borderColor = style.blue_bg;
-        characterImg = BlueCharacter;
+        if(user_role === "human"){
+            characterImg = Human;
+        }else{
+            characterImg = BlueCharacter;
+        }
         fillColor = style.blue_fill;
     } else if (user_color === 'PURPLE') {
         borderColor = style.purple_bg;
-        characterImg = PurpleCharacter;
+        if(user_role === "human"){
+            characterImg = Human;
+        }else{
+            characterImg = PurpleCharacter;
+        }
         fillColor = style.purple_fill;
     } else if (user_color === 'PINK') {
         borderColor = style.pink_bg;
-        characterImg = PinkCharacter;
+        if(user_role === "human"){
+            characterImg = Human;
+        }else{
+            characterImg = PinkCharacter;
+        }
         fillColor = style.pink_fill;
     } else {
         // 빈칸 일때
@@ -52,6 +81,8 @@ const GameUserCard = (props) => {
         isEmpty = true;
         fillColor = 'transparent';
     }
+
+    
 
     const styles = {
         borderColor: borderColor,
