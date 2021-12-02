@@ -98,18 +98,18 @@ const PlayingRoom = (props) => {
                     setSeconds(parseInt(seconds) - 1);
                 }
 
-
-                if (parseInt(seconds) === 0) { //그림판 시작 되기 전 다음 순서 준비
+                if (parseInt(seconds) === 0) {
+                    //그림판 시작 되기 전 다음 순서 준비
 
                     socket.emit('send next turn', {
                         room_idx: parseInt(room_idx),
                         user_idx: parseInt(save_user_idx),
                         member_count: userList.length,
 
-                        draw_order: 1
+                        draw_order: 1,
                     });
                     alert(isDrawReady);
-                    setWaitSeconds(10); // 10초 기다림 
+                    setWaitSeconds(10); // 10초 기다림
 
                     setSeconds(-1);
                 }
@@ -165,7 +165,6 @@ const PlayingRoom = (props) => {
     var myList = userList.find((x) => x.user_idx === save_user_idx);
 
     //console.log('마이리스트 : ' + JSON.stringify(myList));
-
     if (myList) {
         user_order = myList.game_member_order;
     }
@@ -223,11 +222,8 @@ const PlayingRoom = (props) => {
     return (
         <React.Fragment>
             <Background>
-
-
-                {isDrawReady ?
-                    role !== "" ? (
-
+                {isDrawReady ? (
+                    role !== '' ? (
                         <div>
                             <Header />
                             <Container>
@@ -237,39 +233,46 @@ const PlayingRoom = (props) => {
                                         <MissionWord text={keyword} role={role}></MissionWord>
                                         {/* 유저 컴포넌트 */}
 
-                                        {
-                                            userList.map(
-                                                (index, key) => (
-                                                    (
-                                                        <GameUserCard
-                                                            user_idx={userList[key].user_idx}
-                                                            user_color={userList[key].user_color}
-                                                            user_name={userList[key].user_name}
-                                                            user_role="ghost"
-                                                            user_order={userList[key].game_member_order}
-                                                        ></GameUserCard>
-                                                    )
-                                                )
-                                            )
-                                        }
+                                        {userList.map((index, key) => (
+                                            <GameUserCard
+                                                user_idx={userList[key].user_idx}
+                                                user_color={userList[key].user_color}
+                                                user_name={userList[key].user_name}
+                                                user_role="ghost"
+                                                user_order={userList[key].game_member_order}
+                                            ></GameUserCard>
+                                        ))}
                                     </UserDiv>
-                                    {
-                                        seconds === 0 ?
-                                            <DrawDiv>
-                                                {myList && <GameDrawing setIdx={location.state.data.game_set_idx} role={role} order={user_order} color={myList.user_color} room_idx={room_idx} idx={save_user_idx} member_count={userList.length} />}
-                                            </DrawDiv>
-                                            :
-                                            <GameRoleComponent role={role} timer={seconds} />
-                                    }
+                                    {seconds === 0 ? (
+                                        <DrawDiv>
+                                            {myList && (
+                                                <GameDrawing
+                                                    setIdx={location.state.data.game_set_idx}
+                                                    role={role}
+                                                    order={user_order}
+                                                    color={myList.user_color}
+                                                    room_idx={room_idx}
+                                                    idx={save_user_idx}
+                                                    member_count={userList.length}
+                                                />
+                                            )}
+                                        </DrawDiv>
+                                    ) : (
+                                        <GameRoleComponent role={role} timer={seconds} />
+                                    )}
 
                                     <ChatDiv>
                                         <Chatting room_idx={room_idx} height="615px" available={true} color={myList.user_color}></Chatting>
                                     </ChatDiv>
                                 </BackGroundDiv>
-
-                            </Container> </div> ) : <Loading /> : <PlayingLoading />
-                }
-
+                            </Container>{' '}
+                        </div>
+                    ) : (
+                        <Loading />
+                    )
+                ) : (
+                    <PlayingLoading />
+                )}
             </Background>
         </React.Fragment>
     );
