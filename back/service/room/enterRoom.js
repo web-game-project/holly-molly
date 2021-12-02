@@ -4,7 +4,7 @@ const getIOSocket = require('../../socket/getIOSocket');
 const moveRoom = require('../../socket/moveRoom');
 const db = require('../../models');
 const { exitGameAndRoom } = require('../game/exitGame');
-const {printErrorLog} = require('../../util/log');
+const {printErrorLog, printLog} = require('../../util/log');
 
 const enterRoom = async (req, res, next) => {
     try {
@@ -100,6 +100,8 @@ const enterRoom = async (req, res, next) => {
         res.status(201).json({
             room_idx: room.room_idx,
         });
+
+        printLog("enterRoom", user.user_idx+"번 유저 "+room.room_idx+"방 입장 rest api 완료");
     } catch (error) {
         printErrorLog('enterRoom', error);
         res.status(400).json({
