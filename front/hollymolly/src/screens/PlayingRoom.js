@@ -31,12 +31,9 @@ console.log('내 인덱스 : ' + save_user_idx);
 let userList = [{}];
 
 const PlayingRoom = (props) => {
-//const PlayingRoom = ({ match }) => {
     let location = useLocation();
     
-    //alert('룸 인덱스 : ' + location.state.room);
-    //let room_idx = location.state.room;
-    let room_idx = 175;
+    let room_idx = location.state.room;
 
     const [role, setRole] = React.useState('');
     const [keyword, setKeyWord] = React.useState('');
@@ -46,7 +43,7 @@ const PlayingRoom = (props) => {
 
     const [playInfo, setPlayInfo] = React.useState(''); //웨이팅룸에서 넘어온 데이터 저장
 
-    const [isDrawReady, setIsDrawReady] = React.useState(true); // 나중에 false로 바꿔놓아야 함 
+    const [isDrawReady, setIsDrawReady] = React.useState(false); // 나중에 false로 바꿔놓아야 함 
     const [waitSeconds, setWaitSeconds] = useState(-1); // 게임 시작 전 10초 기다리는 타이머, 
 
     const BaseURL = 'http://3.17.55.178:3002/';
@@ -70,6 +67,8 @@ const PlayingRoom = (props) => {
 
     useEffect(() => {
         const waitcountdown = setInterval(() => {
+            console.log('waitcountdown 값: ' + parseInt(waitSeconds));
+            
             if (parseInt(waitSeconds) > 0) {
                 setWaitSeconds(parseInt(waitSeconds) - 1);
             } else if (parseInt(waitSeconds) === 0) {
@@ -98,15 +97,15 @@ const PlayingRoom = (props) => {
                     setSeconds(parseInt(seconds) - 1);
                 }
 
-                if (parseInt(seconds) === 0){
+                if (parseInt(seconds) === 0){ //그림판 시작 되기 전 다음 순서 준비
                     socket.emit('send next turn', {
-                        room_idx: room_idx,
-                        user_idx: save_user_idx,
-                        member_count: 2,
+                        room_idx: parseInt(room_idx),
+                        user_idx: parseInt(save_user_idx),
+                        member_count: userList.length,
                         draw_order: 1
                     }); 
                     setWaitSeconds(10); // 10초 기다림 
-                    //setSeconds(-1);
+                    setSeconds(-1);
                 }
             }, 1000);
 
@@ -121,8 +120,6 @@ const PlayingRoom = (props) => {
         setPlayInfo(location.state.data);
         userList = location.state.data.user_list;
 
-        console.log('넘어온 게임 세트 인덱스_playroom' + location.state.data.game_set_idx);
-
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,
@@ -130,12 +127,9 @@ const PlayingRoom = (props) => {
         };
         const restURL = BaseURL + 'game/member/' + location.state.data.game_set_idx;
 
-        console.log('url : ' + restURL);
-
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
-                //alert('rest 키워드' + response.data.keyword + ', 역할' + response.data.user_role);
                 setRole(response.data.user_role);
                 setKeyWord(response.data.keyword);
             })
@@ -166,9 +160,7 @@ const PlayingRoom = (props) => {
     var myItem = userList.find((x) => x.user_idx === save_user_idx);
     if (myItem) {
         myItem.game_member_order = '나';
-    }
-
-    
+    }    
     
     /* // 비정상 종료
     const exit = async () => {	
@@ -229,14 +221,8 @@ const PlayingRoom = (props) => {
                             <MissionWord text={keyword} role={role}></MissionWord>
                             {/* 유저 컴포넌트 */}
                             {
-                                //let user_list = location.state.data.user_list,
-
                                 userList.map(
                                     (index, key) => (
-                                        console.log('user 길이' + userList.length),
-                                        console.log('유저 인덱스 값 ' + userList[key].user_idx),
-                                        console.log('순서 : ' + userList[key].game_member_order),
-                                        console.log('칼라 : ' + userList[key].user_color),
                                         (
                                             <GameUserCard
                                                 user_idx={userList[key].user_idx}
@@ -249,20 +235,17 @@ const PlayingRoom = (props) => {
                                     )
                                 )
                             }
-                        </UserDiv>
-                        {/* 가운데*/}
+                        </UserDiv>                        
                         {
-                            //우선 역할부여 텍스트 테스트하고 주석 풀기!! jh
                             seconds === 0 ?
                             <DrawDiv>
-                             {myList && <GameDrawing role={role} order={user_order} color={myList.user_color} room_idx={room_idx} idx={save_user_idx} member_count={userList.length}/> }
+                             {myList && <GameDrawing setIdx = {location.state.data.game_set_idx} role={role} order={user_order} color={myList.user_color} room_idx={room_idx} idx={save_user_idx} member_count={userList.length}/> }
                             </DrawDiv> 
                             :
                             <GameRoleComponent role={role} timer={seconds} />
                         }
                         <ChatDiv>
-                            {/* <Chatting /> */}
-                            <Chatting room_idx={room_idx} height="615px" available={false} color={'RED'}></Chatting> 
+                            <Chatting room_idx={room_idx} height="615px" available={true} color={myList.user_color}></Chatting> 
                         </ChatDiv>
                     </BackGroundDiv>
                 </Container> </div> : <Loading/> : <PlayingLoading/>

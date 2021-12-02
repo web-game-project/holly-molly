@@ -35,7 +35,7 @@ function GameRoleComponent(props) {
 
     //let timer = 5;
     useEffect(() => {
-        console.log('넘어온 게임 세트 인덱스_gamerole' + props.role);
+        //console.log('넘어온 게임 세트 인덱스_gamerole' + props.role);
         ///timer = props.timer;
 
         const countdown = setInterval(() => {
@@ -44,7 +44,9 @@ function GameRoleComponent(props) {
             }
         }, 1000);
 
-        return () => {clearInterval(countdown); console.log('게임 롤 초 끝')} ;
+        return () => {
+            clearInterval(countdown); 
+        } ;
     }, [seconds]);
 
     return (
@@ -60,8 +62,6 @@ function GameRoleComponent(props) {
                             
                             <RoleContent role="human">
                                 {human.split("\n").map((i, key) => {
-                                    console.log('key : ' + key)
-                                    console.log('key i : ' + i)
                                   if (key !== 2)
                                         return <text key={key}> {i}</text>;
                                     else
@@ -78,8 +78,6 @@ function GameRoleComponent(props) {
                             
                             <RoleContent role="ghost" >
                                 {ghost.split("\n").map((i, key) => {
-                                    console.log('key : ' + key)
-                                    console.log('key i : ' + i)
                                   if (key !== 5)
                                         return <text key={key}> {i}</text>;
                                     else
