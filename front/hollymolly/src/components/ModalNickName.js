@@ -68,11 +68,13 @@ export default function ModalBase({ tutorial }) {
     });
 
     const createNickname = async () => {
-        const regex = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]*$/; // 한글, 영어, 숫자, 공백 허용
+        const regex = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|\s]*$/; // 한글, 영어, 숫자, 공백 허용
 
         const str = nickName; // str 변수에 저장
 
         const usable = regex.test(str); // 정규식 테스트
+
+        console.log('usable: ' + usable);
 
         if (str.length < 2 || str.length > 10 || usable === false) {
             setNickName('');
@@ -156,7 +158,7 @@ export default function ModalBase({ tutorial }) {
                         onChange={onChange}
                         value={nickName}
                     ></input>
-                    <text style={styles.usable}>＊한글, 영문, 숫자 2~10자까지 가능, 특수문자 입력 불가능 </text>
+                    <text style={styles.usable}>＊한글, 영문, 숫자 공백 포함 2~10자까지 가능, 특수문자 입력 불가능 </text>
 
                     <BtnDiv>
                         <Button color="purple" onClick={createNickname}>
@@ -270,7 +272,7 @@ const styles = {
         alignitems: 'center',
         justifycontent: 'center',
         marginTop: '10px',
-        marginLeft: '18%',
+        marginLeft: '12%',
         // color: '#FF0000',
         textAlign: 'center',
         width: '100%',
