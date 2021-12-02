@@ -13,6 +13,8 @@ import Header from '../components/Header';
 import { useLocation } from 'react-router';
 //통신
 import axios from 'axios';
+//깊은 복제
+import * as _ from 'lodash';
 
 //import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
@@ -59,14 +61,14 @@ const PlayingRoom = (props) => {
         });
 
         socket.on('get next turn', (data) => {
-            console.log(data.message); // success 메시지
+            console.log(data.data); // success 메시지
             setIsDrawReady(true);
         });
     }, []);
 
     useEffect(() => {
         const waitcountdown = setInterval(() => {
-            console.log('waitcountdown 값: ' + parseInt(waitSeconds));
+            //console.log('waitcountdown 값: ' + parseInt(waitSeconds));
 
             if (parseInt(waitSeconds) > 0) {
                 setWaitSeconds(parseInt(waitSeconds) - 1);
@@ -99,6 +101,7 @@ const PlayingRoom = (props) => {
                 }
 
                 if (parseInt(seconds) === 0) {
+                    console.log('역할 부여 초 끝');
                     //그림판 시작 되기 전 다음 순서 준비
                     setIsDrawReady(false);
                     socket.emit('send next turn', {
@@ -117,7 +120,6 @@ const PlayingRoom = (props) => {
 
             return () => {
                 clearInterval(countdown);
-                console.log('플레잉 룸 초 끝');
             };
         }
     }, [seconds]);
@@ -126,11 +128,11 @@ const PlayingRoom = (props) => {
         setPlayInfo(location.state.data);
         userList = location.state.data.user_list;
 
-        console.log('userList');
+        /* console.log('userList');
         console.log(userList);
         console.log('PlayInfo');
         console.log(location.state.data);
-
+        */
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,
@@ -149,28 +151,26 @@ const PlayingRoom = (props) => {
             });
     });
 
+    // 깊은 복사 
+    let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
+    let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트 
+    
     // 유저 리스트 중 내 정보 배열 및 내 순서 저장
-    let user_order;
-    var myList = userList.find((x) => x.user_idx === save_user_idx);
-
-    //console.log('마이리스트 : ' + JSON.stringify(myList));
-    if (myList) {
-        user_order = myList.game_member_order;
-    }
+    const myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
 
     // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
-    var myIndex = userList.find((x) => x.user_idx === save_user_idx);
+    let myIndex = reOrderList.find((x) => x.user_idx === save_user_idx);
     if (myIndex) {
         myIndex.game_member_order = 0;
     }
 
     // 그림 그리기 순서 대로 유저 리스트 재정렬
-    userList.sort(function (a, b) {
+    reOrderList.sort(function (a, b) {
         return a.game_member_order - b.game_member_order;
     });
   
     // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
-    var myItem = userList.find((x) => x.user_idx === save_user_idx);
+    var myItem = reOrderList.find((x) => x.user_idx === save_user_idx);
     if (myItem) {
         myItem.game_member_order = '나';
     }
@@ -249,7 +249,7 @@ const PlayingRoom = (props) => {
                                                 <GameDrawing
                                                     setIdx={location.state.data.game_set_idx}
                                                     role={role}
-                                                    order={user_order}
+                                                    order={myList.game_member_order}
                                                     color={myList.user_color}
                                                     room_idx={room_idx}
                                                     idx={save_user_idx}
@@ -262,7 +262,7 @@ const PlayingRoom = (props) => {
                                     )}
 
                                     <ChatDiv>
-                                        <Chatting room_idx={room_idx} height="615px" available={true} color={myList.user_color}></Chatting>
+                                        <Chatting room_idx={room_idx} height="615px" available={true} color={onlyUserList.user_color}></Chatting>
                                     </ChatDiv>
                                 </BackGroundDiv>
                             </Container>
