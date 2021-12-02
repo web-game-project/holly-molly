@@ -23,7 +23,6 @@ socket.on('connect', () => {
 });
 
 const Chatting = (props) => { 
-    console.log("room_idx : " + parseInt(props.room_idx));
     // console.log("save_token : " + save_token);
     // console.log("save_user_idx : " +save_user_idx);
     // console.log("save_user_name : " +save_user_name);

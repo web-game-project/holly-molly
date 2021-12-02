@@ -156,7 +156,7 @@ const NameContainer = styled.div`
     display: flex;
     justify-content: center;
     font-size: 10px;
-    width: 45px; //90px
+    width: 90px; //90px
     height: 30px;
 `;
 

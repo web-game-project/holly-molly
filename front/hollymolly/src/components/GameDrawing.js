@@ -31,8 +31,6 @@ socket.on('connect', () => {
 const GameDrawing = (props) => {
     const {order, color, room_idx, idx, member_count, role,  setIdx} = props;
 
-    console.log('역할 잘 왓는가? ' + setIdx);
-
     const [possible, setPossible] = useState(true);
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머
     const [waitSeconds, setWaitSeconds] = useState(-1); // 순서 받기 타이머, 그림 다 그린 후 타이머 실행되야 하므로 일단 -1 으로 초기화
@@ -42,23 +40,29 @@ const GameDrawing = (props) => {
     const orderCount = useRef(1); // orderCount
     const drawingTime = useRef(true); // 그릴 수 있는 시간을 관리하는 변수
 
-    // ** 넘어온 props 값 & save_token 값으로 바꾸기
-    //정희야 여기 주석 풀자
     let user_order = parseInt(order);
-    let user_color = color; // RED, ORANGE, YELLOW, GREEN, BLUE, PINK, PURPLE 
+    let user_color = color; 
+    
+    // 지정 색 코드로 바꿔주기 
+    if(user_color === 'RED'){
+        user_color = '#FF0000';
+    }else if(user_color === 'ORANGE'){
+        user_color = '#FF5C00'
+    }else if(user_color === 'YELLOW'){
+        user_color = '#FFB800'
+    }else if(user_color === 'GREEN'){
+        user_color = '#95DB3B'
+    }else if(user_color === 'BLUE'){
+        user_color = '#3B8EDB'
+    }else if(user_color === 'PINK'){
+        user_color = '#CE3BDB'
+    }else{
+        user_color = '#823BDB'
+    }
+
     let user_room_index = parseInt(room_idx);
     let user_idx = parseInt(idx);
     let user_member_count = parseInt(member_count);
-    // **
-    
-    alert("user_order: " + user_order + " orderCount.current: " + orderCount.current);
-    
-    //8번 정희야 여기 주석해야해
-    /* let user_order = 1;
-    let user_color = 'RED'; // RED, ORANGE, YELLOW, GREEN, BLUE, PINK, PURPLE
-    let user_room_index = 53;
-    let user_idx = 8;
-    let user_member_count = 2; */
 
     let canvas;
     let canvasRef = createRef();
@@ -164,9 +168,6 @@ const GameDrawing = (props) => {
                 // 타이머 종료,
                 console.log('그림 그리기 시간 끝');
 
-                // 순서 증가 
-                orderCount.current += 1;
-
                 drawingTime.current = false; // 그림 그리기 시간 끝
                 setPossible(false);
                 if (orderCount.current === user_member_count) {
@@ -210,7 +211,7 @@ const GameDrawing = (props) => {
                     console.log('다음 순서 받기');
                     setWaitSeconds(-1);
                     setReadyNextOrder(false); // 다시 다음 순서 받을 준비
-                    //orderCount.current += 1; // 순서 바꾸기
+                    orderCount.current += 1; // 순서 바꾸기
                     setReDraw(!reDraw); // 그리기 준비
                     drawingTime.current = true;
                     setPossible(true);
@@ -300,12 +301,12 @@ const GameDrawing = (props) => {
                     </canvas>
                 </div>
                 {
-                    (console.log('가능? ' + possible),
+                    (//console.log('가능? ' + possible),
                      possible === true
                      ?
                     ((ImgUrl = '../assets/timer_' + seconds + '.png'),
                     //dia = "../assets/timer_1.png",
-                    console.log('얌? ' + ImgUrl),
+                    //console.log('얌? ' + ImgUrl),
                     seconds > 0 ? (
                         <img
                             src={require('../assets/timer_' + seconds + '.png').default}
