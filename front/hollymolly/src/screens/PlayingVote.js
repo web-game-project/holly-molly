@@ -11,7 +11,7 @@ import Header from '../components/Header';
 import { useHistory, useLocation, Prompt } from 'react-router';
 
 //투표 컴포넌트
-import GameVote from '../components/GameVoteComponent';
+import GameVoteComponent from '../components/GameVoteComponent';
 //투표 결과 컴포넌트
 import GameVoteResult from '../components/GameVoteResultComponent';
 
@@ -37,7 +37,7 @@ const PlayingVote = (props) => {
 
     // ** 더미 데이터 일단 넣어둠, Playing Vote에서 넘어오면 그걸로 바꿔주면 될 듯! //
     const userList = [
-        { user_idx: 2, user_name: '나는 2번', game_member_order: 2, user_color: 'GREEN' },
+        { user_idx: 2, user_name: '가나다라마바사아자차', game_member_order: 2, user_color: 'GREEN' },
         { user_idx: 1, user_name: '나는 1번', game_member_order: 1, user_color: 'RED' },
         { user_idx: 3, user_name: '나는 3번', game_member_order: 3, user_color: 'BLUE' },
     ];
@@ -78,13 +78,43 @@ const PlayingVote = (props) => {
         myItem.game_member_order = '나';
     }
 
-    const userVoteList = [
-        { user_name: "동선동살쾡이", wrm_user_color: "RED" },
-        { user_name: "수유동살쾡이", wrm_user_color: "ORANGE" },
-        { user_name: "수선동살쾡이", wrm_user_color: "YELLOW" },
-        { user_name: "방배동살쾡이", wrm_user_color: "GREEN" },
-        { user_name: "진월동살쾡이", wrm_user_color: "PURPLE" },
-        { user_name: "봉선동살쾡이", wrm_user_color: "PINK" },
+    const user_list = [
+        {
+            user_idx: 206,
+            user_name: '가나다라마바사아자차',
+            user_color: 'PURPLE',
+            game_member_order: '나',
+        },
+        {
+            user_idx: 207,
+            user_name: '용명아저씨',
+            user_color: 'RED',
+            game_member_order: 1,
+        },
+        {
+            user_idx: 210,
+            user_name: '흰둥이',
+            user_color: 'YELLOW',
+            game_member_order: 2,
+        },
+        {
+            user_idx: 211,
+            user_name: '미선씌',
+            user_color: 'GREEN',
+            game_member_order: 3,
+        },
+        {
+            user_idx: 315,
+            user_name: '11',
+            user_color: 'ORANGE',
+            game_member_order: 4,
+        },
+        {
+            user_idx: 384,
+            user_name: '가나다라마바사아자차',
+            user_color: 'BLUE',
+            game_member_order: 5,
+        },
     ];
 
     return (
@@ -111,13 +141,10 @@ const PlayingVote = (props) => {
                                 ))
                             }
                         </UserDiv>
-                        
                         {/* 투표 */}
-                       {/*  <GameVote data = {userVoteList}/> */}
-
+                        <GameVoteComponent data={user_list} gameSet={1} /> {/* gameSet -> 숫자만 들어가면 됨, 임의의 숫자 넣어둠 */}
                         {/* 투표 결과 */}
-                        <GameVoteResult/>
-                        
+                        {/* <GameVoteResult/> */}
                         <ChatDiv>
                             {/* <Chatting /> */}
                             {/* <Chatting room_idx={location.state.data.room_idx}></Chatting> */}
@@ -145,6 +172,9 @@ const Container = styled.div`
     height: 620px;
     display: flex;
     flex-direction: row;
+    overflow: hidden;
+    border-bottom-left-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
 `;
 
 const UserDiv = styled.div`

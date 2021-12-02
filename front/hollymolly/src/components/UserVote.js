@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import style from '../styles/styles';
 import styled from 'styled-components';
 import '../assets/font.css';
 
 import roundVote from '../assets/roundVote.png';
+import holly from '../assets/holly.png';
 
-export default function UserVote({ nick, color }) {
-    const [clicked, isClicked] = useState(0);
+export default function UserVote({ nick, color, click, voteWho }) {
+    const [clicked, isClicked] = useState();
+    const [who, ClickWho] = useState(voteWho);
+
+    useEffect(() => {
+        ClickWho(voteWho);
+    }, []);
 
     function Click() {
         if (clicked == 1) {
@@ -14,59 +20,93 @@ export default function UserVote({ nick, color }) {
         } else {
             isClicked(1);
         }
-        alert(nick + clicked);
+        // alert(nick + clicked);
     }
 
     return (
-        <div>
+        <div style={{ marginRight: 3, marginLeft: 3 }}>
             {(function () {
                 if (color == 'RED') {
                     return (
-                        <RedContainer onClick={Click}>
+                        <RedContainer>
                             <Name>{nick}</Name>
-                            <RedInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</RedInnerContainer>
+                            {/* <RedInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</RedInnerContainer> */}
+                            <RedInnerContainer>
+                                {/* ({voteWho == 'RED'}&&{click ? <></> : <></>}) */}
+                                {voteWho == 'RED' ? <RoundVote src={roundVote} /> : <RoundVote />}
+                            </RedInnerContainer>
                         </RedContainer>
                     );
                 } else if (color == 'ORANGE') {
                     return (
                         <OrangeContainer onClick={Click}>
                             <Name>{nick}</Name>
-                            <OrangeInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</OrangeInnerContainer>
+                            {/* <OrangeInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</OrangeInnerContainer> */}
+                            <OrangeInnerContainer>
+                                {/* ({voteWho == 'ORANGE'}&&{click ? <RoundVote src={roundVote} /> : <></>}) */}
+
+                                {voteWho == 'ORANGE' ? <RoundVote src={roundVote} /> : <RoundVote />}
+                            </OrangeInnerContainer>
                         </OrangeContainer>
                     );
                 } else if (color == 'YELLOW') {
                     return (
                         <YellowContainer onClick={Click}>
                             <Name>{nick}</Name>
-                            <YellowInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</YellowInnerContainer>
+                            {/* <YellowInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</YellowInnerContainer> */}
+                            <YellowInnerContainer>
+                                {/* ({voteWho == 'YELLOW'}&&{click ? <RoundVote src={roundVote} /> : <></>}) */}
+
+                                {voteWho == 'YELLOW' ? <RoundVote src={roundVote} /> : <RoundVote />}
+                            </YellowInnerContainer>
                         </YellowContainer>
                     );
                 } else if (color == 'GREEN') {
                     return (
                         <GreenContainer onClick={Click}>
                             <Name>{nick}</Name>
-                            <GreenInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</GreenInnerContainer>
+                            {/* <GreenInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</GreenInnerContainer> */}
+                            <GreenInnerContainer>
+                                {/* ({voteWho == 'GREEN'}&&{click ? <RoundVote src={roundVote} /> : <></>}) */}
+
+                                {voteWho == 'GREEN' ? <RoundVote src={roundVote} /> : <RoundVote />}
+                            </GreenInnerContainer>
                         </GreenContainer>
                     );
                 } else if (color == 'BLUE') {
                     return (
                         <BlueContainer onClick={Click}>
                             <Name>{nick}</Name>
-                            <BlueInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</BlueInnerContainer>
+                            {/* <BlueInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</BlueInnerContainer> */}
+                            <BlueInnerContainer>
+                                {/* ({voteWho == 'BLUE'}&&{click ? <RoundVote src={roundVote} /> : <></>}) */}
+
+                                {voteWho == 'BLUE' ? <RoundVote src={roundVote} /> : <RoundVote />}
+                            </BlueInnerContainer>
                         </BlueContainer>
                     );
                 } else if (color == 'PURPLE') {
                     return (
                         <PurpleContainer onClick={Click}>
                             <Name>{nick}</Name>
-                            <PurpleInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</PurpleInnerContainer>
+                            {/* <PurpleInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</PurpleInnerContainer> */}
+                            <PurpleInnerContainer>
+                                {/* ({voteWho == 'PURPLE'}&&{click ? <RoundVote src={roundVote} /> : <></>}) */}
+
+                                {voteWho == 'PURPLE' ? <RoundVote src={roundVote} /> : <RoundVote />}
+                            </PurpleInnerContainer>
                         </PurpleContainer>
                     );
                 } else if (color == 'PINK') {
                     return (
                         <PinkContainer onClick={Click}>
                             <Name>{nick}</Name>
-                            <PinkInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</PinkInnerContainer>
+                            {/* <PinkInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</PinkInnerContainer> */}
+                            <PinkInnerContainer>
+                                {/* ({voteWho == 'PINK'}&&{click ? <RoundVote src={roundVote} /> : <></>}) */}
+
+                                {voteWho == 'PINK' ? <RoundVote src={roundVote} /> : <RoundVote />}
+                            </PinkInnerContainer>
                         </PinkContainer>
                     );
                 }
@@ -268,7 +308,7 @@ const Name = styled.div`
     align-items: center;
     justify-content: center;
     align-self: center;
-    font-size: 20px;
+    font-size: 18px;
     // background-color: blue;
     // font-family: 'Hahmlet', serif;
     // @import url('https://fonts.googleapis.com/css2?family=East+Sea+Dokdo&display=swap');
