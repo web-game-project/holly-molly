@@ -45,7 +45,7 @@ const GameVoteComponent = (props) => {
 
                 if (parseInt(seconds) === 0) {
                     setSeconds(0);
-                    //postVote();
+                    postVote();
                 }
             }, 1000);
 
