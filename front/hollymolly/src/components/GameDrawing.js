@@ -51,8 +51,10 @@ const GameDrawing = (props) => {
     let user_member_count = parseInt(member_count);
     // **
     
+    alert("user_order: " + user_order + " orderCount.current: " + orderCount.current);
+    
     //8번 정희야 여기 주석해야해
-   /*  let user_order = 1;
+    /* let user_order = 1;
     let user_color = 'RED'; // RED, ORANGE, YELLOW, GREEN, BLUE, PINK, PURPLE
     let user_room_index = 53;
     let user_idx = 8;
@@ -247,57 +249,39 @@ const GameDrawing = (props) => {
         const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
         const fileName = room_idx + '_' + date + '.png';
         let formData = new FormData();
+
         formData.append('set_image', file, fileName);
         //formData.append('file', file, "21_1202");
-
-        let formValue;
-
-        for (let value of formData.values()) {
-             formValue = value;
-            console.log('폼 : ' + formValue);
-            console.log('폼 타입 ' + typeof formValue)
-          }
-
-        downloadURI(imgBase64, formData)
 
         const restURL = 'http://3.17.55.178:3002/game/set/image/' + setIdx; //게임세트 인덱스 넣기
 
         const reqHeaders = {
             headers: {
-               // Content-Type: 'multipart/form-data',
                 authorization: 'Bearer ' + save_token,
             },
-        };
-
-        console.log('폼데이터? 성공: ' + formData);
+        };      
+        
         axios
             .patch(
-                restURL,
-                {
-                    set_image: formData,
-                },
+                restURL, formData,
                 reqHeaders
             )
             .then(function (response) {
                 console.log('이미지 저장 성공');
             })
             .catch(function (error) {
-                alert('error ' + error.message);
-            });           
+                alert('이미지 error ' + error.message);
+            });       
     }
 
     //downloadURI, Save 는 지울 예정 정희
-    function downloadURI(uri, name){
+    /* function downloadURI(uri, name){
         var link = document.createElement("a")
         link.download = name;
         link.href = uri;
         document.body.appendChild(link);
         link.click();
-    }
-
-    const Save = () => {
-         
-    }
+    } */
 
     let ImgUrl; //타이머 이미지 URL이 들어갈 곳
 
@@ -317,8 +301,8 @@ const GameDrawing = (props) => {
                 </div>
                 {
                     (console.log('가능? ' + possible),
-                    // possible === true
-                    // ?
+                     possible === true
+                     ?
                     ((ImgUrl = '../assets/timer_' + seconds + '.png'),
                     //dia = "../assets/timer_1.png",
                     console.log('얌? ' + ImgUrl),
@@ -336,12 +320,12 @@ const GameDrawing = (props) => {
                         />
                     ) : (
                         ''
-                    )))
-                    // : ''
+                    ))
+                    : '')
                 }
             </Container>
             {/* <button onClick={onClick}>초기화</button> */}
-            <button onClick={saveCanvas}>저장</button>
+            {/* <button onClick={saveCanvas}>저장</button> */}
         </React.Fragment>
     );
 };

@@ -42,7 +42,7 @@ const PlayingRoom = (props) => {
 
     const [playInfo, setPlayInfo] = React.useState(''); //웨이팅룸에서 넘어온 데이터 저장
 
-    const [isDrawReady, setIsDrawReady] = React.useState(false); // 나중에 false로 바꿔놓아야 함
+    const [isDrawReady, setIsDrawReady] = React.useState(true); // 나중에 false로 바꿔놓아야 함
     const [waitSeconds, setWaitSeconds] = useState(-1); // 게임 시작 전 10초 기다리는 타이머,
 
     const BaseURL = 'http://3.17.55.178:3002/';
@@ -100,7 +100,7 @@ const PlayingRoom = (props) => {
 
                 if (parseInt(seconds) === 0) {
                     //그림판 시작 되기 전 다음 순서 준비
-
+                    setIsDrawReady(false);
                     socket.emit('send next turn', {
                         room_idx: parseInt(room_idx),
                         user_idx: parseInt(save_user_idx),
@@ -108,7 +108,7 @@ const PlayingRoom = (props) => {
 
                         draw_order: 1,
                     });
-                    alert(isDrawReady);
+                    //alert(isDrawReady);
                     setWaitSeconds(10); // 10초 기다림
 
                     setSeconds(-1);
@@ -149,6 +149,15 @@ const PlayingRoom = (props) => {
             });
     });
 
+    // 유저 리스트 중 내 정보 배열 및 내 순서 저장
+    let user_order;
+    var myList = userList.find((x) => x.user_idx === save_user_idx);
+
+    //console.log('마이리스트 : ' + JSON.stringify(myList));
+    if (myList) {
+        user_order = myList.game_member_order;
+    }
+
     // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
     var myIndex = userList.find((x) => x.user_idx === save_user_idx);
     if (myIndex) {
@@ -159,16 +168,7 @@ const PlayingRoom = (props) => {
     userList.sort(function (a, b) {
         return a.game_member_order - b.game_member_order;
     });
-
-    // 유저 리스트 중 내 정보 배열 및 내 순서 저장
-    let user_order;
-    var myList = userList.find((x) => x.user_idx === save_user_idx);
-
-    //console.log('마이리스트 : ' + JSON.stringify(myList));
-    if (myList) {
-        user_order = myList.game_member_order;
-    }
-
+  
     // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
     var myItem = userList.find((x) => x.user_idx === save_user_idx);
     if (myItem) {
@@ -176,7 +176,7 @@ const PlayingRoom = (props) => {
     }
 
     /* // 비정상 종료
-    const exit = async () => {	
+    const exit = async () => {   
         console.log("exit!!!");
         const restURL = 'http://3.17.55.178:3002/game/exit';
 
@@ -243,7 +243,7 @@ const PlayingRoom = (props) => {
                                             ></GameUserCard>
                                         ))}
                                     </UserDiv>
-                                    {seconds === 0 ? (
+                                    {seconds < 0 ? (
                                         <DrawDiv>
                                             {myList && (
                                                 <GameDrawing
@@ -265,7 +265,7 @@ const PlayingRoom = (props) => {
                                         <Chatting room_idx={room_idx} height="615px" available={true} color={myList.user_color}></Chatting>
                                     </ChatDiv>
                                 </BackGroundDiv>
-                            </Container>{' '}
+                            </Container>
                         </div>
                     ) : (
                         <Loading />
