@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import style from '../styles/styles';
 import RefreshVerification from '../server/RefreshVerification';
 
+import axios from 'axios';
+
 //RefreshVerification.verification();
 
 import html2canvas from 'html2canvas';
@@ -17,8 +19,6 @@ let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 const socket = io('http://3.17.55.178:3002/', {
     auth: {
         token: save_token,
-        // 3번 토큰 edge
-        //token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6MywidXNlcl9uYW1lIjoiaHkiLCJpYXQiOjE2MzI4MzMwMTd9.-i36Z3KoqzCfgtVNl1-c8h5fZNSZ8Nlhnp4UI41tFxM"
         // 8번 토큰
         //token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkeCI6OCwidXNlcl9uYW1lIjoidGVzdCIsImlhdCI6MTYzMjgzMzAxN30.Q6DBbNtwXRnhqfA31Z_8hlnXpN6YjN0YQXFEoypO7Mw',
     },
@@ -29,9 +29,9 @@ socket.on('connect', () => {
 });
 
 const GameDrawing = (props) => {
-    const {order, color, room_idx, idx, member_count, role} = props;
+    const {order, color, room_idx, idx, member_count, role,  setIdx} = props;
 
-    //console.log('역할 잘 왓는가? ' + role);
+    console.log('역할 잘 왓는가? ' + setIdx);
 
     const [possible, setPossible] = useState(true);
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머
@@ -43,6 +43,7 @@ const GameDrawing = (props) => {
     const drawingTime = useRef(true); // 그릴 수 있는 시간을 관리하는 변수
 
     // ** 넘어온 props 값 & save_token 값으로 바꾸기
+    //정희야 여기 주석 풀자
     let user_order = parseInt(order);
     let user_color = color; // RED, ORANGE, YELLOW, GREEN, BLUE, PINK, PURPLE 
     let user_room_index = parseInt(room_idx);
@@ -50,7 +51,7 @@ const GameDrawing = (props) => {
     let user_member_count = parseInt(member_count);
     // **
     
-    //8번
+    //8번 정희야 여기 주석해야해
    /*  let user_order = 1;
     let user_color = 'RED'; // RED, ORANGE, YELLOW, GREEN, BLUE, PINK, PURPLE
     let user_room_index = 53;
@@ -170,7 +171,7 @@ const GameDrawing = (props) => {
                     clearInterval(countdown);
                     console.log('모든 순서 끝!');
                     //세트 이미지 저장 api 요청
-
+                    saveCanvas();
                     //여기서 투표로 넘어가기
                 } else {
                     // 다음 순서 받을 준비 완료
@@ -230,6 +231,61 @@ const GameDrawing = (props) => {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // 그림 초기화
     };
 
+    const saveCanvas = () => {
+        const canvas = document.getElementById('draw');
+        
+        const imgBase64 = canvas.toDataURL('image/png', 'image/octet-stream');
+        const decodImg = window.atob(imgBase64.split(',')[1]);
+      
+        let array = [];
+        for (let i = 0; i < decodImg .length; i++) {
+          array.push(decodImg .charCodeAt(i));
+        }
+      
+        var date =+ new Date();
+
+        const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
+        const fileName = room_idx + '_' + date + '.png';
+        let formData = new FormData();
+        formData.append('set_image', file, fileName);
+        //formData.append('file', file, "21_1202");
+
+        let formValue;
+
+        for (let value of formData.values()) {
+             formValue = value;
+            console.log('폼 : ' + formValue);
+            console.log('폼 타입 ' + typeof formValue)
+          }
+
+        downloadURI(imgBase64, formData)
+
+        const restURL = 'http://3.17.55.178:3002/game/set/image/' + setIdx; //게임세트 인덱스 넣기
+
+        const reqHeaders = {
+            headers: {
+               // Content-Type: 'multipart/form-data',
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+
+        console.log('폼데이터? 성공: ' + formData);
+        axios
+            .patch(
+                restURL,
+                {
+                    set_image: formData,
+                },
+                reqHeaders
+            )
+            .then(function (response) {
+                console.log('이미지 저장 성공');
+            })
+            .catch(function (error) {
+                alert('error ' + error.message);
+            });           
+    }
+
     //downloadURI, Save 는 지울 예정 정희
     function downloadURI(uri, name){
         var link = document.createElement("a")
@@ -240,22 +296,7 @@ const GameDrawing = (props) => {
     }
 
     const Save = () => {
-        const canvas = document.getElementById('draw');
-        
-        const imgBase64 = canvas.toDataURL('image/png', 'image/octet-stream');
-        /* const decodImg = atob(imgBase64.split(',')[1]);
-      
-        let array = [];
-        for (let i = 0; i < decodImg .length; i++) {
-          array.push(decodImg .charCodeAt(i));
-        }
-      
-        const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
-        const fileName = 'canvas_img_' + new Date().getMilliseconds() + '.png';
-        let formData = new FormData();
-        formData.append('file', file, fileName); */
-
-        downloadURI(imgBase64, "예스")
+         
     }
 
     let ImgUrl; //타이머 이미지 URL이 들어갈 곳
@@ -299,8 +340,8 @@ const GameDrawing = (props) => {
                     // : ''
                 }
             </Container>
-            {/* <button onClick={onClick}>초기화</button>
-            <button onClick={Save}>저장</button> */}
+            {/* <button onClick={onClick}>초기화</button> */}
+            <button onClick={saveCanvas}>저장</button>
         </React.Fragment>
     );
 };
