@@ -104,8 +104,10 @@ const PlayingRoom = (props) => {
                         room_idx: parseInt(room_idx),
                         user_idx: parseInt(save_user_idx),
                         member_count: userList.length,
+
                         draw_order: 1,
                     });
+                    alert(isDrawReady);
                     setWaitSeconds(10); // 10초 기다림
                     setSeconds(-1);
                 }
@@ -159,6 +161,8 @@ const PlayingRoom = (props) => {
     // 유저 리스트 중 내 정보 배열 및 내 순서 저장
     let user_order;
     var myList = userList.find((x) => x.user_idx === save_user_idx);
+
+    //console.log('마이리스트 : ' + JSON.stringify(myList));
     if (myList) {
         user_order = myList.game_member_order;
     }
@@ -226,6 +230,7 @@ const PlayingRoom = (props) => {
                                         {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
                                         <MissionWord text={keyword} role={role}></MissionWord>
                                         {/* 유저 컴포넌트 */}
+
                                         {userList.map((index, key) => (
                                             <GameUserCard
                                                 user_idx={userList[key].user_idx}
