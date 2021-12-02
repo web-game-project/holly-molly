@@ -58,6 +58,9 @@ export default function App() {
                     <Switch>
                         <Route path="/waitingroom/:name" component={WaitingRoom} />
                         <Route path="/waitingroom" component={WaitingRoom} />
+                    </Switch><Switch>
+                        <Route path="/playingvote/:name" component={PlayingVote} />
+                        <Route path="/playingvote" component={PlayingVote} />
                     </Switch>
                   </ConnectedRouter>
                 </BrowserRouter>
