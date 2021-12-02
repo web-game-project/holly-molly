@@ -12,7 +12,7 @@ module.exports = async (req, res, next) => {
             { where: { game_set_idx: gameSetIdx } }
         );
 
-        res.status(200);
+        res.status(200).end();
     } catch (error) {
         console.log('saveSetImage Error: ', error);
         res.status(400).json({
