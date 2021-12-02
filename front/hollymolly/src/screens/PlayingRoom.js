@@ -131,8 +131,8 @@ const PlayingRoom = (props) => {
         /* console.log('userList');
         console.log(userList);
         console.log('PlayInfo');
-        console.log(location.state.data);
-        */
+        console.log(location.state.data); */
+        
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,
@@ -233,13 +233,13 @@ const PlayingRoom = (props) => {
                                         <MissionWord text={keyword} role={role}></MissionWord>
                                         {/* 유저 컴포넌트 */}
 
-                                        {userList.map((index, key) => (
+                                        {reOrderList.map((index, key) => (
                                             <GameUserCard
-                                                user_idx={userList[key].user_idx}
-                                                user_color={userList[key].user_color}
-                                                user_name={userList[key].user_name}
-                                                user_role="ghost"
-                                                user_order={userList[key].game_member_order}
+                                                user_idx={reOrderList[key].user_idx}
+                                                user_color={reOrderList[key].user_color}
+                                                user_name={reOrderList[key].user_name}
+                                                user_role={role}
+                                                user_order={reOrderList[key].game_member_order}
                                             ></GameUserCard>
                                         ))}
                                     </UserDiv>
@@ -247,6 +247,7 @@ const PlayingRoom = (props) => {
                                         <DrawDiv>
                                             {myList && (
                                                 <GameDrawing
+                                                    keyword = {keyword}
                                                     setIdx={location.state.data.game_set_idx}
                                                     role={role}
                                                     order={myList.game_member_order}
@@ -254,6 +255,7 @@ const PlayingRoom = (props) => {
                                                     room_idx={room_idx}
                                                     idx={save_user_idx}
                                                     member_count={userList.length}
+                                                    userList = {userList}
                                                 />
                                             )}
                                         </DrawDiv>
