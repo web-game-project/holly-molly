@@ -54,10 +54,90 @@ export default function WaitingRoom({ match }) {
 
     const [currentSocketConnection, setCurrentSocketConnection] = useState();
 
+    const getWaiting = () => {
+        const restURL = 'http://3.17.55.178:3002/room/' + room_index;
+
+        const reqHeaders = {
+            headers: {
+                //1번 토큰 이용
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        axios
+            .get(restURL, reqHeaders)
+            .then(function (response) {
+                console.log(response.data);
+                setRoomEnterInfo(response.data);
+                console.log('대기실 데이터 성공');
+                //room index 설정
+                room_idx = response.data.room_idx; //이렇게 받아오면 number타입으로 api, 소켓 에러 X\
+
+                //방장 인덱스 받아오기, save_user_idx 이게 내 인덱스 저장된 변수
+                //받아와서 리더인지 아닌지 state 설정
+                if (response.data.leader_idx === save_user_idx) {
+                    console.log('방장 오케이');
+                    setIsLeader(1); //리더다
+                }
+
+                //userlist로 사용자들이 무슨 색을 할당 받았는지 저장하는 배열
+                locationUserList = response.data.waiting_room_member_list;
+                //setUserList(location.state.data);
+                setUserList(locationUserList);
+
+                for (let i = 0; i < locationUserList.length; i++) {
+                    console.log(
+                        'user color랑 인덱스랑 레디값 : ' +
+                            locationUserList[i].wrm_user_color +
+                            locationUserList[i].user_idx +
+                            ' ' +
+                            locationUserList[i].wrm_user_ready
+                    );
+
+                    const currentColor = locationUserList[i].wrm_user_color;
+
+                    colorList &&
+                        colorList.map((element) => {
+                            if (element.color === currentColor) {
+                                element.choose = 'false';
+                                if (locationUserList[i].wrm_user_ready === true) {
+                                    ready_cnt += 1;
+                                    console.log('세팅 레디 값 : ' + ready_cnt);
+                                }
+
+                                if (save_user_idx == locationUserList[i].user_idx) {
+                                    //선택된 값 세팅
+                                    setSelectColor(element.color);
+                                    //내 준비 상태
+                                    setChangeReady(locationUserList[i].wrm_user_ready);
+                                }
+                            }
+                            setColorList(colorList);
+                        });
+                }
+
+                //햔재 인원 받아오기
+                console.log('수정인데 세팅룸함수 안에 현재 인원 값 : ' + response.data.room_current_member_cnt);
+                setCurrentMember(response.data.room_current_member_cnt);
+
+                //게임 시작 인원 받아오기
+                setStartMember(response.data.room_start_member_cnt - 1);
+
+                //방장 인덱스 받아오기
+                setLeaderIdx(response.data.leader_idx);
+            })
+            .catch(function (error) {
+                console.log('대기실 데이터 실패');
+                console.log(error.response);
+            });
+
+        setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
+    }
     useEffect(() => {
         socket.on('connect', () => {
             console.log(socket.connected);
             setCurrentSocketConnection(socket.connected);
+            getWaiting();
+            //console.log('색깔 변경 컴포넌트 ' + socket.id);
             //alert(socket.connected);
         });
 
@@ -186,7 +266,7 @@ export default function WaitingRoom({ match }) {
         //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 부분
         socket.on('change member color', (data) => {
             alert('socket-> index: ' + data.user_idx + '이전 color: ' + data.before_color + '이후 color: ' + data.current_color);
-
+            
             const changeColorUserIdx = data.user_idx;
             const changeUserBeforeColor = data.before_color;
             const changeUserCurrentColor = data.current_color;
@@ -470,7 +550,7 @@ export default function WaitingRoom({ match }) {
         }
     };
 
-    useEffect(() => {
+    /* useEffect(() => {
         // setRoomEnterInfo(location.state.data);
 
         // 방 데이터 조회 api
@@ -551,7 +631,7 @@ export default function WaitingRoom({ match }) {
             });
 
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
-    }, []);
+    }, []); */
 
     return (
         <Background>
