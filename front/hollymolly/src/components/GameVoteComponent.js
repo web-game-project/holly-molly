@@ -1,48 +1,112 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import style from '../styles/styles';
 import styled from 'styled-components';
-
-//이미지
+import { useSelector } from 'react-redux';
 import gameBackground from '../assets/night.png';
-//유저카드
 import UserVote from './UserVote';
 
-//통신
-import axios from 'axios';
 // 소켓
+import axios from 'axios';
 import { io } from 'socket.io-client';
 
+// local storage에 있는지 확인
+let data = localStorage.getItem('token');
+let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
+
 const GameVoteComponent = (props) => {
-    const  userList  = props.data;
+    const userList = props.data;
+    const gameset = props.gameSet;
+    const [clicked, setClicked] = useState(false); // 클릭리스너
+    const [voteWho, setVoteWho] = useState(''); // 내가 투표한 사람의 컬러
+    const [voteIndex, setVoteIndex] = useState(-1); // 내가 투표한 사람의 인덱스
+    const baseURL = useSelector((state) => state.socket.base_url);
 
-    //console.log('유저리스트 : ' + JSON.stringify(userList));
+    useEffect(() => {
+        setClicked(false);
+        setVoteWho('');
+    }, []);
 
-    /* const userList = [
-        { user_name: "동선동살쾡이", wrm_user_color: "RED" },
-        { user_name: "수유동살쾡이", wrm_user_color: "ORANGE" },
-        { user_name: "수선동살쾡이", wrm_user_color: "YELLOW" },
-        { user_name: "방배동살쾡이", wrm_user_color: "GREEN" },
-        { user_name: "진월동살쾡이", wrm_user_color: "PURPLE" },
-        { user_name: "봉선동살쾡이", wrm_user_color: "PINK" },
-    ]; */
+    const postVote = async () => {
+        //  타이머 카운트 주고 시간 다 되면 이 api 불러주면 됨
+        // 투표 api
+        const restURL = baseURL + 'game/vote';
+
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        axios
+            .post(
+                restURL,
+                {
+                    game_set_idx: gameset,
+                    user_idx: voteIndex,
+                },
+                reqHeaders
+            )
+            .then(function (response) {
+                console.log('postVote 성공');
+            })
+            .catch(function (error) {
+                console.log('postVote 실패');
+                console.log(error.response);
+            });
+    };
 
     return (
         <Container>
-            몰리, 인간을 지목해서 <text style={{ color: style.red, textShadow: '3px 3px #980000'  }}>투표</text>  해주세요.
+            {/* <br /> */}
+            몰리, 인간으로 의심되는 유령을 <text style={{ color: style.red, textShadow: '3px 3px #980000' }}>투표</text> 해주세요.
+            <Button onClick={postVote}>투표하기</Button> {/* //투표 api 테스트 할 때 이 버튼 누르시면 됩니다. */}
             <div style={styles.userListContainer}>
-                {userList && userList.map((element) => (
-                    <UserVote
-                        nick={element.user_name}
-                        color={element.wrm_user_color} />
-                ))}
+                {userList &&
+                    userList.map((element) => (
+                        <Div
+                            onClick={() => {
+                                setClicked(true);
+                                console.log(element.user_color);
+                                setVoteWho(element.user_color);
+                                setVoteIndex(element.user_idx);
+                                console.log(voteWho + '가 voteWho');
+                                console.log(gameset);
+                                console.log('API: 게임세트? ' + gameset + ', 유저인덱스? ' + voteIndex);
+                            }}
+                        >
+                            <UserVote nick={element.user_name} color={element.user_color} click={clicked} voteWho={voteWho} />
+                        </Div>
+                    ))}
             </div>
-
             <Info>
-                투표 시간이 끝난<InfoYeLLOW> 즉시 선택된 유령 </InfoYeLLOW> 이 투표됩니다.
+                투표 시간이 끝난 즉시<InfoYeLLOW> 선택된 유령 </InfoYeLLOW> 이 투표됩니다.
             </Info>
         </Container>
     );
-}
+};
+
+const Button = styled.button`
+    // api 보내기 테스트용 버튼
+    background: white;
+    color: palevioletred;
+    width: 70px;
+    height: 20px;
+    font-size: 15px;
+    font-weight: bolder;
+    // margin: 0px 0px -15px 0px;
+    padding: 0.25px 1px;
+    border: 2px solid palevioletred;
+    border-radius: 15px;
+
+    &:hover {
+        background: palevioletred;
+        color: white;
+        border: white;
+        cursor: grab;
+    }
+`;
 
 const Container = styled.div`
     width: 580px;
@@ -50,15 +114,21 @@ const Container = styled.div`
     margin-top: 70px;
     border-radius: 10px;
     text-align: center;
-    font-size: 30px;  
+    font-size: 30px;
     color: #fff;
     font-family: Black Han Sans;
 `;
 
+const Div = styled.div`
+    &:hover {
+        cursor: grab;
+    }
+`;
+
 const Info = styled.text`
-    font-size: 20px;  
+    font-size: 20px;
     color: #ffffff;
-    margin-top: 60px;    
+    margin-top: 60px;
     font-family: Black Han Sans;
 `;
 
@@ -73,7 +143,7 @@ const styles = {
     userListContainer: {
         display: 'flex',
         alignItems: 'flex-start',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         flexDirection: 'column',
         width: '590px',
         height: '410px',

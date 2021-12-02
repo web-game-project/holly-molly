@@ -17,7 +17,6 @@ import axios from 'axios';
 //import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
 
-
 import Loading from '../components/Loading';
 // local storage에 있는지 확인
 let data = localStorage.getItem('token');
@@ -43,8 +42,8 @@ const PlayingRoom = (props) => {
 
     const [playInfo, setPlayInfo] = React.useState(''); //웨이팅룸에서 넘어온 데이터 저장
 
-    const [isDrawReady, setIsDrawReady] = React.useState(false); // 나중에 false로 바꿔놓아야 함 
-    const [waitSeconds, setWaitSeconds] = useState(-1); // 게임 시작 전 10초 기다리는 타이머, 
+    const [isDrawReady, setIsDrawReady] = React.useState(false); // 나중에 false로 바꿔놓아야 함
+    const [waitSeconds, setWaitSeconds] = useState(-1); // 게임 시작 전 10초 기다리는 타이머,
 
     const BaseURL = 'http://3.17.55.178:3002/';
 
@@ -73,9 +72,11 @@ const PlayingRoom = (props) => {
                 setWaitSeconds(parseInt(waitSeconds) - 1);
             } else if (parseInt(waitSeconds) === 0) {
                 // 10초가 지나도 받지 못하면 네트워크 에러 및 서버에서 강제 퇴장 처리
-                if (isDrawReady) { // 받음 
+                if (isDrawReady) {
+                    // 받음
                     setWaitSeconds(-1);
-                } else { // 못받음 
+                } else {
+                    // 못받음
                     console.log('순서 받기 시간 끝');
                     console.log('네트워크가 불안정합니다.');
 
@@ -97,15 +98,19 @@ const PlayingRoom = (props) => {
                     setSeconds(parseInt(seconds) - 1);
                 }
 
+
                 if (parseInt(seconds) === 0) { //그림판 시작 되기 전 다음 순서 준비
+
                     socket.emit('send next turn', {
                         room_idx: parseInt(room_idx),
                         user_idx: parseInt(save_user_idx),
                         member_count: userList.length,
+
                         draw_order: 1
                     });
                     alert(isDrawReady);
                     setWaitSeconds(10); // 10초 기다림 
+
                     setSeconds(-1);
                 }
             }, 1000);
@@ -120,6 +125,11 @@ const PlayingRoom = (props) => {
     useEffect(() => {
         setPlayInfo(location.state.data);
         userList = location.state.data.user_list;
+
+        console.log('userList');
+        console.log(userList);
+        console.log('PlayInfo');
+        console.log(location.state.data);
 
         const reqHeaders = {
             headers: {
@@ -150,10 +160,12 @@ const PlayingRoom = (props) => {
         return a.game_member_order - b.game_member_order;
     });
 
-    // 유저 리스트 중 내 정보 배열 및 내 순서 저장 
+    // 유저 리스트 중 내 정보 배열 및 내 순서 저장
     let user_order;
     var myList = userList.find((x) => x.user_idx === save_user_idx);
+
     //console.log('마이리스트 : ' + JSON.stringify(myList));
+
     if (myList) {
         user_order = myList.game_member_order;
     }
@@ -212,8 +224,10 @@ const PlayingRoom = (props) => {
         <React.Fragment>
             <Background>
 
+
                 {isDrawReady ?
                     role !== "" ? (
+
                         <div>
                             <Header />
                             <Container>
@@ -222,6 +236,7 @@ const PlayingRoom = (props) => {
                                         {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
                                         <MissionWord text={keyword} role={role}></MissionWord>
                                         {/* 유저 컴포넌트 */}
+
                                         {
                                             userList.map(
                                                 (index, key) => (
@@ -246,12 +261,15 @@ const PlayingRoom = (props) => {
                                             :
                                             <GameRoleComponent role={role} timer={seconds} />
                                     }
+
                                     <ChatDiv>
                                         <Chatting room_idx={room_idx} height="615px" available={true} color={myList.user_color}></Chatting>
                                     </ChatDiv>
                                 </BackGroundDiv>
+
                             </Container> </div> ) : <Loading /> : <PlayingLoading />
                 }
+
             </Background>
         </React.Fragment>
     );
