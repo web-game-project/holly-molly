@@ -18,62 +18,39 @@ const GameUserCard = (props) => {
     let borderColor = ''; // 테두리 색
     let characterImg = '';
     let fillColor = ''; // 배경 색
+    let isHuman = false;
+    
+    if(user_role === "human"){
+        isHuman = true;
+    }
 
     if (user_color === 'RED') {
         borderColor = style.red_bg;
-        if(user_role === "human"){
-            characterImg = Human;
-        }else{
-            characterImg = RedCharacter;
-        }
+        characterImg = RedCharacter;
         fillColor = style.red_fill;
     } else if (user_color === 'ORANGE') {
         borderColor = style.orange_bg;
-        if(user_role === "human"){
-            characterImg = Human;
-        }else{
-            characterImg = OrangeCharacter;
-        }
+        characterImg = OrangeCharacter;
         fillColor = style.orange_fill;
     } else if (user_color === 'YELLOW') {
         borderColor = style.yellow_bg;
-        if(user_role === "human"){
-            characterImg = Human;
-        }else{
-            characterImg = YellowCharacter;
-        }
+        characterImg = YellowCharacter;
         fillColor = style.yellow_fill;
     } else if (user_color === 'GREEN') {
         borderColor = style.green_bg;
-        if(user_role === "human"){
-            characterImg = Human;
-        }else{
-            characterImg = GreenCharacter;
-        }
+        characterImg = GreenCharacter;
         fillColor = style.green_fill;
     } else if (user_color === 'BLUE') {
         borderColor = style.blue_bg;
-        if(user_role === "human"){
-            characterImg = Human;
-        }else{
-            characterImg = BlueCharacter;
-        }
+        characterImg = BlueCharacter;
         fillColor = style.blue_fill;
     } else if (user_color === 'PURPLE') {
         borderColor = style.purple_bg;
-        if(user_role === "human"){
-            characterImg = Human;
-        }else{
-            characterImg = PurpleCharacter;
-        }
+        characterImg = PurpleCharacter;
         fillColor = style.purple_fill;
     } else if (user_color === 'PINK') {
         borderColor = style.pink_bg;
-        if(user_role === "human"){
-            characterImg = Human;
-        }else{
-            characterImg = PinkCharacter;
-        }
+        characterImg = PinkCharacter;
         fillColor = style.pink_fill;
     } else {
         // 빈칸 일때
@@ -82,8 +59,6 @@ const GameUserCard = (props) => {
         fillColor = 'transparent';
     }
 
-    
-
     const styles = {
         borderColor: borderColor,
         fillColor: fillColor,
@@ -91,7 +66,17 @@ const GameUserCard = (props) => {
 
     return (
         <React.Fragment>
-            {isEmpty ? null : (
+            {isHuman ? (
+                <Container {...styles}>
+                    <OrderContainer {...styles}>{user_order}</OrderContainer>
+                    <UserInfoContainer>
+                        <ImgContainer src={Human}></ImgContainer>
+                        <RoleNameContainer>
+                            <RoleContainer {...styles}>{user_role}</RoleContainer>
+                            <NameContainer>{user_name}</NameContainer>
+                        </RoleNameContainer>
+                    </UserInfoContainer>
+                </Container>) : (
                 <Container {...styles}>
                     <OrderContainer {...styles}>{user_order}</OrderContainer>
                     <UserInfoContainer>
