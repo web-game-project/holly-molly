@@ -1,4 +1,6 @@
-const userSchema = {
+const Joi = require('joi');
+
+module.exports.userSchema = {
     login: {
         name: Joi.string().required()
     },
@@ -7,17 +9,17 @@ const userSchema = {
     }
 };
 
-const roomSchema = {
+module.exports.roomSchema = {
     create: Joi.object({
         room_name: Joi.string().required(),
-        room_mode: Joi.string().required().value('easy', 'hard'),
+        room_mode: Joi.string().valid('easy', 'hard').required(),
         room_private: Joi.boolean().required().strict(),
-        room_start_member_cnt: Joi.number().integer().required().value(4, 5, 6).strict()
+        room_start_member_cnt: Joi.number().integer().valid(4, 5, 6).required().strict()
     }),
     filter: Joi.object({
-        page: Joi.number().intger(),
-        room_mode: Joi.string().value('easy', 'hard'),
-        room_start_member_cnt: Joi.number().integer().value(4, 5, 6),
+        page: Joi.number().integer(),
+        room_mode: Joi.string().valid('easy', 'hard'),
+        room_start_member_cnt: Joi.number().integer().valid(4, 5, 6),
         is_waiting: Joi.boolean()
     }),
     join: Joi.object({
@@ -29,15 +31,15 @@ const roomSchema = {
     edit: Joi.object({
         room_idx: Joi.number().integer().required().strict(),
         room_name: Joi.string().required(),
-        room_mode: Joi.string().required(),
-        room_start_member_cnt: Joi.number().integer().required()
+        room_mode: Joi.string().valid('easy', 'hard').required(),
+        room_start_member_cnt: Joi.number().integer().valid(4, 5, 6).required()
     })
 };
 
-const waitingRoomSchema = {
+module.exports.waitingRoomSchema = {
     color: Joi.object({
         room_idx: Joi.number().integer().required().strict(),
-        user_color: Joi.string().required()
+        user_color: Joi.string().valid('RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'PINK', 'PURPLE').required()
     }),
     ready: Joi.object({
         room_idx: Joi.number().integer().required().strict(),
@@ -45,9 +47,9 @@ const waitingRoomSchema = {
     }),
 };
 
-const gameSchema = {
+module.exports.gameSchema = {
     startGame: Joi.object({
-        room_ix: Joi.number().integer().required().strict()
+        room_idx: Joi.number().integer().required().strict()
     }),
     startSet: Joi.object({
         game_idx: Joi.number().integer().required().strict(),
@@ -61,15 +63,17 @@ const gameSchema = {
         game_set_idx: Joi.number().integer().required().strict(),
         game_set_human_answer: Joi.string().required()
     }),
-    /*draw: Joi.object({
-        draw_info: Joi.object().required(),
-        color: Joi.string().regex(/^#[A-Fa-f0-9]{6}/).required(),
-        previous_x: Joi.number().required(),
-        previous_y: Joi.number().required(),
-        current_x: Joi.number().required(),
-        current_y: Joi.number().required(),
-    }),*/
+    draw: Joi.object({
+        room_idx: Joi.number().integer().required().strict(),
+        draw_info: Joi.object({
+            color: Joi.string().regex(/^#[A-Fa-f0-9]{6}/).required(), // color value 확인
+            previous_x: Joi.number().required(),
+            previous_y: Joi.number().required(),
+            current_x: Joi.number().required(),
+            current_y: Joi.number().required()
+        })
+    }),
     chat: Joi.object({
-        msg: Joi.stringG().required()
+        msg: Joi.string().required()
     })
 };

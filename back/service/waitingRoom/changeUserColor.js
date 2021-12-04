@@ -1,9 +1,18 @@
 const { WaitingRoomMember } = require('../../models');
+const { waitingRoomSchema } = require('../../util/joi/schema');
 
 module.exports = async (req, res, next) => {
-    let { user_color } = req.body;
     let { user_idx } = res.locals.user.dataValues;
-    let { room_idx } = req.body;
+
+    const { error, value } = waitingRoomSchema.color.validate(req.body);
+    let { room_idx, user_color } = value;
+    if(error){
+        res.status(403).json({
+            error: error.details[0].message
+        });
+
+        return;
+    }
 
     try {
         let before_color = await getBeforeUserColor(user_idx, room_idx);
