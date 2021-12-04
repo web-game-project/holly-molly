@@ -1,7 +1,16 @@
 const { Game, Keyword, Room, WaitingRoomMember, sequelize, GameMember, GameSet } = require('../../models');
+const { gameSchema } = require('../../util/joi/schema');
 
 module.exports.startGame = async (req, res, next) => {
-    let { room_idx } = req.body;
+    const { error, value } = gameSchema.startGame.validate(req.body);
+    let { room_idx } = value;
+    if(error){
+        res.status(403).json({
+            error: error.details[0].message
+        });
+
+        return;
+    }
 
     try {
         if (!res.locals.leader) {

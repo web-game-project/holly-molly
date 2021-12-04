@@ -1,7 +1,18 @@
 const { Room } = require('../../models');
 const { getMemberCountInfo } = require('../game/startGame');
+const { roomSchema } = require('../../util/joi/schema');
 
 module.exports = async (req, res, next) => {
+    const { error, value } = roomSchema.edit.validate(req.body);
+    let { room_idx, room_name, room_mode, room_start_member_cnt } = value;
+    if(error){
+        res.status(403).json({
+            error: error.details[0].message
+        });
+
+        return;
+    }
+
     if (!res.locals.leader) {
         res.status(403).json({
             message: '권한이 없습니다.',
@@ -10,7 +21,6 @@ module.exports = async (req, res, next) => {
         return;
     }
     
-    let { room_idx, room_name, room_mode, room_start_member_cnt } = req.body;
     room_idx = Number(room_idx);
     const memberCnt = await getMemberCountInfo(room_idx);
 

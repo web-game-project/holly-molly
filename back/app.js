@@ -2,6 +2,7 @@ const express = require('express');
 const Http = require('http');
 const socket = require('./socket/socket');
 const cors = require('cors');
+const morgan = require('morgan');
 
 const {
     loginRouter,
@@ -16,6 +17,7 @@ const PORT = 3002;
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(morgan('common'));
 const server = Http.createServer(app);
 socket(server, app);
 
