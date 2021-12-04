@@ -5,7 +5,7 @@ module.exports.startGame = async (req, res, next) => {
     const { error, value } = gameSchema.startGame.validate(req.body);
     let { room_idx } = value;
     if(error){
-        res.status(403).json({
+        res.status(400).json({
             error: error.details[0].message
         });
 

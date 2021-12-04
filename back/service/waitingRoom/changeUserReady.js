@@ -7,7 +7,7 @@ module.exports = async (req, res, next) => {
     const { error, value } = waitingRoomSchema.ready.validate(req.body);
     let { room_idx, user_ready } = value;
     if(error){
-        res.status(403).json({
+        res.status(400).json({
             error: error.details[0].message
         });
 
