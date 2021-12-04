@@ -144,7 +144,7 @@ const PlayingVote = (props) => {
                                         user_idx={userList[key].user_idx}
                                         user_color={userList[key].user_color}
                                         user_name={userList[key].user_name}
-                                        user_role="ghost"
+                                        user_role={userList[key].user_role}
                                         user_order={userList[key].game_member_order}
                                     ></GameUserCard>
                                 ))
