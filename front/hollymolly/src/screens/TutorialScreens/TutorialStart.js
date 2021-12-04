@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import Header from '../components/Header';
-import TutorialWorldview from '../components/TutorialWorldview';
+import Header from '../../components/Header';
+import TutorialWorldview from '../../components/TutorialWorldview';
 
-function Tutorial() {
+function TutorialStart() {
     return (
         <Background>
             <Header goMain />
             <Container>
                 <TutorialWorldview />
-                {/* 이어서 튜토리얼 페이지들... */}
             </Container>
         </Background>
     );
@@ -36,4 +35,4 @@ const Container = styled.div`
     border-bottom-right-radius: 1.5rem;
     overflow: hidden;
 `;
-export default Tutorial;
+export default TutorialStart;
