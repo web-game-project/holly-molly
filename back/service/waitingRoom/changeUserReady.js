@@ -1,9 +1,18 @@
 const { WaitingRoomMember } = require('../../models');
+const { waitingRoomSchema } = require('../../util/joi/schema');
 
 module.exports = async (req, res, next) => {
-    let { user_ready } = req.body;
     let { user_idx } = res.locals.user.dataValues;
-    let { room_idx } = req.body;
+
+    const { error, value } = waitingRoomSchema.ready.validate(req.body);
+    let { room_idx, user_ready } = value;
+    if(error){
+        res.status(403).json({
+            error: error.details[0].message
+        });
+
+        return;
+    }
 
     try {
         await WaitingRoomMember.update(
@@ -17,7 +26,7 @@ module.exports = async (req, res, next) => {
         let data = { user_idx, user_ready };
         io.to(room_idx).emit('change member ready', data);
 
-        res.status(200).json('success');
+        res.status(200).end();
     } catch (error) {
         console.log('changeUserReady Error:', error);
         res.status(400).json({
