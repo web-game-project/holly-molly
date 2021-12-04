@@ -23,6 +23,7 @@ module.exports = async (req, res, next) => {
             is_waiting
         );
 
+        /*
         // socket : get socket
         const { io, socket } = getIOSocket(req, res);
         if (!io || !socket) {
@@ -34,7 +35,8 @@ module.exports = async (req, res, next) => {
         }
         // socket : join room 0
         moveRoom(io, socket, 0);
-
+        */
+       
         res.json({
             total_room_cnt: rooms.roomCount,
             room_list: rooms.roomList,
