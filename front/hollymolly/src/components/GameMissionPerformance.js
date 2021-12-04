@@ -17,13 +17,13 @@ let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const GameMissionPerformance = (props) => {
    
-    //const {user_name, user_role, user_idx, children} = props;
+    const {role} = props;
     const [isHuman, setIsHuman] = useState(false);
     const [seconds, setSeconds] = useState(5); //게임 시작 5초 후, 타이머
 
     const inputRef = useRef();
 
-    let user_role = "ghost";
+    let user_role = role;
     useEffect(() => {
 
         const socket = io('http://3.17.55.178:3002/', {
@@ -41,6 +41,15 @@ const GameMissionPerformance = (props) => {
         }else{ // ghost 일 때 마피아 미션 수행 기다림 
             setIsHuman(false);
         }
+
+        // 인간 답안 제출 완료 
+        socket.on('submit human answer', (data) => {
+            console.log('submit human answer');
+            
+            if(data.human_submit === true){
+                // 여기서 투표 결과 페이지로 넘기면 될듯 합니다
+            }
+        });
     }, []);
 
     useEffect(() => {
@@ -81,7 +90,7 @@ const GameMissionPerformance = (props) => {
     };
 
     const onClick = () => {
-        //inputHumanKeyword();
+        inputHumanKeyword();
     };
 
       return (
