@@ -89,6 +89,8 @@ const enterRoom = async (req, res, next) => {
             user_name: user.user_name,
             user_color: insertedMember.wrm_user_color,
         });
+
+        printLog("enterRoom", user.user_idx+"번 유저 "+socket.id);
         // socket : join room room_idx
         moveRoom(io, socket, room.room_idx);
 
