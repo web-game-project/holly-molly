@@ -75,8 +75,8 @@ const Description = styled.div`
     width: 500x;
     height: 50px;
     position: absolute;
-    top: 88%;
-    left: 21%;  
+    margin-left: -450px;
+    margin-top: 540px; 
     font-size: 30px;   
     padding: 5px;
     color: ${style.white};
@@ -90,8 +90,8 @@ const NextBtn = styled.div`
     border-radius: 30px;
     text-align: center;
     position: absolute;
-    top: 8%;
-    left: 69%;
+    margin-left: 800px;
+    margin-top: -700px;
     border: 2px solid #000;
     border-radius: 20px;     
     font-size: 21px;   
@@ -116,8 +116,8 @@ const RoleDiv = styled.div`
     background-color: ${style.black};
     font-weight: bolder;
     position: absolute;
-    top: 26%;
-    left: 43%;
+    margin-left: -200px;
+    margin-top: -450px;
 
     &:hover .textDiv {
         background-color:  ${style.white};
@@ -131,8 +131,8 @@ const RoleDiv = styled.div`
         z-index: 1;
         overflow: hidden;
         position: absolute;  
-        top: 60%;
-        left: 43%;
+        top: -25px;
+        left: 30px;
         width: 350px;
         display: none;
         padding: 5px;
@@ -149,8 +149,8 @@ const RoleTextDiv = styled.div`
     background-color: ${style.black};
     font-weight: bolder;
     position: absolute;
-    top: 58%;
-    left: 33.5%;
+    margin-left: -530px;
+    margin-top: 70px;
 
     &:hover .textDiv {
         background-color:  ${style.white};
@@ -182,8 +182,8 @@ const KeywordDiv = styled.div`
     background-color: ${style.black};
     font-weight: bolder;
     position: absolute;
-    top: 16%;
-    left: 20%;
+    margin-left: -976.5px;
+    margin-top: -580px;
 
     &:hover .textDiv {
         background-color:  ${style.white};
@@ -220,8 +220,8 @@ const UserCardDiv = styled.div`
     background-color: ${style.black};
     font-weight: bolder;
     position: absolute;
-    top: 28%;
-    left: 20%;
+    margin-left: -976.5px;
+    margin-top: -380px;
 
     &:hover .textDiv {
         background-color:  ${style.white};
