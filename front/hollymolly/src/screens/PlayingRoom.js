@@ -151,6 +151,15 @@ const PlayingRoom = (props) => {
             });
     });
 
+    for (let i = 0; i < userList.length; i++) {
+        if(userList[i].user_idx === save_user_idx){ 
+            userList[i].user_role = role;
+        }else{
+            userList[i].user_role = "ghost";
+        }
+    }
+
+    console.log(userList);
     // 깊은 복사 
     let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
     let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트 
@@ -238,7 +247,7 @@ const PlayingRoom = (props) => {
                                                 user_idx={reOrderList[key].user_idx}
                                                 user_color={reOrderList[key].user_color}
                                                 user_name={reOrderList[key].user_name}
-                                                user_role={role}
+                                                user_role={reOrderList[key].user_role}
                                                 user_order={reOrderList[key].game_member_order}
                                             ></GameUserCard>
                                         ))}
