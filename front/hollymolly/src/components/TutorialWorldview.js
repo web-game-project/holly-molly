@@ -25,10 +25,19 @@ export default function TutorialWorldview({}) {
             pathname: '/roomlist', // 나가기 성공하면 룸리스트로 이동
         });
     }
+
+    const moveRolePage = async (str) =>{
+        //role 튜토리얼 페이지 이동
+        history.push({
+            pathname: '/role/tutorial',
+            state: { role: str },
+        });
+    }
+
     return (
         <Container>
             {/* 인간 유령 설명 페이지로 연결해주면 됨 div */}
-            <HumanDiv>
+            <HumanDiv onClick={() => {moveRolePage("human");}}>
                 <Div>
                     <MollyCharacter src={molly}></MollyCharacter>
                     <MollyTitle>
@@ -53,7 +62,7 @@ export default function TutorialWorldview({}) {
             </HumanDiv>
 
             {/* 유령 설명 페이지로 연결해주면 됨 div */}
-            <GhostDiv>
+            <GhostDiv onClick={() => {moveRolePage("ghost");}}>
                 <Link to="/">
                     <CardContainer>
                         <CharacterContainer className="ghost">
