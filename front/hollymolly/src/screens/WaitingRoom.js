@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import { io } from 'socket.io-client';
 import style from '../styles/styles.js';
 import exit from '../assets/exit.png';
 
@@ -26,9 +25,7 @@ const BaseURL = 'http://3.17.55.178:3002';
 // local storage에 있는지 확인
 let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 // room_idx 변수
 let room_idx = 0;
@@ -38,10 +35,13 @@ let ready_cnt = 0;
 
 let locationUserList = [{}]; //location에서 받아온 유저리스트 담는 배열
 
-export default function WaitingRoom({ match }) {
+export default function WaitingRoom(props) {
     let location = useLocation();
     const history = useHistory();
 
+    let room_index = parseInt(props.match.params.name); // url에 입력해준 방 인덱스
+    console.log('방 번호는 ?' + room_index);
+    
     //유저 리스트
     const [userList, setUserList] = useState();
 
@@ -83,20 +83,7 @@ export default function WaitingRoom({ match }) {
 
     //방장 인덱스
     const [leaderIdx, setLeaderIdx] = useState();
-
     const leader_idx = useRef(0);
-
-    const socket = io('http://3.17.55.178:3002/', {
-            auth: {
-                token: save_token,
-            },
-            transports: ['websocket']
-    });
-
-    let room_index = parseInt(match.params.name); // url에 입력해준 방 인덱스
-    console.log('방 번호는 ?' + room_index);
-
-    const [currentSocketConnection, setCurrentSocketConnection] = useState();
 
     const getWaiting = () => {
         const restURL = 'http://3.17.55.178:3002/room/' + room_index;
@@ -179,37 +166,31 @@ export default function WaitingRoom({ match }) {
     }
 
     useEffect(() => {
-        socket.on('connect', () => {
-            console.log(socket.connected);
-            setCurrentSocketConnection(socket.connected);
+        console.log("waiting room");
+        console.log(props.socket);
+
+        if(props.socket.connected){
             getWaiting();
+        }
+
+        props.socket.on('connect', () => {
+            
+            getWaiting();
+            
+            //getWaiting();
             //console.log('색깔 변경 컴포넌트 ' + socket.id);
             //alert(socket.connected);
         });
 
-        // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
-        socket.on('disconnect', (reason) => {
-            console.log('disconnect');
-            setCurrentSocketConnection(socket.connected);
-            socket.connect();
-        });
-
-        // 오류 시, 수동으로 다시 연결 시도
-        socket.on('error', () => {
-            setTimeout(() => {
-                socket.connect();
-            }, 1000);
-        });
-
         //방장 변경 leaderIdx
-        socket.on('change host', (data) => {
+        props.socket.on('change host', (data) => {
             console.log('방장 탈출');
 
             setLeaderIdx(data.user_idx);
         });
 
         //방퇴장
-        socket.on('exit room', (data) => {
+        props.socket.on('exit room', (data) => {
             const exitUserIdx = data.user_idx;
 
             console.log('어레이냐> : ' + Array.isArray(userList));
@@ -226,7 +207,7 @@ export default function WaitingRoom({ match }) {
         });
 
         // 방 입장 소켓
-        socket.on('enter room', (data) => {
+        props.socket.on('enter room', (data) => {
             console.log('입장 data : ' + JSON.stringify(data));
 
             const user = {
@@ -261,7 +242,7 @@ export default function WaitingRoom({ match }) {
         });
 
         //사용자의 준비 상태 값 변경에 따른 소켓
-        socket.on('change member ready', (data) => {
+        props.socket.on('change member ready', (data) => {
             const changeReadyUserIdx = data.user_idx;
             const changeReadyResult = data.user_ready;
 
@@ -310,7 +291,7 @@ export default function WaitingRoom({ match }) {
         });
 
         //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 부분
-        socket.on('change member color', (data) => {
+        props.socket.on('change member color', (data) => {
             alert('socket-> index: ' + data.user_idx + '이전 color: ' + data.before_color + '이후 color: ' + data.current_color);
             
             const changeColorUserIdx = data.user_idx;
@@ -362,14 +343,14 @@ export default function WaitingRoom({ match }) {
         });
 
         //방 정보 수정 소켓
-        socket.on('edit room', (data) => {
+        props.socket.on('edit room', (data) => {
             alert('수정) 방정보! ');
             setRoomUpdate(data);
         });
 
        
         //게임 시작 정보 socket
-        socket.on('start game', (data) => {
+        props.socket.on('start game', (data) => {
             alert('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
             alert(leader_idx.current);
             
@@ -378,7 +359,7 @@ export default function WaitingRoom({ match }) {
                 pathname: '/playingroom/' + room_idx,
                 state: { data: data, room: room_idx, leader: leader_idx.current},
             });
-        });
+        }); 
     }, []);
 
     const [result, setResult] = useState(0);
@@ -641,8 +622,10 @@ export default function WaitingRoom({ match }) {
 
     return (
         <Background>
-            {currentSocketConnection ? (
+            {props.socket.connected ? (
+                console.log("socket 연결!"),
                 roomEnterInfo && roomEnterInfo ? (
+                    console.log("정보 조회 성공!"),
                     (RefreshVerification.verification(),
                     (
                         <div>
@@ -775,7 +758,7 @@ export default function WaitingRoom({ match }) {
                                     </div>
                                 </SelectDiv>
                                 <RightDiv>
-                                    <Chatting room_idx={room_idx} height="520px" available={true}></Chatting>
+                                    <Chatting socket={props.socket} room_idx={room_idx} height="520px" available={true}></Chatting>
                                     <StartDiv>
                                         {
                                             isLeader === 0 //방장 아님

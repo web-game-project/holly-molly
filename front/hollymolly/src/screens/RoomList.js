@@ -16,9 +16,6 @@ import RefreshVerification from '../server/RefreshVerification';
 import leftArrowBtn from '../assets/leftArrowBtn.png';
 import rightArrowBtn from '../assets/rightArrowBtn.png';
 
-// 소켓
-import { io } from 'socket.io-client';
-
 // 리덕스 & 로딩
 import { useSelector } from 'react-redux';
 import Loading from '../components/Loading';
@@ -27,18 +24,17 @@ let total_room_cnt = 0; // 룸 리스트 총 방의 갯수
 
 RefreshVerification.verification();
 
-const RoomList = () => {
+const RoomList = (props) => {
+    
     const history = useHistory();
 
     // 리덕스에 저장된 값
-    const isLogin = useSelector((state) => state.socket.is_login);
     const baseURL = useSelector((state) => state.socket.base_url);
 
     const [emptyRoomsLength, setEmptyRoomsLength] = useState('');
     const [createRoomData, setcreateRoomData] = useState('');
     const [isSocket, setIsSocket] = useState(false);
-    const [currentSocketConnection, setCurrentSocketConnection] = useState();
-
+    
     // 방 전체 리스트
     const [rooms, setRooms] = useState();
     // Filter 선택값 결과 배열 list
@@ -52,69 +48,54 @@ const RoomList = () => {
 
     let data = localStorage.getItem('token');
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-    let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-    let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-    let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
-
-    const socket = io('http://3.17.55.178:3002/', {
-            auth: {
-                token: save_token,
-            },
-            transports: ['websocket']
-    });
 
     useEffect(() => {
-        socket.on('connect', () => {
-            console.log('room list connection server');
-            setCurrentSocketConnection(socket.connected);
-        });
-
-        // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
-        socket.on('disconnect', (reason) => {
-            console.log('disconnect');
-            setCurrentSocketConnection(socket.connected);
-            socket.connect();
+       
+        props.socket.on('connect', () => {
+            console.log("room list");
+            console.log(props.socket);
         });
 
         //방 생성 시, 마지막 페이지에 방 추가
-        socket.on('create room', (data) => {
+        props.socket.on('create room', (data) => {
             //setcreateRoomData(data);
             console.log('create room');
             setIsSocket(!isSocket);
         });
 
         // 방 삭제 - 대기실 삭제
-        socket.on('delete room', (data) => {
+        props.socket.on('delete room', (data) => {
             console.log('delete room');
             setIsSocket(!isSocket);
         });
 
         //방 정보 수정  - 특정 대기실에서 대기실 정보 수정 시
-        socket.on('edit room', (data) => {
+        props.socket.on('edit room', (data) => {
             console.log('edit room');
             setIsSocket(!isSocket);
         });
 
         // 방 멤버 변동 - 특정 대기실 사용자 입장/퇴장 시
-        socket.on('change member count', (data) => {
+        props.socket.on('change member count', (data) => {
             console.log('change member count');
             setIsSocket(!isSocket);
         });
 
         //방 상태 변동 - 특정 게임이 시작할 때
-        socket.on('change game status', (data) => {
+        props.socket.on('change game status', (data) => {
             console.log('change game status');
             setIsSocket(!isSocket);
         });
     }, []);
 
-    // 소켓 이벤트 발생 시 모든 페이지 다시 부름
+    
+   /*  // 소켓 이벤트 발생 시 모든 페이지 다시 부름
     useEffect(() => {
         for (let i = 0; i < TOTAL_SLIDES; i++) {
             roomListCheckPage(i);
         }
     }, [isSocket]);
-
+ */
     // 페이지 슬라이드 개수
     let TOTAL_SLIDES = 0;
 
@@ -161,7 +142,6 @@ const RoomList = () => {
             .get(restURL, reqHeaders)
             .then(function (response) {
                 total_room_cnt = response.data.total_room_cnt;
-                console.log(response.data);
                 setRooms(response.data);
                 setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
             })
@@ -170,32 +150,38 @@ const RoomList = () => {
             });
     };
 
-    useEffect(() => {
-        // 룸 리스트 조회
-        const roomListCheck = async () => {
-            const currentPage = currentSlide + 1;
-            var restURL = baseURL + 'room?page=' + currentPage;
-            restURL = filterUrl(restURL, resultArray);
+    const roomListCheck = async () => {
+        const currentPage = currentSlide + 1;
+        var restURL = baseURL + 'room?page=' + currentPage;
+        restURL = filterUrl(restURL, resultArray);
 
-            const reqHeaders = {
-                headers: {
-                    authorization: 'Bearer ' + save_token,
-                },
-            };
-
-            axios
-                .get(restURL, reqHeaders)
-                .then(function (response) {
-                    total_room_cnt = response.data.total_room_cnt;
-                    console.log(response.data);
-                    setRooms(response.data);
-                    setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
-                })
-                .catch(function (error) {
-                    console.log(error.data);
-                });
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
         };
 
+        axios
+            .get(restURL, reqHeaders)
+            .then(function (response) {
+                total_room_cnt = response.data.total_room_cnt;
+                setRooms(response.data);
+                setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
+            })
+            .catch(function (error) {
+                console.log(error.data);
+            });
+    };
+
+    if(isSocket === true){
+        for (let i = 0; i < TOTAL_SLIDES; i++) {
+            roomListCheckPage(i);
+         }
+         setIsSocket(false);
+    }
+
+    useEffect(() => {
+        // 룸 리스트 조회
         roomListCheck();
     }, [currentSlide, resultArray]);
 
@@ -319,7 +305,7 @@ const RoomList = () => {
     return (
         <React.Fragment>
             <Background>
-                {currentSocketConnection ? (                    
+                {props.socket.connected ? (                    
                         RefreshVerification.verification(),                    
                     <div>
                         <Header goMain tutorial />
@@ -328,7 +314,7 @@ const RoomList = () => {
                                 {/* 검색바 & 버튼 div*/}
                                 <RoomGrid is_flex_space width="980px" height="110px" bg="#DAD4F6" border="1px solid #DAD4F6">
                                     <div style={styles.grid}>
-                                        <RoomSearchBar />
+                                        <RoomSearchBar socket={props.socket}/>
                                     </div>
                                     <div
                                         style={{
@@ -357,6 +343,7 @@ const RoomList = () => {
                                                 rooms.room_list.map((values) => {
                                                     return values.room_status === 'waiting' ? (
                                                         <Room
+                                                            socket={props.socket}
                                                             room_idx={values.room_idx}
                                                             room_name={values.room_name}
                                                             room_current_member={values.room_current_member_cnt}
@@ -369,6 +356,7 @@ const RoomList = () => {
                                                         />
                                                     ) : (
                                                         <Room
+                                                            socket={props.socket}
                                                             room_idx={values.room_idx}
                                                             room_name={values.room_name}
                                                             room_current_member={values.room_current_member_cnt}
@@ -383,6 +371,7 @@ const RoomList = () => {
                                                 })}
                                             {createRoomData && (
                                                 <Room
+                                                    socket={props.socket}
                                                     borderRadius
                                                     room_idx={createRoomData.room_idx}
                                                     room_name={createRoomData.room_name}
