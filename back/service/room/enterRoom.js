@@ -10,28 +10,29 @@ const enterRoom = async (req, res, next) => {
     try {
         const user = res.locals.user;
         const { io, socket } = getIOSocket(req, res);
+        const { type } = req.params;
 
-        let room = await findRoom(req, res);
+        let room = await findRoom(type, req.body);
         const beforeWaitingRoomMember = await getWaitingRoomMember(
             user.user_idx
         );
-
-        const flagTodeleteBeforeMember =
-            beforeWaitingRoomMember &&
-            beforeWaitingRoomMember.get('room_room_idx') != room.get('room_idx');
-
-        if (flagTodeleteBeforeMember) {
-            await exitGameAndRoom(user, io);
-            room = await Room.findOne({
-                where: { room_idx: room.room_idx },
-            });
-        }
 
         if (!room) {
             res.status(400).json({
                 message: '방이 존재하지 않습니다.',
             });
             return;
+        }
+
+        const flagTodeleteBeforeMember =
+            beforeWaitingRoomMember &&
+            beforeWaitingRoomMember.get('room_room_idx') != room.room_idx;
+
+        if (flagTodeleteBeforeMember) {
+            await exitGameAndRoom(user, io);
+            room = await Room.findOne({
+                where: { room_idx: room.room_idx },
+            });
         }
 
         if (room.room_status != 'waiting') {
@@ -55,7 +56,7 @@ const enterRoom = async (req, res, next) => {
         if (room.room_start_member_cnt <= waitingRoomMemberList.length) {
             const flagReconnect =
                 beforeWaitingRoomMember &&
-                beforeWaitingRoomMember.get('room_room_idx') == room.get('room_idx');
+                beforeWaitingRoomMember.get('room_room_idx') == room.room_idx;
             if (!flagReconnect) {
                 res.status(400).json({
                     message: '방의 정원이 가득 찼습니다.',
@@ -111,15 +112,11 @@ const enterRoom = async (req, res, next) => {
     }
 };
 
-const findRoom = async (req, res) => {
+const findRoom = async (type, condition) => {
     try {
-        const { type } = req.params;
-        let roomMode = ['easy', 'hard'];
-        let roomStartMemberCnt = [4, 5, 6];
-
         let room;
         if (type === 'idx') {
-            const { room_idx } = req.body;
+            const { room_idx } = condition;
             room = Room.findOne({
                 where: {
                     room_idx,
@@ -127,41 +124,55 @@ const findRoom = async (req, res) => {
                 },
             });
         } else if (type === 'code') {
-            const { room_code } = req.body;
+            const { room_code } = condition;
             room = Room.findOne({
                 where: {
                     room_code,
                 },
             });
         } else if (type === 'random') {
-            const { room_mode, room_start_member_cnt } = req.body; 
-            //console.log("####",room_mode, room_start_member_cnt, typeof(room_mode), typeof(room_start_member_cnt));
+            const { room_mode, room_start_member_cnt } = condition; 
            
+            let roomMode = '("easy","hard")';
+            let startMember = '(4, 5, 6)';
             if (room_mode) {
-                roomMode = room_mode;
+                if (typeof room_mode == 'object')
+                    roomMode = `("` + room_mode.join(`","`) + `")`;
+                else roomMode = `("${room_mode}")`;
             }
             if (room_start_member_cnt) {
-                roomStartMemberCnt = room_start_member_cnt;
+                if (typeof room_start_member_cnt == 'object')
+                    startMember = '(' + room_start_member_cnt.join(',') + ')';
+                else startMember = `(${room_start_member_cnt})`;
             }
 
-            room = Room.findOne({
-                where: {
-                    room_mode: roomMode,
-                    room_start_member_cnt: roomStartMemberCnt,
-                    room_private: false,
-                    room_status: "waiting",
-                },
-                order: Sequelize.literal('RAND()'),
-                limit: 1,
-            });
+            const randomRoomQuery = `SELECT room1.* FROM Room room1
+                INNER JOIN (SELECT room_idx, room_start_member_cnt, count(room_idx) as room_current_member_cnt FROM Room
+                INNER JOIN WaitingRoomMember as wrm
+                ON room_idx = room_room_idx
+                WHERE room_mode IN ${roomMode} AND room_start_member_cnt IN ${startMember} AND room_status IN ('waiting') AND room_private != 1 
+                GROUP BY room_idx) as room2
+                ON room1.room_idx = room2.room_idx
+                WHERE room1.room_start_member_cnt != room2.room_current_member_cnt
+                ORDER BY RAND() LIMIT 1`;
+            
+            room = await db.sequelize.query(
+                randomRoomQuery,
+                { type: db.sequelize.QueryTypes.SELECT }
+            );
+            
+            if(room.length==0){
+                room = undefined
+            }else{
+                room = room[0];
+            }
+
         } else {
-            res.status(400).json({ message: '잘못된 type 입니다.' });
             return undefined;
         }
         return room;
     } catch (error) {
         printErrorLog('enterRoom-findRoom', error);
-        res.status(400).json({ message: '알 수 없는 오류가 발생했습니다.' });
         return undefined;
     }
 };
