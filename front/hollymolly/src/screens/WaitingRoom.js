@@ -42,6 +42,50 @@ export default function WaitingRoom({ match }) {
     let location = useLocation();
     const history = useHistory();
 
+    //유저 리스트
+    const [userList, setUserList] = useState();
+
+    //색깔
+    const [colorList, setColorList] = useState([
+        //선택 할 수 있는지 여부 배열, true : 선택가능
+        { color: 'RED', choose: 'true', code: '#FF0000' },
+        { color: 'ORANGE', choose: 'true', code: '#FF5C00' },
+        { color: 'YELLOW', choose: 'true', code: '#FFB800' },
+        { color: 'GREEN', choose: 'true', code: '#95DB3B' },
+        { color: 'BLUE', choose: 'true', code: '#3B8EDB' },
+        { color: 'PURPLE', choose: 'true', code: '#823BDB' },
+        { color: 'PINK', choose: 'true', code: '#CE3BDB' },
+    ]);
+
+    const [roomEnterInfo, setRoomEnterInfo] = useState();
+    const [roomInfo, setRoomInfo] = useState('');
+    const [count, setCount] = useState('');
+
+    //무슨 색을 선택할 수 있는가
+    const [selectColor, setSelectColor] = React.useState([]);
+
+    //팀원 레디 상태 state
+    const [changeReady, setChangeReady] = React.useState(false);
+
+    //방장인가 state
+    const [isLeader, setIsLeader] = React.useState(0);
+
+    //방장 상태 state 이 변수가 소켓에서 누적된 카운트 값과 동일해야함.
+    const [startMember, setStartMember] = React.useState(0);
+
+    const [gameStart, setGameStart] = React.useState(false);
+
+    //방 정보 수정 useState
+    const [roomUpdate, setRoomUpdate] = useState();
+
+    //현재 인원
+    const [currentMember, setCurrentMember] = useState();
+
+    //방장 인덱스
+    const [leaderIdx, setLeaderIdx] = useState();
+
+    const leader_idx = useRef(0);
+
     const socket = io('http://3.17.55.178:3002/', {
             auth: {
                 token: save_token,
@@ -124,6 +168,7 @@ export default function WaitingRoom({ match }) {
 
                 //방장 인덱스 받아오기
                 setLeaderIdx(response.data.leader_idx);
+                leader_idx.current = response.data.leader_idx;
             })
             .catch(function (error) {
                 console.log('대기실 데이터 실패');
@@ -132,6 +177,7 @@ export default function WaitingRoom({ match }) {
 
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }
+
     useEffect(() => {
         socket.on('connect', () => {
             console.log(socket.connected);
@@ -321,59 +367,19 @@ export default function WaitingRoom({ match }) {
             setRoomUpdate(data);
         });
 
+       
         //게임 시작 정보 socket
         socket.on('start game', (data) => {
             alert('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
-
-            //플레잉룸으로 이동, 데이터 전달
+            alert(leader_idx.current);
+            
+            //플레잉룸으로 이동, 데이터 전달dlEk r
             history.push({
                 pathname: '/playingroom/' + room_idx,
-                state: { data: data, room: room_idx },
+                state: { data: data, room: room_idx, leader: leader_idx.current},
             });
         });
     }, []);
-
-    //유저 리스트
-    const [userList, setUserList] = useState();
-
-    //색깔
-    const [colorList, setColorList] = useState([
-        //선택 할 수 있는지 여부 배열, true : 선택가능
-        { color: 'RED', choose: 'true', code: '#FF0000' },
-        { color: 'ORANGE', choose: 'true', code: '#FF5C00' },
-        { color: 'YELLOW', choose: 'true', code: '#FFB800' },
-        { color: 'GREEN', choose: 'true', code: '#95DB3B' },
-        { color: 'BLUE', choose: 'true', code: '#3B8EDB' },
-        { color: 'PURPLE', choose: 'true', code: '#823BDB' },
-        { color: 'PINK', choose: 'true', code: '#CE3BDB' },
-    ]);
-
-    const [roomEnterInfo, setRoomEnterInfo] = useState();
-    const [roomInfo, setRoomInfo] = useState('');
-    const [count, setCount] = useState('');
-
-    //무슨 색을 선택할 수 있는가
-    const [selectColor, setSelectColor] = React.useState([]);
-
-    //팀원 레디 상태 state
-    const [changeReady, setChangeReady] = React.useState(false);
-
-    //방장인가 state
-    const [isLeader, setIsLeader] = React.useState(0);
-
-    //방장 상태 state 이 변수가 소켓에서 누적된 카운트 값과 동일해야함.
-    const [startMember, setStartMember] = React.useState(0);
-
-    const [gameStart, setGameStart] = React.useState(false);
-
-    //방 정보 수정 useState
-    const [roomUpdate, setRoomUpdate] = useState();
-
-    //현재 인원
-    const [currentMember, setCurrentMember] = useState();
-
-    //방장 인덱스
-    const [leaderIdx, setLeaderIdx] = useState();
 
     const [result, setResult] = useState(0);
     const clickedSetting = (result) => {

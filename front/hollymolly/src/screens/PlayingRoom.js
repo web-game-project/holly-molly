@@ -35,6 +35,7 @@ const PlayingRoom = (props) => {
     let location = useLocation();
 
     let room_idx = location.state.room;
+    let leader_idx = location.state.leader; //리더인지 아닌지 
 
     const [role, setRole] = React.useState('');
     const [keyword, setKeyWord] = React.useState('');
@@ -159,7 +160,6 @@ const PlayingRoom = (props) => {
         }
     }
 
-    console.log(userList);
     // 깊은 복사 
     let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
     let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트 
