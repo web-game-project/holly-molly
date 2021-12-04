@@ -97,19 +97,12 @@ const PlayingResult = (props) => {
     useEffect(() => {
         //getMiddleResult();
 
-        const socket = io('http://3.17.55.178:3002/', {
-            // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
-            auth: {
-                token: save_token,
-            },
-        });
-
-        socket.on('connect', () => {
+        props.socket.on('connect', () => {
             console.log('playing result connection server');
         });
 
         // 같은 대기실에 있는 클라이언트들에게 중간 결과 전송
-        socket.on('get interim result', (data) => {
+        props.socket.on('get interim result', (data) => {
             setWinner(data.winner);
         });
     }, []);

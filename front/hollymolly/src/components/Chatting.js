@@ -12,20 +12,7 @@ let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-const socket = io('http://3.17.55.178:3002/', {
-    auth: {
-        token: save_token,
-    },
-});
-
-socket.on('connect', () => {
-    console.log('chatting connection server');
-});
-
 const Chatting = (props) => { 
-    // console.log("save_token : " + save_token);
-    // console.log("save_user_idx : " +save_user_idx);
-    // console.log("save_user_name : " +save_user_name);
 
     const [recentColor, setRecentColor] = useState('white'); // 기본 화이트 색
     
@@ -73,7 +60,7 @@ const Chatting = (props) => {
                     msg: msg
                 }
 
-                socket.emit("chat", getMsgInfo);
+                props.socket.emit("chat", getMsgInfo);
 
                 setEmitMessage(!emitMessage);
                 setInputMessage('');
@@ -97,7 +84,7 @@ const Chatting = (props) => {
                 msg: msg
             }
 
-            socket.emit("chat", sendMsgInfo);
+            props.socket.emit("chat", sendMsgInfo);
 
             setInputMessage('');
             setEmitMessage(!emitMessage);
@@ -107,10 +94,14 @@ const Chatting = (props) => {
     // 서버에서 받은 입력값을 로컬 상태값으로 갱신하는 함수(바로 밑의 함수로 연결된다)
 
     useEffect(() => {
+        props.socket.on('connect', () => {
+            console.log('chatting connection server');
+        });
+
         setRecentColor(props.color);
-
-        socket.on("chat", (data) => {
-
+        
+        props.socket.on("chat", (data) => {
+            console.log("야야");
             setRecentChatUserIdx(data.user_idx);
             setRecentChatUserName(data.user_name);
             setRecentChat(data.msg);

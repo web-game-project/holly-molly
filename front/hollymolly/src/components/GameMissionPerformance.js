@@ -17,7 +17,7 @@ let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const GameMissionPerformance = (props) => {
    
-    const {role} = props;
+    const {role, socket} = props;
     const [isHuman, setIsHuman] = useState(false);
     const [seconds, setSeconds] = useState(5); //게임 시작 5초 후, 타이머
 
@@ -25,13 +25,6 @@ const GameMissionPerformance = (props) => {
 
     let user_role = role;
     useEffect(() => {
-
-        const socket = io('http://3.17.55.178:3002/', {
-            auth: {
-                token: save_token
-            },
-        });
-
         socket.on('connect', () => {
             console.log('GameMissionPerformance connection server');
         });

@@ -15,43 +15,11 @@ import RefreshVerification from '../server/RefreshVerification';
 // local storage에 있는지 확인
 let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-const socket = io('http://3.17.55.178:3002/', {
-    // 프론트가 서버와 동일한 도메인에서 제공되지 않는 경우 서버의 URL 전달 필요
-    auth: {
-        // 1번 토큰
-        token: save_token,
-    },
-});
 
 const Room = (props) => {
     const history = useHistory();
     const [clicked, setClicked] = useState(false);
-
-    useEffect(() => {
-        // 오류 시, 수동으로 다시 연결 시도
-        socket.on('error', () => {
-            setTimeout(() => {
-                socket.connect();
-            }, 1000);
-        });
-
-        // 소켓이 서버에 연결되어 있는지 여부
-        // 연결 성공 시 시작
-        socket.on('connect', () => {
-            console.log('room connection server');
-        });
-
-        // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
-        socket.on('disconnect', (reason) => {
-            if (reason === 'io server disconnect') {
-                socket.connect();
-            }
-        });
-    }, [clicked]);
 
     const enterRoom = async () => {
         const reqURL = 'http://3.17.55.178:3002/room/idx'; //parameter : 방 타입
@@ -75,7 +43,7 @@ const Room = (props) => {
                 });
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+                alert(error.response);
             });
     };
 

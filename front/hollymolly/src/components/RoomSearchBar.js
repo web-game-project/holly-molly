@@ -21,18 +21,6 @@ const RoomSearchBar = (props) => {
     const inputRef = useRef();
     const [clicked, setClicked] = useState(false);
 
-    useEffect(() => {
-        const socket = io('http://3.17.55.178:3002/', {
-            auth: {
-                token: save_token,
-            },
-        });
-
-        socket.on('connect', () => {
-            console.log('Room SearchBar connection server');
-        });
-    }, []);
-
     const enterRoom = async () => {
         const reqURL = 'http://3.17.55.178:3002/room/code'; //parameter : 방 타입
         const reqHeaders = {

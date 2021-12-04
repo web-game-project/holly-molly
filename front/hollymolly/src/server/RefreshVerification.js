@@ -29,13 +29,6 @@ const RefreshVerification = {
     let save_userIdx = JSON.parse(data) && JSON.parse(data).user_idx;
     let save_userName = JSON.parse(data) && JSON.parse(data).user_name;
     
-    const socket = io(BaseURL, {
-      auth: {
-        // 토큰 값
-        token: save_token,
-      },
-    });
-
     var restURL_room = BaseURL + "room";
 
     const reqHeaders_room = {

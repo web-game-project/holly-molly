@@ -17,7 +17,7 @@ export default function Header({ goMain, tutorial }) {
     const history = useHistory();
     const isLogin = useSelector((state) => state.socket.is_login);
     const baseURL = useSelector((state) => state.socket.base_url);
-    console.log(isLogin + 'isLogin');
+    //console.log(isLogin + 'isLogin');
 
     function goRoomList() {
         history.push({
