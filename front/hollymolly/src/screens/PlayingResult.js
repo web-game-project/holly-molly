@@ -190,7 +190,7 @@ const PlayingResult = (props) => {
                         <ChatDiv>
                             {/* <Chatting /> */}
                             {/* <Chatting room_idx={location.state.data.room_idx}></Chatting> */}
-                            <Chatting room_idx={53} available={false}></Chatting> {/* 채팅 비활성화 */}
+                            <Chatting socket={props.socket} room_idx={53} available={false}></Chatting> {/* 채팅 비활성화 */}
                         </ChatDiv>
                     </BackGroundDiv>
                 </Container>

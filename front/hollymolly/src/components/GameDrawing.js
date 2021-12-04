@@ -20,7 +20,7 @@ let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 const GameDrawing = (props) => {
     const history = useHistory();
 
-    const {order, color, room_idx, idx, member_count, role,  setIdx, userList, keyword} = props;
+    const {socket, leaderIdx, order, color, room_idx, idx, member_count, role,  setIdx, userList, keyword} = props;
 
     const [possible, setPossible] = useState(true);
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머
@@ -31,32 +31,10 @@ const GameDrawing = (props) => {
     const orderCount = useRef(1); // orderCount
     const drawingTime = useRef(true); // 그릴 수 있는 시간을 관리하는 변수
 
-    const socket = io('http://3.17.55.178:3002/', {
-            auth: {
-                token: save_token,
-            },
-            transports: ['websocket']
-    });
-
-    useEffect(() => {
-        
+    useEffect(() => {        
         socket.on('connect', () => {
             console.log('game drawing connection server');
         });
-
-        // 연결 해제 시 임의 지연 기다린 다음 다시 연결 시도
-        socket.on('disconnect', (reason) => {
-            console.log('disconnect');
-            socket.connect();
-        });
-
-        // 오류 시, 수동으로 다시 연결 시도
-        socket.on('error', () => {
-            setTimeout(() => {
-                socket.connect();
-            }, 1000);
-        });
-
     }, []);
 
     let user_order = parseInt(order);
@@ -197,7 +175,7 @@ const GameDrawing = (props) => {
                      //투표로 이동, 데이터 전달
                     history.push({
                         pathname: '/playingvote/' + room_idx,
-                        state: { userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
+                        state: {leader: leaderIdx , move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
                     });
                 } else {
                     // 다음 순서 받을 준비 완료

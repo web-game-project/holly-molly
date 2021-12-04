@@ -14,6 +14,8 @@ import PinkSvg from "../assets/pink.svg";
 import PurpleSvg from "../assets/purple.svg";
 
 const Loading = (props) => {
+  let move = props.move;
+
   return (
     <React.Fragment>
       <Container>
@@ -26,7 +28,7 @@ const Loading = (props) => {
           <PinkCharacter className="ghost6"></PinkCharacter>
           <PurpleCharacter className="ghost7"></PurpleCharacter>
         </CharacterContainer>
-        <Context className="text">게임이 곧 시작됩니다...</Context>
+        <Context className="text">{move}</Context>
       </Container>
     </React.Fragment>
   );

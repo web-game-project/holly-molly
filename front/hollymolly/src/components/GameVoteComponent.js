@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import style from '../styles/styles';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
@@ -21,20 +21,21 @@ const GameVoteComponent = (props) => {
     const gameset = props.gameSet;
     const [clicked, setClicked] = useState(false); // 클릭리스너
     const [voteWho, setVoteWho] = useState(''); // 내가 투표한 사람의 컬러
-    const [voteIndex, setVoteIndex] = useState(-1); // 내가 투표한 사람의 인덱스
+    //const [voteIndex, setVoteIndex] = useState(); // 내가 투표한 사람의 인덱스
     const baseURL = useSelector((state) => state.socket.base_url);
+
+    //투표 유저 인덱스
+    const voteIndex = useRef(-1); // orderCount
 
     //투표 10초 타이머
     const [seconds, setSeconds] = useState(10);
 
-    /* useEffect(() => {
-        setClicked(false);
-        setVoteWho('');
-    }, []); */
-
     useEffect(() => {
         setClicked(false);
         setVoteWho('');
+    }, []);
+
+    useEffect(() => {
 
         if (props != null) {
             //데이터 전달 받은게 세팅되기 전까지는 타이머가 돌아가면 안됨.
@@ -51,7 +52,6 @@ const GameVoteComponent = (props) => {
 
             return () => {
                 clearInterval(countdown);
-                console.log('투표 룸 초 끝');
             };
         }
     }, [seconds]);
@@ -59,6 +59,12 @@ const GameVoteComponent = (props) => {
     const postVote = async () => {
         //  타이머 카운트 주고 시간 다 되면 이 api 불러주면 됨
         // 투표 api
+
+        let str = -1;
+
+        if(voteIndex !== null || voteIndex !== '')
+            str = voteIndex.current;         
+             
         const restURL = baseURL + 'game/vote';
 
         const reqHeaders = {
@@ -71,7 +77,7 @@ const GameVoteComponent = (props) => {
                 restURL,
                 {
                     game_set_idx: gameset,
-                    user_idx: voteIndex,
+                    user_idx: str,
                 },
                 reqHeaders
             )
@@ -82,6 +88,8 @@ const GameVoteComponent = (props) => {
                 console.log('postVote 실패');
                 console.log(error.response);
             });
+
+        setSeconds(-1);
     };
 
     return (
@@ -97,10 +105,11 @@ const GameVoteComponent = (props) => {
                                 setClicked(true);
                                 console.log(element.user_color);
                                 setVoteWho(element.user_color);
-                                setVoteIndex(element.user_idx);
+                                //setVoteIndex(element.user_idx);
+                                voteIndex.current = element.user_idx;
                                 console.log(voteWho + '가 voteWho');
                                 console.log(gameset);
-                                console.log('API: 게임세트? ' + gameset + ', 유저인덱스? ' + voteIndex);
+                                console.log('API: 게임세트? ' + gameset + ', 유저인덱스? ' + voteIndex.current);
                             }}
                         >
                             <UserVote nick={element.user_name} color={element.user_color} click={clicked} voteWho={voteWho} />
@@ -114,9 +123,12 @@ const GameVoteComponent = (props) => {
                         투표 시간이 <InfoRed> 마감 </InfoRed>되었습니다. 
                     </Info>
                     :
+                    seconds > 0 ?
                     <Info>
                         투표 시간이 <InfoRed> {seconds} </InfoRed> 초 남았습니다.
                     </Info>
+                    : 
+                    null //-1되면 -1 초라고 떠서 처리해줌
             }
 
         </Container>

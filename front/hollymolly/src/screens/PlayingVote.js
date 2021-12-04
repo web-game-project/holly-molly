@@ -6,6 +6,7 @@ import night from '../assets/night.svg';
 import Chatting from '../components/Chatting';
 import GameUserCard from '../components/GameUserCard';
 import Header from '../components/Header';
+import PlayingLoading from '../components/PlayingLoading';
 
 //페이지 이동
 import { useHistory, useLocation, Prompt } from 'react-router';
@@ -26,13 +27,20 @@ const PlayingVote = (props) => {
     let location = useLocation();
     const history = useHistory();
 
+    // 투표 10초 타이머 세기, 투표 10초 후에 1초 더 여유롭게 샌다.
+    const [seconds, setSeconds] = useState(11);
+
+    //투표 전 로딩페이지 구현을 위한 타이머
+    const [secondsLoading, setSecondsLoading] = useState(10);
+
     let gameSetIdx = location.state.gameSetIdx; //그림판에서 넘어온 게임 세트 인덱스
     let userList = location.state.userList; //그림판에서 넘어온 유저리스트
     let roomIdx = location.state.roomIdx; //그림판에서 넘어온 룸인덱스
     let role =  location.state.role; //그림판에서 넘어온 역할
     let keyword =   location.state.keyword; //그림판에서 넘어온 키워드
+    let leader = location.state.leaderIdx;
 
-    console.log('data 잘 받았냐? ' + gameSetIdx + '/' + userList + '/' +  roomIdx + '/' +  role + '/' + keyword);
+    ///console.log('data 잘 받았냐? ' + gameSetIdx + '/' + userList + '/' +  roomIdx + '/' +  role + '/' + keyword);
     
     // local storage에 있는지 확인
     let data = localStorage.getItem('token');
@@ -44,14 +52,43 @@ const PlayingVote = (props) => {
 
     const [winner, setWinner] = useState(''); // 중간 결과 승리자
 
-    /* // ** 더미 데이터 일단 넣어둠, Playing Vote에서 넘어오면 그걸로 바꿔주면 될 듯! //
-    const userList = [
-        { user_idx: 2, user_name: '가나다라마바사아자차', game_member_order: 2, user_color: 'GREEN' },
-        { user_idx: 1, user_name: '나는 1번', game_member_order: 1, user_color: 'RED' },
-        { user_idx: 3, user_name: '나는 3번', game_member_order: 3, user_color: 'BLUE' },
-    ];
-    const role = 'human';
-    const keyword = '크리스마스'; */
+    const movePage = useRef(location.state.move);
+
+    useEffect(() => {
+         if(movePage.current !== undefined){
+            //데이터 전달 받은게 세팅되기 전까지는 타이머가 돌아가면 안됨.
+            const countdown = setInterval(() => {
+                if (parseInt(secondsLoading) > 0) {
+                    setSecondsLoading(parseInt(secondsLoading) - 1);
+                }
+                if (parseInt(secondsLoading) === 0) {
+                    setSecondsLoading(0); 
+                }
+            }, 1000);
+
+            return () => {
+                clearInterval(countdown);                
+            };
+        }
+    }, [secondsLoading]);
+    
+    useEffect(() => {
+            //데이터 전달 받은게 세팅되기 전까지는 타이머가 돌아가면 안됨.
+            const countdown = setInterval(() => {
+                if (parseInt(seconds) > 0) {
+                    setSeconds(parseInt(seconds) - 1);
+                }
+
+                if (parseInt(seconds) === 0) {
+                    setSeconds(0);                    
+                }
+            }, 1000);
+
+            return () => {
+                clearInterval(countdown);                
+            };
+
+    }, [seconds]);
 
     const dummyTest = {
         one_game_set_human_score: 1,
@@ -69,23 +106,6 @@ const PlayingVote = (props) => {
         human_user_color: 'RED',
     };
     // **
-
-    // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
-    var myIndex = userList.find((x) => x.user_idx === save_user_idx);
-    if (myIndex) {
-        myIndex.game_member_order = 0;
-    }
-
-    // 그림 그리기 순서 대로 유저 리스트 재정렬
-    userList.sort(function (a, b) {
-        return a.game_member_order - b.game_member_order;
-    });
-
-    // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
-    var myItem = userList.find((x) => x.user_idx === save_user_idx);
-    if (myItem) {
-        myItem.game_member_order = '나';
-    }
 
     const user_list = [
         {
@@ -129,7 +149,10 @@ const PlayingVote = (props) => {
     return (
         <React.Fragment>
             <Background>
-                <Header />
+            { movePage.current !== undefined && secondsLoading > 0 ?
+                    <PlayingLoading move="투표 하기 전, 고민할 시간 10초 드리겠습니다." />                         
+                : 
+                <Header />,
                 <Container>
                     <BackGroundDiv>
                         <UserDiv>
@@ -150,17 +173,24 @@ const PlayingVote = (props) => {
                                 ))
                             }
                         </UserDiv>
-                        {/* 투표 */}
-                        <GameVoteComponent data={userList} gameSet={gameSetIdx} /> {/* gameSet -> 숫자만 들어가면 됨, 임의의 숫자 넣어둠 */}
-                        {/* 투표 결과 */}
-                        {/* <GameVoteResult/> */}
+                        {
+                            seconds > 0 ?
+                                // 투표 
+                                <GameVoteComponent data={userList} gameSet={gameSetIdx} /> 
+                            :                           
+                                // 투표 결과, 타이머가 0일 떄 
+                                seconds === 0 ?
+                                <GameVoteResult data={userList} gameSet={gameSetIdx} roomIdx={roomIdx} role={role} cnt={userList.length} />
+                                : 
+                                null
+                        }                        
+
                         <ChatDiv>
-                            {/* <Chatting /> */}
-                            {/* <Chatting room_idx={location.state.data.room_idx}></Chatting> */}
-                            <Chatting room_idx={roomIdx} available={false}></Chatting> {/* 채팅 비활성화 */}
+                            <Chatting socket={props.socket} room_idx={roomIdx} available={false}></Chatting> {/* 채팅 비활성화 */}
                         </ChatDiv>
-                    </BackGroundDiv>
-                </Container>
+                    </BackGroundDiv>                    
+                </Container> 
+                } : <></> 
             </Background>
         </React.Fragment>
     );
