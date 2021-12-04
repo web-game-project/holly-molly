@@ -10,7 +10,8 @@ import GameRoleComponent from '../components/GameRoleComponent';
 import GameDrawing from '../components/GameDrawing';
 import PlayingLoading from '../components/PlayingLoading';
 import Header from '../components/Header';
-import { useLocation } from 'react-router';
+import { useLocation, useHistory } from 'react-router';
+
 //통신
 import axios from 'axios';
 //깊은 복제
@@ -33,6 +34,7 @@ let userList = [{}];
 
 const PlayingRoom = (props) => {
     let location = useLocation();
+    const history = useHistory();
 
     let room_idx = location.state.room;
     let leader_idx = location.state.leader; //리더인지 아닌지 
@@ -47,21 +49,15 @@ const PlayingRoom = (props) => {
 
     const [isDrawReady, setIsDrawReady] = React.useState(true); // 나중에 false로 바꿔놓아야 함
     const [waitSeconds, setWaitSeconds] = useState(-1); // 게임 시작 전 10초 기다리는 타이머,
-
+   
     const BaseURL = 'http://3.17.55.178:3002/';
 
-    const socket = io(BaseURL, {
-        auth: {
-            token: save_token,
-        },
-    });
-
     useEffect(() => {
-        socket.on('connect', () => {
+        props.socket.on('connect', () => {
             console.log('playing room connection server');
         });
 
-        socket.on('get next turn', (data) => {
+        props.socket.on('get next turn', (data) => {
             console.log(data.data); // success 메시지
             setIsDrawReady(true);
         });
@@ -105,7 +101,7 @@ const PlayingRoom = (props) => {
                     console.log('역할 부여 초 끝');
                     //그림판 시작 되기 전 다음 순서 준비
                     setIsDrawReady(false);
-                    socket.emit('send next turn', {
+                    props.socket.emit('send next turn', {
                         room_idx: parseInt(room_idx),
                         user_idx: parseInt(save_user_idx),
                         member_count: userList.length,
@@ -126,6 +122,7 @@ const PlayingRoom = (props) => {
     }, [seconds]);
 
     useEffect(() => {
+        if (location.state.data !== undefined){
         setPlayInfo(location.state.data);
         userList = location.state.data.user_list;
 
@@ -150,6 +147,7 @@ const PlayingRoom = (props) => {
             .catch(function (error) {
                 alert('error information : ' + error.message);
             });
+        }
     });
 
     for (let i = 0; i < userList.length; i++) {
@@ -230,8 +228,8 @@ const PlayingRoom = (props) => {
 
     return (
         <React.Fragment>
-            <Background>
-                {isDrawReady ? (
+            <Background>                
+               { isDrawReady ? (
                     role !== '' ? (
                         <div>
                             <Header />
@@ -265,6 +263,7 @@ const PlayingRoom = (props) => {
                                                     idx={save_user_idx}
                                                     member_count={userList.length}
                                                     userList = {userList}
+                                                    socket= {props.socket}
                                                 />
                                             )}
                                         </DrawDiv>
@@ -273,7 +272,7 @@ const PlayingRoom = (props) => {
                                     )}
 
                                     <ChatDiv>
-                                        <Chatting room_idx={room_idx} height="615px" available={true} color={onlyUserList.user_color}></Chatting>
+                                        <Chatting socket={props.socket} room_idx={room_idx} height="615px" available={true} color={onlyUserList.user_color}></Chatting>
                                     </ChatDiv>
                                 </BackGroundDiv>
                             </Container>
@@ -281,8 +280,9 @@ const PlayingRoom = (props) => {
                     ) : (
                         <Loading />
                     )
-                ) : (
-                    <PlayingLoading />
+                ) : 
+                (
+                    <PlayingLoading move="게임이 곧 시작됩니다..."/>
                 )}
             </Background>
         </React.Fragment>
