@@ -305,7 +305,7 @@ const RoomList = (props) => {
     return (
         <React.Fragment>
             <Background>
-                {props.socket.connected ? (                    
+                {props.socket.connected === true ? (                    
                         RefreshVerification.verification(),                    
                     <div>
                         <Header goMain tutorial />

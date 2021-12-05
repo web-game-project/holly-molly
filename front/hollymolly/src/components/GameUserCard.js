@@ -11,8 +11,9 @@ import PinkCharacter from '../assets/pink.svg';
 import RedCharacter from '../assets/red.svg';
 import Human from "../assets/human.svg";
 
+
 const GameUserCard = (props) => {
-    const { user_name, user_role, user_color, user_order} = props;
+    const { user_name, user_role, user_color, user_order, is_possible} = props;
 
     let isEmpty = false;
     let borderColor = ''; // 테두리 색
@@ -62,12 +63,22 @@ const GameUserCard = (props) => {
     const styles = {
         borderColor: borderColor,
         fillColor: fillColor,
+        is_possible: is_possible
     };
+
+    let is_blinking;
+    console.log(is_possible);
+    if(is_possible === true){
+        is_blinking = "blink";
+    }else{
+        is_blinking = "";
+    }
 
     return (
         <React.Fragment>
             {isHuman ? (
-                <Container {...styles}>
+                <RootContainer>
+                <Container {...styles} className={is_blinking} >
                     <OrderContainer {...styles}>{user_order}</OrderContainer>
                     <UserInfoContainer>
                         <ImgContainer src={Human}></ImgContainer>
@@ -76,8 +87,8 @@ const GameUserCard = (props) => {
                             <NameContainer>{user_name}</NameContainer>
                         </RoleNameContainer>
                     </UserInfoContainer>
-                </Container>) : (
-                <Container {...styles}>
+                </Container></RootContainer>) : (
+                <Container {...styles} className={is_blinking}>
                     <OrderContainer {...styles}>{user_order}</OrderContainer>
                     <UserInfoContainer>
                         <ImgContainer src={characterImg}></ImgContainer>
@@ -92,6 +103,27 @@ const GameUserCard = (props) => {
     );
 };
 
+const RootContainer = styled.div`
+
+    .blink{ 
+        -webkit-animation:blink 1s ease-in-out infinite alternate; 
+        -moz-animation:blink 1s ease-in-out infinite alternate; 
+        animation:blink 1s ease-in-out infinite alternate; 
+    } 
+    @-webkit-keyframes blink{ 
+        0% {background-color: white;} 
+        100% {background-color: yellow;} 
+    } 
+    @-moz-keyframes blink{ 
+        0% {background-color: white;} 
+        100% {background-color: yellow;} 
+    } 
+    @keyframes blink{ 
+        0% {background-color: white;} 
+        100% {background-color: yellow;} 
+    }
+`;
+
 const Container = styled.div`
     text-align: center;
     font-family: 'Jua';
@@ -103,9 +135,11 @@ const Container = styled.div`
     justify-content: flex-start;
     margin-right: 1px;
     background-color: #ffffff;
-    border: 5px solid;
+    border: 4px solid;
     border-radius: 0.3em;
+    font-size: 10px;
     border-color: ${(props) => props.borderColor}; // border 색상 변경
+        
 `;
 
 const OrderContainer = styled.div`
@@ -119,6 +153,8 @@ const OrderContainer = styled.div`
     height: 20px;
     background-color: ${(props) => props.borderColor};
     border-bottom-right-radius: 0.7rem;
+    border-color: ${(props) => props.borderColor}; 
+    font-size: 15px;
 `;
 
 const UserInfoContainer = styled.div`
@@ -171,9 +207,9 @@ const NameContainer = styled.div`
     flex-direction: column;
     display: flex;
     justify-content: center;
-    font-size: 10px;
     width: 90px; //90px
     height: 30px;
 `;
+
 
 export default GameUserCard;

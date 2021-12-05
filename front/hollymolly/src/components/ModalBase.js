@@ -341,6 +341,7 @@ const OKButton = styled.button`
         background-color: ${style.skyblue};
         // border: 2px solid ${style.white};
         color: ${style.white};
+        cursor: grab;
     }
 `;
 
