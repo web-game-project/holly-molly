@@ -118,9 +118,9 @@ const PlayingResult = (props) => {
         });
     }, []);
 
-    // 비정상 종료
-    const exit = async () => {
-        console.log('exit!!!');
+     // 비정상 종료
+     const exit = async () => {   
+        console.log("exit!!!");
         const restURL = 'http://3.17.55.178:3002/game/exit';
 
         const reqHeaders = {
@@ -133,7 +133,7 @@ const PlayingResult = (props) => {
             .then(function (response) {
                 alert(response);
                 history.push({
-                    pathname: '/inputname', // 성공하면 닉네임 설정 창으로 이동
+                    pathname: '/inputname', // 성공하면 닉네임 설정 창으로 이동 
                 });
             })
             .catch(function (error) {
@@ -141,7 +141,7 @@ const PlayingResult = (props) => {
             });
     };
 
-    /* // 게임 중 비정상 종료 감지
+    // 게임 중 비정상 종료 감지
     useEffect(() => {
         window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
         window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
@@ -160,7 +160,7 @@ const PlayingResult = (props) => {
     // 종료시 실행 
     const handleEndConcert = async () => {
         exit();
-    } */
+    }
 
     return (
         <React.Fragment>

@@ -190,7 +190,11 @@ const PlayingRoom = (props) => {
         myItem.game_member_order = '나';
     }
 
-    /* // 비정상 종료
+    const highOrderFunction = (text) => {
+        console.log(text); // 현재 유저 이름 
+    }
+
+    // 비정상 종료
     const exit = async () => {   
         console.log("exit!!!");
         const restURL = 'http://3.17.55.178:3002/game/exit';
@@ -232,7 +236,7 @@ const PlayingRoom = (props) => {
     // 종료시 실행 
     const handleEndConcert = async () => {
         exit();
-    } */
+    }
 
     return (
         <React.Fragment>
@@ -275,6 +279,7 @@ const PlayingRoom = (props) => {
                                                     gameIdx = {gameIdx}
                                                     gameSetNo = {gameSetNo}
                                                     leaderIdx = {leaderIdx}
+                                                    currentOrder = {highOrderFunction}
                                                 />
                                             )}
                                         </DrawDiv>

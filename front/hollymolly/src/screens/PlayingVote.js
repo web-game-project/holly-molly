@@ -136,6 +136,50 @@ const PlayingVote = (props) => {
         myItem.game_member_order = '나';
     }
 
+    // 비정상 종료
+    const exit = async () => {   
+        console.log("exit!!!");
+        const restURL = 'http://3.17.55.178:3002/game/exit';
+
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        axios
+            .delete(restURL, reqHeaders)
+            .then(function (response) {
+                alert(response);
+                history.push({
+                    pathname: '/inputname', // 성공하면 닉네임 설정 창으로 이동 
+                });
+            })
+            .catch(function (error) {
+                alert(error);
+            });
+    };
+
+    // 게임 중 비정상 종료 감지
+    useEffect(() => {
+        window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
+        window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
+        return () => {
+          window.removeEventListener('beforeunload', alertUser)
+          window.removeEventListener('unload', handleEndConcert)
+        }
+    }, [])
+
+    // 경고창 
+    const alertUser = (e) => {
+        e.preventDefault(); // 페이지가 리프레쉬 되는 고유의 브라우저 동작 막기
+        e.returnValue = "";
+    };
+
+    // 종료시 실행 
+    const handleEndConcert = async () => {
+        exit();
+    }
+
     return (
         <React.Fragment>
             <Background>
