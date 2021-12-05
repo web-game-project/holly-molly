@@ -34,6 +34,7 @@ const RoomList = (props) => {
     const [emptyRoomsLength, setEmptyRoomsLength] = useState('');
     const [createRoomData, setcreateRoomData] = useState('');
     const [isSocket, setIsSocket] = useState(false);
+    const [isConnected, setIsConnected] = useState(false);
     
     // 방 전체 리스트
     const [rooms, setRooms] = useState();
@@ -54,6 +55,7 @@ const RoomList = (props) => {
         props.socket.on('connect', () => {
             console.log("room list");
             console.log(props.socket);
+            setIsConnected(true);
         });
 
         //방 생성 시, 마지막 페이지에 방 추가
@@ -305,7 +307,7 @@ const RoomList = (props) => {
     return (
         <React.Fragment>
             <Background>
-                {props.socket.connected === true ? (                    
+                {isConnected ? (               
                         RefreshVerification.verification(),                    
                     <div>
                         <Header goMain tutorial />
