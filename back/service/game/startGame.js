@@ -23,25 +23,35 @@ module.exports.startGame = async (req, res, next) => {
         const io = req.app.get('io');
         await changeGameStatus(io, room_idx);
 
-        let { game_idx } = await createAndGetGameInfo(room_idx);
-        let { keyword_idx } = await getKeywordIdx();
-        let { game_set_idx } = await createAndGetGameSetInfo(
-            keyword_idx,
-            game_idx
-        );
-        let memberIdxList = await getMemberIdxInfo(room_idx);
-        let memberCount = await getMemberCountInfo(room_idx);
-        let { roleList, orderList } = getRoleAndOrder(memberCount);
-
-        let user_list = await assignRoleAndOrder(
-            game_idx,
-            roleList,
-            orderList,
-            memberIdxList,
-            memberCount
-        );
-
-        let data = {game_idx, game_set_idx, user_list};
+        let exist_game_idx = await isExistGame(room_idx);
+        let data = {};
+        if(exist_game_idx){
+            let user_list = await getExistGameMember(exist_game_idx);
+            let game_set_idx = await getExistGameSetIdx(exist_game_idx);
+            data = {game_idx: exist_game_idx, game_set_idx, user_list};
+        }
+        else{
+            let { game_idx } = await createAndGetGameInfo(room_idx);
+            let { keyword_idx } = await getKeywordIdx();
+            let { game_set_idx } = await createAndGetGameSetInfo(
+                keyword_idx,
+                game_idx
+            );
+            let memberIdxList = await getMemberIdxInfo(room_idx);
+            let memberCount = await getMemberCountInfo(room_idx);
+            let { roleList, orderList } = getRoleAndOrder(memberCount);
+    
+            let user_list = await assignRoleAndOrder(
+                game_idx,
+                roleList,
+                orderList,
+                memberIdxList,
+                memberCount
+            );
+    
+            data = {game_idx, game_set_idx, user_list};
+        }
+        
         io.to(room_idx).emit('start game', data);
         
         res.status(200).end();
@@ -53,6 +63,56 @@ module.exports.startGame = async (req, res, next) => {
         });
     }
 };
+
+const isExistGame = async (roomIdx) => {
+    const existGame = await Game.findOne(
+        {
+            attributes: [
+                'game_idx',
+            ],
+            where: { room_room_idx: roomIdx },
+            order: [["game_idx", "DESC"]]
+        },
+    );
+
+    if(existGame)
+        return existGame.dataValues.game_idx;
+    else    
+        return 0;
+};
+
+const getExistGameSetIdx = async (game_idx) => {
+    const existGameSet = await GameSet.findOne(
+        {
+            attributes: [
+                'game_set_idx',
+            ],
+            where: { game_game_idx: game_idx },
+            order: [["game_set_idx", "DESC"]]
+        },
+    );
+
+    if(existGameSet)
+        return existGameSet.dataValues.game_set_idx;
+    else    
+        return 0;
+};
+
+const getExistGameMember = async (game_idx) => {
+    let sql = "SELECT gm.wrm_user_idx as user_idx, User.user_name, gm.game_member_order, wrm.wrm_user_color as user_color "
+            + "FROM Game "
+            + "JOIN GameMember as gm ON Game.game_idx = gm.game_game_idx "
+            + "JOIN WaitingRoomMember as wrm ON gm.wrm_wrm_idx = wrm.wrm_idx "
+            + "JOIN User ON gm.wrm_user_idx = User.user_idx "
+            + `WHERE Game.game_idx = ${game_idx}`;
+    const gameMember = await sequelize.query(sql,
+        {
+            type: sequelize.QueryTypes.SELECT, 
+            raw: true
+        });
+
+    return gameMember;
+}
 
 const changeGameStatus = async (io, roomIdx) => {
     Room.update(
@@ -66,7 +126,7 @@ const changeGameStatus = async (io, roomIdx) => {
         room_idx: roomIdx,
         room_status: 'playing',
     });
-}
+};
 
 const createAndGetGameInfo = async (roomIdx) => {
     try {
@@ -131,12 +191,12 @@ const getMemberCountInfo = async (roomIdx) => {
 
 const getMemberIdxInfo = async (roomIdx) => {
     try {
-        let query = "SELECT wrm.wrm_idx, wrm.wrm_user_color, wrm.user_user_idx, User.user_name "
+        let sql = "SELECT wrm.wrm_idx, wrm.wrm_user_color, wrm.user_user_idx, User.user_name "
                   + "FROM WaitingRoomMember as wrm "
                   + "JOIN User on wrm.user_user_idx = User.user_idx "
                   + `WHERE wrm.room_room_idx = ${roomIdx}`;
 
-        const member = await sequelize.query(query,
+        const member = await sequelize.query(sql,
             {
                 type: sequelize.QueryTypes.SELECT, 
                 raw: true
