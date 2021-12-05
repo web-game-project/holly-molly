@@ -86,6 +86,9 @@ const RoomGridBox = styled.div`
     width: ${(props) => props.width};
     height: ${(props) => props.height};
     box-sizing: border-box;
+    &:hover {
+        cursor: grab;
+    }
 
     ${(props) => (props.padding ? `padding: ${props.padding};` : '')}
     ${(props) => (props.margin ? `margin: ${props.margin};` : '')}

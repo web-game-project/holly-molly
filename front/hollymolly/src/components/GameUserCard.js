@@ -12,7 +12,7 @@ import RedCharacter from '../assets/red.svg';
 import Human from "../assets/human.svg";
 
 const GameUserCard = (props) => {
-    const { user_name, user_role, user_color, user_order, user_idx, children } = props;
+    const { user_name, user_role, user_color, user_order} = props;
 
     let isEmpty = false;
     let borderColor = ''; // 테두리 색

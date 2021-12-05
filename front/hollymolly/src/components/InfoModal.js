@@ -233,7 +233,7 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
     return (
         <div>
             <SettingsIcon
-                style={{ marginTop: '25px' }}
+                style={{ marginTop: '25px', cursor: 'grab' }}
                 onClick={() => {
                     openModal();
                 }}
