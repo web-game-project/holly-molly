@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import styled from 'styled-components';
 import style from '../styles/styles';
 import RefreshVerification from '../server/RefreshVerification';
+import Toast from '../components/Toast';
 
 import axios from 'axios';
 
@@ -176,10 +177,11 @@ const GameDrawing = (props) => {
                     saveCanvas();
                      //투표로 이동, 데이터 전달
                      console.log('드로잉 리더' + leaderIdx);
-                    history.push({
+
+                     history.push({
                         pathname: '/playingvote/' + room_idx,
                         state: {gameSetNo : gameSetNo, gameIdx : gameIdx, perforamance: false, leaderIdx: leaderIdx , move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
-                    });
+                     });
                 } else {
                     // 다음 순서 받을 준비 완료
                     socket.emit('send next turn', {
@@ -290,16 +292,21 @@ const GameDrawing = (props) => {
 
     let ImgUrl; //타이머 이미지 URL이 들어갈 곳
 
+    // 현재 순서 유저 찾기 
+    var currentItem = userList.find((x) => x.game_member_order === orderCount.current);
+
+     // 순서에 따른 자기 순서 표시(하위 -> 상위)
+     const sendOrder = () => {
+        props.currentOrder(currentItem.user_name);
+    }
+
+
     return (
         <React.Fragment>
-            {/* 그림그리기 시간 : {seconds}
-            <br />
-            순서 기다리는 시간 : {waitSeconds}
-            <br />내 순서 : {user_order}
-            <br />내 색깔 : {user_color}
-            <br />
-            현재 순서 : {orderCount.current} */}
-            <Container>                
+            <Container>      
+                {seconds === 9 ? sendOrder() : null} 
+                {possible === true ? <span><Toast pass={false} name={currentItem.user_name} /></span> : null}     
+          
                 <div style={{backgroundColor: style.white, borderRadius: '15px'}}>
                     <canvas id = "draw" ref={canvasRef} width="610" height={'600'}>
                     </canvas>
