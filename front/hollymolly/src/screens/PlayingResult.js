@@ -14,7 +14,8 @@ import GameOpenResult from '../components/GameOpenResult';
 import { useHistory, useLocation, Prompt } from 'react-router';
 //통신
 import axios from 'axios';
-
+//깊은 복제
+import * as _ from 'lodash';
 //import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
 
@@ -27,19 +28,22 @@ let save_user_idx = 1;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const PlayingResult = (props) => {
+    //location으로 넘어올 데이터 : userList, role, keyword, 게임세트인덱스, 리더인덱스, 게임인덱스, 게임세트_no, 룸인덱스
     let location = useLocation();
     const history = useHistory();
 
-    const [winner, setWinner] = useState(''); // 중간 결과 승리자
+    let gameSetNo = location.state.gameSetNo;
+    const gameIdx = location.state.gameIdx;
+    const gameSetIdx = location.state.gameSetIdx;
+    const leaderIdx = location.state.leaderIdx;
+    const userList = location.state.userList;
+    const roomIdx = location.state.roomIdx;
+    const keyword = location.state.keyword;
+    const role = location.state.role;
 
-    // ** 더미 데이터 일단 넣어둠, Playing Vote에서 넘어오면 그걸로 바꿔주면 될 듯! //
-    const userList = [
-        { user_idx: 2, user_name: '나는 2번', game_member_order: 2, user_color: 'GREEN' },
-        { user_idx: 1, user_name: '나는 1번', game_member_order: 1, user_color: 'RED' },
-        { user_idx: 3, user_name: '나는 3번', game_member_order: 3, user_color: 'BLUE' },
-    ];
-    const role = 'human';
-    const keyword = '크리스마스';
+    alert('프롭스 넘어왔다!! ' + keyword +gameSetNo +gameIdx + gameSetIdx+ leaderIdx+JSON.stringify(userList) +roomIdx+role);
+    
+    const [winner, setWinner] = useState(''); // 중간 결과 승리자
 
     const dummyTest = {
         one_game_set_human_score: 1,
@@ -58,23 +62,30 @@ const PlayingResult = (props) => {
     };
     // **
 
+    // 깊은 복사 
+    let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
+    let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트 
+    
+    // 유저 리스트 중 내 정보 배열 및 내 순서 저장
+    const myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
+
     // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
-    var myIndex = userList.find((x) => x.user_idx === save_user_idx);
+    let myIndex = reOrderList.find((x) => x.user_idx === save_user_idx);
     if (myIndex) {
         myIndex.game_member_order = 0;
     }
 
     // 그림 그리기 순서 대로 유저 리스트 재정렬
-    userList.sort(function (a, b) {
+    reOrderList.sort(function (a, b) {
         return a.game_member_order - b.game_member_order;
     });
 
     // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
-    var myItem = userList.find((x) => x.user_idx === save_user_idx);
+    var myItem = reOrderList.find((x) => x.user_idx === save_user_idx);
     if (myItem) {
         myItem.game_member_order = '나';
     }
-
+    
     // 중간 결과 (방장만 부를 수 있음)
     const getMiddleResult = async () => {
         const restURL = 'http://3.17.55.178:3002/game/interim-result/' + location.state.data.game_idx;
@@ -162,15 +173,13 @@ const PlayingResult = (props) => {
                             <MissionWord text={keyword} role={role}></MissionWord>
                             {/* 유저 컴포넌트 */}
                             {
-                                //let user_list = location.state.data.user_list,
-
-                                userList.map((index, key) => (
+                                reOrderList.map((index, key) => (
                                     <GameUserCard
-                                        user_idx={userList[key].user_idx}
-                                        user_color={userList[key].user_color}
-                                        user_name={userList[key].user_name}
-                                        user_role={userList[key].user_role}
-                                        user_order={userList[key].game_member_order}
+                                        user_idx={reOrderList[key].user_idx}
+                                        user_color={reOrderList[key].user_color}
+                                        user_name={reOrderList[key].user_name}
+                                        user_role={reOrderList[key].user_role}
+                                        user_order={reOrderList[key].game_member_order}
                                     ></GameUserCard>
                                 ))
                             }

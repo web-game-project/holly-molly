@@ -20,7 +20,9 @@ let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 const GameDrawing = (props) => {
     const history = useHistory();
 
-    const {socket, leaderIdx, order, color, room_idx, idx, member_count, role,  setIdx, userList, keyword} = props;
+    const {gameSetNo, gameIdx, socket, leaderIdx, order, color, room_idx, idx, member_count, role,  setIdx, userList, keyword} = props;
+
+    console.log('게임 세트 노!' + gameSetNo);
 
     const [possible, setPossible] = useState(true);
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머
@@ -173,9 +175,10 @@ const GameDrawing = (props) => {
                     //세트 이미지 저장 api 요청
                     saveCanvas();
                      //투표로 이동, 데이터 전달
+                     console.log('드로잉 리더' + leaderIdx);
                     history.push({
                         pathname: '/playingvote/' + room_idx,
-                        state: {perforamance: false,leader: leaderIdx , move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
+                        state: {gameSetNo : gameSetNo, gameIdx : gameIdx, perforamance: false, leaderIdx: leaderIdx , move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
                     });
                 } else {
                     // 다음 순서 받을 준비 완료

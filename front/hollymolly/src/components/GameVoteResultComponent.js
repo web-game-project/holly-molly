@@ -10,7 +10,12 @@ import * as _ from 'lodash';
 
 import UserTotalVoteCard from './UserTotalVoteCard';
 
+//페이지 이동
+import { useHistory, useLocation, Prompt } from 'react-router';
+
 const GameVoteResult = (props) => {
+    const history = useHistory();
+
     // local storage에 있는지 확인
     let data = localStorage.getItem('token');
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
@@ -19,11 +24,15 @@ const GameVoteResult = (props) => {
     let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
     //전 페이지 즉, 플레잉 보트 안에서 넘겨준 데이터 세팅
-    const userList = props.data;
+    const userList = props.userList;
     const gameSetIdx = props.gameSet;
     const roomIdx = props.roomIdx;
     const role = props.role;
     const socket = props.socket;
+    const gameSetNo = props.gameSetNo;
+    const gameIdx = props.gameIdx;
+    const leaderIdx = props.leaderIdx;
+    const keyword = props.keyword;
 
     const BaseURL = 'http://3.17.55.178:3002/';
 
@@ -34,13 +43,9 @@ const GameVoteResult = (props) => {
     let isSame = useRef(false);
     let copyVoteList = useRef([]);
 
-    let voteTotalList = useRef(props.voteTotalList);
+    let voteTotalList = useRef([]);
 
-    const settingSize = async () => {
-        console.log('보트 토탈 넘어온 거 : ' + JSON.stringify(voteTotalList.current));
-        console.log('보트 arr : ' + arrSize);
-
-        setArrSize(voteTotalList.current.length);
+    const settingVoteList = async () => {
         copyVoteList.current = _.cloneDeep(voteList.current); // 유저 리스트 중 순서 정리를 위한 리스트 
         voteListLength.current = voteList.current.length;
 
@@ -94,106 +99,120 @@ const GameVoteResult = (props) => {
                 .then(function (response) {
                     console.log('userLs' + JSON.stringify(response.data.vote_result));
                     voteList.current = response.data.vote_result;
-                    settingSize();
+                    settingVoteList();
                 })
                 .catch(function (error) {
                     alert('error voteResult : ' + error.message);
                 });
         }
+        
+            voteTotalList.current = props.voteTotalList;
+
+            console.log('보트 토탈 넘어온 거 : ' + JSON.stringify(voteTotalList.current));
+            //console.log('보트 arr : ' + arrSize);
+    
+            setArrSize(voteTotalList.current.length);
+       
     });
 
     return (
         <Container>
             {
                 arrSize && seconds > 0 ? (
-                        role === "human" ? 
+                    role === "human" ?
                         <div>
-                        <Title cnt={arrSize}>투표 결과</Title>,                        
-                        <text style={{ fontFamily: 'Black Han Sans' ,color: style.white, fontSize: '28px', marginLeft: '250px' }}>{seconds}초</text>
-                        <ResultTable cnt={arrSize}>
-                            {voteTotalList.current && voteTotalList.current.map((element, key) =>
-                                <ColumnContainer>
-                                    {key === arrSize - 1 ?
-                                        <div style={{ width: '560px', display: 'flex', flexDirection: 'row', paddingTop: '10px', paddingBottom: '10px', }}>
+                            <Title cnt={arrSize}>투표 결과</Title>,
+                            <text style={{ fontFamily: 'Black Han Sans', color: style.white, fontSize: '28px', marginLeft: '250px' }}>{seconds}초</text>
+                            <ResultTable cnt={arrSize}>
+                                {voteTotalList.current && voteTotalList.current.map((element, key) =>
+                                    <ColumnContainer>
+                                        {key === arrSize - 1 ?
+                                            <div style={{ width: '560px', display: 'flex', flexDirection: 'row', paddingTop: '10px', paddingBottom: '10px', }}>
 
-                                            <div style={{ width: '185px' }}>
-                                                {element.game_rank_no}위
+                                                <div style={{ width: '185px' }}>
+                                                    {element.game_rank_no}위
+                                                </div>
+                                                <div style={{ width: '355px' }}>
+                                                    {element.user_name}
+                                                </div>
                                             </div>
-                                            <div style={{ width: '355px' }}>
-                                                {element.user_name}
-                                            </div>
-                                        </div>
-                                        :
-                                        <div style={{ width: '560px', display: 'flex', flexDirection: 'row', paddingTop: '10px', paddingBottom: '10px', borderBottom: '1px solid #fff' }}>
-
-                                            <div style={{ width: '185px' }}>
-                                                {element.game_rank_no}위
-                                            </div>
-                                            <div style={{ width: '355px' }}>
-                                                {element.user_name}
-                                            </div>
-                                        </div>
-                                    }
-                                </ColumnContainer>
-                            )}
-                        </ResultTable> 
-                        <TotalResultCard cnt={arrSize}>
-                            <TotalTitle>
-                                전체 결과 <text style={{ fontFamily: 'Hahmlet', fontSize: '18px', color: style.red }}> * 전체 결과는 몰리에게만 공개됩니다.</text>
-                            </TotalTitle>
-                            <div style={{ display: 'flex', flexDirection: 'row', marginLeft: '60px' }}>
-                                {
-                                    arrSize <= 4 ?
-                                        copyVoteList.current && copyVoteList.current.map((element, key) =>
-                                            <UserTotalVoteCard nickname={element.user_name} color={element.user_color} vote_cnt={element.vote_cnt} width="120px" height="125px" innerHeight="90px" size="30px" />)
-                                        :
-                                        arrSize === 5 ?
-                                            copyVoteList.current && copyVoteList.current.map((element, key) =>
-                                                <UserTotalVoteCard nickname={element.user_name} color={element.user_color} vote_cnt={element.vote_cnt} width="90px" height="95px" innerHeight="60px" size="20px" />)
                                             :
+                                            <div style={{ width: '560px', display: 'flex', flexDirection: 'row', paddingTop: '10px', paddingBottom: '10px', borderBottom: '1px solid #fff' }}>
+
+                                                <div style={{ width: '185px' }}>
+                                                    {element.game_rank_no}위
+                                                </div>
+                                                <div style={{ width: '355px' }}>
+                                                    {element.user_name}
+                                                </div>
+                                            </div>
+                                        }
+                                    </ColumnContainer>
+                                )}
+                            </ResultTable>
+                            <TotalResultCard cnt={arrSize}>
+                                <TotalTitle>
+                                    전체 결과 <text style={{ fontFamily: 'Hahmlet', fontSize: '18px', color: style.red }}> * 전체 결과는 몰리에게만 공개됩니다.</text>
+                                </TotalTitle>
+                                <div style={{ display: 'flex', flexDirection: 'row', marginLeft: '60px' }}>
+                                    {
+                                        arrSize <= 4 ?
                                             copyVoteList.current && copyVoteList.current.map((element, key) =>
-                                                <UserTotalVoteCard nickname={element.user_name} color={element.user_color} vote_cnt={element.vote_cnt} width="70px" height="75px" innerHeight="40px" size="14px" />)
-                                }
-                            </div>
-                        </TotalResultCard>
-                        </div>
-                    : //ghost 일 때
-                       <div>
-                        <Title cnt={arrSize}>투표 결과</Title>,                        
-                        <text style={{ color: style.black, fontSize: '30px' }}>{seconds}초</text>
-                        <ResultTable cnt={arrSize}>
-                            {voteTotalList.current && voteTotalList.current.map((element, key) =>
-                                <ColumnContainer>
-                                    {key === arrSize - 1 ?
-                                        <div style={{ width: '560px', display: 'flex', flexDirection: 'row', paddingTop: '10px', paddingBottom: '10px', }}>
-
-                                            <div style={{ width: '185px' }}>
-                                                {element.game_rank_no}위
-                                            </div>
-                                            <div style={{ width: '355px' }}>
-                                                {element.user_name}
-                                            </div>
-                                        </div>
-                                        :
-                                        <div style={{ width: '560px', display: 'flex', flexDirection: 'row', paddingTop: '10px', paddingBottom: '10px', borderBottom: '1px solid #fff' }}>
-
-                                            <div style={{ width: '185px' }}>
-                                                {element.game_rank_no}위
-                                            </div>
-                                            <div style={{ width: '355px' }}>
-                                                {element.user_name}
-                                            </div>
-                                        </div>
+                                                <UserTotalVoteCard nickname={element.user_name} color={element.user_color} vote_cnt={element.vote_cnt} width="120px" height="125px" innerHeight="90px" size="30px" />)
+                                            :
+                                            arrSize === 5 ?
+                                                copyVoteList.current && copyVoteList.current.map((element, key) =>
+                                                    <UserTotalVoteCard nickname={element.user_name} color={element.user_color} vote_cnt={element.vote_cnt} width="90px" height="95px" innerHeight="60px" size="20px" />)
+                                                :
+                                                copyVoteList.current && copyVoteList.current.map((element, key) =>
+                                                    <UserTotalVoteCard nickname={element.user_name} color={element.user_color} vote_cnt={element.vote_cnt} width="70px" height="75px" innerHeight="40px" size="14px" />)
                                     }
-                                </ColumnContainer>
-                            )}
-                        </ResultTable> 
-                        <TotalResulContainer>
-                            전체 결과는 <text style={{ fontFamily: 'Black Han Sans', color: style.red, fontSize: '30px' }}>몰리만</text> 볼 수 있습니다.
-                        </TotalResulContainer>
-                       </div>
+                                </div>
+                            </TotalResultCard>
+                        </div>
+                        : //ghost 일 때
+                        <div>
+                            <Title cnt={arrSize}>투표 결과</Title>,
+                            <text style={{ color: style.black, fontSize: '30px' }}>{seconds}초</text>
+                            <ResultTable cnt={arrSize}>
+                                {voteTotalList.current && voteTotalList.current.map((element, key) =>
+                                    <ColumnContainer>
+                                        {key === arrSize - 1 ?
+                                            <div style={{ width: '560px', display: 'flex', flexDirection: 'row', paddingTop: '10px', paddingBottom: '10px', }}>
+
+                                                <div style={{ width: '185px' }}>
+                                                    {element.game_rank_no}위
+                                                </div>
+                                                <div style={{ width: '355px' }}>
+                                                    {element.user_name}
+                                                </div>
+                                            </div>
+                                            :
+                                            <div style={{ width: '560px', display: 'flex', flexDirection: 'row', paddingTop: '10px', paddingBottom: '10px', borderBottom: '1px solid #fff' }}>
+
+                                                <div style={{ width: '185px' }}>
+                                                    {element.game_rank_no}위
+                                                </div>
+                                                <div style={{ width: '355px' }}>
+                                                    {element.user_name}
+                                                </div>
+                                            </div>
+                                        }
+                                    </ColumnContainer>
+                                )}
+                            </ResultTable>
+                            <TotalResulContainer>
+                                전체 결과는 <text style={{ fontFamily: 'Black Han Sans', color: style.red, fontSize: '30px' }}>몰리만</text> 볼 수 있습니다.
+                            </TotalResulContainer>
+                        </div>
                 ) : // playingResult로 
-                <></>     
+                    //<></>
+                    console.log('보트 리절트 안 : ' + JSON.stringify(userList)),
+                    console.log('보트 리절트 안 키워드: ' + keyword),
+                    (history.push({
+                        pathname: '/playingresult/' + roomIdx,
+                        state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx, keyword: keyword, role: role },
+                    }))
             }
         </Container>
     );
