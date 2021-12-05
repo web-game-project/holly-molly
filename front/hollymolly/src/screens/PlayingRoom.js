@@ -37,8 +37,16 @@ const PlayingRoom = (props) => {
     const history = useHistory();
 
     let room_idx = location.state.room;
-    let leader_idx = location.state.leader; //리더인지 아닌지 
+    let leaderIdx = location.state.leaderIdx; //리더인지 아닌지 
 
+    let gameIdx = location.state.gameIdx;
+    let movePage = location.state.movePage;
+    let gameSetNo;
+    console.log('잘 받아왓어? ' + gameIdx + movePage);
+
+    if(movePage === "firstGame"){
+        gameSetNo = 1;
+    }
     const [role, setRole] = React.useState('');
     const [keyword, setKeyWord] = React.useState('');
 
@@ -264,12 +272,22 @@ const PlayingRoom = (props) => {
                                                     member_count={userList.length}
                                                     userList = {userList}
                                                     socket= {props.socket}
+                                                    gameIdx = {gameIdx}
+                                                    gameSetNo = {gameSetNo}
+                                                    leaderIdx = {leaderIdx}
                                                 />
                                             )}
                                         </DrawDiv>
-                                    ) : (
+                                    ) : 
+                                        movePage === "firstGame" ?
+                                    (
+                                        console.log('move야'),
                                         <GameRoleComponent role={role} timer={seconds} />
-                                    )}
+                                    )
+                                    :
+                                        <text>야</text>
+                                    }
+
 
                                     <ChatDiv>
                                         <Chatting socket={props.socket} room_idx={room_idx} height="615px" available={true} color={myList.user_color}></Chatting>
