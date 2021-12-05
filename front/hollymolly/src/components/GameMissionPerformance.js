@@ -45,9 +45,8 @@ const GameMissionPerformance = (props) => {
             if(data.human_submit === true){
                 history.push({
                     pathname: '/playingvote/' + roomIdx,
-                    state: {perforamance: true , gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, voteTotalList: voteTotalList.current , userList: userList, roomIdx: roomIdx, gameSetIdx: gameSet, keyword: keyword, role: role },
+                    state: {perforamance: data.human_submit , gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, voteTotalList: voteTotalList.current , userList: userList, roomIdx: roomIdx, gameSetIdx: gameSet, keyword: keyword, role: role },
                 });
-                setSeconds(-1);
                 // 여기서 투표 결과 페이지로 넘기면 될듯 합니다
             }
         });
@@ -102,7 +101,7 @@ const GameMissionPerformance = (props) => {
                     <TimerContext>{seconds}초</TimerContext>
                     <Context>예상 제시어를 적어주세요</Context>
                     <InputHumanKeyword><input style={styles.input} type="text" placeholder="입력하세요..." ref={inputRef} /></InputHumanKeyword>
-                    <SubmitContainer onClick={onClick}><SubmitContext>제출</SubmitContext></SubmitContainer>
+                    <SubmitContainer onClick={() => inputHumanKeyword()}><SubmitContext>제출</SubmitContext></SubmitContainer>
                 </Container> :
                 /* 유령일 때, 인간 제시어 입력 기다림 */
                 <Container>
