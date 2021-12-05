@@ -9,6 +9,7 @@ import Header from '../components/Header';
 import GameMiddleResult from '../components/GameMiddleResult';
 import GameFinalResult from '../components/GameFinalResult';
 import GameOpenResult from '../components/GameOpenResult';
+import GameSetImageShow from '../components/GameSetImageShow';
 
 //페이지 이동
 import { useHistory, useLocation, Prompt } from 'react-router';
@@ -19,19 +20,15 @@ import * as _ from 'lodash';
 //import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
 
-// local storage에 있는지 확인
-let data = localStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-//let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_idx = 1;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const PlayingResult = (props) => {
     //location으로 넘어올 데이터 : userList, role, keyword, 게임세트인덱스, 리더인덱스, 게임인덱스, 게임세트_no, 룸인덱스
     let location = useLocation();
     const history = useHistory();
 
+    const BaseURL = 'http://3.17.55.178:3002';
+
+    // 전 페에지 (GameVoteResultComponet) 넘어온 데이터 
     let gameSetNo = location.state.gameSetNo;
     const gameIdx = location.state.gameIdx;
     const gameSetIdx = location.state.gameSetIdx;
@@ -42,7 +39,20 @@ const PlayingResult = (props) => {
     const role = location.state.role;
 
     alert('프롭스 넘어왔다!! ' + keyword +gameSetNo +gameIdx + gameSetIdx+ leaderIdx+JSON.stringify(userList) +roomIdx+role);
-    
+        
+    let currentGameSetNo = useRef(0);
+    const socketData = useRef({});
+
+    //const [possible, setPossible] = useState(false);
+    const possible = useRef(false);
+
+    // local storage에 있는지 확인
+    let data = localStorage.getItem('token');
+    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
+    let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+    let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
+
     const [winner, setWinner] = useState(''); // 중간 결과 승리자
 
     const dummyTest = {
@@ -107,7 +117,6 @@ const PlayingResult = (props) => {
 
     useEffect(() => {
         //getMiddleResult();
-
         props.socket.on('connect', () => {
             console.log('playing result connection server');
         });
@@ -116,7 +125,65 @@ const PlayingResult = (props) => {
         props.socket.on('get interim result', (data) => {
             setWinner(data.winner);
         });
+
+        //세트 시작 소켓
+        props.socket.on('start set', (data) => {
+            alert('세트 ' + JSON.stringify(data.before_game_set_img));
+           // socketData.current = data.user_list; 
+            socketData.current = data; 
+            possible.current = true;            
+        });
     }, []);
+
+    const startSetAPI = async (str) => {
+        console.log('api call');
+
+        const restURL = BaseURL + '/game/set';
+
+        currentGameSetNo.current = str;
+
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+
+        axios
+            .post(
+                restURL,
+                {
+                    game_idx : gameIdx,
+                    game_set_no : str,
+                },
+                reqHeaders
+            )
+            .then(function (response) {
+                console.log('game set success');
+                //possible.current = true;
+            })
+            .catch(function (error) {
+                alert('set' + error);
+            });
+    }
+
+    useEffect(() => {       
+        if(gameSetNo === 1 && leaderIdx === save_user_idx) {
+                startSetAPI(2);
+        }
+
+        if(possible === true){ //가능 할 때 세트시작
+            if(gameSetNo === 2 && leaderIdx === save_user_idx) {
+                    startSetAPI(3);
+            }
+            else{
+                
+            }      
+        }   
+        else{
+
+        }  
+
+    }, [possible]);
 
      // 비정상 종료
      const exit = async () => {   
@@ -184,6 +251,14 @@ const PlayingResult = (props) => {
                                 ))
                             }
                         </UserDiv>
+
+                        {
+                            possible === true ?
+                                socketData && <GameSetImageShow beforeData={socketData.current} roomIdx={roomIdx} gameSetNo={currentGameSetNo.current} leaderIdx={leaderIdx}/>
+                            :
+                                <text>두번째 세트 아직 놉 </text>
+                        }
+                        
                         {/* 중간 결과 출력이라면? */}
 
                         {/* <GameMiddleResult winner={'ghost'} /> */}
@@ -191,7 +266,7 @@ const PlayingResult = (props) => {
 
                         {/* 최종 결과 출력이라면?*/}
 
-                        <GameFinalResult data={dummyTest} />
+                        {/* <GameFinalResult data={dummyTest} /> */}
 
                         {/* 최종 결과 공개라면? */}
                         {/* <GameOpenResult data={dummyOpenResultTest} /> */}
