@@ -45,12 +45,25 @@ const PlayingVote = (props) => {
     let keyword =   location.state.keyword; //그림판에서 넘어온 키워드
     let leader = location.state.leaderIdx;
 
-    let isMissionPerformance = location.state.perforamance;
+    let isMissionPerformance = location.state.perforamance; 
+    console.log('투표 미션 ㄱ밧' + isMissionPerformance);
 
+    if(isMissionPerformance === false){
+        console.log('미견 수행하러가');
+    }
+    else{
+        console.log('미션 수행 함   '+isMissionPerformance);
+    }
+
+    let gameSetNo = location.state.gameSetNo;
+
+    let gameIdx = location.state.gameIdx;
+    
     let voteTotalList = useRef([]);
 
     if(location.state.voteTotalList !== undefined)
         voteTotalList.current = location.state.voteTotalList;
+    console.log('투표 보트토탈 리ㅡㅅ트' + JSON.stringify(voteTotalList.current));
 
     // local storage에 있는지 확인
     let data = localStorage.getItem('token');
@@ -152,12 +165,12 @@ const PlayingVote = (props) => {
                         {
                             seconds > 0 ?
                                 // 투표  
-                                <GameVoteComponent socket={props.socket} gameSet={gameSetIdx} role={role} leaderIdx={leader} data={userList} room_idx={roomIdx} keyword={keyword}/>                             
+                                <GameVoteComponent socket={props.socket} gameIdx = {gameIdx} gameSetNo={gameSetNo} gameSet={gameSetIdx} role={role} leaderIdx={leader} userList={userList} room_idx={roomIdx} keyword={keyword}/>                             
                             :       
                                 isMissionPerformance === false ?
-                                 <GameMissionPerformance gameSetIdx={gameSetIdx} socket={props.socket} role={role} leaderIdx={leader} userList={userList} room_idx={roomIdx} keyword={keyword}/>                             
+                                 <GameMissionPerformance leaderIdx={leader} gameSetNo={gameSetNo} gameIdx = {gameIdx} voteTotalList={voteTotalList.current} socket={props.socket} userList={userList} gameSet={gameSetIdx} roomIdx={roomIdx} keyword={keyword} role={role} cnt={userList.length} />
                                 :
-                                <GameVoteResult voteTotalList={voteTotalList.current} socket={props.socket} data={userList} gameSet={gameSetIdx} roomIdx={roomIdx} role={role} cnt={userList.length} />
+                                <GameVoteResult leaderIdx={leader} gameSetNo={gameSetNo} gameIdx = {gameIdx} voteTotalList={voteTotalList.current} socket={props.socket} userList={userList} gameSet={gameSetIdx} roomIdx={roomIdx} keyword={keyword} role={role} cnt={userList.length} />
                         }                        
 
                         <ChatDiv>

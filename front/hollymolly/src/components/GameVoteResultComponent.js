@@ -10,7 +10,12 @@ import * as _ from 'lodash';
 
 import UserTotalVoteCard from './UserTotalVoteCard';
 
+//페이지 이동
+import { useHistory, useLocation, Prompt } from 'react-router';
+
 const GameVoteResult = (props) => {
+    const history = useHistory();
+
     // local storage에 있는지 확인
     let data = localStorage.getItem('token');
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
@@ -19,12 +24,16 @@ const GameVoteResult = (props) => {
     let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
     //전 페이지 즉, 플레잉 보트 안에서 넘겨준 데이터 세팅
-    const userList = props.data;
+    const userList = props.userList;
     const gameSetIdx = props.gameSet;
     const roomIdx = props.roomIdx;
     const role = props.role;
     const socket = props.socket;
-
+    const gameSetNo = props.gameSetNo;
+    const gameIdx = props.gameIdx;
+    const leaderIdx = props.leaderIdx;
+    const keyword = props.keyword;
+    
     const BaseURL = 'http://3.17.55.178:3002/';
 
     const [arrSize, setArrSize] = useState();  //넘어온 유저 리스트 길이 값
@@ -34,9 +43,12 @@ const GameVoteResult = (props) => {
     let isSame = useRef(false);
     let copyVoteList = useRef([]);
 
-    let voteTotalList = useRef(props.voteTotalList);
+    let voteTotalList = useRef([]);
 
     const settingSize = async () => {
+
+        voteTotalList.current = props.voteTotalList;
+
         console.log('보트 토탈 넘어온 거 : ' + JSON.stringify(voteTotalList.current));
         console.log('보트 arr : ' + arrSize);
 
@@ -101,6 +113,15 @@ const GameVoteResult = (props) => {
                 });
         }
     });
+
+    const movePlayingResult = async () => {
+        console.log('gamesetno : ' + userList);
+
+        history.push({
+            pathname: '/playingresult/' + roomIdx,
+            state: {gameSetNo : gameSetNo, gameIdx : gameIdx, leaderIdx: leaderIdx , userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx, keyword: keyword, role: role },
+        });
+    }
 
     return (
         <Container>
@@ -193,7 +214,8 @@ const GameVoteResult = (props) => {
                         </TotalResulContainer>
                        </div>
                 ) : // playingResult로 
-                <></>     
+                //<></>
+               movePlayingResult()
             }
         </Container>
     );

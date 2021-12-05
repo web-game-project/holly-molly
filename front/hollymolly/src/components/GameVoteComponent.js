@@ -21,8 +21,12 @@ let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 const GameVoteComponent = (props) => {
     const history = useHistory();
 
-    const userList = props.data;
-    const gameset = props.gameSet;
+    const userList = props.userList;
+    const gameSet = props.gameSet;
+    const gameSetNo=  props.gameSetNo;
+    const gameIdx = props.gameIdx;
+    const leaderIdx = props.leaderIdx;
+
     const [clicked, setClicked] = useState(false); // 클릭리스너
     const [voteWho, setVoteWho] = useState(''); // 내가 투표한 사람의 컬러
     //const [voteIndex, setVoteIndex] = useState(); // 내가 투표한 사람의 인덱스
@@ -44,12 +48,14 @@ const GameVoteComponent = (props) => {
             console.log('game vote result connection server');
         });
 
-        props.socket.on('vote', (data) => { 
+        props.socket.on('vote', (data) => {
             alert('socket 투표 결과 ' + JSON.stringify(data.vote_rank)); // success 메시지
-            history.push({
-                        pathname: '/playingvote/' + props.room_idx,
-                        state: {voteTotalList: data.vote_rank, perforamance: false, leader: props.leaderIdx, userList: props.data, roomIdx: props.room_idx, gameSetIdx: props.gameSet, keyword: props.keyword, role: props.role },
-            });
+            if (data !== null) {
+                history.push({
+                    pathname: '/playingvote/' + props.room_idx,
+                    state: { gameSetNo: gameSetNo, gameIdx: gameIdx, voteTotalList: data.vote_rank, perforamance: false, leaderIdx: leaderIdx, userList: userList, roomIdx: props.room_idx, gameSetIdx: gameSet, keyword: props.keyword, role: props.role },
+                });
+            }
         });
     }, []);
 
@@ -79,9 +85,9 @@ const GameVoteComponent = (props) => {
 
         let str = -1;
 
-        if(voteIndex !== null || voteIndex !== '')
-            str = voteIndex.current;         
-             
+        if (voteIndex !== null || voteIndex !== '')
+            str = voteIndex.current;
+
         const restURL = baseURL + 'game/vote';
 
         const reqHeaders = {
@@ -93,7 +99,7 @@ const GameVoteComponent = (props) => {
             .post(
                 restURL,
                 {
-                    game_set_idx: gameset,
+                    game_set_idx: gameSet,
                     user_idx: str,
                 },
                 reqHeaders
@@ -125,8 +131,8 @@ const GameVoteComponent = (props) => {
                                 //setVoteIndex(element.user_idx);
                                 voteIndex.current = element.user_idx;
                                 console.log(voteWho + '가 voteWho');
-                                console.log(gameset);
-                                console.log('API: 게임세트? ' + gameset + ', 유저인덱스? ' + voteIndex.current);
+                                console.log(gameSet);
+                                console.log('API: 게임세트? ' + gameSet + ', 유저인덱스? ' + voteIndex.current);
                             }}
                         >
                             <UserVote nick={element.user_name} color={element.user_color} click={clicked} voteWho={voteWho} />
@@ -137,15 +143,15 @@ const GameVoteComponent = (props) => {
             {
                 seconds === 0 ?
                     <Info>
-                        투표 시간이 <InfoRed> 마감 </InfoRed>되었습니다. 
+                        투표 시간이 <InfoRed> 마감 </InfoRed>되었습니다.
                     </Info>
                     :
                     seconds > 0 ?
-                    <Info>
-                        투표 시간이 <InfoRed> {seconds} </InfoRed> 초 남았습니다.
-                    </Info>
-                    : 
-                    null //-1되면 -1 초라고 떠서 처리해줌
+                        <Info>
+                            투표 시간이 <InfoRed> {seconds} </InfoRed> 초 남았습니다.
+                        </Info>
+                        :
+                        null //-1되면 -1 초라고 떠서 처리해줌
             }
 
         </Container>

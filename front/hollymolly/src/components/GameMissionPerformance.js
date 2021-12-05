@@ -18,7 +18,9 @@ let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 const GameMissionPerformance = (props) => {
     const history = useHistory();
     
-    const {role, socket, gameSetIdx, leaderIdx, userList, room_idx, keyword } = props;
+    const {socket, gameSetNo, gameIdx,voteTotalList, gameSet, leaderIdx, userList, roomIdx, keyword, role, cnt} = props;
+    console.log('미션 : ' + leaderIdx + userList + roomIdx + keyword + role);
+
     const [isHuman, setIsHuman] = useState(false);
     const [seconds, setSeconds] = useState(10); 
 
@@ -42,9 +44,10 @@ const GameMissionPerformance = (props) => {
             
             if(data.human_submit === true){
                 history.push({
-                    pathname: '/playingvote/' + room_idx,
-                    state: {perforamance: true ,leader: leaderIdx , userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx, keyword: keyword, role: role },
+                    pathname: '/playingvote/' + roomIdx,
+                    state: {perforamance: true , gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, voteTotalList: voteTotalList.current , userList: userList, roomIdx: roomIdx, gameSetIdx: gameSet, keyword: keyword, role: role },
                 });
+                setSeconds(-1);
                 // 여기서 투표 결과 페이지로 넘기면 될듯 합니다
             }
         });
@@ -74,7 +77,7 @@ const GameMissionPerformance = (props) => {
             .patch(
                 reqURL,
                 {
-                    game_set_idx: gameSetIdx, // 게임 세트 인덱스 
+                    game_set_idx: gameSet, // 게임 세트 인덱스 
                     game_set_human_answer: inputRef.current.value // 인간이 입력한 답안 
                 },
                 reqHeaders
