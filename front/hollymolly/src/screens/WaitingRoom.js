@@ -751,6 +751,7 @@ export default function WaitingRoom(props) {
                                             width: '100px',
                                             justifyContent: 'space-between',
                                             marginTop: '-40px',
+                                            cursor: 'grab',
                                         }}
                                     >
                                         <Exit src={exit} />
@@ -992,6 +993,10 @@ const BarColorBox = styled.div`
     justify-content: center;
     border-right: 2px solid #000000;
     disabled: true;
+
+    &:hover {
+        cursor: grab;
+    }
 
     ${(props) =>
         props.color == '#FF0000' || props.data == '#FF0000'

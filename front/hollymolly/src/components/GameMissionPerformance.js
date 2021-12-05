@@ -172,6 +172,10 @@ const SubmitContext = styled.div`
     font-size: 15px;
     font-family: Gowun Dodum;
     text-align: center;
+
+    &:hover {
+        cursor: grab;
+    }
 `;
 
   export default GameMissionPerformance;
