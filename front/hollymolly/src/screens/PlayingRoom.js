@@ -272,7 +272,7 @@ const PlayingRoom = (props) => {
                                     )}
 
                                     <ChatDiv>
-                                        <Chatting socket={props.socket} room_idx={room_idx} height="615px" available={true} color={onlyUserList.user_color}></Chatting>
+                                        <Chatting socket={props.socket} room_idx={room_idx} height="615px" available={true} color={myList.user_color}></Chatting>
                                     </ChatDiv>
                                 </BackGroundDiv>
                             </Container>
@@ -282,7 +282,7 @@ const PlayingRoom = (props) => {
                     )
                 ) : 
                 (
-                    <PlayingLoading move="게임이 곧 시작됩니다..."/>
+                    <PlayingLoading txt="게임이 곧 시작됩니다..."/>
                 )}
             </Background>
         </React.Fragment>

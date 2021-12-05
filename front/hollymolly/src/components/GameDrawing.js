@@ -175,7 +175,7 @@ const GameDrawing = (props) => {
                      //투표로 이동, 데이터 전달
                     history.push({
                         pathname: '/playingvote/' + room_idx,
-                        state: {leader: leaderIdx , move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
+                        state: {perforamance: false,leader: leaderIdx , move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
                     });
                 } else {
                     // 다음 순서 받을 준비 완료

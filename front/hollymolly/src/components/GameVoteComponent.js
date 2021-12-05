@@ -8,6 +8,8 @@ import UserVote from './UserVote';
 // 소켓
 import axios from 'axios';
 import { io } from 'socket.io-client';
+//페이지 이동
+import { useHistory, useLocation, Prompt } from 'react-router';
 
 // local storage에 있는지 확인
 let data = localStorage.getItem('token');
@@ -17,6 +19,8 @@ let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const GameVoteComponent = (props) => {
+    const history = useHistory();
+
     const userList = props.data;
     const gameset = props.gameSet;
     const [clicked, setClicked] = useState(false); // 클릭리스너
@@ -36,7 +40,20 @@ const GameVoteComponent = (props) => {
     }, []);
 
     useEffect(() => {
+        props.socket.on('connect', () => {
+            console.log('game vote result connection server');
+        });
 
+        props.socket.on('vote', (data) => { 
+            alert('socket 투표 결과 ' + JSON.stringify(data.vote_rank)); // success 메시지
+            history.push({
+                        pathname: '/playingvote/' + props.room_idx,
+                        state: {voteTotalList: data.vote_rank, perforamance: false, leader: props.leaderIdx, userList: props.data, roomIdx: props.room_idx, gameSetIdx: props.gameSet, keyword: props.keyword, role: props.role },
+            });
+        });
+    }, []);
+
+    useEffect(() => {
         if (props != null) {
             //데이터 전달 받은게 세팅되기 전까지는 타이머가 돌아가면 안됨.
             const countdown = setInterval(() => {

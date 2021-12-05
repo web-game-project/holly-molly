@@ -6,6 +6,8 @@ import night from '../assets/night.svg';
 // 소켓
 import { io } from 'socket.io-client';
 
+import { useHistory, useLocation } from 'react-router';
+
 // local storage에 있는지 확인 
 let data = localStorage.getItem("token");
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
@@ -13,13 +15,12 @@ let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-
-
 const GameMissionPerformance = (props) => {
-   
-    const {role, socket} = props;
+    const history = useHistory();
+    
+    const {role, socket, gameSetIdx, leaderIdx, userList, room_idx, keyword } = props;
     const [isHuman, setIsHuman] = useState(false);
-    const [seconds, setSeconds] = useState(5); //게임 시작 5초 후, 타이머
+    const [seconds, setSeconds] = useState(10); 
 
     const inputRef = useRef();
 
@@ -40,6 +41,10 @@ const GameMissionPerformance = (props) => {
             console.log('submit human answer');
             
             if(data.human_submit === true){
+                history.push({
+                    pathname: '/playingvote/' + room_idx,
+                    state: {perforamance: true ,leader: leaderIdx , userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx, keyword: keyword, role: role },
+                });
                 // 여기서 투표 결과 페이지로 넘기면 될듯 합니다
             }
         });
@@ -69,7 +74,7 @@ const GameMissionPerformance = (props) => {
             .patch(
                 reqURL,
                 {
-                    game_set_idx: 1, // 게임 세트 인덱스 
+                    game_set_idx: gameSetIdx, // 게임 세트 인덱스 
                     game_set_human_answer: inputRef.current.value // 인간이 입력한 답안 
                 },
                 reqHeaders
