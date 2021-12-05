@@ -52,6 +52,7 @@ const PlayingVote = (props) => {
         console.log('미견 수행하러가');
     }
     else{
+        //setSeconds(0);
         console.log('미션 수행 함   '+isMissionPerformance);
     }
 
@@ -104,7 +105,7 @@ const PlayingVote = (props) => {
                     setSeconds(0);                    
                 }
             }, 1000);
-
+            console.log('보트 se' + seconds);
             return () => {
                 clearInterval(countdown);                
             };
@@ -167,10 +168,11 @@ const PlayingVote = (props) => {
                                 // 투표  
                                 <GameVoteComponent socket={props.socket} gameIdx = {gameIdx} gameSetNo={gameSetNo} gameSet={gameSetIdx} role={role} leaderIdx={leader} userList={userList} room_idx={roomIdx} keyword={keyword}/>                             
                             :       
-                                isMissionPerformance === false ?
-                                 <GameMissionPerformance leaderIdx={leader} gameSetNo={gameSetNo} gameIdx = {gameIdx} voteTotalList={voteTotalList.current} socket={props.socket} userList={userList} gameSet={gameSetIdx} roomIdx={roomIdx} keyword={keyword} role={role} cnt={userList.length} />
+                                isMissionPerformance === true ?
+                                <GameVoteResult leaderIdx={leader} gameSetNo={gameSetNo} gameIdx = {gameIdx} voteTotalList={voteTotalList.current} userList={userList} gameSet={gameSetIdx} roomIdx={roomIdx} keyword={keyword} role={role} cnt={userList.length} />
                                 :
-                                <GameVoteResult leaderIdx={leader} gameSetNo={gameSetNo} gameIdx = {gameIdx} voteTotalList={voteTotalList.current} socket={props.socket} userList={userList} gameSet={gameSetIdx} roomIdx={roomIdx} keyword={keyword} role={role} cnt={userList.length} />
+                                <GameMissionPerformance leaderIdx={leader} gameSetNo={gameSetNo} gameIdx = {gameIdx} voteTotalList={voteTotalList.current} socket={props.socket} userList={userList} gameSet={gameSetIdx} roomIdx={roomIdx} keyword={keyword} role={role} cnt={userList.length} />
+                                
                         }                        
 
                         <ChatDiv>

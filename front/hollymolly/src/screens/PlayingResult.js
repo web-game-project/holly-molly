@@ -32,16 +32,16 @@ const PlayingResult = (props) => {
     let location = useLocation();
     const history = useHistory();
 
-    let gameSetNo = props.gameSetNo;
-    const gameIdx = props.gameIdx;
-    const gameSetIdx = props.gameSetIdx;
-    const leaderIdx = props.leaderIdx;
-    const userList = props.userList;
-    const roomIdx = props.roomIdx;
-    const keyword = props.keyword;
-    const role = props.role;
+    let gameSetNo = location.state.gameSetNo;
+    const gameIdx = location.state.gameIdx;
+    const gameSetIdx = location.state.gameSetIdx;
+    const leaderIdx = location.state.leaderIdx;
+    const userList = location.state.userList;
+    const roomIdx = location.state.roomIdx;
+    const keyword = location.state.keyword;
+    const role = location.state.role;
 
-    alert('프롭스 넘어왔다!! ' + gameSetNo);
+    alert('프롭스 넘어왔다!! ' + keyword +gameSetNo +gameIdx + gameSetIdx+ leaderIdx+JSON.stringify(userList) +roomIdx+role);
     
     const [winner, setWinner] = useState(''); // 중간 결과 승리자
 
@@ -85,7 +85,7 @@ const PlayingResult = (props) => {
     if (myItem) {
         myItem.game_member_order = '나';
     }
-
+    
     // 중간 결과 (방장만 부를 수 있음)
     const getMiddleResult = async () => {
         const restURL = 'http://3.17.55.178:3002/game/interim-result/' + location.state.data.game_idx;
