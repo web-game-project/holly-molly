@@ -72,6 +72,9 @@ const TutorialBtn = styled.div`
     margin: 40px auto;
     background-size: contain;
     background-repeat: no-repeat;
+    &:hover {
+        cursor: grab;
+    }
 `;
 
 export default GameStart;

@@ -223,6 +223,10 @@ const InputMsg = styled.textarea`
     outline: none !important;
     resize: none;
 
+    &:hover {
+        cursor: grab;
+    }
+
     ::placeholder {
         color: white;
         font-weight: bold;
@@ -255,6 +259,10 @@ const InputMsgBtn = styled.div`
     align-items: center;
     justify-content: center;
     color: white;
+
+    &:hover {
+        cursor: grab;
+    }
 `;
 
 export default Chatting;

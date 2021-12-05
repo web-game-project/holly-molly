@@ -252,7 +252,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
     return (
         <div>
             <SettingsIcon
-                style={{ marginTop: '25px' }}
+                style={{ marginTop: '25px', cursor: 'grab' }}
                 onClick={() => {
                     openModal();
                 }}

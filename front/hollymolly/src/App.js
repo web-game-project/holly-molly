@@ -13,7 +13,7 @@ import VoteBoard from './components/VoteBoard';
 import Tutorial from './screens/TutorialScreens/TutorialStart.js';
 import TutorialRole from './screens/TutorialScreens/TutorialRole.js';
 import PlayingResult from './screens/PlayingResult';
-import Chatting from './components/Chatting';
+import Toast from './components/Toast';
 
 //정희
 import GameRoleComponent from './components/GameRoleComponent';
@@ -57,6 +57,7 @@ export default function App() {
                     <Route path="/gameRole" component={GameRoleComponent}></Route>
                     <Route path="/nickname" component={ModalNickName}></Route>
                     <Route path="/vote" component={PlayingVote}></Route>
+                    <Route path="/Toast" component={Toast}></Route>
 
                     <Route path="/voteboard" component={VoteBoard}></Route>
                     <Route exact path="/" component={GameStart} />
