@@ -5,7 +5,7 @@ const { userSchema } = require('../../util/joi/schema');
 
 module.exports = async (req, res, next) => {
     try {
-        const { error, value } = userSchema.login.validate(req.body);
+        const { error, value } = userSchema.refresh.validate(req.body);
         const { refresh_token } = value;
         const user = res.locals.user;
         if(error){
