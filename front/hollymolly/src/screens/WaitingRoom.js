@@ -357,7 +357,7 @@ export default function WaitingRoom(props) {
             //플레잉룸으로 이동, 데이터 전달dlEk r
             history.push({
                 pathname: '/playingroom/' + room_idx,
-                state: { gameIdx: data.game_idx, data: data, room: room_idx, leaderIdx: leader_idx.current, movePage: "firstGame"},
+                state: {isSet: false, gameIdx: data.game_idx, userList: data.user_list, gameSetIdx: data.game_set_idx, room: room_idx, leaderIdx: leader_idx.current, gameSetNo : 1},
             });
         }); 
     }, []);

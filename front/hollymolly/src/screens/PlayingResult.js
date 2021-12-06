@@ -20,11 +20,15 @@ import * as _ from 'lodash';
 //import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
 
+//"무비페이지에 str 자리 값넣어주기!!"
 
 const PlayingResult = (props) => {
-    //location으로 넘어올 데이터 : userList, role, keyword, 게임세트인덱스, 리더인덱스, 게임인덱스, 게임세트_no, 룸인덱스
-    let location = useLocation();
+     let location = useLocation();
     const history = useHistory();
+
+    const [seconds, setSeconds] = useState(10); //10초 보여주기
+    const [winner, setWinner] = useState(''); // 중간 결과 승리자
+    const [finalData, setFinalData] = useState(); //최종 결과 데이터
 
     const BaseURL = 'http://3.17.55.178:3002';
 
@@ -38,33 +42,12 @@ const PlayingResult = (props) => {
     const keyword = location.state.keyword;
     const role = location.state.role;
 
-    alert('프롭스 넘어왔다!! ' + keyword +gameSetNo +gameIdx + gameSetIdx+ leaderIdx+JSON.stringify(userList) +roomIdx+role);
+    /* alert('프롭스 넘어왔다!! ' + keyword +gameSetNo +gameIdx + gameSetIdx+ leaderIdx+JSON.stringify(userList) +roomIdx+role); */
         
-    let currentGameSetNo = useRef(0);
-    const socketData = useRef({});
-
-    //const [possible, setPossible] = useState(false);
-    const possible = useRef(false);
-
     // local storage에 있는지 확인
     let data = localStorage.getItem('token');
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-    let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
     let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-    let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
-
-    const [winner, setWinner] = useState(''); // 중간 결과 승리자
-
-    const dummyTest = {
-        one_game_set_human_score: 1,
-        two_game_set_human_score: 2,
-        three_game_set_human_score: 0,
-        total_game_set_human_score: 3,
-        one_game_set_ghost_score: 1,
-        two_game_set_ghost_score: 2,
-        three_game_set_ghost_score: 0,
-        total_game_set_ghost_score: 2,
-    };
 
     const dummyOpenResultTest = {
         human_user_name: '나는 1번',
@@ -98,7 +81,7 @@ const PlayingResult = (props) => {
     
     // 중간 결과 (방장만 부를 수 있음)
     const getMiddleResult = async () => {
-        const restURL = 'http://3.17.55.178:3002/game/interim-result/' + location.state.data.game_idx;
+        const restURL = 'http://3.17.55.178:3002/game/interim-result/' + gameIdx;
 
         const reqHeaders = {
             headers: {
@@ -109,14 +92,39 @@ const PlayingResult = (props) => {
             .get(restURL, reqHeaders)
             .then(function (response) {
                 console.log(response);
+                //startSetAPI(3);
             })
             .catch(function (error) {
                 console.log(error.response);
             });
     };
 
+    const getFinalResult = async () => {
+        const restURL = 'http://3.17.55.178:3002/game/final/' + gameIdx;
+
+        console.log('토큰,,' + save_token);
+
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        axios
+            .delete(restURL, 
+                reqHeaders, 
+                {data : {
+                    gameIdx : gameIdx
+                }})
+
+            .then(function (response) {
+                console.log('최종결과 성공');
+            })
+            .catch(function (error) {
+                console.log(error.response);
+            });
+    }
+
     useEffect(() => {
-        //getMiddleResult();
         props.socket.on('connect', () => {
             console.log('playing result connection server');
         });
@@ -124,66 +132,42 @@ const PlayingResult = (props) => {
         // 같은 대기실에 있는 클라이언트들에게 중간 결과 전송
         props.socket.on('get interim result', (data) => {
             setWinner(data.winner);
-        });
-
-        //세트 시작 소켓
-        props.socket.on('start set', (data) => {
-            alert('세트 ' + JSON.stringify(data.before_game_set_img));
-           // socketData.current = data.user_list; 
-            socketData.current = data; 
-            possible.current = true;            
-        });
+        });     
+        
+        // 같은 대기실에 있는 클라이언트들에게 최종 결과 전송
+        props.socket.on('get final result', (data) => {
+            setFinalData(data);
+        });   
     }, []);
+    
+    useEffect(() => {
+        const countdown = setInterval(() => {
+            if (parseInt(seconds) > 0) {
+                setSeconds(parseInt(seconds) - 1);
+            }
+        }, 1000);
 
-    const startSetAPI = async (str) => {
-        console.log('api call');
-
-        const restURL = BaseURL + '/game/set';
-
-        currentGameSetNo.current = str;
-
-        const reqHeaders = {
-            headers: {
-                authorization: 'Bearer ' + save_token,
-            },
+        return () => {
+            clearInterval(countdown);
         };
-
-        axios
-            .post(
-                restURL,
-                {
-                    game_idx : gameIdx,
-                    game_set_no : str,
-                },
-                reqHeaders
-            )
-            .then(function (response) {
-                console.log('game set success');
-                //possible.current = true;
-            })
-            .catch(function (error) {
-                alert('set' + error);
-            });
-    }
+    }, [seconds]);
 
     useEffect(() => {       
-        if(gameSetNo === 1 && leaderIdx === save_user_idx) {
-                startSetAPI(2);
+        //먼가 여기서 방장 인덱스랑 내 인덱스가 같은지 같다면 
+        // 1) 세트시작 2) 중간결과 3) 최종결과 api 를 호출한다. ( 2,3번은 success 시 세트시작 api도 콜한다면?)
+        // 밑에서 gameSetNo에 값에 따른 삼항 연산자로 
+        //각각의 소켓에 데이터가 있을 때 
+        //--------
+        //중간 최종결과는 10초씩 보여줘야하니깐 밑에 if문에서 setSeconds 해주기!
+
+        if(gameSetNo === 2 && leaderIdx === save_user_idx) {
+            getMiddleResult();
         }
+        else if(gameSetNo === 3 && leaderIdx === save_user_idx) {
+            getFinalResult();
+        }               
 
-        if(possible === true){ //가능 할 때 세트시작
-            if(gameSetNo === 2 && leaderIdx === save_user_idx) {
-                    startSetAPI(3);
-            }
-            else{
-                
-            }      
-        }   
-        else{
-
-        }  
-
-    }, [possible]);
+    }, []);
 
      // 비정상 종료
      const exit = async () => {   
@@ -253,16 +237,26 @@ const PlayingResult = (props) => {
                         </UserDiv>
 
                         {
-                            possible === true ?
-                                socketData && <GameSetImageShow beforeData={socketData.current} roomIdx={roomIdx} gameSetNo={currentGameSetNo.current} leaderIdx={leaderIdx}/>
-                            :
-                                <text>두번째 세트 아직 놉 </text>
+                            seconds <= 0 ? (
+                                gameSetNo === 2 ?
+                                    //플레잉 룸으로 
+                                    history.push({
+                                        pathname: '/playingroom/' + roomIdx,
+                                        state: { isSet: true, gameSetNo: gameSetNo+1, gameIdx: gameIdx, userList: userList, gameSetIdx: gameSetIdx, room: roomIdx, leaderIdx: leaderIdx},
+                                    })
+                                :
+                                    history.push({
+                                        pathname: '/roomlist'
+                                    }) //게임종료, 룸리스트로 이동
+                            )
+                            : 
+                            ( 
+                               gameSetNo === 2 ? 
+                                winner && <GameMiddleResult winner={winner} />
+                                :
+                                finalData && <GameFinalResult data={finalData} /> //최종 결과
+                            )
                         }
-                        
-                        {/* 중간 결과 출력이라면? */}
-
-                        {/* <GameMiddleResult winner={'ghost'} /> */}
-                        {/* <GameMiddleResult winner={winner} />  */}
 
                         {/* 최종 결과 출력이라면?*/}
 

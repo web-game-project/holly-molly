@@ -2,25 +2,15 @@ import styled from "styled-components";
 import React, { useState, useEffect, useRef } from 'react';
 import style from '../styles/styles';
 import axios from 'axios';
-import night from '../assets/night.svg';
-// 소켓
-import { io } from 'socket.io-client';
-
-import { useHistory, useLocation } from 'react-router';
 
 // local storage에 있는지 확인 
 let data = localStorage.getItem("token");
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const GameMissionPerformance = (props) => {
-    const history = useHistory();
     
-    const {socket, gameSetNo, gameIdx,voteTotalList, gameSet, leaderIdx, userList, roomIdx, keyword, role, cnt} = props;
-    console.log('미션 : ' + leaderIdx + userList + roomIdx + keyword + role);
-
+    const {gameSet,role} = props;
+   
     const [isHuman, setIsHuman] = useState(false);
     const [seconds, setSeconds] = useState(10); 
 
@@ -28,28 +18,11 @@ const GameMissionPerformance = (props) => {
 
     let user_role = role;
     useEffect(() => {
-        socket.on('connect', () => {
-            console.log('GameMissionPerformance connection server');
-        });
-
         if(user_role === "human"){ // human 일 때 마피아 미션 수행 
             setIsHuman(true);
         }else{ // ghost 일 때 마피아 미션 수행 기다림 
             setIsHuman(false);
         }
-
-        // 인간 답안 제출 완료 
-        socket.on('submit human answer', (data) => {
-            console.log('submit human answer');
-            
-            if(data.human_submit === true){
-                history.push({
-                    pathname: '/playingvote/' + roomIdx,
-                    state: {perforamance: data.human_submit , gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, voteTotalList: voteTotalList.current , userList: userList, roomIdx: roomIdx, gameSetIdx: gameSet, keyword: keyword, role: role },
-                });
-                // 여기서 투표 결과 페이지로 넘기면 될듯 합니다
-            }
-        });
     }, []);
 
     useEffect(() => {
@@ -57,11 +30,12 @@ const GameMissionPerformance = (props) => {
             if (parseInt(seconds) > 0) {
                 setSeconds(parseInt(seconds) - 1);
             }else{ // seconds == 0이면,
-                 //inputHumanKeyword();
+                console.log('마피아 미션 수행 초 끝')
+                inputHumanKeyword();
             }
         }, 1000);
 
-        return () => {clearInterval(countdown); console.log('게임 롤 초 끝')} ;
+        return () => {clearInterval(countdown); } ;
     }, [seconds]);
 
     const inputHumanKeyword = async () => {
@@ -72,12 +46,18 @@ const GameMissionPerformance = (props) => {
             },
         };
 
+        let str = '';
+        if(inputRef.current.value === '' || inputRef.current.value === undefined)
+            str = "기 권";
+        else   
+            str = inputRef.current.value;
+
         axios
             .patch(
                 reqURL,
                 {
                     game_set_idx: gameSet, // 게임 세트 인덱스 
-                    game_set_human_answer: inputRef.current.value // 인간이 입력한 답안 
+                    game_set_human_answer: str // 인간이 입력한 답안 
                 },
                 reqHeaders
             )
@@ -89,10 +69,6 @@ const GameMissionPerformance = (props) => {
             });
     };
 
-    const onClick = () => {
-        inputHumanKeyword();
-    };
-
       return (
         <React.Fragment>
                 {isHuman? 
@@ -101,7 +77,7 @@ const GameMissionPerformance = (props) => {
                     <TimerContext>{seconds}초</TimerContext>
                     <Context>예상 제시어를 적어주세요</Context>
                     <InputHumanKeyword><input style={styles.input} type="text" placeholder="입력하세요..." ref={inputRef} /></InputHumanKeyword>
-                    <SubmitContainer onClick={() => inputHumanKeyword()}><SubmitContext>제출</SubmitContext></SubmitContainer>
+                    <SubmitContainer onClick={inputHumanKeyword}><SubmitContext>제출</SubmitContext></SubmitContainer>
                 </Container> :
                 /* 유령일 때, 인간 제시어 입력 기다림 */
                 <Container>

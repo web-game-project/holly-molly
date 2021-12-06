@@ -11,6 +11,7 @@ import GameDrawing from '../components/GameDrawing';
 import PlayingLoading from '../components/PlayingLoading';
 import Header from '../components/Header';
 import { useLocation, useHistory } from 'react-router';
+import GameSetImageShow from '../components/GameSetImageShow';
 
 //통신
 import axios from 'axios';
@@ -40,18 +41,25 @@ const PlayingRoom = (props) => {
     let leaderIdx = location.state.leaderIdx; //리더인지 아닌지 
 
     let gameIdx = location.state.gameIdx;
-    let movePage = location.state.movePage;
-    let gameSetNo;
-    console.log('잘 받아왓어? ' + gameIdx + movePage);
+    let gameSetIdx = useRef(location.state.gameSetIdx);
 
-    if(movePage === "firstGame"){
-        gameSetNo = 1;
-    }
+    let beforeUserList = location.state.userList;
+
+    let gameSetNo = location.state.gameSetNo;
+;
+    console.log('잘 받아왓어? ' + gameIdx + ' : ' + gameSetNo);
+
+    let isSet = location.state.isSet;
+
+    let setBeforeImg = useRef('');
+    let setBeforeHumanAnswer = useRef('');
+    let setBeforeKeyword = useRef('');
+        
     const [role, setRole] = React.useState('');
     const [keyword, setKeyWord] = React.useState('');
 
     //게임 시작 5초 후, 타이머
-    const [seconds, setSeconds] = useState(6);
+    const [seconds, setSeconds] = useState(5);
 
     const [playInfo, setPlayInfo] = React.useState(''); //웨이팅룸에서 넘어온 데이터 저장
 
@@ -60,16 +68,57 @@ const PlayingRoom = (props) => {
    
     const BaseURL = 'http://3.17.55.178:3002/';
 
-    useEffect(() => {
-        props.socket.on('connect', () => {
-            console.log('playing room connection server');
-        });
+    
+    const startSetAPI = async (str) => {
+        console.log('api call');
 
-        props.socket.on('get next turn', (data) => {
-            console.log(data.data); // success 메시지
-            setIsDrawReady(true);
-        });
-    }, []);
+        const restURL = BaseURL + 'game/set';
+
+        //gameSetNo = str;
+
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+
+        axios
+            .post(
+                restURL,
+                {
+                    game_idx : gameIdx,
+                    game_set_no : str,
+                },
+                reqHeaders
+            )
+            .then(function (response) {
+                console.log('game set success');
+                //possible.current = true;
+            })
+            .catch(function (error) {
+                alert('set' + error);
+            });
+    }
+
+    const getGameMember = async () => {
+        //게임 멤버 정보 조회
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        const restURL = BaseURL + 'game/member/' + gameSetIdx.current;
+
+        axios
+            .get(restURL, reqHeaders)
+            .then(function (response) {
+                setRole(response.data.user_role);
+                setKeyWord(response.data.keyword);
+            })
+            .catch(function (error) {
+                alert('error information : ' + error.message);
+            });        
+    }
 
     useEffect(() => {
         const waitcountdown = setInterval(() => {
@@ -98,7 +147,7 @@ const PlayingRoom = (props) => {
     }, [waitSeconds]);
 
     useEffect(() => {
-        if (playInfo != null) {
+        if (beforeUserList != null) {
             //데이터 전달 받은게 세팅되기 전까지는 타이머가 돌아가면 안됨.
             const countdown = setInterval(() => {
                 if (parseInt(seconds) > 0) {
@@ -129,33 +178,55 @@ const PlayingRoom = (props) => {
         }
     }, [seconds]);
 
+    
     useEffect(() => {
-        if (location.state.data !== undefined){
-        setPlayInfo(location.state.data);
-        userList = location.state.data.user_list;
+        props.socket.on('connect', () => {
+            console.log('playing room connection server');
+        });
 
-        /* console.log('userList');
-        console.log(userList);
-        console.log('PlayInfo');
-        console.log(location.state.data); */
+        props.socket.on('get next turn', (data) => {
+            console.log(data.data); // success 메시지
+            setIsDrawReady(true);
+        });
+
+        //세트 시작 소켓
+        props.socket.on('start set', (data) => {
+           // alert('세트 소켓 ' + JSON.stringify(data.before_game_set_human_answer));
+
+            userList = data.user_list;
+            gameSetIdx.current = data.current_game_set_idx;
+
+            console.log(gameSetNo + ' -> API 소켓 게임 세트 인덱스 : ' + gameSetIdx.current);
+
+            setBeforeImg.current =  data.before_game_set_img;
+            setBeforeHumanAnswer.current = data.before_game_set_human_answer;
+            setBeforeKeyword.current = data.current_game_set_idx;  
+            
+            getGameMember();
+
+            //setSeconds(4); // 이전 그림 보여주는 초는 4초!
+        });
+    }, []);
+
+    useEffect(() => {
         
-        const reqHeaders = {
-            headers: {
-                authorization: 'Bearer ' + save_token,
-            },
-        };
-        const restURL = BaseURL + 'game/member/' + location.state.data.game_set_idx;
+        userList = beforeUserList;
 
-        axios
-            .get(restURL, reqHeaders)
-            .then(function (response) {
-                setRole(response.data.user_role);
-                setKeyWord(response.data.keyword);
-            })
-            .catch(function (error) {
-                alert('error information : ' + error.message);
-            });
+        if (gameSetIdx.current !== undefined && isSet === true){
+            if(gameSetNo === 2){ // playingvoteresult에서 하나 증가값으로 준다. 여기 조건문은 그 다음세트 값에 해당.
+                startSetAPI(2); // 세트시작
+                //getGameMember(); // 게임 멤버 정보 조회 api를 통해 역할, 키워드 세팅
+                isSet = 'no'; // 한번 돈 후 요청 안가게! 제어
+            }
+            else{
+                startSetAPI(3); // 세트시작
+                //getGameMember(); // 게임 멤버 정보 조회 api를 통해 역할, 키워드 세팅
+                isSet = 'no'; // 한번 돈 후 요청 안가게! 제어
+            }
         }
+        else if (isSet === false) //웨이팅룸에서 넘어왔을 때는 멤버 정보 조회만.
+            getGameMember();       
+
     });
 
     for (let i = 0; i < userList.length; i++) {
@@ -239,6 +310,7 @@ const PlayingRoom = (props) => {
     }
 
     return (
+        console.log('seconds : ' + seconds),
         <React.Fragment>
             <Background>                
                { isDrawReady ? (
@@ -262,12 +334,13 @@ const PlayingRoom = (props) => {
                                             ></GameUserCard>
                                         ))}
                                     </UserDiv>
+
                                     {seconds < 0 ? (
                                         <DrawDiv>
                                             {myList && (
                                                 <GameDrawing
                                                     keyword = {keyword}
-                                                    setIdx={location.state.data.game_set_idx}
+                                                    setIdx={gameSetIdx.current}
                                                     role={role}
                                                     order={myList.game_member_order}
                                                     color={myList.user_color}
@@ -284,14 +357,23 @@ const PlayingRoom = (props) => {
                                             )}
                                         </DrawDiv>
                                     ) : 
-                                        movePage === "firstGame" ?
-                                    (
-                                        console.log('move야'),
-                                        <GameRoleComponent role={role} timer={seconds} />
-                                    )
-                                    :
-                                        <text>야</text>
-                                    }
+                                       gameSetNo === 1 ?
+                                            (
+                                                console.log('첫번째 세트야.'),
+                                                <GameRoleComponent role={role} timer={seconds} />
+                                            )
+                                        : (
+                                        gameSetNo === 2 ? 
+                                            ( 
+                                                console.log("두번째 세트야"),
+                                                setBeforeImg.current && <GameSetImageShow setBeforeImg={setBeforeImg.current} setBeforeHumanAnswer={setBeforeHumanAnswer.current} setBeforeKeyword={setBeforeKeyword.current} /> 
+                                            )
+                                            :
+                                            (
+                                                console.log("세번째 세트야"),
+                                                setBeforeImg.current && <GameSetImageShow setBeforeImg={setBeforeImg.current} setBeforeHumanAnswer={setBeforeHumanAnswer.current} setBeforeKeyword={setBeforeKeyword.current} /> 
+                                            )
+                                    )}
 
 
                                     <ChatDiv>
