@@ -1,10 +1,19 @@
 const { GameSet, Game, Keyword } = require('../../models');
 const moveRoom = require('../../socket/moveRoom');
 const {printErrorLog} = require('../../util/log');
+const { gameSchema } = require('../../util/joi/schema');
 
 module.exports = async (req, res, next) => {
     try {
-        const { game_set_idx, game_set_human_answer } = req.body;
+        const { error, value } = gameSchema.humanKeyword.validate(req.body);
+        const { game_set_idx, game_set_human_answer } = value;
+        console.log(game_set_human_answer);
+        if(error){
+            res.status(400).json({
+                error: error.details[0].message
+            });
+            return;
+        }
 
         // 인간인지 아닌지 체크
         if (res.locals.role != 'human') {

@@ -9,6 +9,7 @@ var Sequelize = require('sequelize');
 var fs = require('fs');
 const shuffleList = require('../../util/shuffleList');
 const {printErrorLog} = require('../../util/log');
+const { gameSchema } = require('../../util/joi/schema');
 
 module.exports = async (req, res, next) => {
     try {
@@ -18,8 +19,15 @@ module.exports = async (req, res, next) => {
             });
             return;
         }
-     
-        const { game_idx, game_set_no } = req.body;
+        
+        const { error, value } = gameSchema.startSet.validate(req.body);
+        const { game_idx, game_set_no } = value;
+        if(error){
+            res.status(400).json({
+                error: error.details[0].message
+            });
+            return;
+        }
 
         // 이전판 세트정보, keyword 정보
         let keyword;

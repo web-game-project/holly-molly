@@ -2,10 +2,19 @@ const { User, Game, GameMember, GameSet, GameVote } = require('../../models');
 const db = require('../../models');
 const { getVoteList, calculateVoteResult, } = require('./getVoteResult');
 const {printErrorLog} = require('../../util/log');
+const { gameSchema } = require('../../util/joi/schema');
 
 const vote = async (req, res, next) => {
     try {
-        const { game_set_idx, user_idx } = req.body;
+        const { error, value } = gameSchema.vote.validate(req.body);
+        const { game_set_idx, user_idx } = value;
+        if(error){
+            res.status(400).json({
+                error: error.details[0].message
+            });
+            return;
+        }
+
         const io = req.app.get('io');
     
         const gameVoteList = await getVoteList(game_set_idx);
