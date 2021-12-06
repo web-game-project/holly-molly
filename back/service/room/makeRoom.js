@@ -4,11 +4,19 @@ const getIOSocket = require('../../socket/getIOSocket');
 const makeRandomCode = require('../../util/makeRandomCode');
 const { exitGameAndRoom } = require('../game/exitGame');
 const {printErrorLog} = require('../../util/log');
+const { roomSchema } = require('../../util/joi/schema');
 
 module.exports = async (req, res, next) => {
     try {
-        const { room_name, room_mode, room_private, room_start_member_cnt } =
-            req.body;
+        const { error, value } = roomSchema.create.validate(req.body);
+        const { room_name, room_mode, room_private, room_start_member_cnt } = value;
+        if(error){
+            res.status(400).json({
+                error: error.details[0].message
+            });
+            return;
+        }
+
         const user = res.locals.user;
         const { io, socket } = getIOSocket(req, res);
 
