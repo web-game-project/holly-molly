@@ -2,12 +2,19 @@ const db = require('../../models');
 const moveRoom = require('../../socket/moveRoom');
 const getIOSocket = require('../../socket/getIOSocket');
 const {printErrorLog, printLog} = require('../../util/log');
+const { roomSchema } = require('../../util/joi/schema');
 
 module.exports = async (req, res, next) => {
     try {
-        const { page, room_mode, room_start_member_cnt, is_waiting } =
-            req.query;
-
+        const { error, value } = roomSchema.filter.validate(req.query);
+        const { page, room_mode, room_start_member_cnt, is_waiting } = value;
+        if(error){
+            res.status(400).json({
+                error: error.details[0].message
+            });
+            return;
+        }
+        
         printLog("getRoomList", res.locals.user.user_idx+" "+typeof room_mode+" "+typeof room_start_member_cnt+" "+typeof is_waiting);
         let offset;
         if (!page) {

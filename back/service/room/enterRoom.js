@@ -5,6 +5,7 @@ const moveRoom = require('../../socket/moveRoom');
 const db = require('../../models');
 const { exitGameAndRoom } = require('../game/exitGame');
 const {printErrorLog, printLog} = require('../../util/log');
+const { roomSchema } = require('../../util/joi/schema');
 
 const enterRoom = async (req, res, next) => {
     try {
@@ -12,7 +13,15 @@ const enterRoom = async (req, res, next) => {
         const { io, socket } = getIOSocket(req, res);
         const { type } = req.params;
 
-        let room = await findRoom(type, req.body);
+        const { error, value } = roomSchema.join.validate(req.body);
+        if(error){
+            res.status(400).json({
+                error: error.details[0].message
+            });
+            return;
+        }
+
+        let room = await findRoom(type, value);
         const beforeWaitingRoomMember = await getWaitingRoomMember(
             user.user_idx
         );

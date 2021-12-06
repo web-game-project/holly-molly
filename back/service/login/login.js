@@ -1,10 +1,18 @@
 const signJWT = require('../../util/jwt/signJWT');
 const { User } = require('../../models');
 const {printErrorLog} = require('../../util/log')
+const { userSchema } = require('../../util/joi/schema');
 
 module.exports = async (req, res, next) => {
     try {
-        const { name } = req.body;
+        const { error, value } = userSchema.login.validate(req.body);
+        const { name } = value;
+        if(error){
+            res.status(400).json({
+                error: error.details[0].message
+            });
+            return;
+        }
 
         const user = await User.create({
             user_name: name,
