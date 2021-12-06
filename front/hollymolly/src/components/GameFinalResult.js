@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import style from '../styles/styles';
 import night from '../assets/night.svg';
@@ -7,19 +7,10 @@ import Human from '../assets/human.svg';
 import GameResultCard from '../components/GameResultCard';
 
 const GameFinalResult = ({ data }) => {
-    // 넘어오는 임시 데이터
-    // {
-    //     one_game_set_human_score: 1,
-    //     two_game_set_human_score: 2,
-    //     three_game_set_human_score: 0,
-    //     total_game_set_human_score: 3,
-    //     one_game_set_ghost_score: 1,
-    //     two_game_set_ghost_score: 2,
-    //     three_game_set_ghost_score: 0,
-    //     total_game_set_ghost_score: 4,
-    // };
+    const [seconds, setSeconds] = useState(10); //10초 보여주기
 
     let winner = '';
+
     if (data.total_game_set_ghost_score > data.total_game_set_human_score) {
         winner = '유령';
     } else if (data.total_game_set_ghost_score == data.total_game_set_human_score) {
@@ -29,10 +20,24 @@ const GameFinalResult = ({ data }) => {
     }
 
     console.log(data);
+
+    useEffect(() => {
+        const countdown = setInterval(() => {
+            if (parseInt(seconds) > 0) {
+                setSeconds(parseInt(seconds) - 1);
+            }
+        }, 1000);
+
+        return () => {
+            clearInterval(countdown);
+        };
+    }, [seconds]);
+
     return (
         <React.Fragment>
             <Container>
                 <ResultTitle>최종 &nbsp; 결과</ResultTitle>
+                <Timer>{seconds}초 후 몰리를 공개합니다.</Timer>
                 <CardContainer>
                     {winner == '유령' ? (
                         <GameResultCard role={'유령'} engRole={'GHOST'} final win></GameResultCard>
@@ -150,16 +155,31 @@ const GameFinalResult = ({ data }) => {
                     </WinnerContext>
                 )}
             </Container>
+
         </React.Fragment>
     );
 };
+
+const Timer = styled.div`
+    border-radius: 60px;
+    -webkit-text-stroke: 1px #53305e;
+    font-weight: bold;
+    font-family: Black Han Sans;
+    font-size: 20px;
+    color:${style.white};
+    text-shadow: 2px 2px 0px #53305e;    
+    margin-bottom: 30px;
+    margin-top: 10px;
+    height: 35px;
+    text-align: center;
+`;
+
 const ScoreTitle = styled.text`
     font-size: 60px;
     font-weight: bold;
     align-self: center;
     color: #ffffff;
     text-shadow: 5px 5px 0px #2a132e, 5px 5px 0px #2a132e; //#2A132E
-    // margin-bottom: 50px;
 `;
 
 const Container = styled.div`
@@ -168,9 +188,7 @@ const Container = styled.div`
     height: 620px;
     display: flex;
     flex-direction: column;
-    // justify-content: center;
     align-items: center;
-    margin-top: 25px;
     overflow: hidden;
 `;
 
@@ -182,7 +200,7 @@ const CardContainer = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-top: -15px;
 `;
 
 const ResultTitle = styled.text`
@@ -193,7 +211,7 @@ const ResultTitle = styled.text`
     color: #ffffff;
     text-shadow: 4px 4px 0px #53305e, 5px 5px 0px #53305e, 6px 6px 0px #53305e, 7px 7px 0px #2a132e, 8px 8px 0px #2a132e,
         9px 9px 0px #2a132e, 10px 10px 0px #2a132e; //#2A132E
-    margin-bottom: 20px;
+    margin-top: 10px;
 `;
 
 const ResultSubtitle = styled.text`

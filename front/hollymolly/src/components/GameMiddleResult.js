@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import style from "../styles/styles";
 import night from "../assets/night.svg";
@@ -8,6 +8,8 @@ import GameResultCard from "../components/GameResultCard";
 
 const GameMiddleResult = (props) => {
   const { winner } = props;
+
+  const [seconds, setSeconds] = useState(10); //10초 보여주기
 
   let role = "";
   let engRole = "";
@@ -24,10 +26,23 @@ const GameMiddleResult = (props) => {
     draw = true;
   }
 
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      if (parseInt(seconds) > 0) {
+        setSeconds(parseInt(seconds) - 1);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(countdown);
+    };
+  }, [seconds]);
+
   return (
     <React.Fragment>
       <Container>
-        <ResultTitle>중간 &nbsp; 결과</ResultTitle>
+      <ResultTitle>중간 &nbsp; 결과</ResultTitle>
+      <Timer>{seconds}초 후 넘어갑니다.</Timer>
         {draw ? (
           <CardContainer>
             <GameResultCard role={"유령"} engRole={"GHOST"}></GameResultCard>
@@ -45,6 +60,21 @@ const GameMiddleResult = (props) => {
     </React.Fragment>
   );
 };
+
+const Timer = styled.div`
+    border-radius: 60px;
+    -webkit-text-stroke: 1px #53305e;
+    font-weight: bold;
+    font-family: Black Han Sans;
+    font-size: 25px;
+    color:${style.white};
+    text-shadow: 2px 2px 0px #53305e;    
+    margin-bottom: 30px;
+    margin-top: 20px;
+    //width: 60px;
+    height: 35px;
+    text-align: center;
+`;
 
 const Container = styled.div`
   background-color: transparent; // transparent
@@ -75,7 +105,6 @@ const ResultTitle = styled.text`
   text-shadow: 4px 4px 0px #53305e, 5px 5px 0px #53305e, 6px 6px 0px #53305e,
     7px 7px 0px #2a132e, 8px 8px 0px #2a132e, 9px 9px 0px #2a132e,
     10px 10px 0px #2a132e; //#2A132E
-  margin-bottom: 50px;
 `;
 
 const WinnerContext = styled.text`
