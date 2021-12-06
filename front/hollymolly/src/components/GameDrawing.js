@@ -23,8 +23,6 @@ const GameDrawing = (props) => {
 
     const {gameSetNo, gameIdx, socket, leaderIdx, order, color, room_idx, idx, member_count, role,  setIdx, userList, keyword} = props;
 
-    console.log('게임 세트 노!' + gameSetNo);
-
     const [possible, setPossible] = useState(true);
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머
     const [waitSeconds, setWaitSeconds] = useState(-1); // 순서 받기 타이머, 그림 다 그린 후 타이머 실행되야 하므로 일단 -1 으로 초기화
@@ -176,8 +174,6 @@ const GameDrawing = (props) => {
                     //세트 이미지 저장 api 요청
                     saveCanvas();
                      //투표로 이동, 데이터 전달
-                     console.log('드로잉 세트인덱스' + setIdx);
-
                      history.push({
                         pathname: '/playingvote/' + room_idx,
                         state: {gameSetNo : gameSetNo, gameIdx : gameIdx, leaderIdx: leaderIdx , move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
@@ -312,12 +308,10 @@ const GameDrawing = (props) => {
                     </canvas>
                 </div>
                 {
-                    (//console.log('가능? ' + possible),
+                    (
                      possible === true
                      ?
                     ((ImgUrl = '../assets/timer_' + seconds + '.png'),
-                    //dia = "../assets/timer_1.png",
-                    //console.log('얌? ' + ImgUrl),
                     seconds > 0 ? (
                         <img
                             src={require('../assets/timer_' + seconds + '.png').default}

@@ -19,8 +19,6 @@ const GameFinalResult = ({ data }) => {
         winner = '인간';
     }
 
-    console.log(data);
-
     useEffect(() => {
         const countdown = setInterval(() => {
             if (parseInt(seconds) > 0) {

@@ -98,12 +98,9 @@ const GameVoteComponent = (props) => {
                         <Div
                             onClick={() => {
                                 setClicked(true);
-                                console.log(element.user_color);
                                 setVoteWho(element.user_color);
                                 //setVoteIndex(element.user_idx);
                                 voteIndex.current = element.user_idx;
-                                console.log(voteWho + '가 voteWho');
-                                console.log(gameSet);
                                 console.log('API: 게임세트? ' + gameSet + ', 유저인덱스? ' + voteIndex.current);
                             }}
                         >
