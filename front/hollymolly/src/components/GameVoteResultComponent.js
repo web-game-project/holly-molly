@@ -111,7 +111,6 @@ const GameVoteResult = (props) => {
             axios
                 .get(restURL, reqHeaders)
                 .then(function (response) {
-                    console.log('userLs' + JSON.stringify(response.data.vote_result));
                     voteList.current = response.data.vote_result;
                     settingVoteList();
                 })
@@ -121,8 +120,6 @@ const GameVoteResult = (props) => {
         }
         
             voteTotalList.current = props.voteTotalList;
-
-            console.log('보트 토탈 넘어온 거 : ' + JSON.stringify(voteTotalList.current));
     
             setArrSize(voteTotalList.current.length);
     }

@@ -47,8 +47,6 @@ const PlayingRoom = (props) => {
 
     let gameSetNo = location.state.gameSetNo;
 ;
-    console.log('잘 받아왓어? ' + gameIdx + ' : ' + gameSetNo);
-
     let isSet = location.state.isSet;
 
     let setBeforeImg = useRef('');
@@ -70,8 +68,6 @@ const PlayingRoom = (props) => {
 
     
     const startSetAPI = async (str) => {
-        console.log('api call');
-
         const restURL = BaseURL + 'game/set';
 
         //gameSetNo = str;
@@ -196,8 +192,6 @@ const PlayingRoom = (props) => {
             userList = data.user_list;
             gameSetIdx.current = data.current_game_set_idx;
 
-            console.log(gameSetNo + ' -> API 소켓 게임 세트 인덱스 : ' + gameSetIdx.current);
-
             setBeforeImg.current =  data.before_game_set_img;
             setBeforeHumanAnswer.current = data.before_game_set_human_answer;
             setBeforeKeyword.current = data.current_game_set_idx;  
@@ -310,7 +304,6 @@ const PlayingRoom = (props) => {
     }
 
     return (
-        console.log('seconds : ' + seconds),
         <React.Fragment>
             <Background>                
                { isDrawReady ? (
@@ -359,18 +352,15 @@ const PlayingRoom = (props) => {
                                     ) : 
                                        gameSetNo === 1 ?
                                             (
-                                                console.log('첫번째 세트야.'),
                                                 <GameRoleComponent role={role} timer={seconds} />
                                             )
                                         : (
                                         gameSetNo === 2 ? 
                                             ( 
-                                                console.log("두번째 세트야"),
                                                 setBeforeImg.current && <GameSetImageShow setBeforeImg={setBeforeImg.current} setBeforeHumanAnswer={setBeforeHumanAnswer.current} setBeforeKeyword={setBeforeKeyword.current} /> 
                                             )
                                             :
                                             (
-                                                console.log("세번째 세트야"),
                                                 setBeforeImg.current && <GameSetImageShow setBeforeImg={setBeforeImg.current} setBeforeHumanAnswer={setBeforeHumanAnswer.current} setBeforeKeyword={setBeforeKeyword.current} /> 
                                             )
                                     )}
