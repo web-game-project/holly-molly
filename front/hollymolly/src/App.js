@@ -14,9 +14,6 @@ import Tutorial from './screens/TutorialScreens/TutorialStart.js';
 import TutorialRole from './screens/TutorialScreens/TutorialRole.js';
 import PlayingResult from './screens/PlayingResult';
 import Toast from './components/Toast';
-
-//정희
-import GameRoleComponent from './components/GameRoleComponent';
 import ModalNickName from './components/ModalNickName';
 import PlayingVote from './screens/PlayingVote';
 
@@ -49,12 +46,10 @@ export default function App() {
             <div>
                 <BrowserRouter>
                     <ConnectedRouter history={history}>
-
+                    
                     <Route path="/tutorial" component={Tutorial}></Route>
                     <Route path="/role/tutorial" component={TutorialRole}></Route>
 
-                    {/* 정희 역할부여 테스트 */}
-                    <Route path="/gameRole" component={GameRoleComponent}></Route>
                     <Route path="/nickname" component={ModalNickName}></Route>
                     <Route path="/vote" component={PlayingVote}></Route>
                     <Route path="/Toast" component={Toast}></Route>

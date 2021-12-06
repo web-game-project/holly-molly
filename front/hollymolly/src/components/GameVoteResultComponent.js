@@ -19,16 +19,12 @@ const GameVoteResult = (props) => {
     // local storage에 있는지 확인
     let data = localStorage.getItem('token');
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-    let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-    let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-    let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
     //전 페이지 즉, 플레잉 보트 안에서 넘겨준 데이터 세팅
     const userList = props.userList;
     const gameSetIdx = props.gameSet;
     const roomIdx = props.roomIdx;
     const role = props.role;
-    const socket = props.socket;
     const gameSetNo = props.gameSetNo;
     const gameIdx = props.gameIdx;
     const leaderIdx = props.leaderIdx;
@@ -75,8 +71,22 @@ const GameVoteResult = (props) => {
                 setSeconds(parseInt(seconds) - 1);
             }
 
-            if (parseInt(seconds) === 0) {
-                setSeconds(0);
+            if (parseInt(seconds) === 0) {                
+                //여기서 gameSetNo 비교하기
+                if(gameSetNo === 1){
+                    //플레잉룸으로 이동, 게임 세트가 1이라 중간, 최종결과가 필요x
+                    history.push({
+                        pathname: '/playingroom/' + roomIdx,
+                        state: { isSet: true, gameSetNo: gameSetNo+1, gameIdx: gameIdx, userList: userList, gameSetIdx: gameSetIdx, room: roomIdx, leaderIdx: leaderIdx},
+                    });
+                }
+                else {
+                    history.push({
+                        pathname: '/playingresult/' + roomIdx,
+                        state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx, keyword: keyword, role: role },
+                    })
+                }
+                setSeconds(-1);
             }
         }, 1000);
 
@@ -86,6 +96,10 @@ const GameVoteResult = (props) => {
     }, [seconds]);
 
     useEffect(() => {
+        getVoteResult();
+    }, []);
+
+    const getVoteResult = async () => {
         if (role === "human") {
             const reqHeaders = {
                 headers: {
@@ -109,20 +123,18 @@ const GameVoteResult = (props) => {
             voteTotalList.current = props.voteTotalList;
 
             console.log('보트 토탈 넘어온 거 : ' + JSON.stringify(voteTotalList.current));
-            //console.log('보트 arr : ' + arrSize);
     
             setArrSize(voteTotalList.current.length);
-       
-    });
+    }
 
     return (
         <Container>
-            {
-                arrSize && seconds > 0 ? (
-                    role === "human" ?
+                   { 
+                   (copyVoteList.current !== [] ? 
+                   (role === "human") ?
                         <div>
                             <Title cnt={arrSize}>투표 결과</Title>,
-                            <text style={{ fontFamily: 'Black Han Sans', color: style.white, fontSize: '28px', marginLeft: '250px' }}>{seconds}초</text>
+                            <text style={{ fontFamily: 'Black Han Sans', color: style.white, fontSize: '25px', marginLeft: '200px' }}>{seconds}초 후 넘어갑니다.</text>
                             <ResultTable cnt={arrSize}>
                                 {voteTotalList.current && voteTotalList.current.map((element, key) =>
                                     <ColumnContainer>
@@ -173,7 +185,7 @@ const GameVoteResult = (props) => {
                         : //ghost 일 때
                         <div>
                             <Title cnt={arrSize}>투표 결과</Title>,
-                            <text style={{ color: style.black, fontSize: '30px' }}>{seconds}초</text>
+                            <text style={{ color: style.black, fontSize: '30px', marginLeft: '200px' }}>{seconds}초 후 넘어갑니다.</text>
                             <ResultTable cnt={arrSize}>
                                 {voteTotalList.current && voteTotalList.current.map((element, key) =>
                                     <ColumnContainer>
@@ -204,16 +216,11 @@ const GameVoteResult = (props) => {
                             <TotalResulContainer>
                                 전체 결과는 <text style={{ fontFamily: 'Black Han Sans', color: style.red, fontSize: '30px' }}>몰리만</text> 볼 수 있습니다.
                             </TotalResulContainer>
-                        </div>
-                ) : // playingResult로 
-                    //<></>
-                    console.log('보트 리절트 안 : ' + JSON.stringify(userList)),
-                    console.log('보트 리절트 안 키워드: ' + keyword),
-                    (history.push({
-                        pathname: '/playingresult/' + roomIdx,
-                        state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx, keyword: keyword, role: role },
-                    }))
-            }
+                        </div>                    
+                    :
+                     null 
+                    ) 
+                }
         </Container>
     );
 }

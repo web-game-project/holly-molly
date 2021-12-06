@@ -2,30 +2,19 @@ import React, { useEffect, useState, useRef } from 'react';
 import style from '../styles/styles';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import gameBackground from '../assets/night.png';
 import UserVote from './UserVote';
-
-// 소켓
 import axios from 'axios';
-import { io } from 'socket.io-client';
+
 //페이지 이동
 import { useHistory, useLocation, Prompt } from 'react-router';
 
 // local storage에 있는지 확인
 let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const GameVoteComponent = (props) => {
-    const history = useHistory();
-
     const userList = props.userList;
     const gameSet = props.gameSet;
-    const gameSetNo=  props.gameSetNo;
-    const gameIdx = props.gameIdx;
-    const leaderIdx = props.leaderIdx;
 
     const [clicked, setClicked] = useState(false); // 클릭리스너
     const [voteWho, setVoteWho] = useState(''); // 내가 투표한 사람의 컬러
@@ -41,22 +30,6 @@ const GameVoteComponent = (props) => {
     useEffect(() => {
         setClicked(false);
         setVoteWho('');
-    }, []);
-
-    useEffect(() => {
-        props.socket.on('connect', () => {
-            console.log('game vote result connection server');
-        });
-
-        props.socket.on('vote', (data) => {
-            alert('socket 투표 결과 ' + JSON.stringify(data.vote_rank)); // success 메시지
-            if (data !== null) {
-                history.push({
-                    pathname: '/playingvote/' + props.room_idx,
-                    state: { gameSetNo: gameSetNo, gameIdx: gameIdx, voteTotalList: data.vote_rank, perforamance: false, leaderIdx: leaderIdx, userList: userList, roomIdx: props.room_idx, gameSetIdx: gameSet, keyword: props.keyword, role: props.role },
-                });
-            }
-        });
     }, []);
 
     useEffect(() => {
@@ -83,10 +56,10 @@ const GameVoteComponent = (props) => {
         //  타이머 카운트 주고 시간 다 되면 이 api 불러주면 됨
         // 투표 api
 
-        let str = -1;
+        /* let str = -1;
 
         if (voteIndex !== null || voteIndex !== '')
-            str = voteIndex.current;
+            str = voteIndex.current; */
 
         const restURL = baseURL + 'game/vote';
 
@@ -100,7 +73,7 @@ const GameVoteComponent = (props) => {
                 restURL,
                 {
                     game_set_idx: gameSet,
-                    user_idx: str,
+                    user_idx: voteIndex.current,
                 },
                 reqHeaders
             )
@@ -119,7 +92,6 @@ const GameVoteComponent = (props) => {
         <Container>
             {/* <br /> */}
             몰리, 인간으로 의심되는 유령을 <text style={{ color: style.red, textShadow: '3px 3px #980000' }}>투표</text> 해주세요.
-            <Button onClick={postVote}>투표하기</Button> {/* //투표 api 테스트 할 때 이 버튼 누르시면 됩니다. */}
             <div style={styles.userListContainer}>
                 {userList &&
                     userList.map((element) => (
@@ -157,27 +129,6 @@ const GameVoteComponent = (props) => {
         </Container>
     );
 };
-
-const Button = styled.button`
-    // api 보내기 테스트용 버튼
-    background: white;
-    color: palevioletred;
-    width: 70px;
-    height: 20px;
-    font-size: 15px;
-    font-weight: bolder;
-    // margin: 0px 0px -15px 0px;
-    padding: 0.25px 1px;
-    border: 2px solid palevioletred;
-    border-radius: 15px;
-
-    &:hover {
-        background: palevioletred;
-        color: white;
-        border: white;
-        cursor: grab;
-    }
-`;
 
 const Container = styled.div`
     width: 580px;

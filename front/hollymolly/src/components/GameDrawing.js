@@ -176,11 +176,11 @@ const GameDrawing = (props) => {
                     //세트 이미지 저장 api 요청
                     saveCanvas();
                      //투표로 이동, 데이터 전달
-                     console.log('드로잉 리더' + leaderIdx);
+                     console.log('드로잉 세트인덱스' + setIdx);
 
                      history.push({
                         pathname: '/playingvote/' + room_idx,
-                        state: {gameSetNo : gameSetNo, gameIdx : gameIdx, perforamance: false, leaderIdx: leaderIdx , move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
+                        state: {gameSetNo : gameSetNo, gameIdx : gameIdx, leaderIdx: leaderIdx , move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
                      });
                 } else {
                     // 다음 순서 받을 준비 완료
@@ -305,7 +305,7 @@ const GameDrawing = (props) => {
         <React.Fragment>
             <Container>      
                 {seconds === 9 ? sendOrder() : null} 
-                {possible === true ? <span><Toast pass={false} name={currentItem.user_name} /></span> : null}     
+                {/* {possible === true ? <div><Toast pass={false} name={currentItem.user_name} /></div> : null}      */}
           
                 <div style={{backgroundColor: style.white, borderRadius: '15px'}}>
                     <canvas id = "draw" ref={canvasRef} width="610" height={'600'}>
