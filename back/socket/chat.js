@@ -5,7 +5,7 @@ module.exports = async (socket, io, data) => {
     let { msg } = value;
 
     if(error){
-        io.to(socket.id).emit('chat', {error: error.details[0].message});
+        io.to(socket.id).emit('error', {event: 'chat', error: error.details[0].message});
         return;
     }
     else{
