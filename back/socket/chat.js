@@ -1,7 +1,25 @@
+const { gameSchema } = require('../util/joi/schema');
+
 module.exports = async (socket, io, data) => {
-    io.to(data.room_idx).emit('chat', {
-        user_idx: data.user_idx,
-        user_name: data.user_name,
-        msg: data.msg,
-    });
+    const { error, value } = gameSchema.chat.validate(data);
+    let { msg } = value;
+
+    if(error){
+        io.to(socket.id).emit('chat', {error: error.details[0].message});
+        return;
+    }
+    else{
+        const socketRooms = Array.from(socket.rooms);
+        let currentRoom;
+        for (const roomNum of socketRooms) {
+            if (roomNum == socket.id) continue;
+            currentRoom = roomNum;
+        }
+
+        io.to(currentRoom).emit('chat', {
+            user_idx: socket.user_idx,
+            user_name: socket.user_name,
+            msg: msg,
+        });
+    }
 };
