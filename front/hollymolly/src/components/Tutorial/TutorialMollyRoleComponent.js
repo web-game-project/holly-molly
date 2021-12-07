@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import style from '../styles/styles';
-import NightSVG from '../assets/night.svg';
+import style from '../../styles/styles';
 import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 
-import MollyRole from '../assets/mollyRole.png';
+import MollyRole from '../../assets/mollyRole.png';
 
-import ReactTooltip from "react-tooltip";
-
-export default function TutorialMollyRole({}) {
+export default function TutorialMollyRoleComponent(props) {
     const isLogin = useSelector((state) => state.socket.is_login);
 
     const history = useHistory();
-
-    const [hide, setHide] = useState(false);
     
     /* function goRoomList() {
         history.push({
@@ -25,19 +20,26 @@ export default function TutorialMollyRole({}) {
     const keyword = " ● easy mode일 경우에는 유령들이 그리는 키워드와 관련된 키워드를 보여줍니다.\n이 단어를 기반으로 유령들이 그리는 키워드를 추측해보세요. \n ● hard mode인 경우, 아무 키워드도 보여주지 않습니다.";
     const usercard = "플레이어 목록: 맨 위의 카드는 자기 자신을 나타냅니다. \n다른 사용자들은 그림 그리는 순서로 출력이 되며, \n카드의 테두리는 대기방에서 지정한 색깔로 보여줍니다.";
 
+    function onMove(){
+        history.push({
+            pathname: '/drawTutorial', 
+            state: { role: props.role },
+        });
+    } 
+
     return (
         <Container>
 
-            <NextBtn>Next Page ☞</NextBtn>
+            <NextBtn onClick={onMove}>Next Page ☞</NextBtn>
 
             <RoleDiv>
               <div className= "textDiv"> 역할 : 시민 혹은 유령으로 게임에서의 역할을 알려줍니다.</div>
-            ?
+            3
             </RoleDiv>
            
             <RoleTextDiv>
               <div className= "textDiv"> 게임은 총 3세트로 이루어져 있습니다.</div>
-            ?
+            4
             </RoleTextDiv>
 
             <KeywordDiv>
@@ -50,7 +52,7 @@ export default function TutorialMollyRole({}) {
                       return <p key={key}>&nbsp;&nbsp;&nbsp;{i}</p>;
                   })}
                </div>
-            ?
+            1
             </KeywordDiv>          
 
             <UserCardDiv>
@@ -63,10 +65,10 @@ export default function TutorialMollyRole({}) {
                         return <p key={key}>&nbsp;&nbsp;&nbsp;{i}</p>; */
                     })}
               </div>
-            ?
+            2
             </UserCardDiv>
 
-            <Description>원하는 설명의 '?' 위에 마우스 올려보세요!</Description>
+            <Description>원하는 설명 번호 위에 마우스 올려보세요!</Description>
         </Container>
     );
 }

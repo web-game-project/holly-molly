@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Header';
-import TutorialWorldview from '../../components/Tutorial/TutorialWorldviewComponent';
+import TutorialDrawComponent from '../../components/Tutorial/TutorialDrawComponent';
 
-function TutorialStart() {
+function TutorialDraw() {
     return (
         <Background>
             <Header goMain />
             <Container>
-                <TutorialWorldview />
+                <TutorialDrawComponent />
             </Container>
         </Background>
     );
@@ -34,4 +34,4 @@ const Container = styled.div`
     border-bottom-right-radius: 1.5rem;
     overflow: hidden;
 `;
-export default TutorialStart;
+export default TutorialDraw;

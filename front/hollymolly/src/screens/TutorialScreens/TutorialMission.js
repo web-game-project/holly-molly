@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Header';
-import TutorialWorldview from '../../components/Tutorial/TutorialWorldviewComponent';
+import TutorialMollyMissionComponent from '../../components/Tutorial/TutorialMollyMissionComponent';
+import TutorialHollyMissionComponent from '../../components/Tutorial/TutorialHollyMissionComponent';
+import {useLocation } from 'react-router';
 
-function TutorialStart() {
+function TutorialMission() {
+    let location = useLocation();
+
     return (
         <Background>
             <Header goMain />
             <Container>
-                <TutorialWorldview />
+                {
+                    location.state.role && location.state.role === "ghost" ?
+                        <TutorialHollyMissionComponent/>
+                    :
+                        <TutorialMollyMissionComponent />
+
+                }
             </Container>
         </Background>
     );
@@ -34,4 +44,4 @@ const Container = styled.div`
     border-bottom-right-radius: 1.5rem;
     overflow: hidden;
 `;
-export default TutorialStart;
+export default TutorialMission;

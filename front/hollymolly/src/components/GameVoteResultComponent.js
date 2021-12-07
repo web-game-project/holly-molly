@@ -182,7 +182,7 @@ const GameVoteResult = (props) => {
                         : //ghost 일 때
                         <div>
                             <Title cnt={arrSize}>투표 결과</Title>,
-                            <text style={{ color: style.black, fontSize: '30px', marginLeft: '200px' }}>{seconds}초 후 넘어갑니다.</text>
+                            <text style={{ color: style.white, fontSize: '30px', marginLeft: '200px' }}>{seconds}초 후 넘어갑니다.</text>
                             <ResultTable cnt={arrSize}>
                                 {voteTotalList.current && voteTotalList.current.map((element, key) =>
                                     <ColumnContainer>
