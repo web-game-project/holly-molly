@@ -12,11 +12,13 @@ import GameOpenResult from '../components/GameOpenResult';
 import GameSetImageShow from '../components/GameSetImageShow';
 
 //페이지 이동
-import { useHistory, useLocation, Prompt } from 'react-router';
+import { useHistory, useLocation} from 'react-router';
 //통신
 import axios from 'axios';
 //깊은 복제
 import * as _ from 'lodash';
+
+import Loading from '../components/Loading';
 //import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
 
@@ -26,7 +28,7 @@ const PlayingResult = (props) => {
      let location = useLocation();
     const history = useHistory();
 
-    const [seconds, setSeconds] = useState(10); //10초 보여주기
+    const [seconds, setSeconds] = useState(15); //10초 보여주기
     const [winner, setWinner] = useState(''); // 중간 결과 승리자
     const [finalData, setFinalData] = useState(); //최종 결과 데이터
 
@@ -102,8 +104,6 @@ const PlayingResult = (props) => {
     const getFinalResult = async () => {
         const restURL = 'http://3.17.55.178:3002/game/final/' + gameIdx;
 
-        console.log('토큰,,' + save_token);
-
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,
@@ -153,20 +153,12 @@ const PlayingResult = (props) => {
     }, [seconds]);
 
     useEffect(() => {       
-        //먼가 여기서 방장 인덱스랑 내 인덱스가 같은지 같다면 
-        // 1) 세트시작 2) 중간결과 3) 최종결과 api 를 호출한다. ( 2,3번은 success 시 세트시작 api도 콜한다면?)
-        // 밑에서 gameSetNo에 값에 따른 삼항 연산자로 
-        //각각의 소켓에 데이터가 있을 때 
-        //--------
-        //중간 최종결과는 10초씩 보여줘야하니깐 밑에 if문에서 setSeconds 해주기!
-
         if(gameSetNo === 2 && leaderIdx === save_user_idx) {
             getMiddleResult();
         }
         else if(gameSetNo === 3 && leaderIdx === save_user_idx) {
             getFinalResult();
         }               
-
     }, []);
 
      // 비정상 종료
@@ -237,7 +229,7 @@ const PlayingResult = (props) => {
                         </UserDiv>
 
                         {
-                            seconds <= 0 ? (
+                            seconds <= 5 ? (
                                 gameSetNo === 2 ?
                                     //플레잉 룸으로 
                                     history.push({
@@ -245,9 +237,9 @@ const PlayingResult = (props) => {
                                         state: { isSet: true, gameSetNo: gameSetNo+1, gameIdx: gameIdx, userList: userList, gameSetIdx: gameSetIdx, room: roomIdx, leaderIdx: leaderIdx},
                                     })
                                 :
-                                    history.push({
-                                        pathname: '/roomlist'
-                                    }) //게임종료, 룸리스트로 이동
+                                    finalData === undefined ?
+                                        <Loading/>
+                                    : <GameOpenResult name={finalData.human_name} color={finalData.human_color}/>
                             )
                             : 
                             ( 
