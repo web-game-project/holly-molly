@@ -97,7 +97,7 @@ const NextBtn = styled.div`
         color: ${style.white};
         border: 2px solid #000;
         border-radius: 20px;    
-        
+        cursor: grab; 
     }
 
 `;
