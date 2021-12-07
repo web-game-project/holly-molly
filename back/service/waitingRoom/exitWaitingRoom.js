@@ -19,11 +19,8 @@ module.exports = async (req, res, next) => {
             });
             return;
         }
-        // socket : join room room_idx
-        moveRoom(io, socket, 0);
 
         await destroyWaitingRoom(user_idx, roomIdx);
-        //const io = req.app.get('io');
 
         if (res.locals.leader) {
             let newLeaderIdx = await assignNewReader(roomIdx);
@@ -38,7 +35,10 @@ module.exports = async (req, res, next) => {
         io.to(0).emit('change member count', member_data);
         io.to(roomIdx).emit('exit room', { user_idx });
 
-        res.status(200).json('success');
+        // socket : join room room_idx
+        moveRoom(io, socket, 0);
+
+        res.status(200).end();
     } catch (error) {
         console.log('exitWaitingRoom Error: ', error);
         res.status(400).json({
