@@ -16,6 +16,19 @@ import PlayingResult from './screens/PlayingResult';
 import Toast from './components/Toast';
 import ModalNickName from './components/ModalNickName';
 import PlayingVote from './screens/PlayingVote';
+import TutorialRommList from './screens/TutorialScreens/TutorialRoomList';
+import TutorialWaitingRoom from './screens/TutorialScreens/TutorialWaitingRoom';
+import TutorialNickName from './screens/TutorialScreens/TutorialNickName';
+import TutorialDraw from './screens/TutorialScreens/TutoialDraw';
+import TutorialVote from './screens/TutorialScreens/TutorialVote';
+import TutorialMollyVoteResult from './screens/TutorialScreens/TutorialMollyVoteResult';
+import TutorialMission from './screens/TutorialScreens/TutorialMission';
+import TutorialMiddleVoteResult from './screens/TutorialScreens/TutorialMiddleVoteResult';
+import TutorialFinalVoteResult from './screens/TutorialScreens/TutorialFinalVoteResult';
+import TutorialHollyVoteResult from './screens/TutorialScreens/TutorialHollyVoteResult';
+
+//토큰 만료 확인
+import RefreshVerification from './server/RefreshVerification';
 
 const htmlTitle = document.querySelector('title');
 htmlTitle.innerHTML = '홀리몰리';
@@ -23,6 +36,9 @@ htmlTitle.innerHTML = '홀리몰리';
 let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
       
+console.log('app.js에 data 가 있냐?' + data);
+//data && RefreshVerification.verification();
+
 const socket = io('http://3.17.55.178:3002/', {
               auth: {
                   token: save_token,
@@ -38,7 +54,7 @@ const socket = io('http://3.17.55.178:3002/', {
 socket.on('disconnect', (reason) => {
     socket.connect();
 });
- 
+
 export default function App() {
 
     return (
@@ -47,13 +63,24 @@ export default function App() {
                 <BrowserRouter>
                     <ConnectedRouter history={history}>
                     
+                    {/* 튜토리얼 페이지 Route */}
                     <Route path="/tutorial" component={Tutorial}></Route>
-                    <Route path="/role/tutorial" component={TutorialRole}></Route>
+                    <Route path="/nicknameTutorial" component={TutorialNickName}></Route>
+                    <Route path="/roleTutorial" component={TutorialRole}></Route>
+                    <Route path="/roomlistTutorial" component={TutorialRommList}></Route>
+                    <Route path="/waitingroomTutorial" component={TutorialWaitingRoom}></Route>
+                    <Route path="/drawTutorial" component={TutorialDraw}></Route>
+                    <Route path="/voteTutorial" component={TutorialVote}></Route>
+                    <Route path="/MolltvoteresultTutorial" component={TutorialMollyVoteResult}></Route>
+                    <Route path="/missionTutorial" component={TutorialMission}></Route>
+                    <Route path="/middleresultTutorial" component={TutorialMiddleVoteResult}></Route>
+                    <Route path="/finalresultTutorial" component={TutorialFinalVoteResult}></Route>
+                    {/* <Route path="/openmollyTutorial" component={}></Route> */}
+                    <Route path="/HolltvoteresultTutorial" component={TutorialHollyVoteResult}></Route> 
 
                     <Route path="/nickname" component={ModalNickName}></Route>
                     <Route path="/vote" component={PlayingVote}></Route>
                     <Route path="/Toast" component={Toast}></Route>
-
                     <Route path="/voteboard" component={VoteBoard}></Route>
                     <Route exact path="/" component={GameStart} />
                     

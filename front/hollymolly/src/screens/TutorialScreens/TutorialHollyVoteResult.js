@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Header';
-import TutorialWorldview from '../../components/Tutorial/TutorialWorldviewComponent';
+import TutorialHollyVoteResultComponent from '../../components/Tutorial/TutorialHollyVoteResultComponent';
 
-function TutorialStart() {
+function TutorialHollyVoteResult() {
     return (
         <Background>
             <Header goMain />
             <Container>
-                <TutorialWorldview />
+                <TutorialHollyVoteResultComponent />
             </Container>
         </Background>
     );
@@ -34,4 +34,4 @@ const Container = styled.div`
     border-bottom-right-radius: 1.5rem;
     overflow: hidden;
 `;
-export default TutorialStart;
+export default TutorialHollyVoteResult;

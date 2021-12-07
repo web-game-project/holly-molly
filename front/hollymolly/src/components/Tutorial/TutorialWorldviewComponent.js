@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import style from '../styles/styles';
-import NightSVG from '../assets/night.svg';
-import molly from '../assets/molly.png';
-import holly from '../assets/holly.png';
+import style from '../../styles/styles';
+import NightSVG from '../../assets/night.svg';
+import molly from '../../assets/molly.png';
+import holly from '../../assets/holly.png';
 import { Link } from 'react-router-dom';
-import tutorial_btn from '../assets/tutorial_btn.svg';
-import Start_button from '../assets/start_button.svg';
-import Modal from '../components/ModalNickName';
+import tutorial_btn from '../../assets/tutorial_btn.svg';
+import Start_button from '../../assets/start_button.svg';
+import Modal from '../../components/ModalNickName';
 import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 
-// import tutorial_btn from '../assets/tutorial_btn.svg';
-// import start_btn from '../assets/start_btn.svg';
-import Human from '../assets/human.svg';
-import PurpleCharacter from '../assets/purple.svg';
+import Human from '../../assets/human.svg';
+import PurpleCharacter from '../../assets/purple.svg';
 
-export default function TutorialWorldview({}) {
+export default function TutorialWorldviewComponent({}) {
     const isLogin = useSelector((state) => state.socket.is_login);
 
     const history = useHistory();
@@ -29,7 +27,7 @@ export default function TutorialWorldview({}) {
     const moveRolePage = async (str) =>{
         //role 튜토리얼 페이지 이동
         history.push({
-            pathname: '/role/tutorial',
+            pathname: '/nicknameTutorial',
             state: { role: str },
         });
     }

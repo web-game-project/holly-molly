@@ -11,6 +11,8 @@ const RefreshVerification = {
   //API는 방 리스트 조회 사용 -> 각 각 request body나 parameter에 필요한 데이터들이 앞부분에는 없어서 가장 처음 사용하는 api로 결정
 
   async verification() {
+
+    console.log('리프레시 함수 call');
     /* let data = localStorage.getItem("token");
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
     let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
