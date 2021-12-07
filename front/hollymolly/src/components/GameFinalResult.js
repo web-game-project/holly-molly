@@ -5,11 +5,14 @@ import night from '../assets/night.svg';
 import PurpleCharacter from '../assets/purple.svg';
 import Human from '../assets/human.svg';
 import GameResultCard from '../components/GameResultCard';
+import GameOpenResult from '../components/GameOpenResult';
 
 const GameFinalResult = ({ data }) => {
-    const [seconds, setSeconds] = useState(10); //10초 보여주기
+    const [seconds, setSeconds] = useState(15); //20초 보여주기 => 10초는 최종결과, 10초는 마피아 공개
 
     let winner = '';
+
+    console.log('data 치종' + JSON.stringify(data));
 
     if (data.total_game_set_ghost_score > data.total_game_set_human_score) {
         winner = '유령';
@@ -35,7 +38,7 @@ const GameFinalResult = ({ data }) => {
         <React.Fragment>
             <Container>
                 <ResultTitle>최종 &nbsp; 결과</ResultTitle>
-                <Timer>{seconds}초 후 몰리를 공개합니다.</Timer>
+                <Timer>{seconds-5}초 후 몰리를 공개합니다.</Timer>
                 <CardContainer>
                     {winner == '유령' ? (
                         <GameResultCard role={'유령'} engRole={'GHOST'} final win></GameResultCard>
@@ -144,14 +147,14 @@ const GameFinalResult = ({ data }) => {
                         </tbody>
                     </table>
                 </ResultTalbe>
-
-                {winner == 'draw' ? (
+               { winner === 'draw' ? (
                     <WinnerContext>최종 공동 우승입니다.</WinnerContext>
-                ) : (
+                    ) : (
                     <WinnerContext>
                         최종 우승은 <ResultSubtitle>{winner} </ResultSubtitle>입니다
                     </WinnerContext>
-                )}
+                    )
+                }   
             </Container>
 
         </React.Fragment>

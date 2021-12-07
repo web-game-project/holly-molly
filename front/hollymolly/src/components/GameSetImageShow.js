@@ -16,7 +16,6 @@ const GameVoteResult = (props) => {
     let setBeforeHumanAnswer = props.setBeforeHumanAnswer;
     let setBeforeKeyword = props.setBeforeKeyword;
 
-    console.log('세트 인덱스 이미지 쇼 ' + setBeforeKeyword );
     /* let roomIdx = props.roomIdx;
     let gameSetNo = props.gameSetNo;
     let leaderIdx = props.leaderIdx;

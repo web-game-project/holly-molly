@@ -1,28 +1,71 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import style from '../styles/styles';
 import GameResultCard from '../components/GameResultCard';
 import UserOpenCard from './UserOpenCard';
 
-const GameFinalResult = ({ data }) => {
-    console.log('이름, 칼라 : ' + data.human_user_name + data.human_user_color)
+//페이지 이동
+import { useHistory} from 'react-router';
+
+const GameFinalResult = (props) => {
+    const history = useHistory();
+
+    console.log('이름, 칼라 : ' + props.name + props.color );
+
+    let name = props.name;
+    let color = props.color;
+
+    const [seconds, setSeconds] = useState(5); 
+     
+    useEffect(() => {
+        const countdown = setInterval(() => {
+            if (parseInt(seconds) > 0) {
+                setSeconds(parseInt(seconds) - 1);
+            }
+            else {
+                history.push({
+                    pathname: '/roomlist'
+                }) //게임종료, 룸리스트로 이동
+            }
+        }, 1000);
+
+        return () => {
+            clearInterval(countdown);
+        };
+    }, [seconds]);
+
     return (
         <React.Fragment>
             <Container>
                 <Title>인간 &nbsp; 공개</Title>
+                <Timer>{seconds}초 후 대기실로 넘어갑니다.</Timer>,
                 <HumanContainer>
                     {/* <GameResultCard role={'유령'} engRole={'GHOST'} final win></GameResultCard> */}
-                    <UserOpenCard nick = {data.human_user_name} color = {data.human_user_color}/>
+                    <UserOpenCard nick = {name} color = {color}/>
                </HumanContainer>
 
                     <HumanWhoTxt>
-                        인간 몰리는 <ResultSubtitle>{data.human_user_name} </ResultSubtitle>이였습니다.
+                        인간 몰리는 <ResultSubtitle>{name} </ResultSubtitle>이였습니다.
                     </HumanWhoTxt>
                 
             </Container>
         </React.Fragment>
     );
 };
+
+const Timer = styled.div`
+    border-radius: 60px;
+    -webkit-text-stroke: 1px #53305e;
+    font-weight: bold;
+    font-family: Black Han Sans;
+    font-size: 20px;
+    color:${style.white};
+    text-shadow: 2px 2px 0px #53305e;    
+    //margin-bottom: 20px;
+    margin-top: 10px;
+    height: 35px;
+    text-align: center;
+`;
 
 const Container = styled.div`
     background-color: transparent;
@@ -43,8 +86,8 @@ const HumanContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 80px;
-    margin-bottom: 15px;
+    margin-top: 50px;
+   // margin-bottom: 15px;
 `;
 
 const Title = styled.text`
@@ -72,7 +115,7 @@ const HumanWhoTxt = styled.text`
     font-size: 25px;
     font-family: Gowun Dodum;
     color: #ffffff;
-    margin-top: 60px;
+    margin-top: 50px;
 `;
 
 export default GameFinalResult;
