@@ -123,3 +123,6 @@ const getGame = async (gameIdx) => {
 };
 
 module.exports.getGame = getGame;
+module.exports.selectFinalResult = selectFinalResult;
+module.exports.makeTotalScoreData = makeTotalScoreData;
+module.exports.selectHuman = selectHuman;

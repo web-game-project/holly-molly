@@ -1,5 +1,6 @@
 const { Room, Game, GameSet, GameMember, GameVote, WaitingRoomMember, User } = require('../../models');
 const {printErrorLog} = require('../../util/log');
+const {selectFinalResult,makeTotalScoreData,selectHuman} = require('./getFinalResult');
 
 const exitGame = async (req, res, next) => {
     try {
@@ -42,24 +43,28 @@ const exitGameAndRoom = async (user, io) => {
             return true;
         }
 
-        if (game) {
-            if (gameMember.get('game_member_role') == 'human') {
-                // 게임 종료 처리 (game, gameMember, gameSet, gameVote 삭제)
-                await deleteAllAboutGame(memberList, game.get('game_idx'));
-
+        if (game) { // in game
+            if (gameMember.get('game_member_role') == 'human') { // human role
                 // 최종 결과 이벤트
-                const finalResult = await getFinalResult(game.get('game_idx'));
-                io.to(room.get('room_idx')).emit(
-                    'get final result',
-                    finalResult
-                );
+                const finalResult = await selectFinalResult(game.get('game_idx'));
+                let result = await makeTotalScoreData(finalResult);
+                let human_info = await selectHuman(gameIdx);
+                result.human_color = human_info[0].wrm_user_color;
+                result.human_name = human_info[0].user_name;
+                io.to(room.get('room_idx')).emit('get final result', result);
 
-                // game status 이벤트
+                 // 게임 종료 처리 (game, gameMember, gameSet, gameVote 삭제)
+                 await deleteAllAboutGame(memberList, game.get('game_idx'));
+
+                 // game status 이벤트
                 await updateRoomStatus(room.get('room_idx'), 'waiting');
                 io.to(0).emit('change game status', {
                     room_idx: room.get('room_idx'),
                     room_status: 'waiting',
                 });
+            }else{ // ghost role
+                await deleteGameVote(gameMember.game_member_idx);
+                await deleteGameMember(gameMember.game_member_idx);
             }
         }
 
@@ -68,13 +73,10 @@ const exitGameAndRoom = async (user, io) => {
             io.to(room.get('room_idx')).emit('change host', { user_idx: hostIdx });
         }
 
-        if (gameMember) {
-            await deleteGameVote(gameMember.game_member_idx);
-            await deleteGameMember(gameMember.game_member_idx);
-        }
         if (roomMember) {
             await deleteRoomMember(roomMember.wrm_idx);
         }
+
         io.to(0).emit('change member count', {
             room_idx: room.get('room_idx'),
             room_member_count: memberList.length - 1,
@@ -173,53 +175,6 @@ const deleteUser = async (userIdx) => {
             user_idx: userIdx,
         },
     });
-};
-const getFinalResult = async (gameIdx) => {
-    const setResult = await GameSet.findAll({
-        attributes: [
-            'game_set_no',
-            'game_set_human_score',
-            'game_set_ghost_score',
-        ],
-        where: {
-            game_game_idx: gameIdx,
-        },
-    });
-
-    const finalResult = {};
-    const finalHumanScore = 0;
-    const finalGhostScore = 0;
-
-    for (result of setResult) {
-        if (result.get('game_set_no') == 1) {
-            finalResult['one_game_set_human_score'] = result.get(
-                'game_set_human_score'
-            );
-            finalResult['one_game_set_ghost_score'] = result.get(
-                'game_set_ghost_score'
-            );
-        } else if (result.get('game_set_no') == 1) {
-            finalResult['two_game_set_human_score'] = result.get(
-                'game_set_human_score'
-            );
-            finalResult['two_game_set_ghost_score'] = result.get(
-                'game_set_ghost_score'
-            );
-        } else {
-            finalResult['three_game_set_human_score'] = result.get(
-                'game_set_human_score'
-            );
-            finalResult['three_game_set_ghost_score'] = result.get(
-                'game_set_ghost_score'
-            );
-        }
-        finalHumanScore += result.get('game_set_human_score');
-        finalGhostScore += result.get('game_set_ghost_score');
-    }
-    finalResult['total_game_set_human_score'] = finalHumanScore;
-    finalResult['total_game_set_ghost_score'] = finalGhostScore;
-
-    return finalResult;
 };
 const updateRoomStatus = async (roomIdx, status) => {
     await Room.update(
