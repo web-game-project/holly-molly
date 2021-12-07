@@ -106,8 +106,8 @@ const NextBtn = styled.div`
         background-color: #462456;;
         color: ${style.white};
         border: 2px solid #000;
-        border-radius: 20px;    
-        
+        border-radius: 20px; 
+        cursor: grab; 
     }
 
 `;
