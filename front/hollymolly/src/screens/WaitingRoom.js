@@ -43,7 +43,9 @@ export default function WaitingRoom(props) {
     console.log('방 번호는 ?' + room_index);
     
     //유저 리스트
-    const [userList, setUserList] = useState();
+    //const [userList, setUserList] = useState();
+
+    let userList = useRef([]);
 
     //색깔
     const [colorList, setColorList] = useState([
@@ -113,7 +115,9 @@ export default function WaitingRoom(props) {
                 //userlist로 사용자들이 무슨 색을 할당 받았는지 저장하는 배열
                 locationUserList = response.data.waiting_room_member_list;
                 //setUserList(location.state.data);
-                setUserList(locationUserList);
+                
+                //setUserList(locationUserList);
+                userList.current = locationUserList;
 
                 for (let i = 0; i < locationUserList.length; i++) {
                     console.log(
@@ -186,29 +190,35 @@ export default function WaitingRoom(props) {
         props.socket.on('change host', (data) => {
             console.log('방장 탈출');
 
-            setLeaderIdx(data.user_idx);
+           // setLeaderIdx(data.user_idx);
+
+            getWaiting();
         });
 
         //방퇴장
         props.socket.on('exit room', (data) => {
-            const exitUserIdx = data.user_idx;
+            getWaiting();
+
+            /* const exitUserIdx = data.user_idx;
 
             console.log('어레이냐> : ' + Array.isArray(userList));
             const isArr = Array.isArray(userList);
             //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
             if (isArr === true) {
-                const exitUserList = userList.filter((user) => user.user_idx !== exitUserIdx);
+                const exitUserList = userList.current.filter((user) => user.user_idx !== exitUserIdx);
                 //filter로
-                setUserList(exitUserList);
+                //setUserList(exitUserList);
+                userList.current = exitUserList;
             }
             console.log('방 퇴장 시 현재 멤버 더하기 전 : ' + currentMember);
 
-            setCurrentMember(currentMember - 1);
+            setCurrentMember(currentMember - 1); */
         });
 
         // 방 입장 소켓
         props.socket.on('enter room', (data) => {
-            console.log('입장 data : ' + JSON.stringify(data));
+            getWaiting();
+            /* console.log('입장 data : ' + JSON.stringify(data));
 
             const user = {
                 user_idx: data.user_idx,
@@ -221,9 +231,11 @@ export default function WaitingRoom(props) {
 
             //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
             if (isArr === true) {
-                const enterUserList = userList.concat(user);
+                const enterUserList = userList.current.concat(user);
                 //concat으로 추가
-                setUserList(enterUserList);
+                //setUserList(enterUserList);
+                userList.current = enterUserList;
+
             }
 
             colorList &&
@@ -238,12 +250,13 @@ export default function WaitingRoom(props) {
 
             console.log('수정인데 현재 인원이 넘버냐? : ' + parseInt(currentMember));
             //현재인원 증가
-            setCurrentMember(parseInt(currentMember) + 1);
-        });
+            setCurrentMember(parseInt(currentMember) + 1); */
+        }); 
 
         //사용자의 준비 상태 값 변경에 따른 소켓
         props.socket.on('change member ready', (data) => {
-            const changeReadyUserIdx = data.user_idx;
+            getWaiting();
+           /* const changeReadyUserIdx = data.user_idx;
             const changeReadyResult = data.user_ready;
 
             //userList에 해당 인덱스의 ready값을 변경해줘야함
@@ -251,11 +264,11 @@ export default function WaitingRoom(props) {
 
             let middleReadySocket = [{}];
 
-            console.log('아아아악 : 어레이냐? ' + isArr);
+            //console.log('아아아악 : 어레이냐? ' + isArr);
 
             //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
             if (isArr === true) {
-                userList.forEach((element) => {
+                userList.current.forEach((element) => {
                     if (changeReadyUserIdx === element.user_idx) {
                         //element.wrm_user_color = element.wrm_user_color;
                         //element.user_name = element.user_name;
@@ -267,15 +280,16 @@ export default function WaitingRoom(props) {
 
                 console.log('아아아악: 중간소켓 : ' + JSON.stringify(middleReadySocket));
 
-                const concatUserReady = userList.concat(middleReadySocket);
+                const concatUserReady = userList.current.concat(middleReadySocket);
                 console.log('아아아악: 컨캣 : ' + JSON.stringify(concatUserReady));
 
-                const filterReadyUserList = concatUserReady.filter((item, pos) => userList.indexOf(item) == pos);
+                const filterReadyUserList = concatUserReady.filter((item, pos) => userList.current.indexOf(item) == pos);
 
                 //filter로
-                setUserList(filterReadyUserList);
+                //setUserList(filterReadyUserList);
+                userList.current = filterReadyUserList;
 
-                console.log('아아아악 : 유저리스트: ' + JSON.stringify(userList));
+                console.log('아아아악 : 유저리스트: ' + JSON.stringify(userList.current));
             }
 
             //방장인덱스가 내인덱스를 비교할 필요가 잇는가?
@@ -287,43 +301,49 @@ export default function WaitingRoom(props) {
                 console.log('악! ready 감소, ready 현재값 : ' + ready_cnt);
             }
 
-            alert('socket user_idx : ' + data.user_idx + ' user_ready : ' + data.user_ready);
+            alert('socket user_idx : ' + data.user_idx + ' user_ready : ' + data.user_ready); */
         });
 
         //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 부분
         props.socket.on('change member color', (data) => {
-            alert('socket-> index: ' + data.user_idx + '이전 color: ' + data.before_color + '이후 color: ' + data.current_color);
+            getWaiting();
+          //  alert('socket-> index: ' + data.user_idx + '이전 color: ' + data.before_color + '이후 color: ' + data.current_color);
             
-            const changeColorUserIdx = data.user_idx;
+            /* const changeColorUserIdx = data.user_idx;
             const changeUserBeforeColor = data.before_color;
             const changeUserCurrentColor = data.current_color;
 
             const isArr = Array.isArray(userList);
             let middleColorSocket = [{}];
 
+            console.log('어레이냐> : ' + Array.isArray(userList));
+
             //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
-            if (isArr === true) {
-                userList.forEach((element) => {
+            //if (isArr === true) {
+                userList.current.forEach((element) => {
                     if (changeColorUserIdx === element.user_idx) {
                         element.wrm_user_color = changeUserCurrentColor;
                         console.log('색깔 유저 변경 엘레먼트? ' + element.wrm_user_color);
                         //element.user_name = element.user_name;
                         element.user_idx = changeColorUserIdx;
                         //element.wrm_user_ready = false;
-                        middleColorSocket.push(element);
+                       // middleColorSocket.push(element);
                     }
                 });
 
-                console.log('색깔 유저 : middle socket arr: ' + JSON.stringify(middleColorSocket));
+                console.log('유저 칼라 변경 : ' + JSON.stringify(userList.current));
 
-                const concatUserColor = userList.concat(middleColorSocket);
-                const filterColorUserList = concatUserColor.filter((item, pos) => userList.indexOf(item) == pos);
+               // console.log('색깔 유저 : middle socket arr: ' + JSON.stringify(middleColorSocket));
+
+              //  const concatUserColor = userList.current.concat(middleColorSocket);
+               // const filterColorUserList = concatUserColor.filter((item, pos) => userList.current.indexOf(item) == pos);
 
                 //filter로
-                setUserList(filterColorUserList);
+                //setUserList(filterColorUserList);
+               // userList.current = filterColorUserList;
 
-                console.log('색깔 필터했다? : ' + JSON.stringify(filterColorUserList));
-            }
+               // console.log('색깔 필터했다? : ' + JSON.stringify(filterColorUserList));
+            //}
 
             colorList &&
                 colorList.map((element) => {
@@ -339,13 +359,14 @@ export default function WaitingRoom(props) {
                     setColorList(colorList);
                 });
 
-            console.log('색깔 유저리스트 칼라리스트 후 : ' + JSON.stringify(colorList));
+            console.log('색깔 유저리스트 칼라리스트 후 : ' + JSON.stringify(colorList)); */
         });
 
         //방 정보 수정 소켓
         props.socket.on('edit room', (data) => {
             alert('수정) 방정보! ');
-            setRoomUpdate(data);
+            //setRoomUpdate(data);
+            getWaiting();
         });
 
        
@@ -354,6 +375,7 @@ export default function WaitingRoom(props) {
             alert('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
             alert(leader_idx.current);
             
+           // getWaiting();
             //플레잉룸으로 이동, 데이터 전달dlEk r
             history.push({
                 pathname: '/playingroom/' + room_idx,
@@ -730,8 +752,8 @@ export default function WaitingRoom(props) {
                                     </BarContainer>
                                     <UserDiv>
                                         <div style={styles.userListContainer}>
-                                            {userList &&
-                                                userList.map((element) => (
+                                            {userList.current &&
+                                                userList.current.map((element) => (
                                                     <UserCard
                                                         leader={leaderIdx}
                                                         id={element.user_idx}
