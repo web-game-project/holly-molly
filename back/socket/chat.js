@@ -9,9 +9,8 @@ module.exports = async (socket, io, data) => {
         return;
     }
     else{
-        const socketRooms = Array.from(socket.rooms);
-        let currentRoom;
-        for (const roomNum of socketRooms) {
+        let currentRoom = -1;
+        for (const roomNum of socket.rooms) {
             if (roomNum == socket.id) continue;
             currentRoom = roomNum;
         }
