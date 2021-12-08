@@ -101,13 +101,13 @@ const PlayingVote = (props) => {
         });
 
         props.socket.on('vote', (data) => {
-            alert('socket 투표 결과 ' + JSON.stringify(data.vote_rank)); // success 메시지
+            console.log('socket 투표 결과 ' + JSON.stringify(data.vote_rank)); // success 메시지
             voteTotalList.current = data.vote_rank;
         });
 
         // 인간 답안 제출 완료 
         props.socket.on('submit human answer', (data) => {
-            alert('submit human answer' + data.human_submit);
+            console.log('submit human answer' + data.human_submit);
 
             if (data.human_submit === true) {
                 setIsHumanSubmit(true);
@@ -152,7 +152,7 @@ const PlayingVote = (props) => {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-                alert(response);
+                console.log(response);
                 history.push({
                     pathname: '/inputname', // 성공하면 닉네임 설정 창으로 이동 
                 });

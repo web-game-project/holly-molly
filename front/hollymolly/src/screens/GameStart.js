@@ -9,10 +9,6 @@ import tutotrialBtn from '../assets/tutorialBtn.png';
 import Modal from '../components/ModalNickName';
 
 function GameStart() {
-    function tutorialClick() {
-        alert('튜토리얼 clicked ');
-    }
-
     return (
         <Background>
             <Backgroundimg>

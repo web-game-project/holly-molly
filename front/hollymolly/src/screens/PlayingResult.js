@@ -174,7 +174,7 @@ const PlayingResult = (props) => {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-                alert(response);
+                console.log(response);
                 history.push({
                     pathname: '/inputname', // 성공하면 닉네임 설정 창으로 이동 
                 });

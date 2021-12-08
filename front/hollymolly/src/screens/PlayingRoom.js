@@ -92,7 +92,7 @@ const PlayingRoom = (props) => {
                 //possible.current = true;
             })
             .catch(function (error) {
-                alert('set' + error);
+                alert('set Rest API' + error);
             });
     }
 
@@ -112,7 +112,7 @@ const PlayingRoom = (props) => {
                 setKeyWord(response.data.keyword);
             })
             .catch(function (error) {
-                alert('error information : ' + error.message);
+                alert('error 게임멤버정보조회 : ' + error.message);
             });        
     }
 
@@ -272,7 +272,7 @@ const PlayingRoom = (props) => {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-                alert(response);
+                console.log(response);
                 history.push({
                     pathname: '/inputname', // 성공하면 닉네임 설정 창으로 이동 
                 });

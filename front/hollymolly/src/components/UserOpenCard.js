@@ -16,7 +16,7 @@ export default function UserOpenCard({ nick, color }) {
         } else {
             isClicked(1);
         }
-        alert(nick + clicked);
+        //alert(nick + clicked);
     }
 
     return (
