@@ -61,7 +61,7 @@ const RefreshVerification = {
             }, reqHeaders_room)
             .then(function (response) {
               //response로 access token 반환
-              alert("success! " + response.data.access_token);
+              console.log("success! " + response.data.access_token);
 
               localStorage.removeItem("token");
               console.log('내 refresh delete 후 : ' + JSON.stringify(localStorage.getItem("token")));
