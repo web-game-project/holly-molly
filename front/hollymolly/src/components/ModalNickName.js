@@ -89,7 +89,7 @@ export default function ModalBase({ tutorial }) {
                 })
                 .then(function (response) {
                     //response로 jwt token 반환
-                    alert('success!' + response.data.user_idx);
+                    console.log('success!' + response.data.user_idx);
                     //  alert('success! ' + response.data.access_token);
 
                     localStorage.setItem(

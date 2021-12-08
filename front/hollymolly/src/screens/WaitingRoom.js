@@ -364,7 +364,7 @@ export default function WaitingRoom(props) {
 
         //방 정보 수정 소켓
         props.socket.on('edit room', (data) => {
-            alert('수정) 방정보! ');
+            console.log('수정) 방정보! ');
             //setRoomUpdate(data);
             getWaiting();
         });
@@ -372,8 +372,8 @@ export default function WaitingRoom(props) {
        
         //게임 시작 정보 socket
         props.socket.on('start game', (data) => {
-            alert('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
-            alert(leader_idx.current);
+            console.log('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
+            console.log(leader_idx.current);
             
            // getWaiting();
             //플레잉룸으로 이동, 데이터 전달dlEk r
@@ -412,7 +412,7 @@ export default function WaitingRoom(props) {
                 reqHeaders
             )
             .then(function (response) {
-                alert('rest Start ' + readyStatus);
+                console.log('레디 rest: ' + readyStatus);
             })
             .catch(function (error) {
                 alert('error Start' + error.message);
@@ -420,8 +420,6 @@ export default function WaitingRoom(props) {
     }
 
     function startClick() {
-        alert('click start btn!');
-
         const restURL = BaseURL + '/game/start';
 
         const reqHeaders = {
@@ -440,7 +438,7 @@ export default function WaitingRoom(props) {
             )
             .then(function (response) {
                 //response로 jwt token 반환
-                alert('success! 게임시작');
+                console.log('success! 게임시작');
                 //플레잉룸으로 이동 동시에, 게임시장 정보 call 데이터 함께 전달
                 setGameStart(true);
             })
@@ -450,8 +448,6 @@ export default function WaitingRoom(props) {
     }
 
     function colorClick(str) {
-        alert('click: ' + str);
-
         const restURL = BaseURL + '/waiting-room/user-color';
 
         const reqHeaders = {
@@ -470,7 +466,7 @@ export default function WaitingRoom(props) {
                 reqHeaders
             )
             .then(function (response) {
-                alert('rest ' + response.data);
+                console.log('색깔 rest: ' + response.data);
                 setSelectColor(str); //내가 선택한 색
             })
             .catch(function (error) {
