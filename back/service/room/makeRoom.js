@@ -26,7 +26,6 @@ module.exports = async (req, res, next) => {
             },
         });
         
-        console.log("########",beforeWaitingRoomMember)
         if (beforeWaitingRoomMember) await exitGameAndRoom(user, io);
 
         let roomCode = await makeRoomCode();
