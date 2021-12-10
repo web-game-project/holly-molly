@@ -120,6 +120,11 @@ export default function ModalBase({ tutorial }) {
         setNickName(e.target.value);
     };
 
+    const onEnter = (e) => {
+        if(e.key === 'Enter'){
+            createNickname();
+        }
+    }
     return (
         <div>
             {tutorial ? <TutorialStartBtn onClick={openModal} /> : <StartBtn onClick={openModal} />}
@@ -156,6 +161,7 @@ export default function ModalBase({ tutorial }) {
                         type="text"
                         placeholder="           닉네임을 입력해주세요."
                         onChange={onChange}
+                        onKeyPress={onEnter}
                         value={nickName}
                     ></input>
                     <text style={styles.usable}>＊한글, 영문, 숫자 공백 포함 2~10자까지 가능, 특수문자 입력 불가능 </text>
