@@ -197,6 +197,16 @@ export default function WaitingRoom(props) {
 
         //방퇴장
         props.socket.on('exit room', (data) => {
+            let exitUserColor = data.user_color;
+            console.log('나감 : ' + exitUserColor);
+            colorList &&
+            colorList.map((element) => {
+                if (element.color === exitUserColor) {
+                    element.choose = 'true';
+                }
+            });
+
+            setColorList(colorList);  
             getWaiting();
 
             /* const exitUserIdx = data.user_idx;
@@ -216,7 +226,8 @@ export default function WaitingRoom(props) {
         });
 
         // 방 입장 소켓
-        props.socket.on('enter room', (data) => {
+        props.socket.on('enter room', (data) => {           
+
             getWaiting();
             /* console.log('입장 data : ' + JSON.stringify(data));
 
