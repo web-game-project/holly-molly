@@ -94,9 +94,9 @@ module.exports.gameSchema = {
         }),
     }),
     chat: Joi.object({
-        room_idx: Joi.number().integer().strict(),
-        user_idx : Joi.number().integer().strict(),
-        user_name : Joi.string().min(2).max(10),
+        user_color : Joi.string()
+            .regex(/^#[A-Fa-f0-9]{6}/)
+            .required(),
         msg: Joi.string().required(),
     }),
 };
