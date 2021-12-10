@@ -306,6 +306,16 @@ export default function WaitingRoom(props) {
 
         //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 부분
         props.socket.on('change member color', (data) => {
+            const changeUserBeforeColor = data.before_color;
+
+            colorList &&
+            colorList.map((element) => {
+                if (element.color === changeUserBeforeColor) {
+                    element.choose = 'true';
+                }
+                setColorList(colorList);
+            });
+
             getWaiting();
           //  alert('socket-> index: ' + data.user_idx + '이전 color: ' + data.before_color + '이후 color: ' + data.current_color);
             
