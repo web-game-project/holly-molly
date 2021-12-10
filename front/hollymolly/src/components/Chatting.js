@@ -13,8 +13,7 @@ let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const Chatting = (props) => { 
-
-    const [recentColor, setRecentColor] = useState('white'); // 기본 화이트 색
+    const [recentChatColor, setRecentChatColor] = useState(); // 기본 화이트 색
     
     // 입력된 채팅 메시지 상태 값
     const [inputMessage, setInputMessage] = useState('');
@@ -39,6 +38,27 @@ const Chatting = (props) => {
     // 서버에서 받은 갱신된(새로 추가된) 유저 인덱스 받는 상태값
     const [recentChatUserIdx, setRecentChatUserIdx] = useState('');
 
+    // 지정 색 코드로 바꿔주기 
+    let user_color = props.color; 
+    
+    if(user_color === 'RED'){
+        user_color = '#FF0000';
+    }else if(user_color === 'ORANGE'){
+        user_color = '#FF5C00'
+    }else if(user_color === 'YELLOW'){
+        user_color = '#FFB800'
+    }else if(user_color === 'GREEN'){
+        user_color = '#95DB3B'
+    }else if(user_color === 'BLUE'){
+        user_color = '#3B8EDB'
+    }else if(user_color === 'PINK'){
+        user_color = '#CE3BDB'
+    }else if(user_color === 'WHITE'){
+        user_color = '#FFFFFF'
+    }else{
+        user_color = '#823BDB'
+    }
+
     // 입력값을 저장하는 상태값
     const handleInput = (e) => {
         setInputMessage(e.target.value);
@@ -48,15 +68,10 @@ const Chatting = (props) => {
     const handleEnter = (e) => {
         if (e.key === 'Enter') {
             if (inputMessage.length > 0) {
-                let room_idx = parseInt(props.room_idx);
-                let user_idx = parseInt(save_user_idx);
-                let user_name = save_user_name;
                 let msg = inputMessage;
 
                 let getMsgInfo = {
-                    room_idx: room_idx,
-                    user_idx: user_idx,
-                    user_name: user_name,
+                    user_color: user_color,
                     msg: msg
                 }
 
@@ -72,15 +87,10 @@ const Chatting = (props) => {
     // 전송 버튼 클릭 시, 입력값을 서버로 보내는 함수
     const handleSubmit = () => {
         if (inputMessage.length > 0) {
-            let room_idx = parseInt(props.room_idx);
-            let user_idx = parseInt(save_user_idx);
-            let user_name = save_user_name;
             let msg = inputMessage;
 
             let sendMsgInfo = {
-                room_idx: room_idx,
-                user_idx: user_idx,
-                user_name: user_name,
+                user_color: user_color,
                 msg: msg
             }
 
@@ -97,15 +107,13 @@ const Chatting = (props) => {
         props.socket.on('connect', () => {
             console.log('chatting connection server');
         });
-
-        setRecentColor(props.color);
         
         props.socket.on("chat", (data) => {
-            console.log("야야");
-            setRecentChatUserIdx(data.user_idx);
+            setRecentChatColor(data.user_color);
             setRecentChatUserName(data.user_name);
             setRecentChat(data.msg);
-        
+            setRecentChatUserIdx(data.user_idx);
+
             setOnMessage(true);
 
         });
@@ -121,7 +129,7 @@ const Chatting = (props) => {
     useEffect( () => {
         const scrollUpdate = async () => {
         // 새로운 채팅 내용 갱신 
-        (await recentChat.length) > 0 && setChatMonitor([...chatMonitor, {recentChat, recentChatUserName, recentColor}]); 
+        (await recentChat.length) > 0 && setChatMonitor([...chatMonitor, {recentChat, recentChatUserName, recentChatColor}]); 
         
         // await 밑에 스크롤 함수 위치
         scrollToBottom();
@@ -137,7 +145,7 @@ const Chatting = (props) => {
                 <ChatContainer id="chatMonitor">
                     {/* 18개부터 스크롤 생김 */}
                     {chatMonitor.map((values, index) => {          
-                        return (<ChatContext key={index} name={values.recentChatUserName} color={recentColor} text={values.recentChat}></ChatContext>);
+                        return (<ChatContext key={index} name={values.recentChatUserName} color={values.recentChatColor} text={values.recentChat}></ChatContext>);
                     })}
                 </ChatContainer>
                 <InputMsgContainer>

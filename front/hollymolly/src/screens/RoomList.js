@@ -34,7 +34,8 @@ const RoomList = (props) => {
     const [emptyRoomsLength, setEmptyRoomsLength] = useState('');
     const [createRoomData, setcreateRoomData] = useState('');
     const [isSocket, setIsSocket] = useState(false);
-    const [isConnected, setIsConnected] = useState(false);
+    const [currentSlide, setCurrentSlide] = useState(0);
+
     
     // 방 전체 리스트
     const [rooms, setRooms] = useState();
@@ -51,11 +52,9 @@ const RoomList = (props) => {
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
 
     useEffect(() => {
-       
         props.socket.on('connect', () => {
             console.log("room list");
             console.log(props.socket);
-            setIsConnected(true);
         });
 
         //방 생성 시, 마지막 페이지에 방 추가
@@ -90,14 +89,11 @@ const RoomList = (props) => {
         });
     }, []);
 
-    
-   /*  // 소켓 이벤트 발생 시 모든 페이지 다시 부름
     useEffect(() => {
-        for (let i = 0; i < TOTAL_SLIDES; i++) {
-            roomListCheckPage(i);
-        }
-    }, [isSocket]);
- */
+        // 룸 리스트 조회
+        roomListCheck();
+    }, [currentSlide, resultArray]);
+
     // 페이지 슬라이드 개수
     let TOTAL_SLIDES = 0;
 
@@ -106,8 +102,6 @@ const RoomList = (props) => {
     } else {
         TOTAL_SLIDES = Math.floor(total_room_cnt / 6);
     }
-
-    const [currentSlide, setCurrentSlide] = useState(0);
 
     // 다음 페이지 이동
     const nextPage = () => {
@@ -181,11 +175,6 @@ const RoomList = (props) => {
          }
          setIsSocket(false);
     }
-
-    useEffect(() => {
-        // 룸 리스트 조회
-        roomListCheck();
-    }, [currentSlide, resultArray]);
 
     function filterUrl(exitedUrl, resultArray) {
         if (resultArray.includes(6)) {
@@ -307,7 +296,7 @@ const RoomList = (props) => {
     return (
         <React.Fragment>
             <Background>
-                {isConnected ? (               
+                {props.socket.connected ? (               
                         RefreshVerification.verification(),                    
                     <div>
                         <Header goMain tutorial />

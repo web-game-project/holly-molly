@@ -9,11 +9,9 @@ import GameStart from './screens/GameStart';
 import { BrowserRouter, Route, Switch } from 'react-router-dom'; //React-Router import
 import WaitingRoom from './screens/WaitingRoom.js';
 import PlayingRoom from './screens/PlayingRoom.js';
-import VoteBoard from './components/VoteBoard';
 import Tutorial from './screens/TutorialScreens/TutorialStart.js';
 import TutorialRole from './screens/TutorialScreens/TutorialRole.js';
 import PlayingResult from './screens/PlayingResult';
-import Toast from './components/Toast';
 import ModalNickName from './components/ModalNickName';
 import PlayingVote from './screens/PlayingVote';
 import TutorialRommList from './screens/TutorialScreens/TutorialRoomList';
@@ -79,9 +77,6 @@ export default function App() {
                     <Route path="/HolltvoteresultTutorial" component={TutorialHollyVoteResult}></Route> 
 
                     <Route path="/nickname" component={ModalNickName}></Route>
-                    <Route path="/vote" component={PlayingVote}></Route>
-                    <Route path="/Toast" component={Toast}></Route>
-                    <Route path="/voteboard" component={VoteBoard}></Route>
                     <Route exact path="/" component={GameStart} />
                     
                     <Route 
@@ -123,7 +118,7 @@ export default function App() {
                             path="/playingresult" 
                             render={(props) => <PlayingResult socket={socket} {...props} />}/>
                     </Switch>
-
+         
                   </ConnectedRouter>
                 </BrowserRouter>
             </div>

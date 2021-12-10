@@ -67,7 +67,7 @@ const GameUserCard = (props) => {
     };
 
     let is_blinking;
-    console.log(is_possible);
+    
     if(is_possible === true){
         is_blinking = "blink";
     }else{

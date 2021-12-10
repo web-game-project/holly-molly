@@ -787,7 +787,7 @@ export default function WaitingRoom(props) {
                                     </div>
                                 </SelectDiv>
                                 <RightDiv>
-                                    <Chatting socket={props.socket} room_idx={room_idx} height="520px" available={true}></Chatting>
+                                    <Chatting socket={props.socket} room_idx={room_idx} height="520px" available={true} color={'WHITE'}></Chatting>
                                     <StartDiv>
                                         {
                                             isLeader === 0 //방장 아님
