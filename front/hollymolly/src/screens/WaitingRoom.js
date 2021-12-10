@@ -41,7 +41,7 @@ export default function WaitingRoom(props) {
 
     let room_index = parseInt(props.match.params.name); // url에 입력해준 방 인덱스
     console.log('방 번호는 ?' + room_index);
-    
+
     //유저 리스트
     //const [userList, setUserList] = useState();
 
@@ -115,17 +115,17 @@ export default function WaitingRoom(props) {
                 //userlist로 사용자들이 무슨 색을 할당 받았는지 저장하는 배열
                 locationUserList = response.data.waiting_room_member_list;
                 //setUserList(location.state.data);
-                
+
                 //setUserList(locationUserList);
                 userList.current = locationUserList;
 
                 for (let i = 0; i < locationUserList.length; i++) {
                     console.log(
                         'user color랑 인덱스랑 레디값 : ' +
-                            locationUserList[i].wrm_user_color +
-                            locationUserList[i].user_idx +
-                            ' ' +
-                            locationUserList[i].wrm_user_ready
+                        locationUserList[i].wrm_user_color +
+                        locationUserList[i].user_idx +
+                        ' ' +
+                        locationUserList[i].wrm_user_ready
                     );
 
                     const currentColor = locationUserList[i].wrm_user_color;
@@ -134,10 +134,10 @@ export default function WaitingRoom(props) {
                         colorList.map((element) => {
                             if (element.color === currentColor) {
                                 element.choose = 'false';
-                                if (locationUserList[i].wrm_user_ready === true) {
+                                /* if (locationUserList[i].wrm_user_ready === true) {
                                     ready_cnt += 1;
                                     console.log('세팅 레디 값 : ' + ready_cnt);
-                                }
+                                } */
 
                                 if (save_user_idx == locationUserList[i].user_idx) {
                                     //선택된 값 세팅
@@ -173,14 +173,14 @@ export default function WaitingRoom(props) {
         console.log("waiting room");
         console.log(props.socket);
 
-        if(props.socket.connected){
+        if (props.socket.connected) {
             getWaiting();
         }
 
         props.socket.on('connect', () => {
-            
+
             getWaiting();
-            
+
             //getWaiting();
             //console.log('색깔 변경 컴포넌트 ' + socket.id);
             //alert(socket.connected);
@@ -190,7 +190,7 @@ export default function WaitingRoom(props) {
         props.socket.on('change host', (data) => {
             console.log('방장 탈출');
 
-           // setLeaderIdx(data.user_idx);
+            // setLeaderIdx(data.user_idx);
 
             getWaiting();
         });
@@ -251,74 +251,85 @@ export default function WaitingRoom(props) {
             console.log('수정인데 현재 인원이 넘버냐? : ' + parseInt(currentMember));
             //현재인원 증가
             setCurrentMember(parseInt(currentMember) + 1); */
-        }); 
+        });
 
         //사용자의 준비 상태 값 변경에 따른 소켓
         props.socket.on('change member ready', (data) => {
-            getWaiting();
-           /* const changeReadyUserIdx = data.user_idx;
+            //임시방편으로 주석 푼 코드
             const changeReadyResult = data.user_ready;
-
-            //userList에 해당 인덱스의 ready값을 변경해줘야함
-            const isArr = Array.isArray(userList);
-
-            let middleReadySocket = [{}];
-
-            //console.log('아아아악 : 어레이냐? ' + isArr);
-
-            //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
-            if (isArr === true) {
-                userList.current.forEach((element) => {
-                    if (changeReadyUserIdx === element.user_idx) {
-                        //element.wrm_user_color = element.wrm_user_color;
-                        //element.user_name = element.user_name;
-                        element.user_idx = changeReadyUserIdx;
-                        element.wrm_user_ready = changeReadyResult;
-                        middleReadySocket.push(element);
-                    }
-                });
-
-                console.log('아아아악: 중간소켓 : ' + JSON.stringify(middleReadySocket));
-
-                const concatUserReady = userList.current.concat(middleReadySocket);
-                console.log('아아아악: 컨캣 : ' + JSON.stringify(concatUserReady));
-
-                const filterReadyUserList = concatUserReady.filter((item, pos) => userList.current.indexOf(item) == pos);
-
-                //filter로
-                //setUserList(filterReadyUserList);
-                userList.current = filterReadyUserList;
-
-                console.log('아아아악 : 유저리스트: ' + JSON.stringify(userList.current));
-            }
-
-            //방장인덱스가 내인덱스를 비교할 필요가 잇는가?
             if (changeReadyResult === true) {
-                ready_cnt += 1;
-                console.log('악! ready 증가, ready 현재값 : ' + ready_cnt);
+                ready_cnt = ready_cnt + 1;
+                console.log('소켓 ready 증가, ready 현재값 : ' + ready_cnt);
             } else {
-                if (ready_cnt != 0) ready_cnt -= 1;
-                console.log('악! ready 감소, ready 현재값 : ' + ready_cnt);
+                if (ready_cnt != 0) ready_cnt = ready_cnt - 1;
+                console.log('소켓 ready 감소, ready 현재값 : ' + ready_cnt);
             }
 
-            alert('socket user_idx : ' + data.user_idx + ' user_ready : ' + data.user_ready); */
+            getWaiting();
+            /* const changeReadyUserIdx = data.user_idx;
+             const changeReadyResult = data.user_ready;
+ 
+             //userList에 해당 인덱스의 ready값을 변경해줘야함
+             const isArr = Array.isArray(userList);
+ 
+             let middleReadySocket = [{}];
+ 
+             //console.log('아아아악 : 어레이냐? ' + isArr);
+ 
+             //유저리스트가 처음엔 배열이 아니였다가 렌더링 다하고나선 true로 바껴서 true인지 아닌지 처리를 해준다.
+             if (isArr === true) {
+                 userList.current.forEach((element) => {
+                     if (changeReadyUserIdx === element.user_idx) {
+                         //element.wrm_user_color = element.wrm_user_color;
+                         //element.user_name = element.user_name;
+                         element.user_idx = changeReadyUserIdx;
+                         element.wrm_user_ready = changeReadyResult;
+                         middleReadySocket.push(element);
+                     }
+                 });
+ 
+                 console.log('아아아악: 중간소켓 : ' + JSON.stringify(middleReadySocket));
+ 
+                 const concatUserReady = userList.current.concat(middleReadySocket);
+                 console.log('아아아악: 컨캣 : ' + JSON.stringify(concatUserReady));
+ 
+                 const filterReadyUserList = concatUserReady.filter((item, pos) => userList.current.indexOf(item) == pos);
+ 
+                 //filter로
+                 //setUserList(filterReadyUserList);
+                 userList.current = filterReadyUserList;
+ 
+                 console.log('아아아악 : 유저리스트: ' + JSON.stringify(userList.current));
+             }
+ 
+             //방장인덱스가 내인덱스를 비교할 필요가 잇는가?
+             if (changeReadyResult === true) {
+                 ready_cnt += 1;
+                 console.log('악! ready 증가, ready 현재값 : ' + ready_cnt);
+             } else {
+                 if (ready_cnt != 0) ready_cnt -= 1;
+                 console.log('악! ready 감소, ready 현재값 : ' + ready_cnt);
+             }
+ 
+             alert('socket user_idx : ' + data.user_idx + ' user_ready : ' + data.user_ready); */
         });
 
         //색깔 변경 시 소켓으로 response 받고 회색박스 처리해주는 부분
         props.socket.on('change member color', (data) => {
+            //임시방편으로 주석 푼 코드
             const changeUserBeforeColor = data.before_color;
 
             colorList &&
-            colorList.map((element) => {
-                if (element.color === changeUserBeforeColor) {
-                    element.choose = 'true';
-                }
-                setColorList(colorList);
-            });
+                colorList.map((element) => {
+                    if (element.color === changeUserBeforeColor) {
+                        element.choose = 'true';
+                    }
+                    setColorList(colorList);
+                });
 
             getWaiting();
-          //  alert('socket-> index: ' + data.user_idx + '이전 color: ' + data.before_color + '이후 color: ' + data.current_color);
-            
+            //  alert('socket-> index: ' + data.user_idx + '이전 color: ' + data.before_color + '이후 color: ' + data.current_color);
+
             /* const changeColorUserIdx = data.user_idx;
             const changeUserBeforeColor = data.before_color;
             const changeUserCurrentColor = data.current_color;
@@ -379,19 +390,19 @@ export default function WaitingRoom(props) {
             getWaiting();
         });
 
-       
+
         //게임 시작 정보 socket
         props.socket.on('start game', (data) => {
             console.log('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
             console.log(leader_idx.current);
-            
-           // getWaiting();
+
+            // getWaiting();
             //플레잉룸으로 이동, 데이터 전달dlEk r
             history.push({
                 pathname: '/playingroom/' + room_idx,
-                state: {isSet: false, gameIdx: data.game_idx, userList: data.user_list, gameSetIdx: data.game_set_idx, room: room_idx, leaderIdx: leader_idx.current, gameSetNo : 1},
+                state: { isSet: false, gameIdx: data.game_idx, userList: data.user_list, gameSetIdx: data.game_set_idx, room: room_idx, leaderIdx: leader_idx.current, gameSetNo: 1 },
             });
-        }); 
+        });
     }, []);
 
     const [result, setResult] = useState(0);
@@ -655,180 +666,181 @@ export default function WaitingRoom(props) {
                 roomEnterInfo && roomEnterInfo ? (
                     console.log("정보 조회 성공!"),
                     (RefreshVerification.verification(),
-                    (
-                        <div>
-                            <Header />
-                            <Container>
-                                {console.log('방장 인덱스 맞지? : ' + isLeader)}
-                                <SelectDiv>
-                                    <br />
-                                    {roomUpdate ? (
-                                        // 소켓 변경 후 소켓 데이터로 변경
-                                        <TitleDiv>
-                                            <div style={styles.roomInfoContainer}>
-                                                <div style={styles.codeContainer}>{roomEnterInfo.room_code}</div>
-                                                <NameContainer>{roomUpdate.room_name}</NameContainer>
-                                                {isLeader === 1 ? (
-                                                    // 리더가 변경하는 컴포넌트
-                                                    <ModalSetting
-                                                        resultt={result}
-                                                        clickedSetting={clickedSetting}
-                                                        title={roomUpdate.room_name}
-                                                        mode={roomUpdate.room_mode}
-                                                        member={roomUpdate.room_start_member_cnt}
-                                                        room_private={roomInfo.room_private}
-                                                        room_idx={roomUpdate.room_idx}
-                                                    />
-                                                ) : (
-                                                    <InfoModal
-                                                        style={{ marginTop: '30px' }}
-                                                        title={roomUpdate.room_name}
-                                                        mode={roomUpdate.room_mode}
-                                                        member={roomUpdate.room_start_member_cnt}
-                                                        room_private={roomInfo.room_private}
-                                                        room_idx={roomUpdate.room_idx}
-                                                    />
-                                                )}
-                                            </div>
-                                            {/* TitleDiv{result} {roomUpdate.room_idx}번 방 */}
-                                            {/* <br />
+                        (
+                            <div>
+                                <Header />
+                                <Container>
+                                    {console.log('방장 인덱스 맞지? : ' + isLeader)}
+                                    <SelectDiv>
+                                        <br />
+                                        {roomUpdate ? (
+                                            // 소켓 변경 후 소켓 데이터로 변경
+                                            <TitleDiv>
+                                                <div style={styles.roomInfoContainer}>
+                                                    <div style={styles.codeContainer}>{roomEnterInfo.room_code}</div>
+                                                    <NameContainer>{roomUpdate.room_name}</NameContainer>
+                                                    {isLeader === 1 ? (
+                                                        // 리더가 변경하는 컴포넌트
+                                                        <ModalSetting
+                                                            resultt={result}
+                                                            clickedSetting={clickedSetting}
+                                                            title={roomUpdate.room_name}
+                                                            mode={roomUpdate.room_mode}
+                                                            member={roomUpdate.room_start_member_cnt}
+                                                            room_private={roomInfo.room_private}
+                                                            room_idx={roomUpdate.room_idx}
+                                                        />
+                                                    ) : (
+                                                        <InfoModal
+                                                            style={{ marginTop: '30px' }}
+                                                            title={roomUpdate.room_name}
+                                                            mode={roomUpdate.room_mode}
+                                                            member={roomUpdate.room_start_member_cnt}
+                                                            room_private={roomInfo.room_private}
+                                                            room_idx={roomUpdate.room_idx}
+                                                        />
+                                                    )}
+                                                </div>
+                                                {/* TitleDiv{result} {roomUpdate.room_idx}번 방 */}
+                                                {/* <br />
                                         <Text>
                                             방제 : {roomUpdate.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
                                             {roomEnterInfo.room_current_member_cnt} / {roomUpdate.room_start_member_cnt} 명
                                         </Text>
                                         <br /> */}
-                                        </TitleDiv>
-                                    ) : (
-                                        <TitleDiv>
-                                            <div style={styles.roomInfoContainer}>
-                                                <div style={styles.codeContainer}>{roomEnterInfo.room_code}</div>
-                                                <NameContainer>{roomEnterInfo.room_name}</NameContainer>
+                                            </TitleDiv>
+                                        ) : (
+                                            <TitleDiv>
+                                                <div style={styles.roomInfoContainer}>
+                                                    <div style={styles.codeContainer}>{roomEnterInfo.room_code}</div>
+                                                    <NameContainer>{roomEnterInfo.room_name}</NameContainer>
 
-                                                {isLeader === 1 ? (
-                                                    <ModalSetting
-                                                        // 리더가 변경하는 컴포넌트
-                                                        resultt={result}
-                                                        clickedSetting={clickedSetting}
-                                                        title={roomInfo.room_name}
-                                                        mode={roomInfo.room_mode}
-                                                        member={count}
-                                                        room_private={roomInfo.room_private}
-                                                        room_idx={roomInfo.room_idx}
-                                                    />
-                                                ) : (
-                                                    <InfoModal
-                                                        // 리더가 변경하는 컴포넌트
-                                                        title={roomInfo.room_name}
-                                                        mode={roomInfo.room_mode}
-                                                        member={count}
-                                                        room_private={roomInfo.room_private}
-                                                        room_idx={roomInfo.room_idx}
-                                                    />
-                                                )}
-                                            </div>
-                                            {/* TitleDiv {match.params.name}번 방 */}
-                                            {/*  <br /> */}
-                                            {/*  <Text>
+                                                    {isLeader === 1 ? (
+                                                        <ModalSetting
+                                                            // 리더가 변경하는 컴포넌트
+                                                            resultt={result}
+                                                            clickedSetting={clickedSetting}
+                                                            title={roomInfo.room_name}
+                                                            mode={roomInfo.room_mode}
+                                                            member={count}
+                                                            room_private={roomInfo.room_private}
+                                                            room_idx={roomInfo.room_idx}
+                                                        />
+                                                    ) : (
+                                                        <InfoModal
+                                                            // 리더가 변경하는 컴포넌트
+                                                            title={roomInfo.room_name}
+                                                            mode={roomInfo.room_mode}
+                                                            member={count}
+                                                            room_private={roomInfo.room_private}
+                                                            room_idx={roomInfo.room_idx}
+                                                        />
+                                                    )}
+                                                </div>
+                                                {/* TitleDiv {match.params.name}번 방 */}
+                                                {/*  <br /> */}
+                                                {/*  <Text>
                                             방제 : {roomEnterInfo.room_name} | 방 코드 : {roomEnterInfo.room_code} | 인원:{' '}
                                             {roomEnterInfo.room_current_member_cnt} / {roomEnterInfo.room_start_member_cnt} 명
                                         </Text> */}
-                                        </TitleDiv>
-                                    )}
-                                    <BarContainer>
-                                        <BarDiv>
-                                            <BarInnerDiv>
-                                                {colorList &&
-                                                    colorList.map((element, key) =>
-                                                        element.choose === 'true' ? (
-                                                            <BarColorBox
-                                                                data={element.code}
-                                                                color={element.code}
-                                                                onClick={() => {
-                                                                    colorClick(element.color);
-                                                                }}
-                                                            />
-                                                        ) : selectColor === element.color ? (
-                                                            <BarColorBox color={element.code}>V</BarColorBox>
-                                                        ) : (
-                                                            <BarColorBox data={element.code} color="#8C8C8C" />
-                                                        )
-                                                    )}
-                                            </BarInnerDiv>
-                                        </BarDiv>
-                                    </BarContainer>
-                                    <UserDiv>
-                                        <div style={styles.userListContainer}>
-                                            {userList.current &&
-                                                userList.current.map((element) => (
-                                                    <UserCard
-                                                        leader={leaderIdx}
-                                                        id={element.user_idx}
-                                                        nickname={element.user_name}
-                                                        color={element.wrm_user_color}
-                                                        ready={element.wrm_user_ready}
-                                                    />
-                                                ))}
+                                            </TitleDiv>
+                                        )}
+                                        <BarContainer>
+                                            <BarDiv>
+                                                <BarInnerDiv>
+                                                    {colorList &&
+                                                        colorList.map((element, key) =>
+                                                            element.choose === 'true' ? (
+                                                                <BarColorBox
+                                                                    data={element.code}
+                                                                    color={element.code}
+                                                                    onClick={() => {
+                                                                        colorClick(element.color);
+                                                                    }}
+                                                                />
+                                                            ) : selectColor === element.color ? (
+                                                                <BarColorBox color={element.code}>V</BarColorBox>
+                                                            ) : (
+                                                                <BarColorBox data={element.code} color="#8C8C8C" />
+                                                            )
+                                                        )}
+                                                </BarInnerDiv>
+                                            </BarDiv>
+                                        </BarContainer>
+                                        <UserDiv>
+                                            <div style={styles.userListContainer}>
+                                                {userList.current &&
+                                                    userList.current.map((element) => (
+                                                        <UserCard
+                                                            leader={leaderIdx}
+                                                            id={element.user_idx}
+                                                            nickname={element.user_name}
+                                                            color={element.wrm_user_color}
+                                                            ready={element.wrm_user_ready}
+                                                        />
+                                                    ))}
+                                            </div>
+                                        </UserDiv>
+                                        <div
+                                            onClick={() => {
+                                                console.log('눌림');
+                                                exitWaitingRoom();
+                                            }}
+                                            style={{
+                                                width: '100px',
+                                                justifyContent: 'space-between',
+                                                marginTop: '-40px',
+                                                cursor: 'grab',
+                                            }}
+                                        >
+                                            <Exit src={exit} />
+                                            <ExitText>나가기</ExitText>
                                         </div>
-                                    </UserDiv>
-                                    <div
-                                        onClick={() => {
-                                            console.log('눌림');
-                                            exitWaitingRoom();
-                                        }}
-                                        style={{
-                                            width: '100px',
-                                            justifyContent: 'space-between',
-                                            marginTop: '-40px',
-                                            cursor: 'grab',
-                                        }}
-                                    >
-                                        <Exit src={exit} />
-                                        <ExitText>나가기</ExitText>
-                                    </div>
-                                </SelectDiv>
-                                <RightDiv>
-                                    <Chatting socket={props.socket} room_idx={room_idx} height="520px" available={true} color={'WHITE'}></Chatting>
-                                    <StartDiv>
-                                        {
-                                            isLeader === 0 //방장 아님
-                                                ? (console.log(style.red),
-                                                  changeReady === true ? (
-                                                      <BtnDiv
-                                                          color="waiting"
-                                                          onClick={() => {
-                                                              readyClick(!changeReady);
-                                                          }}
-                                                      >
-                                                          준비 완료
-                                                      </BtnDiv>
-                                                  ) : (
-                                                      <BtnDiv
-                                                          color="ready"
-                                                          onClick={() => {
-                                                              readyClick(!changeReady);
-                                                          }}
-                                                      >
-                                                          게임 준비
-                                                      </BtnDiv>
-                                                  ))
-                                                : //방장이다.
-                                                  (console.log('방장이야'),
-                                                  (
-                                                      //일단 플레잉룸으로 넘어가기 위한 하드코딩 밑에 주석임 지울 예정
-                                                      // startMember === ready_cnt ? (
-                                                      <BtnDiv isStart="yes" onClick={startClick}>
-                                                          게임 시작
-                                                      </BtnDiv>
-                                                  )) //게임 시작 api 요청 onclick 달기
-                                            // ) : (
-                                            // <BtnDiv isStart="no">Game Start</BtnDiv>
-                                            //)
-                                        }
-                                    </StartDiv>
-                                </RightDiv>
-                            </Container>
-                        </div>
-                    ))
+                                    </SelectDiv>
+                                    <RightDiv>
+                                        <Chatting socket={props.socket} room_idx={room_idx} height="520px" available={true} color={'WHITE'}></Chatting>
+                                        <StartDiv>
+                                            {
+                                                isLeader === 0 //방장 아님
+                                                    ? (console.log(style.red),
+                                                        changeReady === true ? (
+                                                            <BtnDiv
+                                                                color="waiting"
+                                                                onClick={() => {
+                                                                    readyClick(!changeReady);
+                                                                }}
+                                                            >
+                                                                준비 완료
+                                                            </BtnDiv>
+                                                        ) : (
+                                                            <BtnDiv
+                                                                color="ready"
+                                                                onClick={() => {
+                                                                    readyClick(!changeReady);
+                                                                }}
+                                                            >
+                                                                게임 준비
+                                                            </BtnDiv>
+                                                        ))
+                                                    : //방장이다.
+                                                    (console.log('방장이야'),
+                                                        (
+                                                            //일단 플레잉룸으로 넘어가기 위한 하드코딩 밑에 주석임 지울 예정
+                                                            startMember === ready_cnt ? (
+                                                                <BtnDiv isStart="yes" onClick={startClick}>
+                                                                    게임 시작
+                                                                </BtnDiv>
+                                                            )
+                                                                : (
+                                                                    <BtnDiv isStart="no">게임 시작</BtnDiv>
+                                                                )
+                                                        )) //게임 시작 api 요청 onclick 달기
+                                            }
+                                        </StartDiv>
+                                    </RightDiv>
+                                </Container>
+                            </div>
+                        ))
                 ) : (
                     <Loading />
                 )
@@ -924,7 +936,6 @@ const RightDiv = styled.div`
     padding: 10px;
     overflow: hidden;
 `;
-
 const StartDiv = styled.div`
     width: 220px;
     height: 75px;
@@ -954,8 +965,9 @@ const BtnDiv = styled.div`
     }
     //${(props) => (props.color == 'waiting' ? `background-color: #FFFFFF; color: #B7A8FB; border: 3px solid #B7A8FB;` : ``)}
     //${(props) => (props.color == 'ready' ? `background-color: #FFFFFF; color: #B7A8FB; border: 3px solid #B7A8FB;` : ``)}
-    ${(props) => (props.isStart == 'yes' ? `` : props.isStart == 'no' ? `opacity: 0.5;` : ``)}
+    ${(props) => (props.isStart == 'yes' ? `` : props.isStart == 'no' ? `&:hover { cursor: not-allowed;}opacity: 0.5;` : ``)}
 `;
+
 const TitleDiv = styled.div`
     width: 625px;
     height: 55px;
@@ -1030,8 +1042,8 @@ const BarColorBox = styled.div`
         props.color == '#FF0000' || props.data == '#FF0000'
             ? `background-color: ${props.color}; border-top-left-radius: 15px; border-bottom-left-radius: 15px;`
             : props.color == '#CE3BDB' || props.data == '#CE3BDB'
-            ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
-            : `background-color: ${props.color};`}
+                ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
+                : `background-color: ${props.color};`}
 `;
 
 const Text = styled.text`
