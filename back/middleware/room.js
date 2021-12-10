@@ -26,7 +26,8 @@ module.exports = async (req, res, next) => {
             return;
         }
 
-        res.locals.leader = roomMember.wrm_leader ? true : false; // or false
+        res.locals.leader = roomMember.wrm_leader ? true : false; 
+        res.locals.color = roomMember.wrm_user_color;
         next();
     } catch (error) {
         printErrorLog('RoomMiddleware', error);
