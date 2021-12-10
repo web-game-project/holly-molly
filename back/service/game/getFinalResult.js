@@ -29,9 +29,9 @@ module.exports = async (req, res, next) => {
         console.log(room_idx);
 
         // finishGame
-        /*const gameMembers = await getGameMemberIndex(gameIdx);
+        const gameMembers = await getGameMemberIndex(gameIdx);
         await deleteAllAboutGame(gameMembers, gameIdx);
-        await updateRoomStatus(room_idx, 'waiting');*/
+        await updateRoomStatus(room_idx, 'waiting');
 
         // socket : change game status
         io.to(0).emit('change game status', {
