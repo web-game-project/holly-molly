@@ -46,13 +46,13 @@ const PlayingRoom = (props) => {
     let beforeUserList = location.state.userList;
 
     let gameSetNo = location.state.gameSetNo;
-;
+    ;
     let isSet = location.state.isSet;
 
     let setBeforeImg = useRef('');
     let setBeforeHumanAnswer = useRef('');
     let setBeforeKeyword = useRef('');
-        
+
     const [role, setRole] = React.useState('');
     const [keyword, setKeyWord] = React.useState('');
 
@@ -63,10 +63,10 @@ const PlayingRoom = (props) => {
 
     const [isDrawReady, setIsDrawReady] = React.useState(true); // 나중에 false로 바꿔놓아야 함
     const [waitSeconds, setWaitSeconds] = useState(-1); // 게임 시작 전 10초 기다리는 타이머,
-   
+
     const BaseURL = 'http://3.17.55.178:3002/';
 
-    
+
     const startSetAPI = async (str) => {
         const restURL = BaseURL + 'game/set';
 
@@ -82,8 +82,8 @@ const PlayingRoom = (props) => {
             .post(
                 restURL,
                 {
-                    game_idx : gameIdx,
-                    game_set_no : str,
+                    game_idx: gameIdx,
+                    game_set_no: str,
                 },
                 reqHeaders
             )
@@ -113,7 +113,7 @@ const PlayingRoom = (props) => {
             })
             .catch(function (error) {
                 alert('error 게임멤버정보조회 : ' + error.message);
-            });        
+            });
     }
 
     useEffect(() => {
@@ -174,7 +174,7 @@ const PlayingRoom = (props) => {
         }
     }, [seconds]);
 
-    
+
     useEffect(() => {
         props.socket.on('connect', () => {
             console.log('playing room connection server');
@@ -187,15 +187,15 @@ const PlayingRoom = (props) => {
 
         //세트 시작 소켓
         props.socket.on('start set', (data) => {
-           // alert('세트 소켓 ' + JSON.stringify(data.before_game_set_human_answer));
+            // alert('세트 소켓 ' + JSON.stringify(data.before_game_set_human_answer));
 
             userList = data.user_list;
             gameSetIdx.current = data.current_game_set_idx;
 
-            setBeforeImg.current =  data.before_game_set_img;
+            setBeforeImg.current = data.before_game_set_img;
             setBeforeHumanAnswer.current = data.before_game_set_human_answer;
-            setBeforeKeyword.current = data.current_game_set_idx;  
-            
+            setBeforeKeyword.current = data.current_game_set_idx;
+
             getGameMember();
 
             //setSeconds(4); // 이전 그림 보여주는 초는 4초!
@@ -203,30 +203,32 @@ const PlayingRoom = (props) => {
     }, []);
 
     useEffect(() => {
-        
+
         userList = beforeUserList;
 
-        if (gameSetIdx.current !== undefined && isSet === true){
-            if(gameSetNo === 2){ // playingvoteresult에서 하나 증가값으로 준다. 여기 조건문은 그 다음세트 값에 해당.
-                startSetAPI(2); // 세트시작
-                //getGameMember(); // 게임 멤버 정보 조회 api를 통해 역할, 키워드 세팅
-                isSet = 'no'; // 한번 돈 후 요청 안가게! 제어
-            }
-            else{
-                startSetAPI(3); // 세트시작
-                //getGameMember(); // 게임 멤버 정보 조회 api를 통해 역할, 키워드 세팅
-                isSet = 'no'; // 한번 돈 후 요청 안가게! 제어
+        if (gameSetIdx.current !== undefined && isSet === true) {
+            if (leaderIdx === save_user_idx) { //리더만 세트시작 api 요청 가능
+                if (gameSetNo === 2) { // playingvoteresult에서 하나 증가값으로 준다. 여기 조건문은 그 다음세트 값에 해당.
+                    startSetAPI(2); // 세트시작
+                    //getGameMember(); // 게임 멤버 정보 조회 api를 통해 역할, 키워드 세팅
+                    isSet = 'no'; // 한번 돈 후 요청 안가게! 제어
+                }
+                else {
+                    startSetAPI(3); // 세트시작
+                    //getGameMember(); // 게임 멤버 정보 조회 api를 통해 역할, 키워드 세팅
+                    isSet = 'no'; // 한번 돈 후 요청 안가게! 제어
+                }
             }
         }
         else if (isSet === false) //웨이팅룸에서 넘어왔을 때는 멤버 정보 조회만.
-            getGameMember();       
+            getGameMember();
 
     });
 
     for (let i = 0; i < userList.length; i++) {
-        if(userList[i].user_idx === save_user_idx){ 
+        if (userList[i].user_idx === save_user_idx) {
             userList[i].user_role = role;
-        }else{
+        } else {
             userList[i].user_role = "ghost";
         }
     }
@@ -234,7 +236,7 @@ const PlayingRoom = (props) => {
     // 깊은 복사 
     let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
     let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트 
-    
+
     // 유저 리스트 중 내 정보 배열 및 내 순서 저장
     const myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
 
@@ -248,7 +250,7 @@ const PlayingRoom = (props) => {
     reOrderList.sort(function (a, b) {
         return a.game_member_order - b.game_member_order;
     });
-  
+
     // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
     var myItem = reOrderList.find((x) => x.user_idx === save_user_idx);
     if (myItem) {
@@ -260,7 +262,7 @@ const PlayingRoom = (props) => {
     }
 
     // 비정상 종료
-    const exit = async () => {   
+    const exit = async () => {
         console.log("exit!!!");
         const restURL = 'http://3.17.55.178:3002/game/exit';
 
@@ -287,8 +289,8 @@ const PlayingRoom = (props) => {
         window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
         window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
         return () => {
-          window.removeEventListener('beforeunload', alertUser)
-          window.removeEventListener('unload', handleEndConcert)
+            window.removeEventListener('beforeunload', alertUser)
+            window.removeEventListener('unload', handleEndConcert)
         }
     }, [])
 
@@ -305,8 +307,8 @@ const PlayingRoom = (props) => {
 
     return (
         <React.Fragment>
-            <Background>                
-               { isDrawReady ? (
+            <Background>
+                {isDrawReady ? (
                     role !== '' ? (
                         <div>
                             <Header />
@@ -332,7 +334,7 @@ const PlayingRoom = (props) => {
                                         <DrawDiv>
                                             {myList && (
                                                 <GameDrawing
-                                                    keyword = {keyword}
+                                                    keyword={keyword}
                                                     setIdx={gameSetIdx.current}
                                                     role={role}
                                                     order={myList.game_member_order}
@@ -340,30 +342,30 @@ const PlayingRoom = (props) => {
                                                     room_idx={room_idx}
                                                     idx={save_user_idx}
                                                     member_count={userList.length}
-                                                    userList = {userList}
-                                                    socket= {props.socket}
-                                                    gameIdx = {gameIdx}
-                                                    gameSetNo = {gameSetNo}
-                                                    leaderIdx = {leaderIdx}
-                                                    currentOrder = {highOrderFunction}
+                                                    userList={userList}
+                                                    socket={props.socket}
+                                                    gameIdx={gameIdx}
+                                                    gameSetNo={gameSetNo}
+                                                    leaderIdx={leaderIdx}
+                                                    currentOrder={highOrderFunction}
                                                 />
                                             )}
                                         </DrawDiv>
-                                    ) : 
-                                       gameSetNo === 1 ?
+                                    ) :
+                                        gameSetNo === 1 ?
                                             (
                                                 <GameRoleComponent role={role} timer={seconds} />
                                             )
-                                        : (
-                                        gameSetNo === 2 ? 
-                                            ( 
-                                                setBeforeImg.current && <GameSetImageShow setBeforeImg={setBeforeImg.current} setBeforeHumanAnswer={setBeforeHumanAnswer.current} setBeforeKeyword={setBeforeKeyword.current} /> 
-                                            )
-                                            :
-                                            (
-                                                setBeforeImg.current && <GameSetImageShow setBeforeImg={setBeforeImg.current} setBeforeHumanAnswer={setBeforeHumanAnswer.current} setBeforeKeyword={setBeforeKeyword.current} /> 
-                                            )
-                                    )}
+                                            : (
+                                                gameSetNo === 2 ?
+                                                    (
+                                                        setBeforeImg.current && <GameSetImageShow setBeforeImg={setBeforeImg.current} setBeforeHumanAnswer={setBeforeHumanAnswer.current} setBeforeKeyword={setBeforeKeyword.current} />
+                                                    )
+                                                    :
+                                                    (
+                                                        setBeforeImg.current && <GameSetImageShow setBeforeImg={setBeforeImg.current} setBeforeHumanAnswer={setBeforeHumanAnswer.current} setBeforeKeyword={setBeforeKeyword.current} />
+                                                    )
+                                            )}
 
 
                                     <ChatDiv>
@@ -375,10 +377,10 @@ const PlayingRoom = (props) => {
                     ) : (
                         <Loading />
                     )
-                ) : 
-                (
-                    <PlayingLoading txt="게임이 곧 시작됩니다..."/>
-                )}
+                ) :
+                    (
+                        <PlayingLoading txt="게임이 곧 시작됩니다..." />
+                    )}
             </Background>
         </React.Fragment>
     );
