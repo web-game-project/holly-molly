@@ -211,6 +211,12 @@ export default function ModalBase() {
         // subtitle.style.color = '#f00';
     }
 
+    const onEnter = (e) => {
+        if(e.key === 'Enter'){
+            result();
+        }
+    }
+
     return (
         <div>
             <Button onClick={openModal}>방 만들기</Button>
@@ -230,7 +236,7 @@ export default function ModalBase() {
                     <div style={{ marginLeft: '50px' }}>
                         <div style={styles.div}>
                             <text style={styles.text}>방 이름 : </text>
-                            <input style={styles.input} type="text" placeholder="입력하세요..." ref={inputRef} />
+                            <input onKeyPress={onEnter} style={styles.input} type="text" placeholder="입력하세요..." ref={inputRef} />
                         </div>
 
                         <div style={styles.div}>

@@ -69,6 +69,12 @@ const GameMissionPerformance = (props) => {
             });
     };
 
+    const onEnter = (e) => {
+        if(e.key === 'Enter'){
+            inputHumanKeyword();
+        }
+    }
+
       return (
         <React.Fragment>
                 {isHuman? 
@@ -76,7 +82,7 @@ const GameMissionPerformance = (props) => {
                 <Container> 
                     <TimerContext>{seconds}초</TimerContext>
                     <Context>예상 제시어를 적어주세요</Context>
-                    <InputHumanKeyword><input style={styles.input} type="text" placeholder="입력하세요..." ref={inputRef} /></InputHumanKeyword>
+                    <InputHumanKeyword><input  onKeyPress={onEnter} style={styles.input} type="text" placeholder="입력하세요..." ref={inputRef} /></InputHumanKeyword>
                     <SubmitContainer onClick={inputHumanKeyword}><SubmitContext>제출</SubmitContext></SubmitContainer>
                 </Container> :
                 /* 유령일 때, 인간 제시어 입력 기다림 */
