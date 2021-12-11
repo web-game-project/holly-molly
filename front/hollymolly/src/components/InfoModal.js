@@ -250,7 +250,7 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
                 <CloseButton onClick={closeModal}>X</CloseButton>
                 <br />
                 <div style={styles.container}>
-                    <h1 style={{ textAlign: 'center' }}>방 세부 설정</h1>
+                    <h1 style={{ textAlign: 'center' }}>방 설정 정보</h1>
                     <div style={{ marginLeft: '50px' }}>
                         <div style={styles.div}>
                             <text style={styles.text}>방 이름 : </text>
