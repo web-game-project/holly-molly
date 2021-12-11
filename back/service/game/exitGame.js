@@ -53,11 +53,11 @@ const exitGameAndRoom = async (user, io) => {
                 result.human_name = human_info[0].user_name;
                 io.to(room.get('room_idx')).emit('get final result', result);
 
-                 // 게임 종료 처리 (game, gameMember, gameSet, gameVote 삭제)
-                 await deleteAllAboutGame(memberList, game.get('game_idx'));
-
-                 // game status 이벤트
+                // 게임 종료 처리 (game, gameMember, gameSet, gameVote 삭제)
+                await deleteAllAboutGame(memberList, game.get('game_idx'));
+                // game status
                 await updateRoomStatus(room.get('room_idx'), 'waiting');
+                
                 io.to(0).emit('change game status', {
                     room_idx: room.get('room_idx'),
                     room_status: 'waiting',
