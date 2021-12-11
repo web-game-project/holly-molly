@@ -7,7 +7,7 @@ function Loading(){
                 color="#3d66ba"
                 height={50}
                 width={50}
-                timeout={3000}
+                timeout={10000}
             />
     );
 }
