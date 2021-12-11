@@ -71,23 +71,23 @@ const getRoomList = async (offset, roomMode, startMember, isWaiting) => {
             room_start_member_cnt = '(' + startMember.join(',') + ')';
         else room_start_member_cnt = `(${startMember})`;
     }
-    if (isWaiting == 'true') {
+    if (isWaiting == true) {
         room_status = '("waiting")';
     }
 
-    const roomCount = await db.sequelize.query(
-        `SELECT COUNT(*) as cnt FROM Room
-        WHERE room_mode IN ${room_mode} AND room_start_member_cnt IN ${room_start_member_cnt} AND room_status IN ${room_status} AND room_private != 1`,
-        { type: db.sequelize.QueryTypes.SELECT }
-    );
-    const roomList = await db.sequelize.query(
-        `SELECT room_idx, room_name, room_mode, room_start_member_cnt, count(room_idx) as room_current_member_cnt, room_status FROM Room
+    let roomFilterQuery = `SELECT room_idx, room_name, room_mode, room_start_member_cnt, count(room_idx) as room_current_member_cnt, room_status FROM Room
         INNER JOIN WaitingRoomMember as wrm
         ON room_idx = room_room_idx
         WHERE room_mode IN ${room_mode} AND room_start_member_cnt IN ${room_start_member_cnt} AND room_status IN ${room_status} AND room_private != 1
         GROUP BY room_idx
-        ORDER BY room_status DESC, room_current_member_cnt DESC, room_idx DESC
-        LIMIT ${offset}, 6`,
+        ORDER BY room_status DESC, room_current_member_cnt DESC, room_idx DESC`;
+
+    const roomCount = await db.sequelize.query(
+        `SELECT COUNT(*) as cnt FROM (${roomFilterQuery}) filterQuery`,
+        { type: db.sequelize.QueryTypes.SELECT }
+    );
+    const roomList = await db.sequelize.query(
+        `${roomFilterQuery} LIMIT ${offset}, 6`,
         { type: db.sequelize.QueryTypes.SELECT }
     );
 
