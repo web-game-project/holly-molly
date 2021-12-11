@@ -843,7 +843,9 @@ export default function WaitingRoom(props) {
                                                                 </BtnDiv>
                                                             )
                                                                 : (
-                                                                    <BtnDiv isStart="no">게임 시작</BtnDiv>
+                                                                    <BtnDiv isStart="no">
+                                                                        <div className= "textDiv"> 모든 플레이어가 레디를 해야 게임을 시작할 수 있습니다.</div>
+                                                                        게임 시작</BtnDiv>
                                                                 )
                                                         )) //게임 시작 api 요청 onclick 달기
                                             }
@@ -967,6 +969,7 @@ const BtnDiv = styled.div`
     display: flow;
     align-items: center;
     justify-content: center;
+    position: absolute;
 
     &:hover {
         background: #a274d5;
@@ -977,7 +980,28 @@ const BtnDiv = styled.div`
     //${(props) => (props.color == 'waiting' ? `background-color: #FFFFFF; color: #B7A8FB; border: 3px solid #B7A8FB;` : ``)}
     //${(props) => (props.color == 'ready' ? `background-color: #FFFFFF; color: #B7A8FB; border: 3px solid #B7A8FB;` : ``)}
     ${(props) => (props.isStart == 'yes' ? `` : props.isStart == 'no' ? `&:hover { cursor: not-allowed;}opacity: 0.5;` : ``)}
-`;
+
+    &:hover .textDiv {
+        background-color:  ${style.white};
+        color: ${style.black};
+        border: 2px solid #000;
+        border-radius: 10px;        
+        display: inline;
+    }
+
+    .textDiv{
+        z-index: 1;
+        overflow: hidden;
+        position: absolute;  
+        top: -35px;
+        left: -60px;
+        width: 320px;
+        display: none;
+        padding: 5px;
+        font-size: 15px;
+    }
+
+    `;
 
 const TitleDiv = styled.div`
     width: 625px;
