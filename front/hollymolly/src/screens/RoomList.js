@@ -32,7 +32,7 @@ const RoomList = (props) => {
     const baseURL = useSelector((state) => state.socket.base_url);
 
     const [emptyRoomsLength, setEmptyRoomsLength] = useState('');
-    const [createRoomData, setcreateRoomData] = useState('');
+    const [createRoomData, setCreateRoomData] = useState('');
     const [isSocket, setIsSocket] = useState(false);
     const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -59,7 +59,7 @@ const RoomList = (props) => {
 
         //방 생성 시, 마지막 페이지에 방 추가
         props.socket.on('create room', (data) => {
-            //setcreateRoomData(data);
+            //setCreateRoomData(data);
             console.log('create room');
             setIsSocket(!isSocket);
         });
@@ -149,8 +149,9 @@ const RoomList = (props) => {
     const roomListCheck = async () => {
         const currentPage = currentSlide + 1;
         var restURL = baseURL + 'room?page=' + currentPage;
+        
         restURL = filterUrl(restURL, resultArray);
-
+        
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,
@@ -160,6 +161,7 @@ const RoomList = (props) => {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
+                console.log(response.data);
                 total_room_cnt = response.data.total_room_cnt;
                 setRooms(response.data);
                 setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
@@ -296,8 +298,8 @@ const RoomList = (props) => {
     return (
         <React.Fragment>
             <Background>
-                {props.socket.connected ? (               
-                        RefreshVerification.verification(),                    
+                {props.socket? (            
+                    RefreshVerification.verification(),                    
                     <div>
                         <Header goMain tutorial />
                         <Container>

@@ -81,7 +81,7 @@ export default function App() {
                     
                     <Route 
                         path="/roomlist" 
-                        render={() => <RoomList socket={socket} />}/>
+                        render={(props) => <RoomList socket={socket} {...props} />}/>
                     
                     <Switch>
                         <Route 
