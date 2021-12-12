@@ -2,6 +2,8 @@ const colors = {
     white: '#fff',
     black: '#000000',
     gray: '#666666',
+    gray_user: "#EAEAEA",
+    gary_border: "#D5D5D5",
     blue: '#0B37D3',
     skyblue: '#6B8DE3',
     red: '#FF0000',

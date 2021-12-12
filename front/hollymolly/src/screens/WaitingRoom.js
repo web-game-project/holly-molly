@@ -670,6 +670,33 @@ export default function WaitingRoom(props) {
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }, []); */
 
+    const grayBoxOrigin =  () => {
+        //일반 그레이 박스 함수
+        console.log('함수' + startMember + currentMember);
+        let cnt = startMember + 1 - currentMember;
+        const result = [];
+
+        for(let i = 0; i< cnt; i++){
+            console.log('몇변 ' + i);
+            result.push(<UserCard color="gray"/>);
+        }
+        return result;
+    }
+
+    const grayBox =  () => {
+        console.log('함수' + startMember + currentMember);
+        let cnt = startMember + 1 - currentMember;
+        const result = [];
+
+        for(let i = 0; i< cnt; i++){
+            console.log('몇변 ' + cnt);
+           
+             result.push(<UserCard color="gray"/>);
+           
+        }
+        return result;
+    }
+    
     return (
         <Background>
             {props.socket.connected ? (
@@ -780,7 +807,8 @@ export default function WaitingRoom(props) {
                                         </BarContainer>
                                         <UserDiv>
                                             <div style={styles.userListContainer}>
-                                                {userList.current &&
+                                                {
+                                                userList.current &&
                                                     userList.current.map((element) => (
                                                         <UserCard
                                                             leader={leaderIdx}
@@ -788,8 +816,13 @@ export default function WaitingRoom(props) {
                                                             nickname={element.user_name}
                                                             color={element.wrm_user_color}
                                                             ready={element.wrm_user_ready}
-                                                        />
-                                                    ))}
+                                                        />                                                       
+                                                    ))                                                    
+                                                }     
+                                                {
+                                                    grayBox()
+                                                }
+                                                                                              
                                             </div>
                                         </UserDiv>
                                         <div
