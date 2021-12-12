@@ -106,11 +106,32 @@ export default function UserCard({ leader, id, nickname, color, ready }) {
                         </PinkContainer>
                     );
                 }
+                else {
+                    return(
+                        <GrayContainer/>
+                    );
+                }
             })()}
         </div>
     );
 }
 
+const GrayContainer = styled.div`
+    width: 160px;
+    height: 165px;
+    background-color: ${style.gray_user};
+    margin: 10px auto;
+    border-radius: 23px;
+    border: 4px solid ${style.gary_border};
+    //box-shadow: 5px 5px 22px #808080;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    margin-left: 10px;
+    margin-right: 10px;
+
+`;
 const RedContainer = styled.div`
     width: 160px;
     height: 165px;
