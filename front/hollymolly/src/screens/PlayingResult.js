@@ -239,7 +239,7 @@ const PlayingResult = (props) => {
                                 :
                                     finalData === undefined ?
                                         <Loading/>
-                                    : <GameOpenResult name={finalData.human_name} color={finalData.human_color}/>
+                                    : <GameOpenResult roomIdx={roomIdx} name={finalData.human_name} color={finalData.human_color}/>
                             )
                             : 
                             ( 
