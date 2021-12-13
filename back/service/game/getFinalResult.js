@@ -1,4 +1,4 @@
-const { GameSet, GameMember, Game, sequelize } = require('../../models');
+const { GameSet, GameMember, Game, sequelize, WaitingRoomMember } = require('../../models');
 const { deleteAllAboutGame, updateRoomStatus } = require('./exitGame');
 
 module.exports = async (req, res, next) => {
@@ -32,6 +32,7 @@ module.exports = async (req, res, next) => {
         const gameMembers = await getGameMemberIndex(gameIdx);
         await deleteAllAboutGame(gameMembers, gameIdx);
         await updateRoomStatus(room_idx, 'waiting');
+        await updateMemberReady(room_idx);
 
         // socket : change game status
         io.to(0).emit('change game status', {
@@ -121,6 +122,15 @@ const getGame = async (gameIdx) => {
         },
     });
 };
+
+const updateMemberReady = async (room_idx) => {
+    await WaitingRoomMember.update(
+        {
+            wrm_user_ready: 0,
+        },
+        { where: { room_room_idx: room_idx } }
+    );
+}
 
 module.exports.getGame = getGame;
 module.exports.selectFinalResult = selectFinalResult;
