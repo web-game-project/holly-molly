@@ -1,5 +1,5 @@
 const { User, Game, GameMember, GameVote } = require('../../models');
-const {printErrorLog} = require('../../util/log');
+const {printErrorLog, printLog} = require('../../util/log');
 
 const getVoteResult = async (req, res, next) => {
     try {
@@ -42,11 +42,13 @@ const getVoteList = async (gameSetIdx) => {
         order: [['game_vote_cnt', 'DESC']],
     });
 };
+
 const calculateVoteResult = async (gameIdx, gameSetIdx, numberLimit) => {
     const game = await Game.findOne({
         where: { game_idx: gameIdx },
     });
     const gameVotes = await getVoteList(gameSetIdx);
+    printLog("calculateVoteResult", gameSetIdx+"세트 "+gameVotes.length+"명이 투표 획득");
 
     if(!gameVotes){
         return { game, topVoteRankList:[], score:false };
@@ -68,7 +70,6 @@ const calculateVoteResult = async (gameIdx, gameSetIdx, numberLimit) => {
     let score = false;
     for (const index in voteCntOrderList) {
         const cnt = voteCntOrderList[index];
-        console.log("[*******Cnt] ", index, cnt);
         for (const gameMember of voteRankJSON[cnt]) {
             // update top vote list
             const user = await User.findOne({
@@ -95,7 +96,7 @@ const calculateVoteResult = async (gameIdx, gameSetIdx, numberLimit) => {
         }
         if (numberLimit && topVoteRankList.length >= numberLimit) break;
     }
-    console.log("[***********]",topVoteRankList, score, voteCntOrderList);
+    console.log("공통투표결과",topVoteRankList, "순위: ", voteCntOrderList);
     return { game, topVoteRankList, score };
 };
 
@@ -104,6 +105,7 @@ const calculateVoteResultIncludedCnt = async (gameIdx, gameSetIdx) => {
         where: { game_idx: gameIdx },
     });
     const gameVotes = await getVoteList(gameSetIdx);
+    printLog("calculateVoteResultIncludedCnt", gameSetIdx+"세트 "+gameVotes.length+"명이 투표 획득");
 
     if(!gameVotes){
         return {game, voteResultList:[]};
@@ -126,7 +128,8 @@ const calculateVoteResultIncludedCnt = async (gameIdx, gameSetIdx) => {
             vote_cnt: vote.get('game_vote_cnt'),
         });
     }
-    return { game, voteResultList};
+    printLog("투표결과",voteResultList);
+    return { game, voteResultList };
 };
 
 module.exports = {
@@ -134,3 +137,73 @@ module.exports = {
     getVoteList,
     calculateVoteResult,
 }
+
+/*
+const calculateVoteResult = async (gameIdx, gameSetIdx, numberLimit, hasCnt) => {
+    const game = await Game.findOne({
+        where: { game_idx: gameIdx },
+    });
+    const gameVotes = await getVoteList(gameSetIdx);
+    printLog("calculateVoteResult", gameSetIdx+"세트 "+gameVotes.length+"명이 투표 획득");
+
+    if(!gameVotes){
+        return { game, topVoteRankList:[], score:false };
+    }
+
+    const voteRankJSON = {};
+    const voteCntOrderList = [];
+    for (const vote of gameVotes) {
+        voteCnt = vote.get('game_vote_cnt');
+        if (voteRankJSON[voteCnt]) {
+            voteRankJSON[voteCnt].push(vote);
+        } else {
+            voteRankJSON[voteCnt] = [vote];
+            voteCntOrderList.push(voteCnt);
+        }
+    }
+
+    let topVoteRankList = []; //user_idx, user_name, game_rank_no
+    let score = false;
+    for (const index in voteCntOrderList) {
+        const cnt = voteCntOrderList[index];
+        for (const gameMember of voteRankJSON[cnt]) {
+            // update top vote list
+            const user = await User.findOne({
+                attributes: ['user_idx', 'user_name'],
+                where: {
+                    user_idx: gameMember
+                        .get('game_member_game_member_idx_GameMember')
+                        .get('wrm_user_idx'),
+                },
+            });
+            if(hasCnt){
+                topVoteRankList.push({
+                    user_idx: user.user_idx,
+                    user_name: user.user_name,
+                    vote_cnt: cnt,        
+                });
+            }else{
+                topVoteRankList.push({
+                    user_idx: user.user_idx,
+                    user_name: user.user_name,
+                    game_rank_no: Number(index) + 1,
+                    
+                });
+            }
+            
+            // check if the voted person is a human
+            if (
+                gameMember
+                    .get('game_member_game_member_idx_GameMember')
+                    .get('game_member_role') == 'human'
+            ) {
+                score = true;
+            }
+        }
+        if (numberLimit && topVoteRankList.length >= numberLimit) break;
+    }
+    console.log("투표결과",topVoteRankList, "순위: ", voteCntOrderList);
+    return { game, topVoteRankList, score };
+};
+
+*/

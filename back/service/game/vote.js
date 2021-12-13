@@ -85,7 +85,6 @@ const timer = async (mapKey, time, afterFunction, functionParameterList) => {
         });
 
         let result = await promise;
-        console.log('[vote-timer]', result);
         clearTimeout(timerId);
         timerResolveMap.delete(mapKey);
         numberOfRequeststMap.delete(mapKey);
@@ -138,8 +137,7 @@ const finishVote = async (gameIdx, gameSetIdx, io) => {
     if (score) {
         addGhostScore(gameSetIdx);
     }
-
-    console.log(game.get('room_room_idx'), topVoteRankList);
+    
     io.to(game.get('room_room_idx')).emit('vote', { vote_rank: topVoteRankList });
 };
 const addGhostScore = async (gameSetIdx) => {
