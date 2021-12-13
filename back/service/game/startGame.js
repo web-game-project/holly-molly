@@ -19,6 +19,20 @@ module.exports.startGame = async (req, res, next) => {
             });
             return;
         }
+
+        if(!await isFullMember(room_idx)){
+            res.status(403).json({
+                message: '플레이어의 수가 맞지 않습니다.',
+            });
+            return;
+        }
+
+        if(!await isAllReady(room_idx)){
+            res.status(403).json({
+                message: '준비되지 않은 사용자가 있습니다.',
+            });
+            return;
+        }
         
         const io = req.app.get('io');
         await changeGameStatus(io, room_idx);
@@ -63,6 +77,44 @@ module.exports.startGame = async (req, res, next) => {
         });
     }
 };
+
+const isAllReady = async (roomIdx) => {
+    const notReady = await WaitingRoomMember.findAll(
+        {
+            attributes: [
+                'wrm_idx'
+            ],
+            where: { wrm_leader: 0, wrm_user_ready: 0, room_room_idx: roomIdx}
+        },
+    );
+
+    console.log(notReady);
+
+    if(notReady.length > 0)
+        return false;
+    else
+        return true;
+};
+
+const isFullMember = async (roomIdx) => {
+    let sql = "SELECT Room.room_start_member_cnt, count(WaitingRoomMember.wrm_idx) as memberCnt "
+            + "FROM WaitingRoomMember "
+            + "JOIN Room ON WaitingRoomMember.room_room_idx = Room.room_idx "
+            + `where WaitingRoomMember.room_room_idx = ${roomIdx} `;
+    const fullMember = await sequelize.query(sql,
+        {
+            type: sequelize.QueryTypes.SELECT, 
+            raw: true
+        });
+
+    console.log(fullMember[0].room_start_member_cnt);
+    console.log(fullMember[0].memberCnt);
+
+    if(fullMember[0].room_start_member_cnt == fullMember[0].memberCnt)
+        return true;
+    else
+        return false;
+}
 
 const isExistGame = async (roomIdx) => {
     const existGame = await Game.findOne(
