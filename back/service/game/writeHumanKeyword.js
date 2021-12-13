@@ -7,7 +7,7 @@ module.exports = async (req, res, next) => {
     try {
         const { error, value } = gameSchema.humanKeyword.validate(req.body);
         const { game_set_idx, game_set_human_answer } = value;
-        console.log(game_set_human_answer);
+       
         if(error){
             res.status(400).json({
                 error: error.details[0].message
