@@ -199,6 +199,7 @@ const RoleContainer = styled.div`
     border-radius: 0.5rem;
     background-color: ${(props) => props.fillColor};
     margin-bottom: 4px;
+    font-size: 15px;
 `;
 
 const NameContainer = styled.div`

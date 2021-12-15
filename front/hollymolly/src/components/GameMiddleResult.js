@@ -62,17 +62,12 @@ const GameMiddleResult = (props) => {
 };
 
 const Timer = styled.div`
-    border-radius: 60px;
-    -webkit-text-stroke: 1px #53305e;
     font-weight: bold;
-    font-family: Black Han Sans;
-    font-size: 25px;
-    color:${style.white};
-    text-shadow: 2px 2px 0px #53305e;    
+    font-family: Gowun Dodum;
+    font-size: 20px;
+    color:${style.white};   
     margin-bottom: 30px;
     margin-top: 20px;
-    //width: 60px;
-    height: 35px;
     text-align: center;
 `;
 

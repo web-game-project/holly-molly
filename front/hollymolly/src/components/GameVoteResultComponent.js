@@ -129,9 +129,9 @@ const GameVoteResult = (props) => {
                    { 
                    (copyVoteList.current !== [] ? 
                    (role === "human") ?
-                        <div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                             <Title cnt={arrSize}>투표 결과</Title>,
-                            <text style={{ fontFamily: 'Black Han Sans', color: style.white, fontSize: '25px', marginLeft: '200px' }}>{seconds}초 후 넘어갑니다.</text>
+                            <text style={{ color: style.white, fontSize: '20px', fontFamily: 'Gowun Dodum', fontWeight: 'bold'}}>{seconds}초 후 넘어갑니다.</text>
                             <ResultTable cnt={arrSize}>
                                 {voteTotalList.current && voteTotalList.current.map((element, key) =>
                                     <ColumnContainer>
@@ -180,9 +180,9 @@ const GameVoteResult = (props) => {
                             </TotalResultCard>
                         </div>
                         : //ghost 일 때
-                        <div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                             <Title cnt={arrSize}>투표 결과</Title>,
-                            <text style={{ color: style.white, fontSize: '30px', marginLeft: '200px' }}>{seconds}초 후 넘어갑니다.</text>
+                            <text style={{ color: style.white, fontSize: '20px', fontFamily: 'Gowun Dodum', fontWeight: 'bold'}}>{seconds}초 후 넘어갑니다.</text>
                             <ResultTable cnt={arrSize}>
                                 {voteTotalList.current && voteTotalList.current.map((element, key) =>
                                     <ColumnContainer>
