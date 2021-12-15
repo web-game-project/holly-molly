@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 //이미지
@@ -7,11 +7,14 @@ import gameBackground from '../assets/night.png';
 import startBtn from '../assets/startBtn.png';
 import tutotrialBtn from '../assets/tutorialBtn.png';
 import Modal from '../components/ModalNickName';
+import style from '../styles/styles.js';
 
 function GameStart() {
     return (
         <Background>
             <Backgroundimg>
+            <text style={{color: style.red, fontSize: "15px", marginLeft: "15px"}}>권장 브라우저: Chrome, 다른 브라우저로 이용 시 게임이 원활하지 않을 수 있습니다.</text>
+            
                 <Logo />
 
                 <StartDiv>
