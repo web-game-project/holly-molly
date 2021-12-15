@@ -43,7 +43,7 @@ const Room = (props) => {
                 });
             })
             .catch(function (error) {
-                alert(error.response);
+                alert(error.response.data.message);
             });
     };
 

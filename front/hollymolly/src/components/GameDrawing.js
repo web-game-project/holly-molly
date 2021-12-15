@@ -3,7 +3,8 @@ import io from 'socket.io-client';
 import styled from 'styled-components';
 import style from '../styles/styles';
 import RefreshVerification from '../server/RefreshVerification';
-import Toast from '../components/Toast';
+//import Toast from '../components/Toast';
+import * as _ from 'lodash';
 
 import axios from 'axios';
 
@@ -292,21 +293,55 @@ const GameDrawing = (props) => {
     var currentItem = userList.find((x) => x.game_member_order === orderCount.current);
 
      // 순서에 따른 자기 순서 표시(하위 -> 상위)
-     const sendOrder = () => {
-        props.currentOrder(currentItem.user_name);
+    /* const sendOrder = () => {
+        props.currentOrder(currentItem.user_idx);
+    } */
+
+    // 순서에 따른 토스트 표시 
+    const toast = () => {
+        if(drawingTime.current === true){
+            if(currentItem.user_name === save_user_name){
+                return <div><Toast>🎨 {currentItem.user_name} 님이 그림을 그릴 차례입니다.</Toast></div>;
+            }else{
+                return <div><Toast>🎨 {currentItem.user_name} 님이 그림을 그리고 있습니다.</Toast></div>;
+            }
+        }
     }
 
+     // 지정 색 코드로 바꿔주기 
+     let border_user_color = currentItem.user_color && currentItem.user_color; 
+    
+     if(border_user_color === 'RED'){
+        border_user_color = '#FF0000';
+     }else if(border_user_color === 'ORANGE'){
+        border_user_color = '#FF5C00'
+     }else if(border_user_color === 'YELLOW'){
+        border_user_color = '#FFB800'
+     }else if(border_user_color === 'GREEN'){
+        border_user_color = '#95DB3B'
+     }else if(border_user_color === 'BLUE'){
+        border_user_color = '#3B8EDB'
+     }else if(border_user_color === 'PINK'){
+        border_user_color = '#CE3BDB'
+     }else if(border_user_color === 'WHITE'){
+        border_user_color = '#FFFFFF'
+     }else{
+        border_user_color = '#823BDB'
+     }
 
     return (
-        <React.Fragment>
+        <div>
+            <div>{toast()}</div> 
             <Container>      
-                {seconds === 9 ? sendOrder() : null} 
-                {/* {possible === true ? <div><Toast pass={false} name={currentItem.user_name} /></div> : null}      */}
-          
-                <div style={{backgroundColor: style.white, borderRadius: '15px'}}>
+                {/* {seconds === 10 ? sendOrder() : null}  */}
+                    
+                {/* <div style={{backgroundColor: style.white, borderRadius: '15px'}}>
                     <canvas id = "draw" ref={canvasRef} width="610" height={'600'}>
                     </canvas>
-                </div>
+                </div> */}
+                <DrawingContainer color={border_user_color}>
+                    <canvas id = "draw" ref={canvasRef} width="610" height={'600'}></canvas>
+                </DrawingContainer>
                 {
                     (
                      possible === true
@@ -332,17 +367,9 @@ const GameDrawing = (props) => {
             </Container>
             {/* <button onClick={onClick}>초기화</button> */}
             {/* <button onClick={saveCanvas}>저장</button> */}
-        </React.Fragment>
+        </div>
     );
 };
-
-const TimerSubContainer = styled.div`
-    width: 150px;
-    height: 150px;
-    //${(props) => (props.file !== null ? `background-image: url(${props.file});` : ``)}
-    //background-size: contain;
-    //background-repeat: no-repeat;
-`;
 
 const Container = styled.div`
     background-color: #ffffff;
@@ -350,6 +377,31 @@ const Container = styled.div`
     height: 600px;
     display: flex;
     border-radius: 15px;
+    
+`;
+
+const Toast = styled.div`
+    background-color: #ffffff;
+    width: 300px;
+    height: 30px;
+    display: flex;
+    border-radius: 10px;
+    position: absolute;
+    margin-left: 220px;
+    margin-top: -175px;
+    align-items: center; 
+    justify-content: flex-start;
+    padding: 10px;
+    color: gray;
+`;
+
+const DrawingContainer = styled.div`
+    background-color: #ffffff;
+    border-radius: 15px;
+    border-width: 3px;
+    border-style: solid;
+    border-color: #ffffff;
+    ${(props) => `box-shadow: 0px 0px 5px 5px ${props.color};`}
     
 `;
 

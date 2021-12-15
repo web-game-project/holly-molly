@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
  
 // Importing toastify module
 import {toast, ToastContainer} from 'react-toastify';
@@ -13,8 +13,7 @@ let data = localStorage.getItem('token');
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
  
 // This is main function
-function Toast(props){
-
+const Toast = (props) => {
     const {pass, draw, name, txt} = props;
 
     let drawingTxt = '';
@@ -57,9 +56,10 @@ function Toast(props){
         }
     }, []);
     
-    
     return (
-        <ToastContainer/> 
+        <div>
+            <ToastContainer/> 
+        </div>
     );
 }
   
