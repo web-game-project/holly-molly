@@ -18,8 +18,7 @@ import axios from 'axios';
 //깊은 복제
 import * as _ from 'lodash';
 
-//import RefreshVerification from '../server/RefreshVerification.js';
-//RefreshVerification.verification();
+import RefreshVerification from '../server/RefreshVerification.js';
 
 import Loading from '../components/Loading';
 // local storage에 있는지 확인
@@ -66,7 +65,14 @@ const PlayingRoom = (props) => {
 
     const BaseURL = 'http://3.17.55.178:3002/';
 
-
+    let u = RefreshVerification.verification()
+    console.log('리플시? ' + u);
+    let data, save_token;
+    if(u === true){
+        data = localStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    }
+    
     const startSetAPI = async (str) => {
         const restURL = BaseURL + 'game/set';
 
