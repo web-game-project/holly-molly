@@ -193,7 +193,7 @@ const PlayingRoom = (props) => {
 
             setBeforeImg.current = data.before_game_set_img;
             setBeforeHumanAnswer.current = data.before_game_set_human_answer;
-            setBeforeKeyword.current = data.current_game_set_idx;
+            setBeforeKeyword.current = data.before_game_set_keyword;
 
             getGameMember();
 
