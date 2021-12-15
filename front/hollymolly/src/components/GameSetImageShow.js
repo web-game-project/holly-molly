@@ -53,6 +53,7 @@ const GameVoteResult = (props) => {
                             <Timer>{seconds}초</Timer>
                         </div>
                         <Description>몰리가 입력한 제시어, 정답 제시어 그리고 이전 게임의 그림을 보여줍니다.</Description>
+                        
                         <BeforeRowContainer>
                             <Headline> 제시어 : &nbsp;</Headline> <Content>{setBeforeKeyword}</Content>
                             <Headline> 몰리 입력 : &nbsp;</Headline> <Content>{setBeforeHumanAnswer}</Content>
@@ -92,26 +93,30 @@ const Container = styled.div`
 const Title = styled.text`
     font-size: 50px;
     font-family: Black Han Sans;
-    -webkit-text-stroke: 1px #53305e;
-    font-weight: bold;
+    -webkit-text-stroke: 1px #FB9FA9;
+    //font-weight: bold;
     color:${style.white};
-    text-shadow: 4px 4px 0px #53305e, 5px 5px 0px #53305e;
+    text-shadow: 4px 4px 0px #FB9FA9;
     margin-left: 100px;
 `;
 
 const Timer = styled.div`
-    background-color : #53305e;
+    background-color : #FB9FA9;
     border-radius: 60px;
-    -webkit-text-stroke: 1px #53305e;
-    font-weight: bold;
-    font-family: Black Han Sans;
+    //-webkit-text-stroke: 1px #53305e;
+    //font-weight: bold;
+    font-family: Gowun Dodum;
     color:${style.white};
-    text-shadow: 4px 4px 0px #53305e;
+    //text-shadow: 4px 4px 0px #53305e;
     margin-left: 35px;
    // margin-top: -10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 10px;
     width: 40px;
     height: 35px;
+    font-size: 20px; 
 `;
 
 const Description = styled.div`
@@ -129,17 +134,17 @@ const BeforeRowContainer = styled.div`
 `;
 
 const Headline = styled.div`    
-    text-shadow: 4px 4px 0px #53305e, 5px 5px 0px #53305e;
+    //text-shadow: 4px 4px 0px #FB9FA9;
     font-size: 30px;
     margin-left: 40px;    
 `;
 
 const Content = styled.div`    
-    text-shadow: 4px 4px 0px #53305e, 5px 5px 0px #53305e;
+    //text-shadow: 4px 4px 0px #53305e, 5px 5px 0px #53305e;
     font-size: 40px;
     font-family: Hahmlet;
     -webkit-text-stroke: 1px ${style.yellow};
-    color: ${style.yellow};  
+    color: #EDEDAF;  
     margin-top: -10px;  
 `;
 export default GameVoteResult;
