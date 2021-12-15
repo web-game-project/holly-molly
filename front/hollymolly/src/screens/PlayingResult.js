@@ -19,8 +19,8 @@ import axios from 'axios';
 import * as _ from 'lodash';
 
 import Loading from '../components/Loading';
-//import RefreshVerification from '../server/RefreshVerification.js';
-//RefreshVerification.verification();
+
+import RefreshVerification from '../server/RefreshVerification.js';
 
 //"무비페이지에 str 자리 값넣어주기!!"
 
@@ -51,12 +51,14 @@ const PlayingResult = (props) => {
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
     let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 
-    const dummyOpenResultTest = {
-        human_user_name: '나는 1번',
-        human_user_color: 'RED',
-    };
-    // **
-
+    let u = RefreshVerification.verification()
+    console.log('리플시? ' + u);
+    let data, save_token;
+    if(u === true){
+        data = localStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    }
+    
     // 깊은 복사 
     let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
     let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트 

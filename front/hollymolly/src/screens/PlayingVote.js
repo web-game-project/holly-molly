@@ -22,7 +22,7 @@ import axios from 'axios';
 //깊은 복제
 import * as _ from 'lodash';
 
-//import RefreshVerification from '../server/RefreshVerification.js';
+import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
 
 const PlayingVote = (props) => {
@@ -58,6 +58,14 @@ const PlayingVote = (props) => {
     let data = localStorage.getItem('token');
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
     let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+
+    let u = RefreshVerification.verification()
+    console.log('리플시? ' + u);
+    let data, save_token;
+    if(u === true){
+        data = localStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    }
 
     //투표하기 전에 고민의 10초 세기
     useEffect(() => {

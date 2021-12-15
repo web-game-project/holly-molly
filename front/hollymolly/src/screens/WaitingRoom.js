@@ -22,11 +22,6 @@ import Loading from '../components/Loading';
 
 const BaseURL = 'http://3.17.55.178:3002';
 
-// local storage에 있는지 확인
-let data = localStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-
 // room_idx 변수
 let room_idx = 0;
 
@@ -46,6 +41,22 @@ export default function WaitingRoom(props) {
     //const [userList, setUserList] = useState();
 
     let userList = useRef([]);
+
+    let u = RefreshVerification.verification()
+    console.log('리플시? ' + u);
+    let data, save_token, save_user_idx;
+    if(u === true){
+        data = localStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+        save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+    }
+
+
+   /*  RefreshVerification.verification()
+    // local storage에 있는지 확인
+    let data = localStorage.getItem('token');
+    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx; */
 
     //색깔
     const [colorList, setColorList] = useState([
@@ -703,7 +714,6 @@ export default function WaitingRoom(props) {
                 console.log("socket 연결!"),
                 roomEnterInfo && roomEnterInfo ? (
                     console.log("정보 조회 성공!"),
-                    (RefreshVerification.verification(),
                         (
                             <div>
                                 <Header />
@@ -886,7 +896,7 @@ export default function WaitingRoom(props) {
                                     </RightDiv>
                                 </Container>
                             </div>
-                        ))
+                        )
                 ) : (
                     <Loading />
                 )
