@@ -51,7 +51,6 @@ export default function WaitingRoom(props) {
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     }
 
-
    /*  RefreshVerification.verification()
     // local storage에 있는지 확인
     let data = localStorage.getItem('token');
@@ -202,7 +201,9 @@ export default function WaitingRoom(props) {
             console.log('방장 탈출');
 
             // setLeaderIdx(data.user_idx);
+            for (let i = 0; i < locationUserList.length; i++) {
 
+            }
             getWaiting();
         });
 
@@ -486,7 +487,7 @@ export default function WaitingRoom(props) {
                 setGameStart(true);
             })
             .catch(function (error) {
-                alert(error);
+                alert(error.message);
             });
     }
 
@@ -513,7 +514,7 @@ export default function WaitingRoom(props) {
                 setSelectColor(str); //내가 선택한 색
             })
             .catch(function (error) {
-                alert('error ' + error.message);
+                alert(error.response.data.message);
             });
     }
 
@@ -820,6 +821,7 @@ export default function WaitingRoom(props) {
                                                 {
                                                 userList.current &&
                                                     userList.current.map((element) => (
+                                                        
                                                         <UserCard
                                                             leader={leaderIdx}
                                                             id={element.user_idx}
@@ -880,16 +882,16 @@ export default function WaitingRoom(props) {
                                                     (console.log('방장이야'),
                                                         (
                                                             //일단 플레잉룸으로 넘어가기 위한 하드코딩 밑에 주석임 지울 예정
-                                                           // startMember === ready_cnt ? (
+                                                            startMember === ready_cnt ? (
                                                                 <BtnDiv isStart="yes" onClick={startClick}>
                                                                     게임 시작
                                                                 </BtnDiv>
-                                                           /*  )
+                                                            )
                                                                 : (
                                                                     <BtnDiv isStart="no">
                                                                         <div className= "textDiv"> 모든 플레이어가 레디를 해야 게임을 시작할 수 있습니다.</div>
                                                                         게임 시작</BtnDiv>
-                                                                ) */
+                                                                )
                                                         )) //게임 시작 api 요청 onclick 달기
                                             }
                                         </StartDiv>
