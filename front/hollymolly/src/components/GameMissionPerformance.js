@@ -87,7 +87,7 @@ const GameMissionPerformance = (props) => {
                 </Container> :
                 /* 유령일 때, 인간 제시어 입력 기다림 */
                 <Container>
-                    <Context><HumanContext>인간</HumanContext>이 미션 수행중입니다 ....</Context>
+                    <Context><HumanContext>몰리</HumanContext>가 미션 수행중입니다 ....</Context>
                     <TimerContext>{seconds}초</TimerContext>
                 </Container> }
         </React.Fragment>
