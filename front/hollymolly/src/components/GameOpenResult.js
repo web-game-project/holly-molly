@@ -37,7 +37,7 @@ const GameFinalResult = (props) => {
     return (
         <React.Fragment>
             <Container>
-                <Title>인간 &nbsp; 공개</Title>
+                <Title>몰리 &nbsp; 공개</Title>
                 <Timer>{seconds}초 후 대기실로 넘어갑니다.</Timer>,
                 <HumanContainer>
                     {/* <GameResultCard role={'유령'} engRole={'GHOST'} final win></GameResultCard> */}
@@ -54,16 +54,11 @@ const GameFinalResult = (props) => {
 };
 
 const Timer = styled.div`
-    border-radius: 60px;
-    -webkit-text-stroke: 1px #53305e;
     font-weight: bold;
-    font-family: Black Han Sans;
+    font-family: Gowun Dodum;
     font-size: 20px;
-    color:${style.white};
-    text-shadow: 2px 2px 0px #53305e;    
-    //margin-bottom: 20px;
+    color:${style.white};   
     margin-top: 10px;
-    height: 35px;
     text-align: center;
 `;
 

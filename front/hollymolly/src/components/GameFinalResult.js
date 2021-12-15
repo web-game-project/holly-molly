@@ -162,16 +162,12 @@ const GameFinalResult = ({ data }) => {
 };
 
 const Timer = styled.div`
-    border-radius: 60px;
-    -webkit-text-stroke: 1px #53305e;
     font-weight: bold;
-    font-family: Black Han Sans;
+    font-family: Gowun Dodum;
     font-size: 20px;
-    color:${style.white};
-    text-shadow: 2px 2px 0px #53305e;    
+    color:${style.white};   
     margin-bottom: 30px;
     margin-top: 10px;
-    height: 35px;
     text-align: center;
 `;
 
