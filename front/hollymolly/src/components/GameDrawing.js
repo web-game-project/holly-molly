@@ -297,12 +297,15 @@ const GameDrawing = (props) => {
         props.currentOrder(currentItem.user_idx);
     } */
 
+    let cursor_status;
     // 순서에 따른 토스트 표시 
     const toast = () => {
         if(drawingTime.current === true){
-            if(currentItem.user_name === save_user_name){
+            if(currentItem.user_idx === save_user_idx){
+                cursor_status = true;
                 return <div><Toast>🎨 {currentItem.user_name} 님이 그림을 그릴 차례입니다.</Toast></div>;
             }else{
+                cursor_status = false;
                 return <div><Toast>🎨 {currentItem.user_name} 님이 그림을 그리고 있습니다.</Toast></div>;
             }
         }
@@ -334,12 +337,8 @@ const GameDrawing = (props) => {
             <div>{toast()}</div> 
             <Container>      
                 {/* {seconds === 10 ? sendOrder() : null}  */}
-                    
-                {/* <div style={{backgroundColor: style.white, borderRadius: '15px'}}>
-                    <canvas id = "draw" ref={canvasRef} width="610" height={'600'}>
-                    </canvas>
-                </div> */}
-                <DrawingContainer color={border_user_color}>
+
+                <DrawingContainer color={border_user_color} cursor={cursor_status}>
                     <canvas id = "draw" ref={canvasRef} width="610" height={'600'}></canvas>
                 </DrawingContainer>
                 {
@@ -402,6 +401,8 @@ const DrawingContainer = styled.div`
     border-style: solid;
     border-color: #ffffff;
     ${(props) => `box-shadow: 0px 0px 5px 5px ${props.color};`}
+    ${(props) => (props.cursor === true ? `cursor: pointer;` : `cursor: not-allowed;`)}
+    
     
 `;
 
