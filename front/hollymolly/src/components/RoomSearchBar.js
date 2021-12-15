@@ -52,10 +52,16 @@ const RoomSearchBar = (props) => {
         enterRoom();
     };
 
+    const onEnter = (e) => {
+        if(e.key === 'Enter'){
+            enterRoom();
+        }
+    }
+
     return (
         <React.Fragment>
             <RoomGrid borderRadius is_flex_space padding="10px" width="410px" height="40px" border="" bg="white">
-                <input style={styles.input} type="text" placeholder="입력하세요..." ref={inputRef} />
+                <input onKeyPress={onEnter} style={styles.input} type="text" placeholder="입력하세요..." ref={inputRef} />
                 {/* 검색 버튼 */}
                 <RoomGrid borderRadius onClick={onClick} is_flex_center width="160px" height="32px" border="1px solid white" bg="#4D1596">
                     <RoomText size="17px" color={style.white}>

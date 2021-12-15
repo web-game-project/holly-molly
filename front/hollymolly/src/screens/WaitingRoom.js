@@ -22,11 +22,6 @@ import Loading from '../components/Loading';
 
 const BaseURL = 'http://3.17.55.178:3002';
 
-// local storage에 있는지 확인
-let data = localStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-
 // room_idx 변수
 let room_idx = 0;
 
@@ -46,6 +41,21 @@ export default function WaitingRoom(props) {
     //const [userList, setUserList] = useState();
 
     let userList = useRef([]);
+
+    let u = RefreshVerification.verification()
+    console.log('리플시? ' + u);
+    let data, save_token, save_user_idx;
+    if(u === true){
+        data = localStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+        save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+    }
+
+   /*  RefreshVerification.verification()
+    // local storage에 있는지 확인
+    let data = localStorage.getItem('token');
+    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx; */
 
     //색깔
     const [colorList, setColorList] = useState([
@@ -191,7 +201,9 @@ export default function WaitingRoom(props) {
             console.log('방장 탈출');
 
             // setLeaderIdx(data.user_idx);
+            for (let i = 0; i < locationUserList.length; i++) {
 
+            }
             getWaiting();
         });
 
@@ -475,7 +487,7 @@ export default function WaitingRoom(props) {
                 setGameStart(true);
             })
             .catch(function (error) {
-                alert(error);
+                alert(error.message);
             });
     }
 
@@ -502,7 +514,7 @@ export default function WaitingRoom(props) {
                 setSelectColor(str); //내가 선택한 색
             })
             .catch(function (error) {
-                alert('error ' + error.message);
+                alert(error.response.data.message);
             });
     }
 
@@ -670,13 +682,39 @@ export default function WaitingRoom(props) {
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }, []); */
 
+    const grayBoxOrigin =  () => {
+        //일반 그레이 박스 함수
+        console.log('함수' + startMember + currentMember);
+        let cnt = startMember + 1 - currentMember;
+        const result = [];
+
+        for(let i = 0; i< cnt; i++){
+            console.log('몇변 ' + i);
+            result.push(<UserCard color="gray"/>);
+        }
+        return result;
+    }
+
+    const grayBox =  () => {
+        console.log('함수' + startMember + currentMember);
+        let cnt = startMember + 1 - currentMember;
+        const result = [];
+
+        for(let i = 0; i< cnt; i++){
+            console.log('몇변 ' + cnt);
+           
+             result.push(<UserCard color="gray"/>);
+           
+        }
+        return result;
+    }
+    
     return (
         <Background>
             {props.socket.connected ? (
                 console.log("socket 연결!"),
                 roomEnterInfo && roomEnterInfo ? (
                     console.log("정보 조회 성공!"),
-                    (RefreshVerification.verification(),
                         (
                             <div>
                                 <Header />
@@ -780,16 +818,23 @@ export default function WaitingRoom(props) {
                                         </BarContainer>
                                         <UserDiv>
                                             <div style={styles.userListContainer}>
-                                                {userList.current &&
+                                                {
+                                                userList.current &&
                                                     userList.current.map((element) => (
+                                                        
                                                         <UserCard
                                                             leader={leaderIdx}
                                                             id={element.user_idx}
                                                             nickname={element.user_name}
                                                             color={element.wrm_user_color}
                                                             ready={element.wrm_user_ready}
-                                                        />
-                                                    ))}
+                                                        />                                                       
+                                                    ))                                                    
+                                                }     
+                                                {
+                                                    grayBox()
+                                                }
+                                                                                              
                                             </div>
                                         </UserDiv>
                                         <div
@@ -843,7 +888,9 @@ export default function WaitingRoom(props) {
                                                                 </BtnDiv>
                                                             )
                                                                 : (
-                                                                    <BtnDiv isStart="no">게임 시작</BtnDiv>
+                                                                    <BtnDiv isStart="no">
+                                                                        <div className= "textDiv"> 모든 플레이어가 레디를 해야 게임을 시작할 수 있습니다.</div>
+                                                                        게임 시작</BtnDiv>
                                                                 )
                                                         )) //게임 시작 api 요청 onclick 달기
                                             }
@@ -851,7 +898,7 @@ export default function WaitingRoom(props) {
                                     </RightDiv>
                                 </Container>
                             </div>
-                        ))
+                        )
                 ) : (
                     <Loading />
                 )
@@ -967,6 +1014,7 @@ const BtnDiv = styled.div`
     display: flow;
     align-items: center;
     justify-content: center;
+    position: absolute;
 
     &:hover {
         background: #a274d5;
@@ -977,7 +1025,28 @@ const BtnDiv = styled.div`
     //${(props) => (props.color == 'waiting' ? `background-color: #FFFFFF; color: #B7A8FB; border: 3px solid #B7A8FB;` : ``)}
     //${(props) => (props.color == 'ready' ? `background-color: #FFFFFF; color: #B7A8FB; border: 3px solid #B7A8FB;` : ``)}
     ${(props) => (props.isStart == 'yes' ? `` : props.isStart == 'no' ? `&:hover { cursor: not-allowed;}opacity: 0.5;` : ``)}
-`;
+
+    &:hover .textDiv {
+        background-color:  ${style.white};
+        color: ${style.black};
+        border: 2px solid #000;
+        border-radius: 10px;        
+        display: inline;
+    }
+
+    .textDiv{
+        z-index: 1;
+        overflow: hidden;
+        position: absolute;  
+        top: -35px;
+        left: -60px;
+        width: 320px;
+        display: none;
+        padding: 5px;
+        font-size: 15px;
+    }
+
+    `;
 
 const TitleDiv = styled.div`
     width: 625px;

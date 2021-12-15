@@ -18,18 +18,9 @@ import axios from 'axios';
 //깊은 복제
 import * as _ from 'lodash';
 
-//import RefreshVerification from '../server/RefreshVerification.js';
-//RefreshVerification.verification();
+import RefreshVerification from '../server/RefreshVerification.js';
 
 import Loading from '../components/Loading';
-// local storage에 있는지 확인
-let data = localStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
-
-console.log('내 인덱스 : ' + save_user_idx);
 
 let userList = [{}];
 
@@ -66,7 +57,15 @@ const PlayingRoom = (props) => {
 
     const BaseURL = 'http://3.17.55.178:3002/';
 
-
+    let u = RefreshVerification.verification()
+    console.log('리플시? ' + u);
+    let data, save_token, save_user_idx;
+    if(u === true){
+        data = localStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+        save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+    }
+    
     const startSetAPI = async (str) => {
         const restURL = BaseURL + 'game/set';
 

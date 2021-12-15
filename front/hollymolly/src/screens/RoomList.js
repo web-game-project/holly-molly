@@ -22,7 +22,7 @@ import Loading from '../components/Loading';
 
 let total_room_cnt = 0; // 룸 리스트 총 방의 갯수
 
-RefreshVerification.verification();
+//RefreshVerification.verification();
 
 const RoomList = (props) => {
     
@@ -48,8 +48,13 @@ const RoomList = (props) => {
 
     const resultArray = result.sort();
 
-    let data = localStorage.getItem('token');
-    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    let u = RefreshVerification.verification()
+    console.log('리플시? ' + u);
+    let data, save_token;
+    if(u === true){
+        data = localStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    }
 
     useEffect(() => {
         props.socket.on('connect', () => {
@@ -298,8 +303,7 @@ const RoomList = (props) => {
     return (
         <React.Fragment>
             <Background>
-                {props.socket? (            
-                    RefreshVerification.verification(),                    
+                {props.socket? (                
                     <div>
                         <Header goMain tutorial />
                         <Container>
