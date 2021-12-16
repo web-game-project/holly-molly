@@ -112,6 +112,8 @@ const PlayingVote = (props) => {
         props.socket.on('vote', (data) => {
             console.log('socket 투표 결과 ' + JSON.stringify(data.vote_rank)); // success 메시지
             voteTotalList.current = data.vote_rank;
+
+            //data.vote_rank의 length가 0이면 투표결과가 없다!
         });
 
         // 인간 답안 제출 완료 

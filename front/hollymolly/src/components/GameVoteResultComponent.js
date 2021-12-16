@@ -132,6 +132,11 @@ const GameVoteResult = (props) => {
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                             <Title cnt={arrSize}>투표 결과</Title>,
                             <text style={{ color: style.white, fontSize: '20px', fontFamily: 'Gowun Dodum', fontWeight: 'bold'}}>{seconds}초 후 넘어갑니다.</text>
+                           {
+                                voteTotalList.current.length === 0 ?
+                                <text style={{color: style.white, fontFamily: "Black Han Sans", fontSize: "35px", marginTop: "150px"}}> 아무도 투표를 하지 않았습니다.</text>
+                                :
+                                <div>
                             <ResultTable cnt={arrSize}>
                                 {voteTotalList.current && voteTotalList.current.map((element, key) =>
                                     <ColumnContainer>
@@ -163,6 +168,7 @@ const GameVoteResult = (props) => {
                                 <TotalTitle>
                                     전체 결과 <text style={{ fontFamily: 'Hahmlet', fontSize: '18px', color: style.red }}> * 전체 결과는 몰리에게만 공개됩니다.</text>
                                 </TotalTitle>
+                                
                                 <div style={{ display: 'flex', flexDirection: 'row', marginLeft: '60px' }}>
                                     {
                                         arrSize <= 4 ?
@@ -178,6 +184,8 @@ const GameVoteResult = (props) => {
                                     }
                                 </div>
                             </TotalResultCard>
+                            </div>
+                           }
                         </div>
                         : //ghost 일 때
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
