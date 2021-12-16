@@ -28,6 +28,8 @@ module.exports = async (req, res, next) => {
             await updateWaitingRoomLeader(newLeaderIdx, roomIdx);
             let leader_data = { user_idx: newLeaderIdx };
             io.to(roomIdx).emit('change host', leader_data);
+            let ready_data = { user_idx: newLeaderIdx, user_ready: false };
+            io.to(room_idx).emit('change member ready', ready_data);
         }
 
         let memberCount = await getMemberCount(roomIdx);
@@ -69,6 +71,7 @@ const updateWaitingRoomLeader = async (newLeaderIdx, roomIdx) => {
     await WaitingRoomMember.update(
         {
             wrm_leader: 1,
+            wrm_user_ready: 0
         },
         {
             where: {
