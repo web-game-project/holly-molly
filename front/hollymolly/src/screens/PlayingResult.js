@@ -178,9 +178,10 @@ const PlayingResult = (props) => {
             .delete(restURL, reqHeaders)
             .then(function (response) {
                 console.log(response);
-                history.push({
+                /* history.push({
                     pathname: '/inputname', // 성공하면 닉네임 설정 창으로 이동 
-                });
+                }); */
+                window.location.replace('/');
             })
             .catch(function (error) {
                 alert(error);
@@ -188,17 +189,17 @@ const PlayingResult = (props) => {
     };
 
     // 게임 중 비정상 종료 감지
-    useEffect(() => {
-        window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
-        window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
+    //useEffect(() => {
+        //window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
+        //window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
        /*  return () => {
           window.removeEventListener('beforeunload', alertUser)
           window.removeEventListener('unload', handleEndConcert)
         } */
-    }, [])
+    //}, [])
 
     // 경고창 
-    const alertUser = (e) => {
+    /* const alertUser = (e) => {
         e.preventDefault(); // 페이지가 리프레쉬 되는 고유의 브라우저 동작 막기
         e.returnValue = "";
 
@@ -208,7 +209,24 @@ const PlayingResult = (props) => {
     // 종료시 실행 
     const handleEndConcert = async () => {
         exit();
-    }
+    } */
+
+    useEffect(()=> {
+        const unblock = history.block((loc, action) => {
+            if (action === 'POP') {
+                if(window.confirm('게임방에서 나가게됩니다. 뒤로 가시겠습니까?')){
+                    exit();
+                    return true
+                }else{
+                    return false
+                }
+            }
+            return true
+        })
+
+        return () => unblock()
+        
+    },[]) 
 
     return (
         <React.Fragment>
