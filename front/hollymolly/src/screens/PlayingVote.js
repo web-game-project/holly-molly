@@ -30,16 +30,16 @@ const PlayingVote = (props) => {
     const history = useHistory();
 
     // 투표 10초 타이머 세기, 투표 10초 후에 1초 더 여유롭게.
-    const [seconds, setSeconds] = useState(-2);
+    const [seconds, setSeconds] = useState(11);
 
     //투표 전 로딩페이지 구현을 위한 타이머
-    const [secondsLoading, setSecondsLoading] = useState(10);
+    //const [secondsLoading, setSecondsLoading] = useState(10);
 
     //유저가 미션수행은 햇는가?
     const [isHumanSubmit, setIsHumanSubmit] = useState(false);
 
     //이전페이지를 알 수 있는 방법
-    const movePage = useRef(location.state.move);
+    //const movePage = useRef(location.state.move);
 
     let gameSetIdx = location.state.gameSetIdx; //그림판에서 넘어온 게임 세트 인덱스
     let gameSetNo = location.state.gameSetNo;
@@ -69,7 +69,7 @@ const PlayingVote = (props) => {
     }
 
     //투표하기 전에 고민의 10초 세기
-    useEffect(() => {
+    /* useEffect(() => {
         if (movePage.current !== undefined) {
             const countdown = setInterval(() => {
                 if (parseInt(secondsLoading) > 0) {
@@ -86,7 +86,7 @@ const PlayingVote = (props) => {
             };
 
         }
-    }, [secondsLoading]);
+    }, [secondsLoading]); */
 
     //투표 시간 10초 세기
     useEffect(() => {
@@ -177,16 +177,18 @@ const PlayingVote = (props) => {
     useEffect(() => {
         window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
         window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
-        return () => {
+        /* return () => {
             window.removeEventListener('beforeunload', alertUser)
             window.removeEventListener('unload', handleEndConcert)
-        }
+        } */
     }, [])
 
     // 경고창 
     const alertUser = (e) => {
         e.preventDefault(); // 페이지가 리프레쉬 되는 고유의 브라우저 동작 막기
         e.returnValue = "";
+
+        exit();
     };
 
     // 종료시 실행 
@@ -197,8 +199,8 @@ const PlayingVote = (props) => {
     return (
         <React.Fragment>
             <Background>
-                {movePage.current !== undefined && secondsLoading > 0 ?
-                    <PlayingLoading txt="투표 하기 전, 고민할 시간 10초 드리겠습니다." /> :
+                {/* {movePage.current !== undefined && secondsLoading > 0 ?
+                    <PlayingLoading txt="투표 하기 전, 고민할 시간 10초 드리겠습니다." /> : */}
                     <div>
                         <Header />
                         <Container>
@@ -232,7 +234,7 @@ const PlayingVote = (props) => {
                             </BackGroundDiv>
                         </Container>
                     </div>
-                }
+                {/* } */}
             </Background>
         </React.Fragment>
     );
