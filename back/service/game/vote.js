@@ -138,7 +138,8 @@ const finishVote = async (gameIdx, gameSetIdx, io) => {
         addGhostScore(gameSetIdx);
     }
     
-    io.to(game.get('room_room_idx')).emit('vote', { vote_rank: topVoteRankList });
+    io.to(game.get('room_room_idx')).emit('end of vote', { end_of_vote: true });
+    //io.to(game.get('room_room_idx')).emit('vote', { vote_rank: topVoteRankList });
 };
 const addGhostScore = async (gameSetIdx) => {
     const gameSet = await GameSet.findOne({
