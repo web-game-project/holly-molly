@@ -287,16 +287,18 @@ const PlayingRoom = (props) => {
     useEffect(() => {
         window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
         window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
-        return () => {
+        /* return () => {
             window.removeEventListener('beforeunload', alertUser)
             window.removeEventListener('unload', handleEndConcert)
-        }
+        } */
     }, [])
 
     // 경고창 
     const alertUser = (e) => {
         e.preventDefault(); // 페이지가 리프레쉬 되는 고유의 브라우저 동작 막기
         e.returnValue = "";
+
+        exit();
     };
 
     // 종료시 실행 

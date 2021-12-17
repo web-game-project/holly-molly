@@ -15,7 +15,6 @@ import { useHistory, useLocation } from 'react-router';
 
 let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
@@ -27,6 +26,7 @@ const GameDrawing = (props) => {
     const [possible, setPossible] = useState(true);
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머
     const [waitSeconds, setWaitSeconds] = useState(-1); // 순서 받기 타이머, 그림 다 그린 후 타이머 실행되야 하므로 일단 -1 으로 초기화
+    const [secondsLoading, setSecondsLoading] = useState(-1); //투표 전 로딩 구현을 위한 타이머
     const [readyNextOrder, setReadyNextOrder] = useState(false); // 다음 순서 준비 완료 소켓 값을 관리하는 상태 값
     const [reDraw, setReDraw] = useState(false); // 다시 그리기 위해 canvas 관리하는 상태 값
 
@@ -174,11 +174,8 @@ const GameDrawing = (props) => {
                     console.log('모든 순서 끝!');
                     //세트 이미지 저장 api 요청
                     saveCanvas();
-                     //투표로 이동, 데이터 전달
-                     history.push({
-                        pathname: '/playingvote/' + room_idx,
-                        state: {gameSetNo : gameSetNo, gameIdx : gameIdx, leaderIdx: leaderIdx , move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
-                     });
+                    //투표 로딩 타이머 시작 
+                    setSecondsLoading(10);
                 } else {
                     // 다음 순서 받을 준비 완료
                     socket.emit('send next turn', {
@@ -232,6 +229,26 @@ const GameDrawing = (props) => {
             clearInterval(waitcountdown);
         };
     }, [waitSeconds]);
+
+    //투표하기 전에 고민의 10초 세기
+    useEffect(() => {
+            const countdown = setInterval(() => {
+                if (parseInt(secondsLoading) > 0) {
+                    setSecondsLoading(parseInt(secondsLoading) - 1);
+                }
+                if (parseInt(secondsLoading) === 0) {
+                    history.push({
+                        pathname: '/playingvote/' + room_idx,
+                        state: {gameSetNo : gameSetNo, gameIdx : gameIdx, leaderIdx: leaderIdx , move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
+                    });
+                    setSecondsLoading(-1);
+                }
+            }, 1000);
+
+            return () => {
+                clearInterval(countdown);
+            };
+    }, [secondsLoading]);
 
     const onClick = () => {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // 그림 초기화
@@ -335,9 +352,9 @@ const GameDrawing = (props) => {
     return (
         <div>
             <div>{toast()}</div> 
+            {secondsLoading !== -1? <TimerToast>📢 투표 {secondsLoading}초 전</TimerToast> : null}
             <Container>      
                 {/* {seconds === 10 ? sendOrder() : null}  */}
-
                 <DrawingContainer color={border_user_color} cursor={cursor_status}>
                     <canvas id = "draw" ref={canvasRef} width="610" height={'600'}></canvas>
                 </DrawingContainer>
@@ -391,7 +408,22 @@ const Toast = styled.div`
     align-items: center; 
     justify-content: flex-start;
     padding: 10px;
-    color: gray;
+    color: black;
+`;
+
+const TimerToast = styled.div`
+    background-color: #ffffff;
+    width: 110px;
+    height: 30px;
+    display: flex;
+    border-radius: 10px;
+    position: absolute;
+    margin-left: 280px;
+    margin-top: -175px;
+    align-items: center; 
+    justify-content: center;
+    padding: 10px;
+    color: black;
 `;
 
 const DrawingContainer = styled.div`

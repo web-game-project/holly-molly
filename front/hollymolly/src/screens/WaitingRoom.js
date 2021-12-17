@@ -37,6 +37,9 @@ export default function WaitingRoom(props) {
     let room_index = parseInt(props.match.params.name); // url에 입력해준 방 인덱스
     console.log('방 번호는 ?' + room_index);
 
+    // 뒤로가기 감지 
+    const [isBlocking, setIsBlocking] = useState(false);
+
     //유저 리스트
     //const [userList, setUserList] = useState();
 
@@ -487,7 +490,7 @@ export default function WaitingRoom(props) {
                 setGameStart(true);
             })
             .catch(function (error) {
-                alert(error.message);
+                alert(error.response.data.message);
             });
     }
 
@@ -598,6 +601,23 @@ export default function WaitingRoom(props) {
             exitRoom(); //대기실 나가기 조회 api
         }
     };
+
+    // 뒤로 가기 감지 시 대기방 나가기 처리 
+    useEffect(()=> {
+        const unblock = history.block((loc, action) => {
+            if (action === 'POP') {
+                exitWaitingRoom();
+                //return window.confirm('뒤로 가시겠습니까?')
+            }
+            //return true
+        })
+
+        return () => unblock()
+    },[])
+
+  /*   useEffect(()=>{
+        info && setIsBlocking(true)
+    }, [info]) */
 
     /* useEffect(() => {
         // setRoomEnterInfo(location.state.data);

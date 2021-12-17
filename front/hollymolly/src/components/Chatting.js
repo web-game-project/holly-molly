@@ -61,7 +61,8 @@ const Chatting = (props) => {
 
     // 입력값을 저장하는 상태값
     const handleInput = (e) => {
-        setInputMessage(e.target.value);
+        let textValue = e.target.value.replace(/^\s*/, "");
+        setInputMessage(textValue);
     };
 
     // 엔터 시, 입력값을 서버로 보내는 함수
