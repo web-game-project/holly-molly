@@ -352,7 +352,7 @@ const GameDrawing = (props) => {
     return (
         <div>
             <div>{toast()}</div> 
-            {secondsLoading !== -1? <TimerToast>📢 투표 {secondsLoading}초 전</TimerToast> : null}
+            {secondsLoading !== -1? <TimerToast>📢 투표 {secondsLoading} 초 전</TimerToast> : null}
             <Container>      
                 {/* {seconds === 10 ? sendOrder() : null}  */}
                 <DrawingContainer color={border_user_color} cursor={cursor_status}>
@@ -404,26 +404,28 @@ const Toast = styled.div`
     border-radius: 10px;
     position: absolute;
     margin-left: 220px;
-    margin-top: -175px;
+    margin-top: -85px;
     align-items: center; 
     justify-content: flex-start;
     padding: 10px;
     color: black;
+    box-shadow: 5px 5px 15px #808080;
 `;
 
 const TimerToast = styled.div`
     background-color: #ffffff;
-    width: 110px;
+    width: 120px;
     height: 30px;
     display: flex;
     border-radius: 10px;
     position: absolute;
     margin-left: 280px;
-    margin-top: -175px;
+    margin-top: -85px;
     align-items: center; 
     justify-content: center;
     padding: 10px;
     color: black;
+    box-shadow: 5px 5px 15px #808080;
 `;
 
 const DrawingContainer = styled.div`
