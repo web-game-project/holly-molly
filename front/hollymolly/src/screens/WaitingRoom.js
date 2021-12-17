@@ -490,7 +490,7 @@ export default function WaitingRoom(props) {
                 setGameStart(true);
             })
             .catch(function (error) {
-                alert(error.message);
+                alert(error.response.data.message);
             });
     }
 
