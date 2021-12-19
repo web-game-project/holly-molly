@@ -25,12 +25,12 @@ module.exports = async (req, res, next) => {
         result.human_color = human_info[0].wrm_user_color;
         result.human_name = human_info[0].user_name;
         io.to(room_idx).emit('get final result', result);
-        console.log(room_idx);
 
         // finishGame
         const gameMembers = await getGameMemberIndex(gameIdx);
         await deleteAllAboutGame(gameMembers, gameIdx);
         await updateRoomStatus(room_idx, 'waiting');
+        await updateMemberReady(room_idx);
 
         // socket : change game status
         io.to(0).emit('change game status', {
@@ -163,6 +163,15 @@ const updateRoomStatus = async (roomIdx, status) => {
         }
     );
 };
+
+const updateMemberReady = async (room_idx) => {
+    await WaitingRoomMember.update(
+        {
+            wrm_user_ready: 0,
+        },
+        { where: { room_room_idx: room_idx } }
+    );
+}
 
 module.exports.getGame = getGame;
 module.exports.selectFinalResult = selectFinalResult;
