@@ -6,14 +6,15 @@ import { useHistory } from 'react-router';
 
 import Missions from '../../assets/hollyMission.png';
 
-export default function TutorialMollyMissionComponent({}) {
+export default function TutorialHollyMissionComponent(props) {
     const isLogin = useSelector((state) => state.socket.is_login);
 
     const history = useHistory();
     
     function onMove(){
         history.push({
-            pathname: '/HolltvoteresultTutorial', 
+            pathname: '/HollyvoteresultTutorial', 
+            state: { role: props.role },
         });
     } 
 

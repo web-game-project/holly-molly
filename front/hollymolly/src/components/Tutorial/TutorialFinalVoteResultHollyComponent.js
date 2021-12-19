@@ -4,29 +4,33 @@ import style from '../../styles/styles';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
-import Missions from '../../assets/mission.png';
+import FinalResult from '../../assets/hollyFinalResult.png';
 
-export default function TutorialMollyMissionComponent(props) {
+export default function TutorialFinalVoteResultHollyComponent({}) {
     const isLogin = useSelector((state) => state.socket.is_login);
 
     const history = useHistory();
-    
+        
     function onMove(){
         history.push({
-            pathname: '/MolltvoteresultTutorial', 
-            state: { role: props.role },
+            pathname: '/', 
         });
     } 
 
     return (
         <Container>
 
-            <NextBtn onClick={onMove}>Next Page ☞</NextBtn>
+            <NextBtn onClick={onMove}>Start Game ☞</NextBtn>
 
-            <Txt>
-              <div className= "textDiv">시간은 10초입니다. <br></br>홀리들의 그림을 보고 추측한 키워드를 적어주세요.</div>
+            <Result>
+              <div className= "textDiv">최종적으로 누가 이겼는지 보여줍니다.</div>
             1
-            </Txt>
+            </Result>
+
+            <ResultContent>
+              <div className= "textDiv">3세트의 득점 결과를 보여줍니다.</div>
+            2
+            </ResultContent>
 
             <Description>원하는 설명 번호 위에 마우스 올려보세요!</Description>
         </Container>
@@ -38,7 +42,7 @@ const Description = styled.div`
     height: 50px;
     position: absolute;
     margin-left: -65px;
-    margin-top: 540px; 
+    margin-top: -580px; 
     font-size: 30px;   
     padding: 5px;
     color: ${style.white};
@@ -64,11 +68,12 @@ const NextBtn = styled.div`
         color: ${style.white};
         border: 2px solid #000;
         border-radius: 20px;    
-        cursor: grab; 
+        cursor: grab;
     }
 
 `;
-const Txt = styled.div`
+
+const Result = styled.div`
     width: 20px;
     height: 20px;
     border-radius: 50px;
@@ -78,8 +83,8 @@ const Txt = styled.div`
     background-color: ${style.white};
     font-weight: bolder;
     position: absolute;
-    margin-left: -400px;
-    margin-top: -105px;
+    margin-left: -350px;
+    margin-top: -485px;
 
     &:hover .textDiv {
         background-color:  ${style.white};
@@ -93,16 +98,49 @@ const Txt = styled.div`
         z-index: 1;
         overflow: hidden;
         position: absolute;  
-        top: 30px;
-        left: 25px;
-        width: 320px;
+        top: 25px;
+        left: -275px;
+        width: 280px;
+        display: none;
+        padding: 5px;
+    }
+`;  
+
+const ResultContent = styled.div`
+    width: 20px;
+    height: 20px;
+    border-radius: 50px;
+    text-align: center;
+    padding: 10px;
+    color: ${style.red};
+    background-color: ${style.white};
+    font-weight: bolder;
+    position: absolute;
+    margin-left: -380px;
+    margin-top: 105px;
+
+    &:hover .textDiv {
+        background-color:  ${style.white};
+        color: ${style.black};
+        border: 2px solid #000;
+        border-radius: 10px;        
+        display: inline;
+    }
+
+    .textDiv{
+        z-index: 1;
+        overflow: hidden;
+        position: absolute;  
+        top: 23px;
+        left: -240px;
+        width: 240px;
         display: none;
         padding: 5px;
     }
 `;  
 
 const Container = styled.div`
-    background-image: url(${Missions});
+    background-image: url(${FinalResult});
     width: 1020px;
     height: 620px;
     flex-direction: column;

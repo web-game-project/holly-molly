@@ -3,12 +3,16 @@ import styled from 'styled-components';
 import Header from '../../components/Header';
 import TutorialMollyVoteResultComponent from '../../components/Tutorial/TutorialMollyVoteResultComponent';
 
+import {useLocation } from 'react-router';
+
 function TutorialMollyVoteResult() {
+    let location = useLocation();
+    const [role, setRole] = useState(location.state.role);
     return (
         <Background>
             <Header goMain />
             <Container>
-                <TutorialMollyVoteResultComponent />
+                <TutorialMollyVoteResultComponent role={role}/>
             </Container>
         </Background>
     );

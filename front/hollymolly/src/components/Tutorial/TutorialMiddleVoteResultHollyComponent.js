@@ -4,34 +4,51 @@ import style from '../../styles/styles';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
-import VoteResult from '../../assets/hollyVoteResult.png';
+import MiddleResult from '../../assets/hollyMiddleResult.png';
 
-export default function TutorialHollyVoteResultComponent(props) {
+export default function TutorialMollyMiddleVoteResultComponent(props) {
     const isLogin = useSelector((state) => state.socket.is_login);
 
     const history = useHistory();
-    
+        
     function onMove(){
         history.push({
-            pathname: '/middleresultTutorial', 
+            pathname: '/finalresultTutorial', 
             state: { role: props.role },
         });
     } 
 
+    const title = "게임은 총 3 세트로 이루어져 있습니다.\n두번째 세트가 끝나면 현재 누가 이기고 있는지 보여줍니다. \n3세트 모두 점수가 다르기 때문에, 지고 있다고 걱정하지 마세요! \n역전의 기회를 노려봅시다.";
+    const content = "어느 팀이 이기고 있는지 보여줍니다.\n점수 기준은 다음과 같습니다.\n[1 라운드]\n인간이 키워드 맞힘 +1점\n유령이 인간을 상위권 후보에 오르게 함 +1점 \n[2 라운드]\n인간이 키워드 맞힘 +2점 \n유령이 인간을 상위권 후보에 오르게 함 +2점 \n[3 라운드]\n인간이 키워드 맞힘 +3점 \n유령이 인간을 상위권 후보에 오르게 함 + 3점";
+    
     return (
         <Container>
 
             <NextBtn onClick={onMove}>Next Page ☞</NextBtn>
 
-            <ResultTxt>
-              <div className= "textDiv"> 표를 가장 많이 받은 2명 (동점자가 있는 경우 포함)을 알려줍니다.</div>
+            <Title>
+              <div className= "textDiv">
+              {title.split("\n").map((i, key) => {
+                        if(key === 1)
+                            return <p key={key}>{i}<br></br> </p>;
+                        else
+                            return <p key={key}>{i}</p>;
+                    })}
+                </div>
             1
-            </ResultTxt>
-           
-            <ResultTotalTxt>
-              <div className= "textDiv"> 홀리는 투표 결과 전체를 확인할 수 없습니다.</div>
+            </Title>
+
+            <Content>
+            <div className= "textDiv">
+              {content.split("\n").map((i, key) => {
+                        if(key === 2 || key === 5 || key === 8)
+                            return <p key={key}><br></br>{i}</p>;
+                        else
+                            return <p key={key}>{i}</p>;
+                    })}
+                </div>
             2
-            </ResultTotalTxt>
+            </Content>
 
             <Description>원하는 설명 번호 위에 마우스 올려보세요!</Description>
         </Container>
@@ -42,8 +59,8 @@ const Description = styled.div`
     width: 500x;
     height: 50px;
     position: absolute;
-    margin-left: -450px;
-    margin-top: 540px; 
+    margin-left: -65px;
+    margin-top: -550px; 
     font-size: 30px;   
     padding: 5px;
     color: ${style.white};
@@ -68,12 +85,13 @@ const NextBtn = styled.div`
         background-color: #462456;;
         color: ${style.white};
         border: 2px solid #000;
-        border-radius: 20px;  
-        cursor: grab;           
+        border-radius: 20px; 
+        cursor: grab;    
     }
 
 `;
-const ResultTxt = styled.div`
+
+const Title = styled.div`
     width: 20px;
     height: 20px;
     border-radius: 50px;
@@ -83,8 +101,8 @@ const ResultTxt = styled.div`
     background-color: ${style.white};
     font-weight: bolder;
     position: absolute;
-    margin-left: -280px;
-    margin-top: -480px;
+    margin-left: -370px;
+    margin-top: -450px;
 
     &:hover .textDiv {
         background-color:  ${style.white};
@@ -98,15 +116,20 @@ const ResultTxt = styled.div`
         z-index: 1;
         overflow: hidden;
         position: absolute;  
-        top: -20px;
+        top: -85px;
         left: 25px;
-        width: 420px;
+        width: 390px;
         display: none;
         padding: 5px;
+    }
+
+    p{
+        margin: 0px;
+        text-align: left;
     }
 `;  
 
-const ResultTotalTxt = styled.div`
+const Content = styled.div`
     width: 20px;
     height: 20px;
     border-radius: 50px;
@@ -116,8 +139,8 @@ const ResultTotalTxt = styled.div`
     background-color: ${style.white};
     font-weight: bolder;
     position: absolute;
-    margin-left: -690px;
-    margin-top: 245px;
+    margin-left: -410px;
+    margin-top: 430px;
 
     &:hover .textDiv {
         background-color:  ${style.white};
@@ -131,16 +154,21 @@ const ResultTotalTxt = styled.div`
         z-index: 1;
         overflow: hidden;
         position: absolute;  
-        top: -20px;
-        left: 25px;
-        width: 320px;
+        top: -300px;
+        left: -295px;
+        width: 300px;
         display: none;
         padding: 5px;
+    }
+
+    p{
+        margin: 0px;
+        text-align: left;
     }
 `;  
 
 const Container = styled.div`
-    background-image: url(${VoteResult});
+    background-image: url(${MiddleResult});
     width: 1020px;
     height: 620px;
     flex-direction: column;

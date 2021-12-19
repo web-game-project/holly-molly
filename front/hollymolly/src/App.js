@@ -74,7 +74,7 @@ export default function App() {
                     <Route path="/middleresultTutorial" component={TutorialMiddleVoteResult}></Route>
                     <Route path="/finalresultTutorial" component={TutorialFinalVoteResult}></Route>
                     {/* <Route path="/openmollyTutorial" component={}></Route> */}
-                    <Route path="/HolltvoteresultTutorial" component={TutorialHollyVoteResult}></Route> 
+                    <Route path="/HollyvoteresultTutorial" component={TutorialHollyVoteResult}></Route> 
 
                     <Route path="/nickname" component={ModalNickName}></Route>
                     <Route exact path="/" component={GameStart} />
