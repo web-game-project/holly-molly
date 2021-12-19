@@ -52,7 +52,7 @@ const PlayingVote = (props) => {
     let keyword = location.state.keyword; //그림판에서 넘어온 키워드
     let leader = location.state.leaderIdx;
 
-    let voteTotalList = useRef([]);
+   // let voteTotalList = useRef([]);
 
     // local storage에 있는지 확인
     /* let data = localStorage.getItem('token');
@@ -109,12 +109,12 @@ const PlayingVote = (props) => {
             console.log('playing vote');
         });
 
-        props.socket.on('vote', (data) => {
+        /* props.socket.on('vote', (data) => {
             console.log('socket 투표 결과 ' + JSON.stringify(data.vote_rank)); // success 메시지
             voteTotalList.current = data.vote_rank;
 
             //data.vote_rank의 length가 0이면 투표결과가 없다!
-        });
+        }); */
 
         // 인간 답안 제출 완료 
         props.socket.on('submit human answer', (data) => {
@@ -244,7 +244,7 @@ const PlayingVote = (props) => {
                                 {
                                     (seconds !== -1) ? (<GameVoteComponent leaderIdx={leader} userList={userList} gameSet={gameSetIdx} />) :
                                         (!isHumanSubmit ? <GameMissionPerformance leaderIdx={leader} gameSet={gameSetIdx} role={role} /> :
-                                            voteTotalList.current && <GameVoteResult leaderIdx={leader} gameSetNo={gameSetNo} gameIdx={gameIdx} voteTotalList={voteTotalList.current} userList={userList} gameSet={gameSetIdx} roomIdx={roomIdx} keyword={keyword} role={role} cnt={userList.length} />)
+                                           <GameVoteResult leaderIdx={leader} gameSetNo={gameSetNo} gameIdx={gameIdx} userList={userList} gameSet={gameSetIdx} roomIdx={roomIdx} keyword={keyword} role={role} cnt={userList.length} />)
                                 }
                                 
                                 <ChatDiv>

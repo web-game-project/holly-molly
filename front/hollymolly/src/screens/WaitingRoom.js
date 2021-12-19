@@ -222,7 +222,8 @@ export default function WaitingRoom(props) {
             });
 
             setColorList(colorList);  
-            getWaiting();
+            if(data.user_idx !== save_user_idx)
+                getWaiting();
 
             /* const exitUserIdx = data.user_idx;
 
