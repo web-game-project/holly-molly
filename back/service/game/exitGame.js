@@ -1,6 +1,6 @@
 const { Room, Game, GameSet, GameMember, GameVote, WaitingRoomMember, User } = require('../../models');
 const {printErrorLog} = require('../../util/log');
-const {selectFinalResult,makeTotalScoreData,selectHuman} = require('./getFinalResult');
+const {selectFinalResult,makeTotalScoreData,selectHuman, deleteAllAboutGame, updateRoomStatus} = require('./getFinalResult');
 
 const exitGame = async (req, res, next) => {
     try {
@@ -138,53 +138,12 @@ const deleteRoomAndMember = async (wrmIdx, roomIdx) => {
         },
     });
 };
-const deleteAllAboutGame = async (members, gameIdx) => {
-    let gameMemberIdx = [];
-    for (const member of members) {
-        try {
-            gameMemberIdx.push(member.get('GameMembers')[0].get('game_member_idx'));
-        } catch (error) {
-            gameMemberIdx.push(member.get('game_member_idx'));   
-        }
-    }
-
-    await GameVote.destroy({
-        where: {
-            game_member_game_member_idx: gameMemberIdx,
-        },
-    });
-    await GameMember.destroy({
-        where: {
-            game_member_idx: gameMemberIdx,
-        },
-    });
-    await GameSet.destroy({
-        where: {
-            game_game_idx: gameIdx,
-        },
-    });
-    await Game.destroy({
-        where: {
-            game_idx: gameIdx,
-        },
-    });
-};
 const deleteUser = async (userIdx) => {
     await User.destroy({
         where: {
             user_idx: userIdx,
         },
     });
-};
-const updateRoomStatus = async (roomIdx, status) => {
-    await Room.update(
-        { room_status: status },
-        {
-            where: {
-                room_idx: roomIdx,
-            },
-        }
-    );
 };
 const changeHost = async (memberList, userIdx) => {
     const hostIdx =
@@ -227,8 +186,6 @@ const deleteRoomMember = async (wrmIdx) => {
 module.exports = {
     exitGame,
     exitGameAndRoom,
-    deleteAllAboutGame,
-    updateRoomStatus,
     deleteGameVote,
     deleteGameMember,
     deleteRoomMember,
