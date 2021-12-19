@@ -331,23 +331,30 @@ const GameDrawing = (props) => {
      // 지정 색 코드로 바꿔주기 
      let border_user_color = currentItem.user_color && currentItem.user_color; 
     
-     if(border_user_color === 'RED'){
-        border_user_color = '#FF0000';
-     }else if(border_user_color === 'ORANGE'){
-        border_user_color = '#FF5C00'
-     }else if(border_user_color === 'YELLOW'){
-        border_user_color = '#FFB800'
-     }else if(border_user_color === 'GREEN'){
-        border_user_color = '#95DB3B'
-     }else if(border_user_color === 'BLUE'){
-        border_user_color = '#3B8EDB'
-     }else if(border_user_color === 'PINK'){
-        border_user_color = '#CE3BDB'
-     }else if(border_user_color === 'WHITE'){
-        border_user_color = '#FFFFFF'
-     }else{
-        border_user_color = '#823BDB'
+     if(drawingTime.current === true){
+        if(border_user_color === 'RED'){
+            border_user_color = '#FF0000';
+        }else if(border_user_color === 'ORANGE'){
+            border_user_color = '#FF5C00'
+        }else if(border_user_color === 'YELLOW'){
+            border_user_color = '#FFB800'
+        }else if(border_user_color === 'GREEN'){
+            border_user_color = '#95DB3B'
+        }else if(border_user_color === 'BLUE'){
+            border_user_color = '#3B8EDB'
+        }else if(border_user_color === 'PINK'){
+            border_user_color = '#CE3BDB'
+        }else if(border_user_color === 'WHITE'){
+            border_user_color = '#FFFFFF'
+        }else{
+            border_user_color = '#823BDB'
+        }
      }
+     else{
+        border_user_color = 'transparent'
+     }
+
+     
 
     return (
         <div>
