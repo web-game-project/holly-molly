@@ -8,6 +8,7 @@ const vote = require('./vote');
 const { getVoteResult } = require('./getVoteResult');
 const saveSetImage = require('./saveSetImage');
 const writeHumanKeyword = require('./writeHumanKeyword');
+const {getTopVoteResult} = require('./getTopVoteResult');
 
 module.exports = {
     getInterimResult,
@@ -18,6 +19,7 @@ module.exports = {
     startSet,
     vote,
     getVoteResult,
+    getTopVoteResult,
     writeHumanKeyword,
     saveSetImage
 };

@@ -11,6 +11,7 @@ const {
     startSet,
     vote,
     getVoteResult,
+    getTopVoteResult,
     writeHumanKeyword,
     saveSetImage
 } = require('../service').gameService;
@@ -24,6 +25,7 @@ router.delete('/exit', exitGame);
 router.post('/set', gameMiddleware, startSet);
 router.post('/vote', gameMiddleware,vote);
 router.get('/vote-result/:gameSetIdx', gameMiddleware, getVoteResult);
+router.get('/top-vote-result/:gameSetIdx', gameMiddleware, getTopVoteResult);
 router.patch('/human-keyword', gameMiddleware, writeHumanKeyword);
 router.patch('/set/image/:gameSetIdx', gameMiddleware, upload.single("set_image"), saveSetImage);
 
