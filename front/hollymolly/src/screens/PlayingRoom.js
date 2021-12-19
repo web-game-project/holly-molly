@@ -187,7 +187,6 @@ const PlayingRoom = (props) => {
         //세트 시작 소켓
         props.socket.on('start set', (data) => {
             // alert('세트 소켓 ' + JSON.stringify(data.before_game_set_human_answer));
-
             userList = data.user_list;
             gameSetIdx.current = data.current_game_set_idx;
 
@@ -222,7 +221,7 @@ const PlayingRoom = (props) => {
         else if (isSet === false) //웨이팅룸에서 넘어왔을 때는 멤버 정보 조회만.
             getGameMember();
 
-    });
+    }, []);
 
     for (let i = 0; i < userList.length; i++) {
         if (userList[i].user_idx === save_user_idx) {
