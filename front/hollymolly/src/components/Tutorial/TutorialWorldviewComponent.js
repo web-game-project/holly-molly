@@ -14,7 +14,12 @@ import { useHistory } from 'react-router';
 import Human from '../../assets/human.svg';
 import PurpleCharacter from '../../assets/purple.svg';
 
+
+
 export default function TutorialWorldviewComponent({}) {
+    let data = localStorage.getItem('token');
+    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+
     const isLogin = useSelector((state) => state.socket.is_login);
 
     const history = useHistory();
@@ -82,7 +87,7 @@ export default function TutorialWorldviewComponent({}) {
                     <br />
                 </Div>
             </GhostDiv>
-            {isLogin ? <GameStart src={Start_button} onClick={goRoomList} /> : <Modal tutorial />}
+            {isLogin ? (save_token === null ? <Modal tutorial /> : <GameStart src={Start_button} onClick={goRoomList} />) : <Modal tutorial />}
         </Container>
     );
 }
