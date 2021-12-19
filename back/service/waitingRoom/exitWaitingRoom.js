@@ -29,10 +29,10 @@ module.exports = async (req, res, next) => {
             let leader_data = { user_idx: newLeaderIdx };
             io.to(roomIdx).emit('change host', leader_data);
             let ready_data = { user_idx: newLeaderIdx, user_ready: false };
-            io.to(room_idx).emit('change member ready', ready_data);
+            io.to(roomIdx).emit('change member ready', ready_data);
         }
 
-        let memberCount = await getMemberCount(roomIdx);
+        let memberCount = await getMemberCount(roomIdx);s
         let member_data = { room_idx: roomIdx, room_member_count: memberCount };
         io.to(roomIdx).emit('change member count', member_data);
         io.to(0).emit('change member count', member_data);
