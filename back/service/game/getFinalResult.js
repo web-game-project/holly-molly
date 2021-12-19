@@ -1,5 +1,4 @@
-const { GameSet, GameMember, Game, sequelize } = require('../../models');
-const { deleteAllAboutGame, updateRoomStatus } = require('./exitGame');
+const { GameSet, GameMember, Game, sequelize, Room,  GameVote } = require('../../models');
 
 module.exports = async (req, res, next) => {
     let { gameIdx } = req.params;
@@ -122,7 +121,53 @@ const getGame = async (gameIdx) => {
     });
 };
 
+const deleteAllAboutGame = async (members, gameIdx) => {
+    let gameMemberIdx = [];
+    for (const member of members) {
+        try {
+            gameMemberIdx.push(member.get('GameMembers')[0].get('game_member_idx'));
+        } catch (error) {
+            gameMemberIdx.push(member.get('game_member_idx'));   
+        }
+    }
+
+    await GameVote.destroy({
+        where: {
+            game_member_game_member_idx: gameMemberIdx,
+        },
+    });
+    await GameMember.destroy({
+        where: {
+            game_member_idx: gameMemberIdx,
+        },
+    });
+    await GameSet.destroy({
+        where: {
+            game_game_idx: gameIdx,
+        },
+    });
+    await Game.destroy({
+        where: {
+            game_idx: gameIdx,
+        },
+    });
+};
+
+const updateRoomStatus = async (roomIdx, status) => {
+    await Room.update(
+        { room_status: status },
+        {
+            where: {
+                room_idx: roomIdx,
+            },
+        }
+    );
+};
+
 module.exports.getGame = getGame;
 module.exports.selectFinalResult = selectFinalResult;
 module.exports.makeTotalScoreData = makeTotalScoreData;
 module.exports.selectHuman = selectHuman;
+module.exports.deleteAllAboutGame = deleteAllAboutGame;
+module.exports.updateRoomStatus = updateRoomStatus;
+
