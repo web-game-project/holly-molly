@@ -326,7 +326,7 @@ const PlayingRoom = (props) => {
         <React.Fragment>
             <Background>
                 {isDrawReady ? (
-                    role !== '' ? (
+                    role !== '' && keyword !== '' ? (
                         <div>
                             <Header />
                             <Container>
