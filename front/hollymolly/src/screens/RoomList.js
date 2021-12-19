@@ -58,8 +58,8 @@ const RoomList = (props) => {
 
     useEffect(() => {
         props.socket.on('connect', () => {
-            console.log("room list");
-            console.log(props.socket);
+            //console.log("room list");
+            //console.log(props.socket);
         });
 
         //방 생성 시, 마지막 페이지에 방 추가
