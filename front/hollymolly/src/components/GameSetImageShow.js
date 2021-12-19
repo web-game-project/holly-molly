@@ -29,7 +29,7 @@ const GameVoteResult = (props) => {
     let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
-    const [seconds, setSeconds] = useState(5);
+    const [seconds, setSeconds] = useState(4);
 
     useEffect(() => {
         const countdown = setInterval(() => {
@@ -48,15 +48,16 @@ const GameVoteResult = (props) => {
             {
                 seconds > 0 ?
                     <Container>
-                        <div style={{ display: 'flex', flexDirection: 'row' }}>
+                        <div style={{ display: 'flex', flexDirection: 'row', marginLeft: '40px' }}>
                             <Title>이전 게임 정보 공개 </Title>
-                            <Timer>{seconds}초</Timer>
+                            <Timer>{seconds} 초</Timer>
                         </div>
                         <Description>몰리가 입력한 제시어, 정답 제시어 그리고 이전 게임의 그림을 보여줍니다.</Description>
                         
                         <BeforeRowContainer>
-                            <Headline> 제시어 : &nbsp;</Headline> <Content>{setBeforeKeyword}</Content>
-                            <Headline> 몰리 입력 : &nbsp;</Headline> <Content>{setBeforeHumanAnswer}</Content>
+                            
+                            <RowContainer><Headline> 제시어 : &nbsp;</Headline> <Content>{setBeforeKeyword}</Content></RowContainer>
+                            <RowContainer><Headline> 몰리 입력 : &nbsp;</Headline> <Content>{setBeforeHumanAnswer}</Content></RowContainer>
                             {/* <HumanAnswer> 몰리가 </HumanAnswer> */}
                         </BeforeRowContainer>
 
@@ -80,12 +81,14 @@ const Container = styled.div`
     margin-top: 20px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
     .DrawImg{
         width: 420px;
         height: 420px;
         background-color: ${style.white};
-        margin-left: 85px;
+        //margin-left: 85px;
         border-radius: 20px;
     }
 `;
@@ -97,7 +100,7 @@ const Title = styled.text`
     //font-weight: bold;
     color:${style.white};
     text-shadow: 4px 4px 0px #FB9FA9;
-    margin-left: 100px;
+    //margin-left: 100px;
 `;
 
 const Timer = styled.div`
@@ -123,7 +126,7 @@ const Description = styled.div`
     font-size: 20px;
     font-family: Nanum Pen Script;
     color: ${style.white};
-    margin-left: 100px;
+    //margin-left: 100px;
 `;
 const BeforeRowContainer = styled.div`
     width: 580px;
@@ -131,20 +134,32 @@ const BeforeRowContainer = styled.div`
     margin-top: 13px;
     display: flex;
     flex-direction: row;
+    align-items: center;
+    justify-content: center;
+`;
+
+const RowContainer = styled.div`
+    //width: 580px;
+    display: flex;
+    flex-direction: row;
+    margin: 20px;
+    //margin-left: 40px; 
+    //align-items: center;
+    //justify-content: center;
 `;
 
 const Headline = styled.div`    
     //text-shadow: 4px 4px 0px #FB9FA9;
-    font-size: 30px;
-    margin-left: 40px;    
+    font-size: 25px;
+    //margin-left: 40px;    
 `;
 
 const Content = styled.div`    
     //text-shadow: 4px 4px 0px #53305e, 5px 5px 0px #53305e;
-    font-size: 40px;
+    font-size: 25px;
     font-family: Hahmlet;
     -webkit-text-stroke: 1px ${style.yellow};
     color: #EDEDAF;  
-    margin-top: -10px;  
+    //margin-top: -10px;  
 `;
 export default GameVoteResult;
