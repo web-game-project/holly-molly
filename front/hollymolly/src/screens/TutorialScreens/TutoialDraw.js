@@ -2,13 +2,24 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Header';
 import TutorialDrawComponent from '../../components/Tutorial/TutorialDrawComponent';
+import TutorialDrawHollyComponent from '../../components/Tutorial/TutorialDrawHollyComponent';
+
+import {useLocation } from 'react-router';
 
 function TutorialDraw() {
+    let location = useLocation();
+    const [role, setRole] = useState(location.state.role);
+
     return (
         <Background>
             <Header goMain />
-            <Container>
-                <TutorialDrawComponent />
+            <Container>{
+                console.log('롤은? ' + role),
+                role && role === "ghost" ?
+                <TutorialDrawHollyComponent role={role}/>
+                :
+                <TutorialDrawComponent role={role}/>
+            }
             </Container>
         </Background>
     );

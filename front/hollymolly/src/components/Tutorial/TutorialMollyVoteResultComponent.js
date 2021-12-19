@@ -6,7 +6,7 @@ import { useHistory } from 'react-router';
 
 import VoteResult from '../../assets/mollyVoteResult.png';
 
-export default function TutorialMollyVoteResultComponent({}) {
+export default function TutorialMollyVoteResultComponent(props) {
     const isLogin = useSelector((state) => state.socket.is_login);
 
     const history = useHistory();
@@ -14,6 +14,7 @@ export default function TutorialMollyVoteResultComponent({}) {
     function onMove(){
         history.push({
             pathname: '/middleresultTutorial', 
+            state: { role: props.role },
         });
     } 
 

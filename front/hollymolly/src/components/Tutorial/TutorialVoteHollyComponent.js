@@ -2,20 +2,21 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import style from '../../styles/styles';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 
-import Missions from '../../assets/mission.png';
+import Vote from '../../assets/hollyVote.png';
 
-export default function TutorialMollyMissionComponent(props) {
+export default function TutorialMollyVoteComponent(props) {
     const isLogin = useSelector((state) => state.socket.is_login);
 
     const history = useHistory();
-    
+    let location = useLocation();
+
     function onMove(){
-        history.push({
-            pathname: '/MolltvoteresultTutorial', 
-            state: { role: props.role },
-        });
+            history.push({
+                pathname: '/missionTutorial', 
+                state: { role: props.role },
+            });       
     } 
 
     return (
@@ -23,10 +24,10 @@ export default function TutorialMollyMissionComponent(props) {
 
             <NextBtn onClick={onMove}>Next Page ☞</NextBtn>
 
-            <Txt>
-              <div className= "textDiv">시간은 10초입니다. <br></br>홀리들의 그림을 보고 추측한 키워드를 적어주세요.</div>
+            <Text>
+              <div className= "textDiv"> 인간으로 지목하고 싶은 플레이어를 투표합니다. 시간 내에 투표하지 않으면 기권으로 처리됩니다.</div>
             1
-            </Txt>
+            </Text>
 
             <Description>원하는 설명 번호 위에 마우스 올려보세요!</Description>
         </Container>
@@ -37,13 +38,13 @@ const Description = styled.div`
     width: 500x;
     height: 50px;
     position: absolute;
-    margin-left: -65px;
+    margin-left: -450px;
     margin-top: 540px; 
     font-size: 30px;   
     padding: 5px;
     color: ${style.white};
     font-family: Hahmlet;
-    -webkit-text-stroke: 2px ${style.red};
+    -webkit-text-stroke: 1px ${style.yellow};
 `;
 
 const NextBtn = styled.div`
@@ -63,12 +64,12 @@ const NextBtn = styled.div`
         background-color: #462456;;
         color: ${style.white};
         border: 2px solid #000;
-        border-radius: 20px;    
+        border-radius: 20px; 
         cursor: grab; 
     }
 
 `;
-const Txt = styled.div`
+const Text = styled.div`
     width: 20px;
     height: 20px;
     border-radius: 50px;
@@ -78,8 +79,8 @@ const Txt = styled.div`
     background-color: ${style.white};
     font-weight: bolder;
     position: absolute;
-    margin-left: -400px;
-    margin-top: -105px;
+    margin-left: -640px;
+    margin-top: -480px;
 
     &:hover .textDiv {
         background-color:  ${style.white};
@@ -93,16 +94,16 @@ const Txt = styled.div`
         z-index: 1;
         overflow: hidden;
         position: absolute;  
-        top: 30px;
-        left: 25px;
-        width: 320px;
+        top: -20px;
+        left: 28px;
+        width: 600px;
         display: none;
         padding: 5px;
     }
 `;  
 
 const Container = styled.div`
-    background-image: url(${Missions});
+    background-image: url(${Vote});
     width: 1020px;
     height: 620px;
     flex-direction: column;

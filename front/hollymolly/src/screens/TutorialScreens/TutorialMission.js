@@ -14,9 +14,9 @@ function TutorialMission() {
             <Container>
                 {
                     location.state.role && location.state.role === "ghost" ?
-                        <TutorialHollyMissionComponent/>
+                        <TutorialHollyMissionComponent role={location.state.role}/>
                     :
-                        <TutorialMollyMissionComponent />
+                        <TutorialMollyMissionComponent role={location.state.role}/>
 
                 }
             </Container>

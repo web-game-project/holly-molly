@@ -2,13 +2,24 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Header';
 import TutorialMiddleVoteResultComponent from '../../components/Tutorial/TutorialMiddleVoteResultComponent';
+import TutorialMiddleVoteResultHollyComponent from '../../components/Tutorial/TutorialMiddleVoteResultHollyComponent';
+
+import {useLocation } from 'react-router';
 
 function TutorialMiddleVoteResult() {
+    let location = useLocation();
+    const [role, setRole] = useState(location.state.role);
+
     return (
         <Background>
             <Header goMain />
-            <Container>
-                <TutorialMiddleVoteResultComponent />
+            <Container>{
+                console.log('롤은? ' + role),
+                role && role === "ghost" ?
+                <TutorialMiddleVoteResultHollyComponent role={role}/>
+                :
+                <TutorialMiddleVoteResultComponent role={role}/>
+            }
             </Container>
         </Background>
     );
