@@ -1,4 +1,4 @@
-const { GameSet, GameMember, Game, sequelize, Room,  GameVote } = require('../../models');
+const { GameSet, GameMember, Game, sequelize, Room,  GameVote, WaitingRoomMember } = require('../../models');
 
 module.exports = async (req, res, next) => {
     let { gameIdx } = req.params;
