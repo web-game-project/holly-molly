@@ -25,11 +25,13 @@ module.exports = async (req, res, next) => {
 
         if (res.locals.leader) {
             let newLeaderIdx = await assignNewReader(roomIdx);
-            await updateWaitingRoomLeader(newLeaderIdx, roomIdx);
-            let leader_data = { user_idx: newLeaderIdx };
-            io.to(roomIdx).emit('change host', leader_data);
-            let ready_data = { user_idx: newLeaderIdx, user_ready: false };
-            io.to(room_idx).emit('change member ready', ready_data);
+            if(newLeaderIdx != 0){
+                await updateWaitingRoomLeader(newLeaderIdx, roomIdx);
+                let leader_data = { user_idx: newLeaderIdx };
+                io.to(roomIdx).emit('change host', leader_data);
+                let ready_data = { user_idx: newLeaderIdx, user_ready: false };
+                io.to(roomIdx).emit('change member ready', ready_data);
+            }
         }
 
         let memberCount = await getMemberCount(roomIdx);
@@ -64,7 +66,10 @@ const assignNewReader = async (roomIdx) => {
         order: sequelize.literal('rand()'),
     });
 
-    return newLeader.dataValues.user_user_idx;
+    if(newLeader)
+        return newLeader.dataValues.user_user_idx;
+    else
+        return 0;
 }
 
 const updateWaitingRoomLeader = async (newLeaderIdx, roomIdx) => {
