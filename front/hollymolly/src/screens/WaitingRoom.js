@@ -907,16 +907,16 @@ export default function WaitingRoom(props) {
                                                     (console.log('방장이야'),
                                                         (
                                                             //일단 플레잉룸으로 넘어가기 위한 하드코딩 밑에 주석임 지울 예정
-                                                            //startMember === ready_cnt ? (
+                                                            startMember === ready_cnt ? (
                                                                 <BtnDiv isStart="yes" onClick={startClick}>
                                                                     게임 시작
                                                                 </BtnDiv>
-                                                            //)
-                                                               /*  : (
+                                                            )
+                                                                 : (
                                                                     <BtnDiv isStart="no">
                                                                         <div className= "textDiv"> 모든 플레이어가 레디를 해야 게임을 시작할 수 있습니다.</div>
                                                                         게임 시작</BtnDiv>
-                                                                ) */
+                                                                ) 
                                                         )) //게임 시작 api 요청 onclick 달기
                                             }
                                         </StartDiv>
