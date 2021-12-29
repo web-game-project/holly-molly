@@ -1,5 +1,6 @@
 const { User, Game, GameMember, GameVote } = require('../../models');
 const {printErrorLog, printLog} = require('../../util/log');
+var Sequelize = require('sequelize');
 
 const getVoteResult = async (req, res, next) => {
     try {
@@ -31,10 +32,11 @@ const getVoteList = async (gameSetIdx) => {
                 as: 'game_member_game_member_idx_GameMember',
                 required: true,
                 attributes: [
-                    [sequelize.fn('DISTINCT', sequelize.col('game_member_idx')), 'game_member_idx'],
+                    'game_member_idx',
                     'wrm_user_idx',
                     'game_member_role',
                 ],
+                distinct: true,
             },
         ],
         where: {
