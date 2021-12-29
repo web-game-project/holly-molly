@@ -14,6 +14,7 @@ const getVoteResult = async (req, res, next) => {
         const { voteResultList } =await calculateVoteResultIncludedCnt(res.locals.gameIdx, gameSetIdx);
     
         res.json({ vote_result: voteResultList });
+        printLog("투표결과", {vote_result: voteResultList});
     } catch (error) {
         printErrorLog('getVoteResult', error);
         res.status(400).json({
@@ -30,7 +31,7 @@ const getVoteList = async (gameSetIdx) => {
                 as: 'game_member_game_member_idx_GameMember',
                 required: true,
                 attributes: [
-                    'game_member_idx',
+                    [sequelize.fn('DISTINCT', sequelize.col('game_member_idx')), 'game_member_idx'],
                     'wrm_user_idx',
                     'game_member_role',
                 ],
