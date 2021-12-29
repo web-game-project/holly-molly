@@ -8,70 +8,78 @@ import roundVote from '../assets/roundVote.png';
 import { ReactComponent as HumanCharacter } from '../assets/human.svg';
 
 export default function UserOpenCard({ nick, color }) {
-    const [clicked, isClicked] = useState(0);
-
-    function Click() {
-        if (clicked == 1) {
-            isClicked(0);
-        } else {
-            isClicked(1);
-        }
-        //alert(nick + clicked);
-    }
-
+    
     return (
         <div>
             {(function () {
                 if (color == 'RED') {
-                        return (
-                            <RedContainer>
-                                <Name>{nick}</Name>                                
-                                <RedInnerContainer> 
-                                    <RoundVote src={roundVote} /> 
-                                    <HumanCharacter className="ghost" width="250" height="180" />
-                                </RedInnerContainer>
-                            </RedContainer>
-                        );                    
+                    return (
+                        <RedContainer>
+                            <Name>{nick}</Name>
+                            <RedInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </RedInnerContainer>
+                        </RedContainer>
+                    );
                 } else if (color == 'ORANGE') {
                     return (
-                        <OrangeContainer onClick={Click}>
+                        <OrangeContainer>
                             <Name>{nick}</Name>
-                            <OrangeInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</OrangeInnerContainer>
+                            <OrangeInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </OrangeInnerContainer>
                         </OrangeContainer>
                     );
                 } else if (color == 'YELLOW') {
                     return (
-                        <YellowContainer onClick={Click}>
+                        <YellowContainer>
                             <Name>{nick}</Name>
-                            <YellowInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</YellowInnerContainer>
+                            <YellowInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </YellowInnerContainer>
                         </YellowContainer>
                     );
                 } else if (color == 'GREEN') {
                     return (
-                        <GreenContainer onClick={Click}>
+                        <GreenContainer>
                             <Name>{nick}</Name>
-                            <GreenInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</GreenInnerContainer>
+                            <GreenInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </GreenInnerContainer>
                         </GreenContainer>
                     );
                 } else if (color == 'BLUE') {
                     return (
-                        <BlueContainer onClick={Click}>
+                        <BlueContainer>
                             <Name>{nick}</Name>
-                            <BlueInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</BlueInnerContainer>
+                            <BlueInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </BlueInnerContainer>
                         </BlueContainer>
                     );
                 } else if (color == 'PURPLE') {
                     return (
-                        <PurpleContainer onClick={Click}>
+                        <PurpleContainer>
                             <Name>{nick}</Name>
-                            <PurpleInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</PurpleInnerContainer>
+                            <PurpleInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </PurpleInnerContainer>
                         </PurpleContainer>
                     );
                 } else if (color == 'PINK') {
                     return (
-                        <PinkContainer onClick={Click}>
+                        <PinkContainer>
                             <Name>{nick}</Name>
-                            <PinkInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</PinkInnerContainer>
+                            <PinkInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </PinkInnerContainer>
                         </PinkContainer>
                     );
                 }
