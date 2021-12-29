@@ -20,12 +20,12 @@ module.exports.startGame = async (req, res, next) => {
             return;
         }
 
-        /*if(!await isFullMember(room_idx)){
+        if(!await isFullMember(room_idx)){
             res.status(403).json({
                 message: '플레이어의 수가 맞지 않습니다.',
             });
             return;
-        }*/
+        }
 
         if(!await isAllReady(room_idx)){
             res.status(403).json({
