@@ -9,7 +9,7 @@ const ChatContext = (props) => {
 
       return (
         <React.Fragment>
-              <ChatContextBox {...styles}>{name} : {text}</ChatContextBox>
+              <ChatContextBox {...styles}><span styles={{fontWeight: 'bold'}}>{name} : {text}</span></ChatContextBox>
         </React.Fragment>
       );
   };
@@ -27,7 +27,6 @@ const ChatContext = (props) => {
     display: flex
     margin-bottom: 5px;
     white-space: normal;
-    font-weight: bold;
   `;
 
   export default ChatContext;
