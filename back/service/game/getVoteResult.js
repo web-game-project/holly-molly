@@ -43,6 +43,7 @@ const getVoteList = async (gameSetIdx) => {
             game_set_game_set_idx: gameSetIdx,
         },
         order: [['game_vote_cnt', 'DESC']],
+        distinct: true,
     });
 };
 
