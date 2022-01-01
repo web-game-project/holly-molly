@@ -148,11 +148,16 @@ export default function WaitingRoom(props) {
                         colorList.map((element) => {
                             if (element.color === currentColor) {
                                 element.choose = 'false';
-                                /* if (locationUserList[i].wrm_user_ready === true) {
+                                
+                                console.log('ready getWaiting : ' + locationUserList[i].wrm_user_ready);
+                               
+                                if (locationUserList[i].wrm_user_ready === true) {
                                     ready_cnt += 1;
                                     console.log('세팅 레디 값 : ' + ready_cnt);
-                                } */
+                                }
 
+                                console.log('ready getWaiting 레디카운트값 : ' + ready_cnt);
+                                
                                 if (save_user_idx == locationUserList[i].user_idx) {
                                     //선택된 값 세팅
                                     setSelectColor(element.color);
@@ -285,11 +290,14 @@ export default function WaitingRoom(props) {
         props.socket.on('change member ready', (data) => {
             //임시방편으로 주석 푼 코드
             const changeReadyResult = data.user_ready;
-            if (changeReadyResult === true) {
+            if(ready_cnt > startMember){ // 레디카운트가 시작 멤버보다 값이 크게 바꼈다면 레디카운트에 시작 멤버 값 대입
+                ready_cnt = startMember;
+            }
+            if (changeReadyResult === true) { // 레디가 트루면,
                 ready_cnt = ready_cnt + 1;
                 console.log('소켓 ready 증가, ready 현재값 : ' + ready_cnt);
             } else {
-                if (ready_cnt != 0) ready_cnt = ready_cnt - 1;
+                if (ready_cnt != 0) ready_cnt = ready_cnt - 1; // 레디카운트가 0이 아닐 때만 -1
                 console.log('소켓 ready 감소, ready 현재값 : ' + ready_cnt);
             }
 
@@ -908,16 +916,16 @@ export default function WaitingRoom(props) {
                                                     (console.log('방장이야'),
                                                         (
                                                             //일단 플레잉룸으로 넘어가기 위한 하드코딩 밑에 주석임 지울 예정
-                                                            //startMember === ready_cnt ? (
+                                                            startMember === ready_cnt ? (
                                                                 <BtnDiv isStart="yes" onClick={startClick}>
                                                                     게임 시작
                                                                 </BtnDiv>
-                                                            /* )
+                                                             )
                                                                  : (
                                                                     <BtnDiv isStart="no">
                                                                         <div className= "textDiv"> 모든 플레이어가 레디를 해야 게임을 시작할 수 있습니다.</div>
                                                                         게임 시작</BtnDiv>
-                                                                )  */
+                                                                ) 
                                                         )) //게임 시작 api 요청 onclick 달기
                                             }
                                         </StartDiv>
