@@ -106,8 +106,8 @@ const RedContainer = styled.div`
 `;
 
 const OrangeContainer = styled.div`
-    width: 160px;
-    height: 165px;
+    width: 250px;
+    height: 255px;
     background-color: ${style.orange_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -122,8 +122,8 @@ const OrangeContainer = styled.div`
 `;
 
 const YellowContainer = styled.div`
-    width: 160px;
-    height: 165px;
+    width: 250px;
+    height: 255px;  
     background-color: ${style.yellow_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -138,8 +138,8 @@ const YellowContainer = styled.div`
 `;
 
 const GreenContainer = styled.div`
-    width: 160px;
-    height: 165px;
+    width: 250px;
+    height: 255px;
     background-color: ${style.green_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -154,8 +154,8 @@ const GreenContainer = styled.div`
 `;
 
 const BlueContainer = styled.div`
-    width: 160px;
-    height: 165px;
+    width: 250px;
+    height: 255px;
     background-color: ${style.blue_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -170,8 +170,8 @@ const BlueContainer = styled.div`
 `;
 
 const PurpleContainer = styled.div`
-    width: 160px;
-    height: 165px;
+    width: 250px;
+    height: 255px;
     background-color: ${style.purple_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -186,8 +186,8 @@ const PurpleContainer = styled.div`
 `;
 
 const PinkContainer = styled.div`
-    width: 160px;
-    height: 165px;
+    width: 250px;
+    height: 255px;
     background-color: ${style.pink_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -222,8 +222,8 @@ const RedInnerContainer = styled.div`
 `;
 
 const OrangeInnerContainer = styled.div`
-    width: 160px;
-    height: 130px;
+    width: 250px;
+    height: 220px;
     background-color: ${style.orange_fill};
     display: flex;
     align-items: center;
@@ -232,8 +232,8 @@ const OrangeInnerContainer = styled.div`
 `;
 
 const YellowInnerContainer = styled.div`
-    width: 160px;
-    height: 130px;
+    width: 250px;
+    height: 220px;
     background-color: ${style.yellow_fill};
     display: flex;
     align-items: center;
@@ -242,8 +242,8 @@ const YellowInnerContainer = styled.div`
 `;
 
 const GreenInnerContainer = styled.div`
-    width: 160px;
-    height: 130px;
+    width: 250px;
+    height: 220px;
     background-color: ${style.green_fill};
     display: flex;
     align-items: center;
@@ -252,8 +252,8 @@ const GreenInnerContainer = styled.div`
 `;
 
 const BlueInnerContainer = styled.div`
-    width: 160px;
-    height: 130px;
+    width: 250px;
+    height: 220px;
     background-color: ${style.blue_fill};
     display: flex;
     align-items: center;
@@ -262,8 +262,8 @@ const BlueInnerContainer = styled.div`
 `;
 
 const PurpleInnerContainer = styled.div`
-    width: 160px;
-    height: 130px;
+    width: 250px;
+    height: 220px;
     background-color: ${style.purple_fill};
     display: flex;
     align-items: center;
@@ -272,8 +272,8 @@ const PurpleInnerContainer = styled.div`
 `;
 
 const PinkInnerContainer = styled.div`
-    width: 160px;
-    height: 130px;
+    width: 250px;
+    height: 220px;
     background-color: ${style.pink_fill};
     display: flex;
     align-items: center;
