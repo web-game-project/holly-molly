@@ -22,17 +22,13 @@ module.exports.startTimer = async (io, room_idx, user_idx, member_count, draw_or
             timerResolveMap.set(room_idx, resolve);
         });
     }
-    else {
-        promise = new Promise((resolve, reject) => {
-            timer = setTimeout(() => resolve('time out'), 3 * 1000);
-            timerResolveMap.set(room_idx, resolve);
-        });
-    }
     let result = await promise;
     clearTimeout(timer);
     timerResolveMap.delete(room_idx);
     memberCountMap.delete(room_idx);
 
+    console.log('timer result');
+    console.log(result);
     io.to(room_idx).emit('get next turn', { data: 'success' });
     
     if (result == 'time out') {
