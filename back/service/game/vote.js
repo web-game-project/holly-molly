@@ -40,11 +40,8 @@ const vote = async (req, res, next) => {
 
             let voteRecipientsIdx = undefined;
             for (const vote of gameVoteList) {
-                voteGameMember = vote.get(
-                    'game_member_game_member_idx_GameMember'
-                );
-                if (user_idx == voteGameMember.get('wrm_user_idx')) {
-                    voteRecipientsIdx = voteGameMember.get('game_member_idx');
+                if (user_idx == vote['game_member_game_member_idx_GameMember.wrm_user_idx']) {
+                    voteRecipientsIdx = vote['game_member_game_member_idx_GameMember.game_member_idx'];
                     break;
                 }
             }
