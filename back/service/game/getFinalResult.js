@@ -180,10 +180,8 @@ const updateMemberReady = async (room_idx) => {
     );
 }
 
-module.exports = {
-    getGame,
-    selectFinalResult,
-    selectHuman,
-    deleteAllAboutGame,
-    updateRoomStatus
-};
+module.exports.getGame = getGame;
+module.exports.selectFinalResult = selectFinalResult;
+module.exports.selectHuman = selectHuman;
+module.exports.deleteAllAboutGame = deleteAllAboutGame;
+module.exports.updateRoomStatus = updateRoomStatus;
