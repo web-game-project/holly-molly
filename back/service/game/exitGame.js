@@ -1,6 +1,6 @@
 const { Room, Game, GameSet, GameMember, GameVote, WaitingRoomMember, User } = require('../../models');
 const {printErrorLog} = require('../../util/log');
-const {selectFinalResult,makeTotalScoreData,selectHuman, deleteAllAboutGame, updateRoomStatus} = require('./getFinalResult');
+const {selectFinalResult, selectHuman, deleteAllAboutGame, updateRoomStatus} = require('./getFinalResult');
 
 const exitGame = async (req, res, next) => {
     try {
@@ -46,8 +46,7 @@ const exitGameAndRoom = async (user, io) => {
         if (game) { // in game
             if (gameMember.get('game_member_role') == 'human') { // human role
                 // 최종 결과 이벤트
-                const finalResult = await selectFinalResult(game.get('game_idx'));
-                let result = await makeTotalScoreData(finalResult);
+                const result = await selectFinalResult(game.get('game_idx'));
                 let human_info = await selectHuman(gameIdx);
                 result.human_color = human_info[0].wrm_user_color;
                 result.human_name = human_info[0].user_name;
