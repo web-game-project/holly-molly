@@ -19,8 +19,7 @@ module.exports = async (req, res, next) => {
         let room_idx = game.get('room_room_idx');
 
         // get final result
-        const finalResult = await selectFinalResult(gameIdx);
-        let result = await makeTotalScoreData(finalResult);
+        const result = await selectFinalResult(gameIdx);
         let human_info = await selectHuman(gameIdx);
         result.human_color = human_info[0].wrm_user_color;
         result.human_name = human_info[0].user_name;
@@ -49,13 +48,49 @@ module.exports = async (req, res, next) => {
 };
 
 const selectFinalResult = async (gameIdx) => {
-    const finalResult = await GameSet.findAll({
-        attributes: ['game_set_human_score', 'game_set_ghost_score'],
+    const setResult = await GameSet.findAll({
+        attributes: [
+            'game_set_no',
+            'game_set_human_score',
+            'game_set_ghost_score',
+        ],
         where: {
             game_game_idx: gameIdx,
         },
-        order: ['game_set_no'],
     });
+
+    let finalResult = {};
+    let finalHumanScore = 0;
+    let finalGhostScore = 0;
+
+    for (result of setResult) {
+        if (result.get('game_set_no') == 1) {
+            finalResult['one_game_set_human_score'] = result.get(
+                'game_set_human_score'
+            );
+            finalResult['one_game_set_ghost_score'] = result.get(
+                'game_set_ghost_score'
+            );
+        } else if (result.get('game_set_no') == 2) {
+            finalResult['two_game_set_human_score'] = result.get(
+                'game_set_human_score'
+            );
+            finalResult['two_game_set_ghost_score'] = result.get(
+                'game_set_ghost_score'
+            );
+        } else {
+            finalResult['three_game_set_human_score'] = result.get(
+                'game_set_human_score'
+            );
+            finalResult['three_game_set_ghost_score'] = result.get(
+                'game_set_ghost_score'
+            );
+        }
+        finalHumanScore += result.get('game_set_human_score');
+        finalGhostScore += result.get('game_set_ghost_score');
+    }
+    finalResult['total_game_set_human_score'] = finalHumanScore;
+    finalResult['total_game_set_ghost_score'] = finalGhostScore;
 
     return finalResult;
 };
@@ -74,34 +109,6 @@ const selectHuman = async (game_idx) => {
     });
 
     return human;
-};
-
-const makeTotalScoreData = async (finalResult) => {
-    let result = {};
-    result.one_game_set_human_score =
-        finalResult[0].dataValues.game_set_human_score;
-    result.two_game_set_human_score =
-        finalResult[1].dataValues.game_set_human_score;
-    result.three_game_set_human_score =
-        finalResult[2].dataValues.game_set_human_score;
-    result.total_game_set_human_score = 0;
-    for (let i in finalResult) {
-        result.total_game_set_human_score +=
-            finalResult[i].dataValues.game_set_human_score;
-    }
-    result.one_game_set_ghost_score =
-        finalResult[0].dataValues.game_set_ghost_score;
-    result.two_game_set_ghost_score =
-        finalResult[1].dataValues.game_set_ghost_score;
-    result.three_game_set_ghost_score =
-        finalResult[2].dataValues.game_set_ghost_score;
-    result.total_game_set_ghost_score = 0;
-    for (let i in finalResult) {
-        result.total_game_set_ghost_score +=
-            finalResult[i].dataValues.game_set_ghost_score;
-    }
-
-    return result;
 };
 
 const getGameMemberIndex = async (gameIdx) => {
@@ -175,8 +182,6 @@ const updateMemberReady = async (room_idx) => {
 
 module.exports.getGame = getGame;
 module.exports.selectFinalResult = selectFinalResult;
-module.exports.makeTotalScoreData = makeTotalScoreData;
 module.exports.selectHuman = selectHuman;
 module.exports.deleteAllAboutGame = deleteAllAboutGame;
 module.exports.updateRoomStatus = updateRoomStatus;
-
