@@ -56,7 +56,7 @@ const Chatting = (props) => {
     }else if(user_color === 'WHITE'){
         user_color = '#FFFFFF'
     }else{
-        user_color = '#823BDB'
+        user_color = '#946CEE'
     }
 
     // 입력값을 저장하는 상태값
@@ -182,7 +182,7 @@ const Container = styled.div`
     justify-content: space-between;
     flex-direction: column;
     color: white;
-    opacity: 0.7;
+    opacity: 1.5;
 `;
 
 const ChatContainer = styled.div`
