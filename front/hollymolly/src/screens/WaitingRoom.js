@@ -76,6 +76,9 @@ export default function WaitingRoom(props) {
     const [roomInfo, setRoomInfo] = useState('');
     const [count, setCount] = useState('');
 
+    //사용자가 색을 바꾸었을 때, 변경중입니다 toast 띄우기 위해서
+    const [modify, setModifiy] = React.useState(false);
+
     //무슨 색을 선택할 수 있는가
     const [selectColor, setSelectColor] = React.useState([]);
 
@@ -151,6 +154,8 @@ export default function WaitingRoom(props) {
                                 element.choose = 'false';
 
                                 if (save_user_idx == locationUserList[i].user_idx) {
+                                    //색깔변경중입니다 토스트 지우기
+                                    setModifiy(false); 
                                     //선택된 값 세팅
                                     setSelectColor(element.color);
                                     //내 준비 상태
@@ -518,6 +523,8 @@ export default function WaitingRoom(props) {
     }
 
     function colorClick(str) {
+        setModifiy(true);
+
         const restURL = BaseURL + '/waiting-room/user-color';
 
         const reqHeaders = {
@@ -537,7 +544,7 @@ export default function WaitingRoom(props) {
             )
             .then(function (response) {
                 console.log('색깔 rest: ' + response.data);
-                setSelectColor(str); //내가 선택한 색
+                //setSelectColor(str); //내가 선택한 색
             })
             .catch(function (error) {
                 alert(error.response.data.message);
@@ -863,6 +870,12 @@ export default function WaitingRoom(props) {
                                             </BarInnerDiv>
                                         </BarDiv>
                                     </BarContainer>
+                                    {
+                                        modify ?
+                                            <ColorToast>색깔 변경 중 입니다....</ColorToast>
+                                        :
+                                            null
+                                    }
                                     <UserDiv>
                                         <div style={styles.userListContainer}>
                                             {
@@ -991,6 +1004,18 @@ const styles = {
     },
 };
 
+const ColorToast = styled.div`
+    display: flex;
+    justify-content: center;
+    width: 625px;
+    height: 50px;
+    margin-top: -10px;
+    margin-left: 120px;
+    text-align: center;
+    position: absolute;
+   /*  border-radius: 18px;
+    border: 3px solid #a274d5; */
+`;
 const NameContainer = styled.text`
     font-size: 45px;
     font-family: Black Han Sans;
