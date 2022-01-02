@@ -22,6 +22,12 @@ module.exports.startTimer = async (io, room_idx, user_idx, member_count, draw_or
             timerResolveMap.set(room_idx, resolve);
         });
     }
+    else { // 처음 순서가 아니고, 다음 순서로 넘어갈 땐 3초
+        promise = new Promise((resolve, reject) => {
+            timer = setTimeout(() => resolve('time out'), 3 * 1000);
+            timerResolveMap.set(room_idx, resolve);
+        });
+    }
     let result = await promise;
     clearTimeout(timer);
     timerResolveMap.delete(room_idx);
