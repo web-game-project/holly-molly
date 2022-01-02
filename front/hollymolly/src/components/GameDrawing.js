@@ -218,8 +218,9 @@ const GameDrawing = (props) => {
                     setSeconds(10);
                 } else {
                     console.log('순서 받기 시간 끝');
-                    console.log('네트워크가 불안정합니다.');
-
+                    alert('네트워크가 불안정합니다.');
+                    window.location.replace('/');
+                    
                     setWaitSeconds(-1);
                 }
             }
