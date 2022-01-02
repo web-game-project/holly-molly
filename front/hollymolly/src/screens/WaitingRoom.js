@@ -184,9 +184,9 @@ export default function WaitingRoom(props) {
         console.log("waiting room");
         console.log(props.socket);
 
-        /* if (props.socket.connected) {
+        if (props.socket.connected) {
             getWaiting();
-        } */
+        }
 
         props.socket.on('connect', () => {
 
