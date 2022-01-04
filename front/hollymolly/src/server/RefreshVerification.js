@@ -12,7 +12,7 @@ const RefreshVerification = {
 
   verification() {
 
-    console.log('리프레시 함수 call');
+    //console.log('리프레시 함수 call');
     /* let data = localStorage.getItem("token");
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
     let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
@@ -45,7 +45,7 @@ const RefreshVerification = {
     JSON.parse(data) && axios
       .get(restURL_room, reqHeaders_room)
       .then(function (response) {
-        console.log("리프레시 안에서 방접속 api 성공");
+        //console.log("리프레시 안에서 방접속 api 성공");
       })
       .catch(function (error) {
         var errTxt = '"로그인 후 이용해주세요."';
@@ -76,7 +76,7 @@ const RefreshVerification = {
                   user_name : save_userName,
                 })
               );
-              console.log('내 refresh 설정 후 : ' + JSON.stringify(localStorage.getItem("token")));
+              //console.log('내 refresh 설정 후 : ' + JSON.stringify(localStorage.getItem("token")));
             })
             .catch(function (error) {
               alert('refresh 갱신 api 에러 ' + error);
