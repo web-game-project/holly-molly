@@ -370,10 +370,9 @@ const GameDrawing = (props) => {
                     (
                      possible === true
                      ?
-                    ((ImgUrl = '../assets/timer_' + seconds + '.png'),
                     seconds > 0 ? (
                         <img
-                            src={require('../assets/timer_' + seconds + '.png').default}
+                            src={require('../assets/timer_' + seconds + '.png')}
                             style={{
                                 width: '80px',
                                 height: '50px',
@@ -385,7 +384,7 @@ const GameDrawing = (props) => {
                         />
                     ) : (
                         ''
-                    ))
+                    )
                     : '')
                 }
             </Container>
