@@ -43,7 +43,12 @@ const RoomSearchBar = (props) => {
                 });
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+                if(error.response.data.message === undefined){
+                    alert("올바른 코드값을 입력해주세요")
+                }else{
+                    alert(error.response.data.message);
+                }
+                
             });
     };
 
