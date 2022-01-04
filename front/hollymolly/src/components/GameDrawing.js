@@ -16,7 +16,6 @@ import { useHistory, useLocation } from 'react-router';
 let data = localStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
 let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const GameDrawing = (props) => {
     const history = useHistory();
@@ -27,21 +26,22 @@ const GameDrawing = (props) => {
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머
     const [waitSeconds, setWaitSeconds] = useState(-1); // 순서 받기 타이머, 그림 다 그린 후 타이머 실행되야 하므로 일단 -1 으로 초기화
     const [secondsLoading, setSecondsLoading] = useState(-1); //투표 전 로딩 구현을 위한 타이머
-    const [readyNextOrder, setReadyNextOrder] = useState(false); // 다음 순서 준비 완료 소켓 값을 관리하는 상태 값
+    //const [readyNextOrder, setReadyNextOrder] = useState(false); // 다음 순서 준비 완료 소켓 값을 관리하는 상태 값
     const [reDraw, setReDraw] = useState(false); // 다시 그리기 위해 canvas 관리하는 상태 값
 
     const orderCount = useRef(1); // orderCount
     const drawingTime = useRef(true); // 그릴 수 있는 시간을 관리하는 변수
+    const readyNextOrder = useRef(false); // 그릴 수 있는 시간을 관리하는 변수
 
-    useEffect(() => {        
-        socket.on('connect', () => {
-            console.log('game drawing connection server');
-        });
-    }, []);
-
-    let user_order = parseInt(order);
-    let user_color = color; 
+    //let user_order = parseInt(order);
     
+    // 방 퇴장 시 실시간 순서 변경 반영 위해 useRef 사용 
+    const user_order = useRef(0);
+    const myList = userList.find((x) => x.user_idx === save_user_idx);
+    user_order.current = myList.game_member_order
+
+    let user_color = color; 
+
     // 지정 색 코드로 바꿔주기 
     if(user_color === 'RED'){
         user_color = '#FF0000';
@@ -95,7 +95,7 @@ const GameDrawing = (props) => {
 
     // 초기 세팅
     function initDraw(event) {
-        if (orderCount.current === user_order && drawingTime.current) {
+        if (orderCount.current === user_order.current && drawingTime.current) {
             // 자기 순서 일때만 그리기 // props.order
             ctx.beginPath();
             pos = { drawable: true, ...getPosition(event) };
@@ -140,7 +140,10 @@ const GameDrawing = (props) => {
         socket.on('draw', (data) => {
             // 그림 좌표 받기
             // 자기 순서가 아니면 받은 그림 좌표 그려주기
-            if (orderCount.current !== user_order) {
+            console.log(userList);
+            console.log(user_order.current);
+            console.log(orderCount.current);
+            if (orderCount.current !== user_order.current) {
                 // props.order
                 ctx.strokeStyle = data.color;
                 ctx.beginPath();
@@ -152,9 +155,8 @@ const GameDrawing = (props) => {
 
         socket.on('get next turn', (data) => {
             // 그림 좌표 받기
-            console.log(data.message); // success 메시지
-            setReadyNextOrder(true);
-            //setReDraw(false);
+            console.log(data.data); // success 메시지
+            readyNextOrder.current = true;
         });
     }, []);
 
@@ -186,8 +188,8 @@ const GameDrawing = (props) => {
                     });
 
                     // 다음 순서 받을 준비 완료 소켓 보내고 3초 시간 잼
-                    setWaitSeconds(3);
-                    //여기야, 내가 바꾼 코드
+                    setWaitSeconds(10);
+                    
                     setSeconds(-1);
                     setPossible(false);
                 }
@@ -204,13 +206,25 @@ const GameDrawing = (props) => {
         const waitcountdown = setInterval(() => {
             if (parseInt(waitSeconds) > 0) {
                 setWaitSeconds(parseInt(waitSeconds) - 1);
-            } else if (parseInt(waitSeconds) === 0) {
-                // 3초가 지나도 받지 못하면 네트워크 에러 및 서버에서 강제 퇴장 처리
 
-                if (readyNextOrder) {
+                if (readyNextOrder.current) {
                     console.log('다음 순서 받기');
                     setWaitSeconds(-1);
-                    setReadyNextOrder(false); // 다시 다음 순서 받을 준비
+                    readyNextOrder.current = false; // 다시 다음 순서 받을 준비
+                    orderCount.current += 1; // 순서 바꾸기
+                    setReDraw(!reDraw); // 그리기 준비
+                    drawingTime.current = true;
+                    setPossible(true);
+                    setSeconds(10);
+                }
+
+            } else if (parseInt(waitSeconds) === 0) {
+                // 3초가 지나도 받지 못하면 네트워크 에러 및 서버에서 강제 퇴장 처리
+                console.log("readyNextOrder: " + readyNextOrder);
+                if (readyNextOrder.current) {
+                    console.log('다음 순서 받기');
+                    setWaitSeconds(-1);
+                    readyNextOrder.current = false; // 다시 다음 순서 받을 준비
                     orderCount.current += 1; // 순서 바꾸기
                     setReDraw(!reDraw); // 그리기 준비
                     drawingTime.current = true;
@@ -224,6 +238,7 @@ const GameDrawing = (props) => {
                     setWaitSeconds(-1);
                 }
             }
+
         }, 1000);
 
         return () => {
@@ -309,7 +324,7 @@ const GameDrawing = (props) => {
 
     // 현재 순서 유저 찾기 
     var currentItem = userList.find((x) => x.game_member_order === orderCount.current);
-
+    
      // 순서에 따른 자기 순서 표시(하위 -> 상위)
     /* const sendOrder = () => {
         props.currentOrder(currentItem.user_idx);
@@ -325,12 +340,12 @@ const GameDrawing = (props) => {
             }else{
                 cursor_status = false;
                 return <div><Toast>🎨 {currentItem.user_name} 님이 그림을 그리고 있습니다.</Toast></div>;
-            }
+            }  
         }
     }
 
      // 지정 색 코드로 바꿔주기 
-     let border_user_color = currentItem.user_color && currentItem.user_color; 
+     let border_user_color = currentItem && currentItem.user_color; 
     
      if(drawingTime.current === true){
         if(border_user_color === 'RED'){

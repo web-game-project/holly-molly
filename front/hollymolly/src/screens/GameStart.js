@@ -13,7 +13,10 @@ function GameStart() {
     return (
         <Background>
             <Backgroundimg>
-            <text style={{color: style.red, fontSize: "15px", marginLeft: "15px"}}>권장 브라우저: Chrome, 다른 브라우저로 이용 시 게임이 원활하지 않을 수 있습니다.</text>
+                
+                <text style={{color: style.red, fontSize: "15px", marginLeft: "15px"}}>권장 브라우저: Chrome, 다른 브라우저로 이용 시 게임이 원활하지 않을 수 있습니다.</text>
+                <br/>
+                <text style={{color: style.red, fontSize: "15px", marginLeft: "15px"}}>게임 중 새로고침, URL 이동, 브라우저 종료 시 비정상 종료 처리가 될 수 있습니다.</text>
             
                 <Logo />
 

@@ -52,6 +52,8 @@ const PlayingVote = (props) => {
     let keyword = location.state.keyword; //그림판에서 넘어온 키워드
     let leader = location.state.leaderIdx;
 
+    let chatAvailable = useRef(true);
+   
    // let voteTotalList = useRef([]);
 
     // local storage에 있는지 확인
@@ -96,6 +98,7 @@ const PlayingVote = (props) => {
             }
 
             if (parseInt(seconds) === 0) {
+                chatAvailable.current = false;
                 setSeconds(-1);  // -1인 이유 -1일 때 voteComponent call                  
             }
         }, 1000);
@@ -122,6 +125,22 @@ const PlayingVote = (props) => {
 
             if (data.human_submit === true) {
                 setIsHumanSubmit(true);
+            }
+        });
+
+        // 방 퇴장 
+        props.socket.on('exit room', (data) => {
+            console.log("퇴장한 사람 : " + data.user_idx);
+
+            var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
+
+            var exitIndex = userList.findIndex(v => v.user_idx === data.user_idx);
+            userList.splice(exitIndex,1);
+
+            for (let i = 0; i < userList.length; i++) {
+                if(exitPerson.game_member_order < userList[i].game_member_order){
+                    userList[i].game_member_order = userList[i].game_member_order - 1;
+                }
             }
         });
     }, []);
@@ -175,30 +194,31 @@ const PlayingVote = (props) => {
     };
 
     // 게임 중 비정상 종료 감지
-    //useEffect(() => {
-        //window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
-        //window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
-        /* return () => {
-            window.removeEventListener('beforeunload', alertUser)
-            window.removeEventListener('unload', handleEndConcert)
-        } */
-    //}, [])
+    useEffect(() => {
+        window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
+        window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
+        
+        return () => {
+            //window.removeEventListener('beforeunload', alertUser)
+            //window.removeEventListener('unload', handleEndConcert)
+        }  
+    }, [])
 
     // 경고창 
-    /* const alertUser = (e) => {
+    const alertUser = (e) => {
         e.preventDefault(); // 페이지가 리프레쉬 되는 고유의 브라우저 동작 막기
         e.returnValue = "";
-
+        
         exit();
     };
 
     // 종료시 실행 
     const handleEndConcert = async () => {
         exit();
-    } */
+    } 
 
     // 뒤로 가기 감지 시 비정상종료 처리 
-    useEffect(()=> {
+    /* useEffect(()=> {
         const unblock = history.block((loc, action) => {
             if (action === 'POP') {
                 if(window.confirm('게임방에서 나가게됩니다. 뒤로 가시겠습니까?')){
@@ -213,7 +233,7 @@ const PlayingVote = (props) => {
 
         return () => unblock()
         
-    },[]) 
+    },[])  */
 
     return (
         <React.Fragment>
@@ -248,7 +268,7 @@ const PlayingVote = (props) => {
                                 }
                                 
                                 <ChatDiv>
-                                    <Chatting socket={props.socket} room_idx={roomIdx} available={false}></Chatting> {/* 채팅 비활성화 */}
+                                    <Chatting socket={props.socket} room_idx={roomIdx} available={chatAvailable.current}></Chatting> {/* 채팅 비활성화 */}
                                 </ChatDiv>
                             </BackGroundDiv>
                         </Container>

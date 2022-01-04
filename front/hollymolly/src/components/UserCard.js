@@ -4,7 +4,7 @@ import '../assets/font.css';
 
 import { ReactComponent as RedCharacter } from '../assets/red.svg';
 import { ReactComponent as OOO } from '../assets/orange.svg';
-import orangePng from '../assets/orange.png'; // 일단 오렌지만 png로 쓰는 걸로
+import orangePng from '../assets/orange.svg'; // 일단 오렌지만 png로 쓰는 걸로
 import { ReactComponent as YellowCharacter } from '../assets/yellow.svg';
 import { ReactComponent as GreenCharacter } from '../assets/green.svg';
 import { ReactComponent as BlueCharacter } from '../assets/blue.svg';
