@@ -140,9 +140,6 @@ const GameDrawing = (props) => {
         socket.on('draw', (data) => {
             // 그림 좌표 받기
             // 자기 순서가 아니면 받은 그림 좌표 그려주기
-            console.log(userList);
-            console.log(user_order.current);
-            console.log(orderCount.current);
             if (orderCount.current !== user_order.current) {
                 // props.order
                 ctx.strokeStyle = data.color;

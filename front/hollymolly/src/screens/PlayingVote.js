@@ -143,6 +143,14 @@ const PlayingVote = (props) => {
                 }
             }
         });
+
+        // 비정상 종료 감지 최종 결과 전송
+        props.socket.on('get final result', (data) => {
+            history.push({
+                pathname: '/playingresult/' + roomIdx,
+                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leader, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
+            })
+        });  
     }, []);
 
     // 깊은 복사 
