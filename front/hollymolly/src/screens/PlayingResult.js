@@ -12,7 +12,7 @@ import GameOpenResult from '../components/GameOpenResult';
 import GameSetImageShow from '../components/GameSetImageShow';
 
 //페이지 이동
-import { useHistory, useLocation} from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 //통신
 import axios from 'axios';
 //깊은 복제
@@ -25,13 +25,16 @@ import RefreshVerification from '../server/RefreshVerification.js';
 //"무비페이지에 str 자리 값넣어주기!!"
 
 const PlayingResult = (props) => {
-     let location = useLocation();
+    let location = useLocation();
     const history = useHistory();
 
     const [seconds, setSeconds] = useState(15); //10초 보여주기
     const [winner, setWinner] = useState(''); // 중간 결과 승리자
     const [finalData, setFinalData] = useState(); //최종 결과 데이터
-
+    
+    const [normal, setNormal] = useState(location.state.normal); //props로 받음 비정상 종료인지 구분하는 변수
+    const [exitData, setExitData] = useState(location.state.exitData); //props로 받는 비정상 종료 후 최종결과 데이터
+    
     const BaseURL = 'http://3.17.55.178:3002';
 
     // 전 페에지 (GameVoteResultComponet) 넘어온 데이터 
@@ -45,7 +48,7 @@ const PlayingResult = (props) => {
     const role = location.state.role;
 
     /* alert('프롭스 넘어왔다!! ' + keyword +gameSetNo +gameIdx + gameSetIdx+ leaderIdx+JSON.stringify(userList) +roomIdx+role); */
-        
+
     // local storage에 있는지 확인
     /* let data = localStorage.getItem('token');
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
@@ -54,16 +57,16 @@ const PlayingResult = (props) => {
     let u = RefreshVerification.verification()
     console.log('리플시? ' + u);
     let data, save_token, save_user_idx;
-    if(u === true){
+    if (u === true) {
         data = localStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     }
-    
+
     // 깊은 복사 
     let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
     let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트 
-    
+
     // 유저 리스트 중 내 정보 배열 및 내 순서 저장
     const myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
 
@@ -83,7 +86,7 @@ const PlayingResult = (props) => {
     if (myItem) {
         myItem.game_member_order = '나';
     }
-    
+
     // 중간 결과 (방장만 부를 수 있음)
     const getMiddleResult = async () => {
         const restURL = 'http://3.17.55.178:3002/game/interim-result/' + gameIdx;
@@ -113,11 +116,13 @@ const PlayingResult = (props) => {
             },
         };
         axios
-            .delete(restURL, 
-                reqHeaders, 
-                {data : {
-                    gameIdx : gameIdx
-                }})
+            .delete(restURL,
+                reqHeaders,
+                {
+                    data: {
+                        gameIdx: gameIdx
+                    }
+                })
 
             .then(function (response) {
                 console.log('최종결과 성공');
@@ -135,8 +140,8 @@ const PlayingResult = (props) => {
         // 같은 대기실에 있는 클라이언트들에게 중간 결과 전송
         props.socket.on('get interim result', (data) => {
             setWinner(data.winner);
-        });     
-        
+        });
+
         // 같은 대기실에 있는 클라이언트들에게 최종 결과 전송
         props.socket.on('get final result', (data) => {
             setFinalData(data);
@@ -158,7 +163,7 @@ const PlayingResult = (props) => {
             }
         });
     }, []);
-    
+
     useEffect(() => {
         const countdown = setInterval(() => {
             if (parseInt(seconds) > 0) {
@@ -171,17 +176,17 @@ const PlayingResult = (props) => {
         };
     }, [seconds]);
 
-    useEffect(() => {       
-        if(gameSetNo === 2 && leaderIdx === save_user_idx) {
+    useEffect(() => {
+        if (gameSetNo === 2 && leaderIdx === save_user_idx) {
             getMiddleResult();
         }
-        else if(gameSetNo === 3 && leaderIdx === save_user_idx) {
+        else if (gameSetNo === 3 && leaderIdx === save_user_idx) {
             getFinalResult();
-        }               
+        }
     }, []);
 
-     // 비정상 종료
-     const exit = async () => {   
+    // 비정상 종료
+    const exit = async () => {
         console.log("exit!!!");
         const restURL = 'http://3.17.55.178:3002/game/exit';
 
@@ -232,10 +237,10 @@ const PlayingResult = (props) => {
     /* useEffect(()=> {
         const unblock = history.block((loc, action) => {
             if (action === 'POP') {
-                if(window.confirm('게임방에서 나가게됩니다. 뒤로 가시겠습니까?')){
+                if (window.confirm('게임방에서 나가게됩니다. 뒤로 가시겠습니까?')) {
                     exit();
                     return true
-                }else{
+                } else {
                     return false
                 }
             }
@@ -243,9 +248,8 @@ const PlayingResult = (props) => {
         })
 
         return () => unblock()
-        
     },[])  */
-
+    
     return (
         <React.Fragment>
             <Background>
@@ -275,20 +279,23 @@ const PlayingResult = (props) => {
                                     //플레잉 룸으로 
                                     history.push({
                                         pathname: '/playingroom/' + roomIdx,
-                                        state: { isSet: true, gameSetNo: gameSetNo+1, gameIdx: gameIdx, userList: userList, gameSetIdx: gameSetIdx, room: roomIdx, leaderIdx: leaderIdx},
+                                        state: { isSet: true, gameSetNo: gameSetNo + 1, gameIdx: gameIdx, userList: userList, gameSetIdx: gameSetIdx, room: roomIdx, leaderIdx: leaderIdx },
                                     })
-                                :
+                                    :
                                     finalData === undefined ?
-                                        <Loading/>
-                                    : <GameOpenResult roomIdx={roomIdx} name={finalData.human_name} color={finalData.human_color}/>
+                                        <Loading />
+                                        : <GameOpenResult roomIdx={roomIdx} name={finalData.human_name} color={finalData.human_color} />
                             )
-                            : 
-                            ( 
-                               gameSetNo === 2 ? 
-                                winner && <GameMiddleResult winner={winner} />
                                 :
-                                finalData && <GameFinalResult data={finalData} /> //최종 결과
-                            )
+                                (
+                                    gameSetNo === 2 && normal === true ?  // 2세트이고, 비정상 종료가 아닐 때,
+                                            winner && <GameMiddleResult winner={winner} />
+                                    : //게임세트가 어떻게 되었든 최종결과 보여주기
+                                        normal === true ?
+                                        finalData && <GameFinalResult data={finalData} /> //최종 결과
+                                        :
+                                        exitData && <GameFinalResult data={exitData} />
+                                )
                         }
 
                         {/* 최종 결과 출력이라면?*/}

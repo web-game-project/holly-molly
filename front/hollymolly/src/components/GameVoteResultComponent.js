@@ -84,7 +84,7 @@ const GameVoteResult = (props) => {
                 else {
                     history.push({
                         pathname: '/playingresult/' + roomIdx,
-                        state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx, keyword: keyword, role: role },
+                        state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx, keyword: keyword, role: role, normal: true, exitData: null},
                     })
                 }
                 setSeconds(-1);
