@@ -212,8 +212,15 @@ const PlayingRoom = (props) => {
                     }
                 }
             }
-            
         });
+
+        // 비정상 종료 감지 최종 결과 전송
+        props.socket.on('get final result', (data) => {
+            history.push({
+                pathname: '/playingresult/' + room_idx,
+                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
+            })
+        });   
     }, []);
 
 
