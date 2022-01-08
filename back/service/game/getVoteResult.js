@@ -86,7 +86,7 @@ const calculateVoteResult = async (gameIdx, gameSetIdx, numberLimit) => {
         }
         if (numberLimit && topVoteRankList.length >= numberLimit) break;
     }
-    console.log("공통투표결과",topVoteRankList, "순위: ", voteCntOrderList);
+    console.log("투표수리스트: ", voteCntOrderList);
     return { game, topVoteRankList, score };
 };
 
@@ -116,7 +116,7 @@ const calculateVoteResultIncludedCnt = async (gameIdx, gameSetIdx) => {
             vote_cnt: vote.game_vote_cnt,
         });
     }
-    printLog("투표결과",voteResultList);
+    //printLog("투표결과",voteResultList);
     return { game, voteResultList };
 };
 
