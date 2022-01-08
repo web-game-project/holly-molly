@@ -49,7 +49,7 @@ const vote = async (req, res, next) => {
             if (!voteRecipientsIdx) {
                 await voteByCreating(game_set_idx, user_idx);
             } else {
-                await voteByUpdating(voteRecipientsIdx);
+                await voteByUpdating(voteRecipientsIdx, game_set_idx);
             }
         }
         numberOfRequeststMap.set(
@@ -116,8 +116,8 @@ const voteByCreating = async (gameSetIdx, userIdx) => {
         game_member_game_member_idx: voteRecipients.get('game_member_idx'),
     });
 };
-const voteByUpdating = async (voteRecipientsIdx) => {
-    const updateGameVoteQuery = `UPDATE GameVote SET game_vote_cnt = game_vote_cnt + 1 WHERE game_member_game_member_idx=${voteRecipientsIdx}`;
+const voteByUpdating = async (voteRecipientsIdx, gameSetIdx) => {
+    const updateGameVoteQuery = `UPDATE GameVote SET game_vote_cnt = game_vote_cnt + 1 WHERE game_member_game_member_idx=${voteRecipientsIdx} and game_set_game_set_idx=${gameSetIdx}`;
     await db.sequelize.query(updateGameVoteQuery, {
         type: db.sequelize.QueryTypes.UPDATE,
     });
