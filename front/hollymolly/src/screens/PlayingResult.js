@@ -31,10 +31,10 @@ const PlayingResult = (props) => {
     const [seconds, setSeconds] = useState(15); //10초 보여주기
     const [winner, setWinner] = useState(''); // 중간 결과 승리자
     const [finalData, setFinalData] = useState(); //최종 결과 데이터
-    
+
     const [normal, setNormal] = useState(location.state.normal); //props로 받음 비정상 종료인지 구분하는 변수
     const [exitData, setExitData] = useState(location.state.exitData); //props로 받는 비정상 종료 후 최종결과 데이터
-    
+
     const BaseURL = 'http://3.17.55.178:3002';
 
     // 전 페에지 (GameVoteResultComponet) 넘어온 데이터 
@@ -145,19 +145,19 @@ const PlayingResult = (props) => {
         // 같은 대기실에 있는 클라이언트들에게 최종 결과 전송
         props.socket.on('get final result', (data) => {
             setFinalData(data);
-        });   
+        });
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
             console.log("퇴장한 사람 : " + data.user_idx);
 
-            var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
+            var exitPerson = userList.find((x) => x.user_idx === data.user_idx);
 
             var exitIndex = userList.findIndex(v => v.user_idx === data.user_idx);
-            userList.splice(exitIndex,1);
+            userList.splice(exitIndex, 1);
 
             for (let i = 0; i < userList.length; i++) {
-                if(exitPerson.game_member_order < userList[i].game_member_order){
+                if (exitPerson.game_member_order < userList[i].game_member_order) {
                     userList[i].game_member_order = userList[i].game_member_order - 1;
                 }
             }
@@ -213,25 +213,25 @@ const PlayingResult = (props) => {
     useEffect(() => {
         window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
         window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
-        
+
         return () => {
             //window.removeEventListener('beforeunload', alertUser)
             //window.removeEventListener('unload', handleEndConcert)
-        }  
+        }
     }, [])
 
     // 경고창 
     const alertUser = (e) => {
         e.preventDefault(); // 페이지가 리프레쉬 되는 고유의 브라우저 동작 막기
         e.returnValue = "";
-        
+
         exit();
     };
 
     // 종료시 실행 
     const handleEndConcert = async () => {
         exit();
-    } 
+    }
 
     // 뒤로 가기 감지 시 비정상종료 처리 
     /* useEffect(()=> {
@@ -249,7 +249,7 @@ const PlayingResult = (props) => {
 
         return () => unblock()
     },[])  */
-    
+
     return (
         <React.Fragment>
             <Background>
@@ -282,19 +282,24 @@ const PlayingResult = (props) => {
                                         state: { isSet: true, gameSetNo: gameSetNo + 1, gameIdx: gameIdx, userList: userList, gameSetIdx: gameSetIdx, room: roomIdx, leaderIdx: leaderIdx },
                                     })
                                     :
-                                    finalData === undefined ?
+                                    finalData === undefined && normal === true ?
                                         <Loading />
-                                        : <GameOpenResult roomIdx={roomIdx} name={finalData.human_name} color={finalData.human_color} />
-                            )
+                                        :
+                                        (normal === false ?
+                                            <GameOpenResult roomIdx={roomIdx} name={exitData.human_name} color={exitData.human_color} />
+                                            :
+                                            <GameOpenResult roomIdx={roomIdx} name={finalData.human_name} color={finalData.human_color} />
+                                        )
+                                )
                                 :
                                 (
                                     gameSetNo === 2 && normal === true ?  // 2세트이고, 비정상 종료가 아닐 때,
-                                            winner && <GameMiddleResult winner={winner} />
-                                    : //게임세트가 어떻게 되었든 최종결과 보여주기
+                                        winner && <GameMiddleResult winner={winner} />
+                                        : //게임세트가 어떻게 되었든 최종결과 보여주기
                                         normal === true ?
-                                        finalData && <GameFinalResult data={finalData} /> //최종 결과
-                                        :
-                                        exitData && <GameFinalResult data={exitData} />
+                                            finalData && <GameFinalResult data={finalData} /> //최종 결과
+                                            :
+                                            exitData && <GameFinalResult data={exitData} />
                                 )
                         }
 
