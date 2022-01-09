@@ -69,6 +69,10 @@ const exitGameAndRoom = async (user, io) => {
                 await deleteGameVote(gameMember.game_member_idx);
                 await deleteGameMember(gameMember.game_member_idx);
             }
+        }else{
+            io.to(room.get('room_idx')).emit('exit room', {
+                user_idx: user.user_idx,
+            });
         }
 
         if (isLeader) {
@@ -83,9 +87,6 @@ const exitGameAndRoom = async (user, io) => {
         io.to(0).emit('change member count', {
             room_idx: room.get('room_idx'),
             room_member_count: memberList.length - 1,
-        });
-        io.to(room.get('room_idx')).emit('exit room', {
-            user_idx: user.user_idx,
         });
 
         return true;
