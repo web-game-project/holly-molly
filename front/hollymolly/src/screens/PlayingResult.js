@@ -47,6 +47,8 @@ const PlayingResult = (props) => {
     const keyword = location.state.keyword;
     const role = location.state.role;
 
+    let exitSocket = useRef(false);
+
     /* alert('프롭스 넘어왔다!! ' + keyword +gameSetNo +gameIdx + gameSetIdx+ leaderIdx+JSON.stringify(userList) +roomIdx+role); */
 
     // local storage에 있는지 확인
@@ -151,16 +153,20 @@ const PlayingResult = (props) => {
         props.socket.on('exit room', (data) => {
             console.log("퇴장한 사람 : " + data.user_idx);
 
-            var exitPerson = userList.find((x) => x.user_idx === data.user_idx);
+            var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
 
             var exitIndex = userList.findIndex(v => v.user_idx === data.user_idx);
-            userList.splice(exitIndex, 1);
+            userList.splice(exitIndex,1);
 
-            for (let i = 0; i < userList.length; i++) {
-                if (exitPerson.game_member_order < userList[i].game_member_order) {
-                    userList[i].game_member_order = userList[i].game_member_order - 1;
+            if(exitPerson){
+                for (let i = 0; i < userList.length; i++) {
+                    if(exitPerson.game_member_order < userList[i].game_member_order){
+                        userList[i].game_member_order = userList[i].game_member_order - 1;
+                    }
                 }
             }
+
+            exitSocket.current = true;
         });
     }, []);
 
