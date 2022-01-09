@@ -43,12 +43,12 @@ const exitGameAndRoom = async (user, io) => {
             return true;
         }
 
+        io.to(room.get('room_idx')).emit('exit room', {
+            user_idx: user.user_idx,
+        });
+
         if (game) { // in game
             if (gameMember.get('game_member_role') == 'human' || memberList.length <= 3) { // human role or member count
-                io.to(room.get('room_idx')).emit('exit room', {
-                    user_idx: user.user_idx,
-                });
-
                 // 최종 결과 이벤트
                 const result = await selectFinalResult(game.get('game_idx'));
                 let human_info = await selectHuman(game.get('game_idx'));
@@ -69,10 +69,6 @@ const exitGameAndRoom = async (user, io) => {
                 await deleteGameVote(gameMember.game_member_idx);
                 await deleteGameMember(gameMember.game_member_idx);
             }
-        }else{
-            io.to(room.get('room_idx')).emit('exit room', {
-                user_idx: user.user_idx,
-            });
         }
 
         if (isLeader) {
