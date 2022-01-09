@@ -30,7 +30,7 @@ const exitGameAndRoom = async (user, io) => {
         const memberList = await getMemberList(room.get('room_idx')); //roomMember+gameMemberIdx
         const isLeader = roomMember.get('wrm_leader');
 
-        if (memberList.length <= 3) {
+        if (memberList.length <= 1) {
             if(game){
                 await deleteAllAboutGame(memberList, game.get('game_idx')); // game, gameMember, gameSet, gameVote 삭제
             }
@@ -44,7 +44,11 @@ const exitGameAndRoom = async (user, io) => {
         }
 
         if (game) { // in game
-            if (gameMember.get('game_member_role') == 'human') { // human role
+            if (gameMember.get('game_member_role') == 'human' || memberList.length <= 3) { // human role or member count
+                io.to(room.get('room_idx')).emit('exit room', {
+                    user_idx: user.user_idx,
+                });
+
                 // 최종 결과 이벤트
                 const result = await selectFinalResult(game.get('game_idx'));
                 let human_info = await selectHuman(game.get('game_idx'));
