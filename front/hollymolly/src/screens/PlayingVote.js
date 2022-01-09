@@ -53,6 +53,8 @@ const PlayingVote = (props) => {
     let leader = location.state.leaderIdx;
 
     let chatAvailable = useRef(true);
+
+    let exitSocket = useRef(false);
    
    // let voteTotalList = useRef([]);
 
@@ -137,19 +139,25 @@ const PlayingVote = (props) => {
             var exitIndex = userList.findIndex(v => v.user_idx === data.user_idx);
             userList.splice(exitIndex,1);
 
-            for (let i = 0; i < userList.length; i++) {
-                if(exitPerson.game_member_order < userList[i].game_member_order){
-                    userList[i].game_member_order = userList[i].game_member_order - 1;
+            if(exitPerson){
+                for (let i = 0; i < userList.length; i++) {
+                    if(exitPerson.game_member_order < userList[i].game_member_order){
+                        userList[i].game_member_order = userList[i].game_member_order - 1;
+                    }
                 }
             }
+
+            exitSocket.current = true;
         });
 
         // 비정상 종료 감지 최종 결과 전송
         props.socket.on('get final result', (data) => {
-            history.push({
-                pathname: '/playingresult/' + roomIdx,
-                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leader, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
-            })
+            if(exitSocket.current === true){
+                history.push({
+                    pathname: '/playingresult/' + roomIdx,
+                    state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leader, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
+                })
+            }
         });  
     }, []);
 

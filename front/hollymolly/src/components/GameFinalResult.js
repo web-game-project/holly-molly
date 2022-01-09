@@ -12,7 +12,7 @@ const GameFinalResult = ({ data }) => {
 
     let winner = '';
 
-    console.log('data 치종' + JSON.stringify(data));
+    //console.log('data 치종' + JSON.stringify(data));
 
     if (data.total_game_set_ghost_score > data.total_game_set_human_score) {
         winner = '유령';

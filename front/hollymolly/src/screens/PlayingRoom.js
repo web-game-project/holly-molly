@@ -37,12 +37,14 @@ const PlayingRoom = (props) => {
     let beforeUserList = location.state.userList;
 
     let gameSetNo = location.state.gameSetNo;
-    ;
+    
     let isSet = location.state.isSet;
 
     let setBeforeImg = useRef('');
     let setBeforeHumanAnswer = useRef('');
     let setBeforeKeyword = useRef('');
+
+    let exitSocket = useRef(false);
 
     const [role, setRole] = React.useState('');
     const [keyword, setKeyWord] = React.useState('');
@@ -199,7 +201,7 @@ const PlayingRoom = (props) => {
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
             console.log("퇴장한 사람 : " + data.user_idx);
-
+            
             var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
 
             var exitIndex = userList.findIndex(v => v.user_idx === data.user_idx);
@@ -208,18 +210,23 @@ const PlayingRoom = (props) => {
             if(exitPerson){
                 for (let i = 0; i < userList.length; i++) {
                     if(exitPerson.game_member_order < userList[i].game_member_order){
-                            userList[i].game_member_order = userList[i].game_member_order - 1;
+                        userList[i].game_member_order = userList[i].game_member_order - 1;
                     }
                 }
             }
+
+            exitSocket.current = true;
         });
 
         // 비정상 종료 감지 최종 결과 전송
         props.socket.on('get final result', (data) => {
-            history.push({
-                pathname: '/playingresult/' + room_idx,
-                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
-            })
+            if(exitSocket.current === true){
+                history.push({
+                    pathname: '/playingresult/' + room_idx,
+                    state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
+                })
+            }
+            
         });   
     }, []);
 
