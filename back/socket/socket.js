@@ -28,11 +28,11 @@ module.exports = (server, app) => {
             let token;
             try {
                 try {
-                    token = verifyJWT.verifyAccessToken(
+                    token = verifyJWT.decode(
                         socket.handshake.headers.auth
                     );
                 } catch (error) {
-                    token = verifyJWT.verifyAccessToken(
+                    token = verifyJWT.decode(
                         socket.handshake.auth.token
                     );
                 }
