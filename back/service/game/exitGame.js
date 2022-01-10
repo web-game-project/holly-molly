@@ -1,6 +1,6 @@
 const { Room, Game, GameSet, GameMember, GameVote, WaitingRoomMember, User } = require('../../models');
 const {printErrorLog} = require('../../util/log');
-const {selectFinalResult, selectHuman, deleteAllAboutGame, updateRoomStatus} = require('./getFinalResult');
+const {selectFinalResult, selectHuman, deleteAllAboutGame, updateRoomStatus, updateMemberReady} = require('./getFinalResult');
 
 const exitGame = async (req, res, next) => {
     try {
@@ -66,6 +66,9 @@ const exitGameAndRoom = async (user, io) => {
                     room_idx: room.get('room_idx'),
                     room_status: 'waiting',
                 });
+
+                // ready 상태 변경
+                updateMemberReady(room.get('room_idx'));
             }else{ // ghost role
                 await deleteGameVote(gameMember.game_member_idx);
                 await deleteGameMember(gameMember.game_member_idx);
