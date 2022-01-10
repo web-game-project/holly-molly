@@ -1,4 +1,4 @@
-const { User, Game, GameMember, GameVote } = require('../../models');
+const { User, Game, GameMember, GameVote, WaitingRoomMember } = require('../../models');
 const {printErrorLog, printLog} = require('../../util/log');
 const db = require('../../models');
 
@@ -106,6 +106,7 @@ const calculateVoteResultIncludedCnt = async (gameIdx, gameSetIdx) => {
     for (const vote of gameVotes) {
         const user = await User.findOne({
             attributes: ['user_idx', 'user_name'],
+            include: [{ model: WaitingRoomMember, required: false, as: 'WaitingRoomMembers', attributes:['wrm_user_color'] }],
             where: {
                 user_idx: vote['game_member_game_member_idx_GameMember.wrm_user_idx'],
             },
@@ -113,6 +114,7 @@ const calculateVoteResultIncludedCnt = async (gameIdx, gameSetIdx) => {
         voteResultList.push({
             user_idx: user.user_idx,
             user_name: user.user_name,
+            user_color : user.WaitingRoomMembers[0].wrm_user_color,
             vote_cnt: vote.game_vote_cnt,
         });
     }
