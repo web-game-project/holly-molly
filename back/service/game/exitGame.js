@@ -45,6 +45,7 @@ const exitGameAndRoom = async (user, io) => {
 
         io.to(room.get('room_idx')).emit('exit room', {
             user_idx: user.user_idx,
+            user_name: user.user_name,
         });
 
         if (game) { // in game
