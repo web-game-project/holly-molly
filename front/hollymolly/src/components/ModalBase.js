@@ -5,17 +5,11 @@ import styled from 'styled-components';
 import style from '../styles/styles';
 import { useHistory } from 'react-router';
 import colors from '../styles/styles';
+import RefreshVerification from '../server/RefreshVerification';
 
 // 소켓
 import { io } from 'socket.io-client';
 import axios from 'axios';
-
-// local storage에 있는지 확인
-let data = localStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 export default function ModalBase() {
     const history = useHistory();
@@ -45,6 +39,16 @@ export default function ModalBase() {
     const inputRef = useRef();
     let roomMode = '';
 
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
+    let data, save_token;
+
+    if (verify === true) {
+        data = sessionStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    }
+    
     // 난이도 useState
     const [isChecked, setIschecked] = React.useState(true); // 디폴트 이지 -> true
     const isHard = () => {

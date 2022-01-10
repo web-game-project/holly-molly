@@ -10,6 +10,9 @@ import Modal from '../components/ModalNickName';
 import style from '../styles/styles.js';
 
 function GameStart() {
+
+    console.log('세션스토리지 : ' + sessionStorage.getItem('token'));
+    
     return (
         <Background>
             <Backgroundimg>

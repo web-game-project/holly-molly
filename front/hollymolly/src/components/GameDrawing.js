@@ -13,14 +13,10 @@ import axios from 'axios';
 import html2canvas from 'html2canvas';
 import { useHistory, useLocation } from 'react-router';
 
-let data = localStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-
 const GameDrawing = (props) => {
     const history = useHistory();
 
-    const {gameSetNo, gameIdx, socket, leaderIdx, order, color, room_idx, idx, member_count, role,  setIdx, userList, keyword} = props;
+    const { gameSetNo, gameIdx, socket, leaderIdx, order, color, room_idx, idx, member_count, role, setIdx, userList, keyword } = props;
 
     const [possible, setPossible] = useState(true);
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머
@@ -33,29 +29,40 @@ const GameDrawing = (props) => {
     const drawingTime = useRef(true); // 그릴 수 있는 시간을 관리하는 변수
     const readyNextOrder = useRef(false); // 그릴 수 있는 시간을 관리하는 변수
 
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
+    let data, save_token, save_user_idx;
+
+    if (verify === true) {
+        data = sessionStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+        save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+    }
+
     //let user_order = parseInt(order);
-    
+
     // 방 퇴장 시 실시간 순서 변경 반영 위해 useRef 사용 
     const user_order = useRef(0);
     const myList = userList.find((x) => x.user_idx === save_user_idx);
     user_order.current = myList.game_member_order
 
-    let user_color = color; 
+    let user_color = color;
 
     // 지정 색 코드로 바꿔주기 
-    if(user_color === 'RED'){
+    if (user_color === 'RED') {
         user_color = '#FF0000';
-    }else if(user_color === 'ORANGE'){
+    } else if (user_color === 'ORANGE') {
         user_color = '#FF5C00'
-    }else if(user_color === 'YELLOW'){
+    } else if (user_color === 'YELLOW') {
         user_color = '#FFB800'
-    }else if(user_color === 'GREEN'){
+    } else if (user_color === 'GREEN') {
         user_color = '#95DB3B'
-    }else if(user_color === 'BLUE'){
+    } else if (user_color === 'BLUE') {
         user_color = '#3B8EDB'
-    }else if(user_color === 'PINK'){
+    } else if (user_color === 'PINK') {
         user_color = '#CE3BDB'
-    }else{
+    } else {
         user_color = '#823BDB'
     }
 
@@ -186,7 +193,7 @@ const GameDrawing = (props) => {
 
                     // 다음 순서 받을 준비 완료 소켓 보내고 3초 시간 잼
                     setWaitSeconds(10);
-                    
+
                     setSeconds(-1);
                     setPossible(false);
                 }
@@ -231,7 +238,7 @@ const GameDrawing = (props) => {
                     console.log('순서 받기 시간 끝');
                     alert('네트워크가 불안정합니다.');
                     window.location.replace('/');
-                    
+
                     setWaitSeconds(-1);
                 }
             }
@@ -245,22 +252,22 @@ const GameDrawing = (props) => {
 
     //투표하기 전에 고민의 10초 세기
     useEffect(() => {
-            const countdown = setInterval(() => {
-                if (parseInt(secondsLoading) > 0) {
-                    setSecondsLoading(parseInt(secondsLoading) - 1);
-                }
-                if (parseInt(secondsLoading) === 0) {
-                    history.push({
-                        pathname: '/playingvote/' + room_idx,
-                        state: {gameSetNo : gameSetNo, gameIdx : gameIdx, leaderIdx: leaderIdx , move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
-                    });
-                    setSecondsLoading(-1);
-                }
-            }, 1000);
+        const countdown = setInterval(() => {
+            if (parseInt(secondsLoading) > 0) {
+                setSecondsLoading(parseInt(secondsLoading) - 1);
+            }
+            if (parseInt(secondsLoading) === 0) {
+                history.push({
+                    pathname: '/playingvote/' + room_idx,
+                    state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, move: '10초', userList: userList, roomIdx: room_idx, gameSetIdx: setIdx, keyword: keyword, role: role },
+                });
+                setSecondsLoading(-1);
+            }
+        }, 1000);
 
-            return () => {
-                clearInterval(countdown);
-            };
+        return () => {
+            clearInterval(countdown);
+        };
     }, [secondsLoading]);
 
     const onClick = () => {
@@ -269,18 +276,18 @@ const GameDrawing = (props) => {
 
     const saveCanvas = () => {
         const canvas = document.getElementById('draw');
-        
+
         const imgBase64 = canvas.toDataURL('image/png', 'image/octet-stream');
         const decodImg = window.atob(imgBase64.split(',')[1]);
-      
-        let array = [];
-        for (let i = 0; i < decodImg .length; i++) {
-          array.push(decodImg .charCodeAt(i));
-        }
-      
-        var date =+ new Date();
 
-        const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
+        let array = [];
+        for (let i = 0; i < decodImg.length; i++) {
+            array.push(decodImg.charCodeAt(i));
+        }
+
+        var date = + new Date();
+
+        const file = new Blob([new Uint8Array(array)], { type: 'image/png' });
         const fileName = room_idx + '_' + date + '.png';
         let formData = new FormData();
 
@@ -293,8 +300,8 @@ const GameDrawing = (props) => {
             headers: {
                 authorization: 'Bearer ' + save_token,
             },
-        };      
-        
+        };
+
         axios
             .patch(
                 restURL, formData,
@@ -305,7 +312,7 @@ const GameDrawing = (props) => {
             })
             .catch(function (error) {
                 alert('이미지 error ' + error.message);
-            });       
+            });
     }
 
     //downloadURI, Save 는 지울 예정 정희
@@ -321,8 +328,8 @@ const GameDrawing = (props) => {
 
     // 현재 순서 유저 찾기 
     var currentItem = userList.find((x) => x.game_member_order === orderCount.current);
-    
-     // 순서에 따른 자기 순서 표시(하위 -> 상위)
+
+    // 순서에 따른 자기 순서 표시(하위 -> 상위)
     /* const sendOrder = () => {
         props.currentOrder(currentItem.user_idx);
     } */
@@ -330,74 +337,74 @@ const GameDrawing = (props) => {
     let cursor_status;
     // 순서에 따른 토스트 표시 
     const toast = () => {
-        if(drawingTime.current === true){
-            if(currentItem.user_idx === save_user_idx){
+        if (drawingTime.current === true) {
+            if (currentItem.user_idx === save_user_idx) {
                 cursor_status = true;
                 return <div><Toast>🎨 {currentItem.user_name} 님이 그림을 그릴 차례입니다.</Toast></div>;
-            }else{
+            } else {
                 cursor_status = false;
                 return <div><Toast>🎨 {currentItem.user_name} 님이 그림을 그리고 있습니다.</Toast></div>;
-            }  
+            }
         }
     }
 
-     // 지정 색 코드로 바꿔주기 
-     let border_user_color = currentItem && currentItem.user_color; 
-    
-     if(drawingTime.current === true){
-        if(border_user_color === 'RED'){
+    // 지정 색 코드로 바꿔주기 
+    let border_user_color = currentItem && currentItem.user_color;
+
+    if (drawingTime.current === true) {
+        if (border_user_color === 'RED') {
             border_user_color = '#FF0000';
-        }else if(border_user_color === 'ORANGE'){
+        } else if (border_user_color === 'ORANGE') {
             border_user_color = '#FF5C00'
-        }else if(border_user_color === 'YELLOW'){
+        } else if (border_user_color === 'YELLOW') {
             border_user_color = '#FFB800'
-        }else if(border_user_color === 'GREEN'){
+        } else if (border_user_color === 'GREEN') {
             border_user_color = '#95DB3B'
-        }else if(border_user_color === 'BLUE'){
+        } else if (border_user_color === 'BLUE') {
             border_user_color = '#3B8EDB'
-        }else if(border_user_color === 'PINK'){
+        } else if (border_user_color === 'PINK') {
             border_user_color = '#CE3BDB'
-        }else if(border_user_color === 'WHITE'){
+        } else if (border_user_color === 'WHITE') {
             border_user_color = '#FFFFFF'
-        }else{
+        } else {
             border_user_color = '#823BDB'
         }
-     }
-     else{
+    }
+    else {
         border_user_color = 'transparent'
-     }
+    }
 
-     
+
 
     return (
         <div>
-            <div>{toast()}</div> 
-            {secondsLoading !== -1? <TimerToast>📢 투표 {secondsLoading} 초 전</TimerToast> : null}
-            <Container>      
+            <div>{toast()}</div>
+            {secondsLoading !== -1 ? <TimerToast>📢 투표 {secondsLoading} 초 전</TimerToast> : null}
+            <Container>
                 {/* {seconds === 10 ? sendOrder() : null}  */}
                 <DrawingContainer color={border_user_color} cursor={cursor_status}>
-                    <canvas id = "draw" ref={canvasRef} width="610" height={'600'}></canvas>
+                    <canvas id="draw" ref={canvasRef} width="610" height={'600'}></canvas>
                 </DrawingContainer>
                 {
                     (
-                     possible === true
-                     ?
-                    seconds > 0 ? (
-                        <img
-                            src={require('../assets/timer_' + seconds + '.png')}
-                            style={{
-                                width: '80px',
-                                height: '50px',
-                                backgroundSize: 'contain',
-                                marginTop: '20px',
-                                zIndex: '1',
-                                marginLeft: '-100px',
-                            }}
-                        />
-                    ) : (
-                        ''
-                    )
-                    : '')
+                        possible === true
+                            ?
+                            seconds > 0 ? (
+                                <img
+                                    src={require('../assets/timer_' + seconds + '.png')}
+                                    style={{
+                                        width: '80px',
+                                        height: '50px',
+                                        backgroundSize: 'contain',
+                                        marginTop: '20px',
+                                        zIndex: '1',
+                                        marginLeft: '-100px',
+                                    }}
+                                />
+                            ) : (
+                                ''
+                            )
+                            : '')
                 }
             </Container>
             {/* <button onClick={onClick}>초기화</button> */}

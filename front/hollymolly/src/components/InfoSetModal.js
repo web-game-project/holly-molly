@@ -4,18 +4,14 @@ import Modal from 'react-modal';
 import styled from 'styled-components';
 import style from '../styles/styles';
 import { ReactComponent as SettingIcon } from '../assets/settingIcon.svg'; // 방 세팅 버튼
+import RefreshVerification from '../server/RefreshVerification';
+
 // 소켓
 import { io } from 'socket.io-client';
 import axios from 'axios';
 import colors from '../styles/styles';
 
 const BaseURL = 'http://3.17.55.178:3002';
-
-//RefreshVerification.verification();
-
-// local storage에 있는지 확인
-let data = localStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
 
 export default function InfoSetModal({ title, mode, room_private, member, room_idx }) {
     // 인원수 0 제목 0 난이도
@@ -41,6 +37,16 @@ export default function InfoSetModal({ title, mode, room_private, member, room_i
         },
     };
 
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
+    let data, save_token;
+
+    if (verify === true) {
+        data = sessionStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    }
+    
     const UpdateRoomInfo = async () => {
         // 대기실 정보 수정 api
         const restURL = BaseURL + '/room/info/';

@@ -16,15 +16,6 @@ import { ReactComponent as HumanCharacter } from '../assets/human.svg';
 import { ReactComponent as GhostCharacter } from '../assets/purple.svg';
 import colors from '../styles/styles';
 
-// local storage에 있는지 확인
-let data = localStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
-
-console.log('내 인덱스 : ' + save_user_idx);
-
 function GameRoleComponent(props) {
 
     const ghost = "유령 친구들과 수다를 떨고 있는 Holly!\n그런데.. 동작 그만! 자꾸 생뚱맞은 이야기를 하는 너, \n대체 누구야?\n아무리 봐도 지금 우리 사이에 인간이 들어 온 것 같다!\n겁없이 유령 사이에 끼어든 인간을 찾아 혼쭐을 내주자.\n동안 유령 친구들과 함께 최선을 다해서 \n인간을 찾아보자구!";

@@ -4,13 +4,10 @@ import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import UserVote from './UserVote';
 import axios from 'axios';
+import RefreshVerification from '../server/RefreshVerification';
 
 //페이지 이동
 import { useHistory, useLocation, Prompt } from 'react-router';
-
-// local storage에 있는지 확인
-let data = localStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
 
 const GameVoteComponent = (props) => {
     const userList = props.userList;
@@ -27,6 +24,16 @@ const GameVoteComponent = (props) => {
     //투표 10초 타이머
     const [seconds, setSeconds] = useState(10);
 
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
+    let data, save_token;
+
+    if (verify === true) {
+        data = sessionStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    }
+    
     useEffect(() => {
         setClicked(false);
         setVoteWho('');

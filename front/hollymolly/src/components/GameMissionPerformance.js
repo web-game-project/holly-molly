@@ -2,10 +2,7 @@ import styled from "styled-components";
 import React, { useState, useEffect, useRef } from 'react';
 import style from '../styles/styles';
 import axios from 'axios';
-
-// local storage에 있는지 확인 
-let data = localStorage.getItem("token");
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+import RefreshVerification from "../server/RefreshVerification";
 
 const GameMissionPerformance = (props) => {
     
@@ -17,6 +14,17 @@ const GameMissionPerformance = (props) => {
     const inputRef = useRef();
 
     let user_role = role;
+
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
+    let data, save_token;
+
+    if (verify === true) {
+        data = sessionStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    }
+    
     useEffect(() => {
         if(user_role === "human"){ // human 일 때 마피아 미션 수행 
             setIsHuman(true);

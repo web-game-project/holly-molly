@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
- 
+import RefreshVerification
+ from '../server/RefreshVerification';
 // Importing toastify module
 import {toast, ToastContainer} from 'react-toastify';
  
@@ -7,13 +8,19 @@ import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
  
 toast.configure()
-
-// local storage에 있는지 확인
-let data = localStorage.getItem('token');
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
  
 // This is main function
 const Toast = (props) => {
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
+    let data, save_user_name;
+
+    if (verify === true) {
+        data = sessionStorage.getItem('token');
+        save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
+    }
+
     const {pass, draw, name, txt} = props;
 
     let drawingTxt = '';
