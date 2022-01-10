@@ -55,19 +55,15 @@ const PlayingVote = (props) => {
     let chatAvailable = useRef(true);
 
     let exitSocket = useRef(false);
-   
-   // let voteTotalList = useRef([]);
+    let finalSocket = useRef(false);
 
-    // local storage에 있는지 확인
-    /* let data = localStorage.getItem('token');
-    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-    let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx; */
-
-    let u = RefreshVerification.verification()
-    console.log('리플시? ' + u);
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token, save_user_idx;
-    if(u === true){
-        data = localStorage.getItem('token');
+
+    if(verify === true){
+        data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     }
@@ -132,7 +128,7 @@ const PlayingVote = (props) => {
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
-            console.log("퇴장한 사람 : " + data.user_idx);
+            console.log('exit room');
 
             var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
 
@@ -152,14 +148,28 @@ const PlayingVote = (props) => {
 
         // 비정상 종료 감지 최종 결과 전송
         props.socket.on('get final result', (data) => {
-            if(exitSocket.current === true){
+            
+            detectExit(data);
+            
+            /* if(exitSocket.current === true){
                 history.push({
                     pathname: '/playingresult/' + roomIdx,
                     state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leader, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
                 })
-            }
+            } */
+
         });  
     }, []);
+
+    // 비정상 종료 감지 후 최종 결과 페이지로 이동 
+    const detectExit = async (data) => {
+        if(exitSocket.current === true && finalSocket.current === true){
+            history.push({
+                pathname: '/playingresult/' + roomIdx,
+                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leader, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
+            })
+        }
+    }
 
     // 깊은 복사 
     let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
@@ -284,7 +294,7 @@ const PlayingVote = (props) => {
                                 }
                                 
                                 <ChatDiv>
-                                    <Chatting socket={props.socket} room_idx={roomIdx} available={chatAvailable.current}></Chatting> {/* 채팅 비활성화 */}
+                                    <Chatting socket={props.socket} room_idx={roomIdx} available={chatAvailable.current} color={myList&&myList.user_color}></Chatting> {/* 채팅 비활성화 */}
                                 </ChatDiv>
                             </BackGroundDiv>
                         </Container>

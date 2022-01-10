@@ -45,6 +45,7 @@ const PlayingRoom = (props) => {
     let setBeforeKeyword = useRef('');
 
     let exitSocket = useRef(false);
+    let finalSocket = useRef(false);
 
     const [role, setRole] = React.useState('');
     const [keyword, setKeyWord] = React.useState('');
@@ -59,11 +60,13 @@ const PlayingRoom = (props) => {
 
     const BaseURL = 'http://3.17.55.178:3002/';
 
-    let u = RefreshVerification.verification()
-    //console.log('리플시? ' + u); 
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token, save_user_idx;
-    if(u === true){
-        data = localStorage.getItem('token');
+
+    if(verify === true){
+        data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     }
@@ -200,7 +203,7 @@ const PlayingRoom = (props) => {
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
-            console.log("퇴장한 사람 : " + data.user_idx);
+            console.log('exit room');
             
             var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
 
@@ -220,15 +223,29 @@ const PlayingRoom = (props) => {
 
         // 비정상 종료 감지 최종 결과 전송
         props.socket.on('get final result', (data) => {
-            if(exitSocket.current === true){
+        
+            finalSocket.current = true;
+
+            detectExit(data);
+            /* if(exitSocket.current === true){
                 history.push({
                     pathname: '/playingresult/' + room_idx,
                     state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
                 })
-            }
+            } */
             
         });   
     }, []);
+
+    // 비정상 종료 감지 후 최종 결과 페이지로 이동 
+    const detectExit = async (data) => {
+        if(exitSocket.current === true && finalSocket.current === true){
+            history.push({
+                pathname: '/playingresult/' + room_idx,
+                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
+            })
+        }
+    }
 
 
     useEffect(() => {
@@ -424,7 +441,7 @@ const PlayingRoom = (props) => {
                                         <Chatting socket={props.socket} room_idx={room_idx} height="615px" available={true} color={myList&&myList.user_color}></Chatting>
                                     </ChatDiv>
                                 </BackGroundDiv>
-                            </Container>
+                            </Container> 
                         </div>
                     ) : (
                         <Loading />
