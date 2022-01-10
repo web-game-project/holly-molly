@@ -281,7 +281,7 @@ const PlayingResult = (props) => {
 
                         {
                             seconds <= 5 ? (
-                                gameSetNo === 2 ?
+                                gameSetNo === 2 && normal === true?
                                     //플레잉 룸으로 
                                     history.push({
                                         pathname: '/playingroom/' + roomIdx,
