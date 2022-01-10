@@ -25,7 +25,7 @@ let total_room_cnt = 0; // 룸 리스트 총 방의 갯수
 //RefreshVerification.verification();
 
 const RoomList = (props) => {
-    
+
     const history = useHistory();
 
     // 리덕스에 저장된 값
@@ -36,7 +36,6 @@ const RoomList = (props) => {
     const [isSocket, setIsSocket] = useState(false);
     const [currentSlide, setCurrentSlide] = useState(0);
 
-    
     // 방 전체 리스트
     const [rooms, setRooms] = useState();
     // Filter 선택값 결과 배열 list
@@ -48,11 +47,13 @@ const RoomList = (props) => {
 
     const resultArray = result.sort();
 
-    let u = RefreshVerification.verification()
-    console.log('리플시? ' + u);
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
-    if(u === true){
-        data = localStorage.getItem('token');
+
+    if (verify === true) {
+        data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
 
@@ -154,9 +155,9 @@ const RoomList = (props) => {
     const roomListCheck = async () => {
         const currentPage = currentSlide + 1;
         var restURL = baseURL + 'room?page=' + currentPage;
-        
+
         restURL = filterUrl(restURL, resultArray);
-        
+
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,
@@ -176,11 +177,11 @@ const RoomList = (props) => {
             });
     };
 
-    if(isSocket === true){
+    if (isSocket === true) {
         for (let i = 0; i < TOTAL_SLIDES; i++) {
             roomListCheckPage(i);
-         }
-         setIsSocket(false);
+        }
+        setIsSocket(false);
     }
 
     function filterUrl(exitedUrl, resultArray) {
@@ -303,7 +304,7 @@ const RoomList = (props) => {
     return (
         <React.Fragment>
             <Background>
-                {props.socket? (                
+                {props.socket ? (
                     <div>
                         <Header goMain tutorial />
                         <Container>
@@ -311,7 +312,7 @@ const RoomList = (props) => {
                                 {/* 검색바 & 버튼 div*/}
                                 <RoomGrid is_flex_space width="980px" height="110px" bg="#DAD4F6" border="1px solid #DAD4F6">
                                     <div style={styles.grid}>
-                                        <RoomSearchBar socket={props.socket}/>
+                                        <RoomSearchBar socket={props.socket} />
                                     </div>
                                     <div
                                         style={{

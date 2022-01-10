@@ -31,12 +31,9 @@ import RefreshVerification from './server/RefreshVerification';
 const htmlTitle = document.querySelector('title');
 htmlTitle.innerHTML = '홀리몰리';
 
-let data = localStorage.getItem('token');
+let data = sessionStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
       
-//console.log('app.js에 data 가 있냐?' + data);
-//data && RefreshVerification.verification();
-
 const socket = io('http://3.17.55.178:3002/', {
               auth: {
                   token: save_token,

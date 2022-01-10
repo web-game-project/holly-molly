@@ -92,7 +92,17 @@ export default function ModalBase({ tutorial }) {
                     console.log('success!' + response.data.user_idx);
                     //  alert('success! ' + response.data.access_token);
 
-                    localStorage.setItem(
+                    sessionStorage.setItem('token',
+                    JSON.stringify({
+                        access_token: response.data.access_token,
+                        refresh_token: response.data.refresh_token,
+                        user_idx: response.data.user_idx,
+                        user_name: nickName,
+                    }));
+
+                    console.log('세션스토리지 : ' + sessionStorage.getItem('token'));
+                    
+                    /* localStorage.setItem(
                         'token',
                         JSON.stringify({
                             access_token: response.data.access_token,
@@ -100,7 +110,7 @@ export default function ModalBase({ tutorial }) {
                             user_idx: response.data.user_idx,
                             user_name: nickName,
                         })
-                    );
+                    ); */
 
                     // 리덕스 store에 baseURL 넣기
                     dispatch(socketActions.socketAction('http://3.17.55.178:3002/'));

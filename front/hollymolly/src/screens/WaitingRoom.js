@@ -45,20 +45,16 @@ export default function WaitingRoom(props) {
 
     let userList = useRef([]);
 
-    let u = RefreshVerification.verification()
-    console.log('리플시? ' + u);
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token, save_user_idx;
-    if (u === true) {
-        data = localStorage.getItem('token');
+
+    if (verify === true) {
+        data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     }
-
-    /*  RefreshVerification.verification()
-     // local storage에 있는지 확인
-     let data = localStorage.getItem('token');
-     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-     let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx; */
 
     //색깔
     const [colorList, setColorList] = useState([
@@ -155,7 +151,7 @@ export default function WaitingRoom(props) {
 
                                 if (save_user_idx == locationUserList[i].user_idx) {
                                     //색깔변경중입니다 토스트 지우기
-                                    setModifiy(false); 
+                                    setModifiy(false);
                                     //선택된 값 세팅
                                     setSelectColor(element.color);
                                     //내 준비 상태
@@ -873,7 +869,7 @@ export default function WaitingRoom(props) {
                                     {
                                         modify ?
                                             <ColorToast>색깔 변경 중 입니다....</ColorToast>
-                                        :
+                                            :
                                             null
                                     }
                                     <UserDiv>

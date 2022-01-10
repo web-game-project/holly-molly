@@ -10,6 +10,8 @@ import GameMiddleResult from '../components/GameMiddleResult';
 import GameFinalResult from '../components/GameFinalResult';
 import GameOpenResult from '../components/GameOpenResult';
 import GameSetImageShow from '../components/GameSetImageShow';
+import Loading from '../components/Loading';
+import RefreshVerification from '../server/RefreshVerification.js';
 
 //페이지 이동
 import { useHistory, useLocation } from 'react-router';
@@ -17,12 +19,6 @@ import { useHistory, useLocation } from 'react-router';
 import axios from 'axios';
 //깊은 복제
 import * as _ from 'lodash';
-
-import Loading from '../components/Loading';
-
-import RefreshVerification from '../server/RefreshVerification.js';
-
-//"무비페이지에 str 자리 값넣어주기!!"
 
 const PlayingResult = (props) => {
     let location = useLocation();
@@ -49,18 +45,13 @@ const PlayingResult = (props) => {
 
     let exitSocket = useRef(false);
 
-    /* alert('프롭스 넘어왔다!! ' + keyword +gameSetNo +gameIdx + gameSetIdx+ leaderIdx+JSON.stringify(userList) +roomIdx+role); */
-
-    // local storage에 있는지 확인
-    /* let data = localStorage.getItem('token');
-    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-    let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx; */
-
-    let u = RefreshVerification.verification()
-    console.log('리플시? ' + u);
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token, save_user_idx;
-    if (u === true) {
-        data = localStorage.getItem('token');
+
+    if(verify === true){
+        data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     }

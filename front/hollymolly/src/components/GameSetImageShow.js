@@ -21,14 +21,6 @@ const GameVoteResult = (props) => {
     let leaderIdx = props.leaderIdx;
     let gameIdx = props.gameIdx; */
 
-
-    // local storage에 있는지 확인
-    let data = localStorage.getItem('token');
-    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-    let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-    let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-    let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
-
     const [seconds, setSeconds] = useState(4);
 
     useEffect(() => {
