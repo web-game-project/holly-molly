@@ -185,3 +185,4 @@ module.exports.selectFinalResult = selectFinalResult;
 module.exports.selectHuman = selectHuman;
 module.exports.deleteAllAboutGame = deleteAllAboutGame;
 module.exports.updateRoomStatus = updateRoomStatus;
+module.exports.updateMemberReady = updateMemberReady ;
