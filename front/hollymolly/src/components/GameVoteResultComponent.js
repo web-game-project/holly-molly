@@ -47,27 +47,6 @@ const GameVoteResult = (props) => {
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
 
-    const settingVoteList = async () => {
-        copyVoteList.current = _.cloneDeep(voteList.current); // 유저 리스트 중 순서 정리를 위한 리스트 
-        voteListLength.current = voteList.current.length;
-
-        for (let j = 0; j < userList.length; j++) {
-            for (let i = 0; i < voteListLength.current; i++) {
-                isSame.current = (userList[i].user_idx === copyVoteList.current[j].user_idx) ? true : false
-
-                if (isSame.current === true) {
-                    copyVoteList.current[j].user_color = userList[i].user_color;
-                } else if (isSame.current === false) {
-                    let overlap = copyVoteList.current.find((x) => x.user_idx === userList[i].user_idx)
-
-                    if (!overlap) {
-                        copyVoteList.current.push({ user_idx: userList[i].user_idx, user_name: userList[i].user_name, vote_cnt: 0, user_color: userList[i].user_color });
-                    }
-                }
-            }
-        }
-    }
-
     // 투표 10초 타이머 세기, 투표 10초 후에 1초 더 여유롭게.
     const [seconds, setSeconds] = useState(10);
 
@@ -118,7 +97,6 @@ const GameVoteResult = (props) => {
                 .get(restURL, reqHeaders)
                 .then(function (response) {
                     voteList.current = response.data.vote_result;
-                   // settingVoteList();
                 })
                 .catch(function (error) {
                     alert('error voteResult : ' + error.message);
