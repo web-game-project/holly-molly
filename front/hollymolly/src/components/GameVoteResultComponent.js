@@ -97,6 +97,7 @@ const GameVoteResult = (props) => {
                 .get(restURL, reqHeaders)
                 .then(function (response) {
                     voteList.current = response.data.vote_result;
+                    console.log('전체 투표 결과야!' + JSON.stringify(voteList.current));
                 })
                 .catch(function (error) {
                     alert('error voteResult : ' + error.message);

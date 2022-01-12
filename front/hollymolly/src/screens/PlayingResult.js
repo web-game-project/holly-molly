@@ -30,6 +30,7 @@ const PlayingResult = (props) => {
 
     const [normal, setNormal] = useState(location.state.normal); //props로 받음 비정상 종료인지 구분하는 변수
     const [exitData, setExitData] = useState(location.state.exitData); //props로 받는 비정상 종료 후 최종결과 데이터
+    const [keyword, setKeyword] = useState(location.state.keyword);
 
     const BaseURL = 'http://3.17.55.178:3002';
 
@@ -40,7 +41,6 @@ const PlayingResult = (props) => {
     const leaderIdx = location.state.leaderIdx;
     const userList = location.state.userList;
     const roomIdx = location.state.roomIdx;
-    const keyword = location.state.keyword;
     const role = location.state.role;
 
     let exitSocket = useRef(false);
@@ -50,10 +50,12 @@ const PlayingResult = (props) => {
     console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token, save_user_idx;
 
-    if(verify === true){
-        data = sessionStorage.getItem('token');
-        save_token = JSON.parse(data) && JSON.parse(data).access_token;
-        save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+    if (normal === true) {
+        if (verify === true) {
+            data = sessionStorage.getItem('token');
+            save_token = JSON.parse(data) && JSON.parse(data).access_token;
+            save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+        }
     }
 
     // 깊은 복사 
@@ -136,22 +138,34 @@ const PlayingResult = (props) => {
         });
 
         // 같은 대기실에 있는 클라이언트들에게 최종 결과 전송
-        props.socket.on('get final result', (data) => {
-            setFinalData(data);
+        props.socket.on('get final result', (data) => {           
+
+            if (gameSetNo === 2) { //게임 세트가 2인데 최종결과 전송이 왔다? 비정상 종료다.
+
+                console.log('중간결과 비정상' + JSON.stringify(data));
+                setKeyword("게임 종료");
+                setNormal(false);
+                setExitData(data);
+                setSeconds(15); ///다시 15초를 샌다.
+            }
+            else { // 게임 세트가 3일 때
+                setFinalData(data);
+            }
+
         });
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
             console.log("퇴장한 사람 : " + data.user_idx);
 
-            var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
+            var exitPerson = userList.find((x) => x.user_idx === data.user_idx);
 
             var exitIndex = userList.findIndex(v => v.user_idx === data.user_idx);
-            userList.splice(exitIndex,1);
+            userList.splice(exitIndex, 1);
 
-            if(exitPerson){
+            if (exitPerson) {
                 for (let i = 0; i < userList.length; i++) {
-                    if(exitPerson.game_member_order < userList[i].game_member_order){
+                    if (exitPerson.game_member_order < userList[i].game_member_order) {
                         userList[i].game_member_order = userList[i].game_member_order - 1;
                     }
                 }
@@ -174,8 +188,10 @@ const PlayingResult = (props) => {
     }, [seconds]);
 
     useEffect(() => {
-        if (gameSetNo === 2 && leaderIdx === save_user_idx) {
-            getMiddleResult();
+        if (normal === true) {
+            if (gameSetNo === 2 && leaderIdx === save_user_idx) {
+                getMiddleResult();
+            }
         }
         else if (gameSetNo === 3 && leaderIdx === save_user_idx) {
             getFinalResult();
@@ -272,7 +288,7 @@ const PlayingResult = (props) => {
 
                         {
                             seconds <= 5 ? (
-                                gameSetNo === 2 && normal === true?
+                                gameSetNo === 2 && normal === true ?
                                     //플레잉 룸으로 
                                     history.push({
                                         pathname: '/playingroom/' + roomIdx,
@@ -287,7 +303,7 @@ const PlayingResult = (props) => {
                                             :
                                             <GameOpenResult roomIdx={roomIdx} name={finalData.human_name} color={finalData.human_color} />
                                         )
-                                )
+                            )
                                 :
                                 (
                                     gameSetNo === 2 && normal === true ?  // 2세트이고, 비정상 종료가 아닐 때,

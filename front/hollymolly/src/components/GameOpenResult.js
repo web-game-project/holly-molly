@@ -26,6 +26,7 @@ const GameFinalResult = (props) => {
                 history.push({
                     pathname: '/waitingroom/' + props.roomIdx,
                 }); //게임종료, 웨이팅룸으로 이동
+                //window.location.replace('/waitingroom/'+ props.roomIdx);
             }
         }, 1000);
 
