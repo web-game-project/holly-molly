@@ -242,7 +242,7 @@ const PlayingRoom = (props) => {
         if(exitSocket.current === true && finalSocket.current === true){
             history.push({
                 pathname: '/playingresult/' + room_idx,
-                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
+                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx.current, keyword: "게임종료", role: role, exitData: data, normal: false},
             })
         }
     }
@@ -325,7 +325,10 @@ const PlayingRoom = (props) => {
             .delete(restURL, reqHeaders)
             .then(function (response) {
                 console.log(response);
-                window.location.replace('/');
+                history.push({
+                    pathname: '/',  
+                });
+                //window.location.replace('/');
             })
             .catch(function (error) {
                 alert(error);
@@ -338,8 +341,8 @@ const PlayingRoom = (props) => {
         window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
         
         return () => {
-            //window.removeEventListener('beforeunload', alertUser)
-            //window.removeEventListener('unload', handleEndConcert)
+            window.removeEventListener('beforeunload', alertUser)
+            window.removeEventListener('unload', handleEndConcert)
         }  
     }, [])
 
