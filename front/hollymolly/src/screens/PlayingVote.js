@@ -151,6 +151,7 @@ const PlayingVote = (props) => {
             
             detectExit(data);
             
+            finalSocket.current = true;
             /* if(exitSocket.current === true){
                 history.push({
                     pathname: '/playingresult/' + roomIdx,
@@ -166,7 +167,7 @@ const PlayingVote = (props) => {
         if(exitSocket.current === true && finalSocket.current === true){
             history.push({
                 pathname: '/playingresult/' + roomIdx,
-                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leader, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
+                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leader, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx.current, keyword: "게임종료", role: role, exitData: data, normal: false},
             })
         }
     }
@@ -209,10 +210,10 @@ const PlayingVote = (props) => {
             .delete(restURL, reqHeaders)
             .then(function (response) {
                 console.log(response);
-                /* history.push({
-                    pathname: '/inputname', // 성공하면 닉네임 설정 창으로 이동 
-                }); */
-                window.location.replace('/');
+                history.push({
+                    pathname: '/',  
+                });
+                //window.location.replace('/');
             })
             .catch(function (error) {
                 alert(error);
@@ -225,8 +226,8 @@ const PlayingVote = (props) => {
         window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
         
         return () => {
-            //window.removeEventListener('beforeunload', alertUser)
-            //window.removeEventListener('unload', handleEndConcert)
+            window.removeEventListener('beforeunload', alertUser)
+            window.removeEventListener('unload', handleEndConcert)
         }  
     }, [])
 
