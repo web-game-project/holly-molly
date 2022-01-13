@@ -110,14 +110,17 @@ const Chatting = (props) => {
         });
 
         props.socket.on('exit room', (data) => {
-            let msg = data.user_name + " 님이 퇴장하셨습니다."
+            if(data.user_name !== undefined){
+                let msg = data.user_name + " 님이 퇴장하셨습니다."
 
-            setRecentChatColor('#fff');
-            setRecentChatUserName('📢 관리자');
-            setRecentChat(msg);
-            setRecentChatUserIdx('00');
+                setRecentChatColor('#fff');
+                setRecentChatUserName('📢 관리자');
+                setRecentChat(msg);
+                setRecentChatUserIdx('00');
 
-            setOnMessage(true);
+                setOnMessage(true);
+            }
+            
         });
 
     }, []);
