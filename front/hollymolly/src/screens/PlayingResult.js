@@ -20,6 +20,8 @@ import axios from 'axios';
 //깊은 복제
 import * as _ from 'lodash';
 
+let userList = [{}];
+
 const PlayingResult = (props) => {
     let location = useLocation();
     const history = useHistory();
@@ -39,7 +41,7 @@ const PlayingResult = (props) => {
     const gameIdx = location.state.gameIdx;
     const gameSetIdx = location.state.gameSetIdx;
     const leaderIdx = location.state.leaderIdx;
-    const userList = location.state.userList;
+    userList = location.state.userList;
     const roomIdx = location.state.roomIdx;
     const role = location.state.role;
 
@@ -140,7 +142,7 @@ const PlayingResult = (props) => {
         // 같은 대기실에 있는 클라이언트들에게 최종 결과 전송
         props.socket.on('get final result', (data) => {           
 
-            if (gameSetNo === 2) { //게임 세트가 2인데 최종결과 전송이 왔다? 비정상 종료다.
+            if (gameSetNo === 2 && exitSocket.current === true) { //게임 세트가 2인데 최종결과 전송이 왔다? 비정상 종료다.
 
                 console.log('중간결과 비정상' + JSON.stringify(data));
                 setKeyword("게임 종료");
