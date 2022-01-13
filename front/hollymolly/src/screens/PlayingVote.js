@@ -25,6 +25,8 @@ import * as _ from 'lodash';
 import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
 
+let userList = [{}];
+
 const PlayingVote = (props) => {
     let location = useLocation();
     const history = useHistory();
@@ -44,7 +46,7 @@ const PlayingVote = (props) => {
     let gameSetIdx = location.state.gameSetIdx; //그림판에서 넘어온 게임 세트 인덱스
     let gameSetNo = location.state.gameSetNo;
     let gameIdx = location.state.gameIdx;
-    let userList = location.state.userList; //그림판에서 넘어온 유저리스트
+    userList = location.state.userList; //그림판에서 넘어온 유저리스트
 
     let roomIdx = location.state.roomIdx; //그림판에서 넘어온 룸인덱스
     let role = location.state.role; //그림판에서 넘어온 역할
