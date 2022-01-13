@@ -85,7 +85,7 @@ const saveSocketId = async (socket) => {
             printLog('socket', `${tokenValue.user_idx}USER{${socket.id}, 대기실 리스트}`);
         }
     } catch (error) {
-        printErrorLog('socket-saveSocketId', error);
+        //printErrorLog('socket-saveSocketId', error);
         socket.disconnect(true);
     }
 };
