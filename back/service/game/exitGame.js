@@ -23,7 +23,7 @@ const exitGame = async (req, res, next) => {
 
 const exitGameAndRoom = async (user, io) => {
     try {
-        printErrorLog('exitGameAndRoom', user.user_idx+"번  퇴장");
+        printErrorLog('exitGameAndRoom', user.user_idx+"번  퇴장 시작");
 
         const { game, gameMember } = await getGameAndMember(user.user_idx);
         const { room, roomMember } = await getRoomAndMember(user.user_idx);
@@ -91,6 +91,7 @@ const exitGameAndRoom = async (user, io) => {
             room_member_count: memberList.length - 1,
         });
 
+        printErrorLog('exitGameAndRoom', user.user_idx+"번  퇴장 완료");
         return true;
     } catch (error) {
         printErrorLog('exitGame-exitGameAndRoom', error);
