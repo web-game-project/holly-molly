@@ -68,7 +68,6 @@ const PlayingRoom = (props) => {
 
     //토큰 검사
     let verify = RefreshVerification.verification()
-    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token, save_user_idx;
 
     if(verify === true){
@@ -279,7 +278,11 @@ const PlayingRoom = (props) => {
 
     useEffect(() => {
 
-        userList = beforeUserList;
+        //userList = beforeUserList;
+
+        if(exitSocket.current === false){
+            userList = beforeUserList;; //그림판에서 넘어온 유저리스트
+        }
 
         if (gameSetIdx.current !== undefined && isSet === true) {
             if (leaderIdx === save_user_idx) { //리더만 세트시작 api 요청 가능
