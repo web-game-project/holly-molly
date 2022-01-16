@@ -66,6 +66,7 @@ const exitGameAndRoomAndDeleteUser = async (io, room_idx, acceptedMember) => {
 
     for(let i in NotAcceptedMembers){
         let { user_user_idx } = NotAcceptedMembers[i];
+        console.log("timer exit: " + user_user_idx);
         const isSuccess = await exitGameAndRoom({user_idx: user_user_idx}, io);
         if(!isSuccess)  throw "exitGame fail";
         deleteUser(user_user_idx);
