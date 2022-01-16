@@ -54,18 +54,18 @@ const GameMissionPerformance = (props) => {
             },
         };
 
-        /* let str = '';
-        if(inputRef.current.value === '' || inputRef.current.value === undefined)
-            str = "기 권";
+        let str = '';
+        if(inputRef.current.value === '' || inputRef.current.value === undefined )
+            str = null;
         else   
-            str = inputRef.current.value; */
+            str = inputRef.current.value;
 
         axios
             .patch(
                 reqURL,
                 {
                     game_set_idx: gameSet, // 게임 세트 인덱스 
-                    game_set_human_answer: inputRef.current.value // 인간이 입력한 답안 
+                    game_set_human_answer: str // 인간이 입력한 답안 
                 },
                 reqHeaders
             )
