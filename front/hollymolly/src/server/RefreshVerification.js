@@ -63,7 +63,7 @@ const RefreshVerification = {
               );
             })
             .catch(function (error) {
-              alert('refresh 갱신 api 에러 ' + error);
+              alert(error.response.data.message);
             });
         }
       });  
