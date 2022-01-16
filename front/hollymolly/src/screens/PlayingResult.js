@@ -25,6 +25,7 @@ let userList = [{}];
 const PlayingResult = (props) => {
     let location = useLocation();
     const history = useHistory();
+    let exitSocket = useRef(false);
 
     const [seconds, setSeconds] = useState(15); //10초 보여주기
     const [winner, setWinner] = useState(''); // 중간 결과 승리자
@@ -41,11 +42,13 @@ const PlayingResult = (props) => {
     const gameIdx = location.state.gameIdx;
     const gameSetIdx = location.state.gameSetIdx;
     const leaderIdx = location.state.leaderIdx;
-    userList = location.state.userList;
+
+    if(exitSocket.current === false){
+        userList = location.state.userList; //그림판에서 넘어온 유저리스트
+    }
+
     const roomIdx = location.state.roomIdx;
     const role = location.state.role;
-
-    let exitSocket = useRef(false);
 
     //토큰 검사
     let verify = RefreshVerification.verification()
@@ -58,30 +61,6 @@ const PlayingResult = (props) => {
             save_token = JSON.parse(data) && JSON.parse(data).access_token;
             save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
         }
-    }
-
-    // 깊은 복사 
-    let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
-    let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트 
-
-    // 유저 리스트 중 내 정보 배열 및 내 순서 저장
-    const myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
-
-    // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
-    let myIndex = reOrderList.find((x) => x.user_idx === save_user_idx);
-    if (myIndex) {
-        myIndex.game_member_order = 0;
-    }
-
-    // 그림 그리기 순서 대로 유저 리스트 재정렬
-    reOrderList.sort(function (a, b) {
-        return a.game_member_order - b.game_member_order;
-    });
-
-    // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
-    var myItem = reOrderList.find((x) => x.user_idx === save_user_idx);
-    if (myItem) {
-        myItem.game_member_order = '나';
     }
 
     // 중간 결과 (방장만 부를 수 있음)
@@ -143,6 +122,22 @@ const PlayingResult = (props) => {
         props.socket.on('get final result', (data) => {           
 
             if (gameSetNo === 2 && exitSocket.current === true) { //게임 세트가 2인데 최종결과 전송이 왔다? 비정상 종료다.
+                // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+                let myIndex = userList.find((x) => x.user_idx === save_user_idx);
+                if (myIndex) {
+                    myIndex.game_member_order = 0;
+                }
+
+                // 그림 그리기 순서 대로 유저 리스트 재정렬
+                userList.sort(function (a, b) {
+                    return a.game_member_order - b.game_member_order;
+                });
+
+                // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+                var myItem = userList.find((x) => x.user_idx === save_user_idx);
+                if (myItem) {
+                    myItem.game_member_order = '나';
+                }
 
                 console.log('중간결과 비정상' + JSON.stringify(data));
                 setKeyword("게임 종료");
@@ -158,23 +153,21 @@ const PlayingResult = (props) => {
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
-            console.log("퇴장한 사람 : " + data.user_idx);
+            console.log('exit room');
+            var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
 
-            var exitPerson = userList.find((x) => x.user_idx === data.user_idx);
+            userList = userList.filter(x => x.user_idx !== data.user_idx);
 
-            var exitIndex = userList.findIndex(v => v.user_idx === data.user_idx);
-            userList.splice(exitIndex, 1);
-
-            if (exitPerson) {
+            if(exitPerson){
                 for (let i = 0; i < userList.length; i++) {
-                    if (exitPerson.game_member_order < userList[i].game_member_order) {
+                    if(exitPerson.game_member_order < userList[i].game_member_order){
                         userList[i].game_member_order = userList[i].game_member_order - 1;
                     }
                 }
             }
-
+   
             exitSocket.current = true;
-        });
+            });
     }, []);
 
     useEffect(() => {
@@ -264,6 +257,33 @@ const PlayingResult = (props) => {
 
         return () => unblock()
     },[])  */
+
+    // 깊은 복사 
+    let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
+    let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트 
+
+    // 유저 리스트 중 내 정보 배열 및 내 순서 저장
+    const myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
+
+    // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+    let myIndex = reOrderList.find((x) => x.user_idx === save_user_idx);
+    if (myIndex) {
+        myIndex.game_member_order = 0;
+    }
+
+    // 그림 그리기 순서 대로 유저 리스트 재정렬
+    reOrderList.sort(function (a, b) {
+        return a.game_member_order - b.game_member_order;
+    });
+
+    // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+    var myItem = reOrderList.find((x) => x.user_idx === save_user_idx);
+    if (myItem) {
+        myItem.game_member_order = '나';
+    }
+
+    console.log("reOrderList")
+    console.log(reOrderList)
 
     return (
         <React.Fragment>

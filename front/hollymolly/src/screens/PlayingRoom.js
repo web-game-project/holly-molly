@@ -15,6 +15,7 @@ import GameSetImageShow from '../components/GameSetImageShow';
 
 //통신
 import axios from 'axios';
+
 //깊은 복제
 import * as _ from 'lodash';
 
@@ -23,9 +24,8 @@ import RefreshVerification from '../server/RefreshVerification.js';
 import Loading from '../components/Loading';
 
 let userList = [{}];
-
 const PlayingRoom = (props) => {
-    let location = useLocation();
+    const location = useLocation();
     const history = useHistory();
 
     let room_idx = location.state.room;
@@ -33,8 +33,14 @@ const PlayingRoom = (props) => {
 
     let gameIdx = location.state.gameIdx;
     let gameSetIdx = useRef(location.state.gameSetIdx);
+    
+    let beforeUserList  = location.state.userList;
 
-    let beforeUserList = location.state.userList;
+    console.log("room props");
+    console.log(location.state.userList);
+
+    console.log("room userList");
+    console.log(userList);
 
     let gameSetNo = location.state.gameSetNo;
     
@@ -114,6 +120,14 @@ const PlayingRoom = (props) => {
             .then(function (response) {
                 setRole(response.data.user_role);
                 setKeyWord(response.data.keyword);
+
+                for (let i = 0; i < userList.length; i++) {
+                    if (userList[i].user_idx === save_user_idx) {
+                        userList[i].user_role = response.data.user_role;
+                    } else {
+                        userList[i].user_role = "ghost";
+                    }
+                }
             })
             .catch(function (error) {
                 alert('error 게임멤버정보조회 : ' + error.message);
@@ -203,13 +217,11 @@ const PlayingRoom = (props) => {
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
-            console.log('exit room');
-            
+            console.log('exit room');   
             var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
-
-            var exitIndex = userList.findIndex(v => v.user_idx === data.user_idx);
-            userList.splice(exitIndex,1);
-
+ 
+            userList = userList.filter(x => x.user_idx !== data.user_idx);
+            
             if(exitPerson){
                 for (let i = 0; i < userList.length; i++) {
                     if(exitPerson.game_member_order < userList[i].game_member_order){
@@ -225,6 +237,23 @@ const PlayingRoom = (props) => {
         props.socket.on('get final result', (data) => {
         
             finalSocket.current = true;
+
+            // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+            let myIndex = userList.find((x) => x.user_idx === save_user_idx);
+            if (myIndex) {
+                myIndex.game_member_order = 0;
+            }
+
+            // 그림 그리기 순서 대로 유저 리스트 재정렬
+            userList.sort(function (a, b) {
+                return a.game_member_order - b.game_member_order;
+            });
+
+            // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+            var myItem = userList.find((x) => x.user_idx === save_user_idx);
+            if (myItem) {
+                myItem.game_member_order = '나';
+            }
 
             detectExit(data);
             /* if(exitSocket.current === true){
@@ -271,41 +300,33 @@ const PlayingRoom = (props) => {
 
     }, []);
 
-    for (let i = 0; i < userList.length; i++) {
-        if (userList[i].user_idx === save_user_idx) {
-            userList[i].user_role = role;
-        } else {
-            userList[i].user_role = "ghost";
-        }
-    }
-
-    for (let i = 0; i < userList.length; i++) {
-        userList[i].user_exit = "0";
-    }
-
     // 깊은 복사 
     let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
-    let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트 
+    let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트
+    
 
-    // 유저 리스트 중 내 정보 배열 및 내 순서 저장
-    const myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
+        // 유저 리스트 중 내 정보 배열 및 내 순서 저장
+        let myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
+    
+        // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+        let myIndex = reOrderList.find((x) => x.user_idx === save_user_idx);
+        if (myIndex) {
+            myIndex.game_member_order = 0;
+        }
+    
+        // 그림 그리기 순서 대로 유저 리스트 재정렬
+        reOrderList.sort(function (a, b) {
+            return a.game_member_order - b.game_member_order;
+        });
+    
+        // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+        var myItem = reOrderList.find((x) => x.user_idx === save_user_idx);
+        if (myItem) {
+            myItem.game_member_order = '나';
+        }
+    
 
-    // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
-    let myIndex = reOrderList.find((x) => x.user_idx === save_user_idx);
-    if (myIndex) {
-        myIndex.game_member_order = 0;
-    }
-
-    // 그림 그리기 순서 대로 유저 리스트 재정렬
-    reOrderList.sort(function (a, b) {
-        return a.game_member_order - b.game_member_order;
-    });
-
-    // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
-    var myItem = reOrderList.find((x) => x.user_idx === save_user_idx);
-    if (myItem) {
-        myItem.game_member_order = '나';
-    }
+    
 
     const highOrderFunction = (text) => {
         console.log(text); // 현재 유저 이름 
@@ -420,6 +441,8 @@ const PlayingRoom = (props) => {
                                                     gameSetNo={gameSetNo}
                                                     leaderIdx={leaderIdx}
                                                     currentOrder={highOrderFunction}
+                                                    reOrderList={reOrderList}
+                                                    myList={myList}
                                                 />
                                             )}
                                         </DrawDiv>

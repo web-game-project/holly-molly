@@ -4,7 +4,7 @@ import thunk from "redux-thunk";
 import { createBrowserHistory } from "history";
 import { connectRouter } from "connected-react-router";
 
-import socket from "./modules/socket";
+import socket from "./modules/socket"; // 소켓 객체 저장 
 
 // redux-persist
 import {persistReducer  } from 'redux-persist';

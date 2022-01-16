@@ -13,10 +13,12 @@ import axios from 'axios';
 import html2canvas from 'html2canvas';
 import { useHistory, useLocation } from 'react-router';
 
+let userList = [{}];
+
 const GameDrawing = (props) => {
     const history = useHistory();
 
-    const { gameSetNo, gameIdx, socket, leaderIdx, order, color, room_idx, idx, member_count, role, setIdx, userList, keyword } = props;
+    const { gameSetNo, gameIdx, socket, leaderIdx, order, color, room_idx, idx, member_count, role, setIdx, keyword } = props;
 
     const [possible, setPossible] = useState(true);
     const [seconds, setSeconds] = useState(10); // 그림 그리기 타이머
@@ -29,9 +31,11 @@ const GameDrawing = (props) => {
     const drawingTime = useRef(true); // 그릴 수 있는 시간을 관리하는 변수
     const readyNextOrder = useRef(false); // 그릴 수 있는 시간을 관리하는 변수
 
+    userList = props.userList;
+
     //토큰 검사
     let verify = RefreshVerification.verification()
-    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
+    //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token, save_user_idx;
 
     if (verify === true) {
@@ -162,6 +166,12 @@ const GameDrawing = (props) => {
             console.log(data.data); // success 메시지
             readyNextOrder.current = true;
         });
+
+         // 방 퇴장 
+        socket.on('exit room', (data) => {
+            setSeconds(10);
+        });
+
     }, []);
 
     // 그림 그리기 타이머
@@ -237,8 +247,9 @@ const GameDrawing = (props) => {
                 } else {
                     console.log('순서 받기 시간 끝');
                     alert('네트워크가 불안정합니다.');
-                    window.location.replace('/');
-
+                    history.push({
+                        pathname: '/',  
+                    });
                     setWaitSeconds(-1);
                 }
             }
@@ -373,8 +384,6 @@ const GameDrawing = (props) => {
     else {
         border_user_color = 'transparent'
     }
-
-
 
     return (
         <div>
