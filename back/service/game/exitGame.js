@@ -49,6 +49,7 @@ const exitGameAndRoom = async (user, io) => {
             user_idx: user.user_idx,
             user_name: user.user_name,
         });
+        printErrorLog('exitGameAndRoom', user.user_idx+"번  퇴장 소켓 이벤트 전송");
 
         if (game) { // in game
             if (gameMember.get('game_member_role') == 'human' || memberList.length <= 3) { // human role or member count
