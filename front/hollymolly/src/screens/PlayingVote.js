@@ -69,7 +69,7 @@ const PlayingVote = (props) => {
 
     //토큰 검사
     let verify = RefreshVerification.verification()
-    console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
+    //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token, save_user_idx;
 
     if(verify === true){
