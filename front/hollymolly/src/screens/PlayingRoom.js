@@ -206,7 +206,14 @@ const PlayingRoom = (props) => {
             gameSetIdx.current = data.current_game_set_idx;
 
             setBeforeImg.current = data.before_game_set_img;
-            setBeforeHumanAnswer.current = data.before_game_set_human_answer;
+
+            if(data.before_game_set_human_answer === null){                
+                setBeforeHumanAnswer.current = "기 권";
+            }
+            else{
+                setBeforeHumanAnswer.current = data.before_game_set_human_answer;
+            }
+
             setBeforeKeyword.current = data.before_game_set_keyword;
 
             getGameMember();
