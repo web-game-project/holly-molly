@@ -79,7 +79,7 @@ module.exports.gameSchema = {
     }),
     humanKeyword: Joi.object({
         game_set_idx: Joi.number().integer().required().strict(),
-        game_set_human_answer: Joi.string().trim().required(),
+        game_set_human_answer: Joi.string().allow(null, '').trim(),
     }),
     draw: Joi.object({
         room_idx: Joi.number().integer().required().strict(),
