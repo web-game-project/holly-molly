@@ -4,6 +4,7 @@ const verifyJWT = require('../util/jwt/verifyJWT');
 const chat = require('./chat');
 const draw = require('./draw');
 const sendNextTurn = require('./sendNextTurn');
+const waitHumanAnswer = require('./waitHumanAnswer');
 const { User, WaitingRoomMember } = require('../models');
 const {printErrorLog, printLog} = require('../util/log');
 var fs = require('fs');
@@ -15,10 +16,10 @@ module.exports = (server, app) => {
     io.on('connection', async (socket) => {
         saveSocketId(socket);
 
-        // 여기에 socket.on 추가
         socket.on('chat', chat.bind(this, socket, io));
         socket.on('draw', draw.bind(this, socket, io));
         socket.on('send next turn', sendNextTurn.bind(this, socket, io));
+        socket.on('wait human answer', waitHumanAnswer.bind(this, socket, io));
 
         socket.on('error', errorEvent.bind(this, socket));
         socket.on('disconnect', () => {

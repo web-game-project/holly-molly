@@ -99,4 +99,7 @@ module.exports.gameSchema = {
             .required(),
         msg: Joi.string().required(),
     }),
+    waitHumanAnswer: Joi.object({
+        game_set_idx: Joi.number().integer().required().strict(),
+    }),
 };

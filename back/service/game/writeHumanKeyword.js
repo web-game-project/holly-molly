@@ -2,6 +2,7 @@ const { GameSet, Game, Keyword } = require('../../models');
 const moveRoom = require('../../socket/moveRoom');
 const {printErrorLog} = require('../../util/log');
 const { gameSchema } = require('../../util/joi/schema');
+const { resolveWaitingMap } = require('../../socket/waitHumanAnswer');
 
 module.exports = async (req, res, next) => {
     try {
@@ -20,6 +21,9 @@ module.exports = async (req, res, next) => {
             res.status(403).json({ meesage: '권한이 없습니다.' });
             return;
         }
+
+        // resolve ghost waiting human answer
+        resolveWaitingMap(game_set_idx);
 
         // 인간 제시어 입력
         const gameSet = await GameSet.findOne({
