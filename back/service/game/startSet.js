@@ -98,6 +98,7 @@ module.exports = async (req, res, next) => {
                 .get('wrm_wrm_idx_WaitingRoomMember')
                 .get('room_room_idx')
         ).emit('start set', setInfo);
+
         res.status(201).json({});
     } catch (error) {
         printErrorLog('startSet', error);

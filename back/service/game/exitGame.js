@@ -23,7 +23,7 @@ const exitGame = async (req, res, next) => {
 
 const exitGameAndRoom = async (user, io) => {
     try {
-        printErrorLog('exitGameAndRoom', user.user_idx+"번  퇴장");
+        printErrorLog('exitGameAndRoom', user.user_idx+"번  퇴장 시작");
 
         const { game, gameMember } = await getGameAndMember(user.user_idx);
         const { room, roomMember } = await getRoomAndMember(user.user_idx);
@@ -49,6 +49,7 @@ const exitGameAndRoom = async (user, io) => {
             user_idx: user.user_idx,
             user_name: user.user_name,
         });
+        printErrorLog('exitGameAndRoom', user.user_idx+"번  퇴장 소켓 이벤트 전송");
 
         if (game) { // in game
             if (gameMember.get('game_member_role') == 'human' || memberList.length <= 3) { // human role or member count
@@ -91,6 +92,7 @@ const exitGameAndRoom = async (user, io) => {
             room_member_count: memberList.length - 1,
         });
 
+        printErrorLog('exitGameAndRoom', user.user_idx+"번  퇴장 완료");
         return true;
     } catch (error) {
         printErrorLog('exitGame-exitGameAndRoom', error);

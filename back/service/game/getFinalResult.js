@@ -1,4 +1,5 @@
 const { GameSet, GameMember, Game, sequelize, Room,  GameVote, WaitingRoomMember } = require('../../models');
+const {printErrorLog} = require('../../util/log');
 
 module.exports = async (req, res, next) => {
     let { gameIdx } = req.params;
@@ -129,35 +130,39 @@ const getGame = async (gameIdx) => {
 };
 
 const deleteAllAboutGame = async (members, gameIdx) => {
-    let gameMemberIdx = [];
-    for (const member of members) {
-        try {
-            gameMemberIdx.push(member.get('GameMembers')[0].get('game_member_idx'));
-        } catch (error) {
-            gameMemberIdx.push(member.get('game_member_idx'));   
+    try {
+        let gameMemberIdx = [];
+        for (const member of members) {
+            try {
+                gameMemberIdx.push(member.get('GameMembers')[0].get('game_member_idx'));
+            } catch (error) {
+                gameMemberIdx.push(member.get('game_member_idx'));   
+            }
         }
-    }
 
-    await GameVote.destroy({
-        where: {
-            game_member_game_member_idx: gameMemberIdx,
-        },
-    });
-    await GameMember.destroy({
-        where: {
-            game_member_idx: gameMemberIdx,
-        },
-    });
-    await GameSet.destroy({
-        where: {
-            game_game_idx: gameIdx,
-        },
-    });
-    await Game.destroy({
-        where: {
-            game_idx: gameIdx,
-        },
-    });
+        await GameVote.destroy({
+            where: {
+                game_member_game_member_idx: gameMemberIdx,
+            },
+        });
+        await GameMember.destroy({
+            where: {
+                game_member_idx: gameMemberIdx,
+            },
+        });
+        await GameSet.destroy({
+            where: {
+                game_game_idx: gameIdx,
+            },
+        });
+        await Game.destroy({
+            where: {
+                game_idx: gameIdx,
+            },
+        });
+    } catch (error) {
+        printErrorLog('deleteAllAboutGame', error);
+    }
 };
 
 const updateRoomStatus = async (roomIdx, status) => {
