@@ -59,6 +59,7 @@ const exitGameAndRoom = async (user, io) => {
                 result.human_color = human_info[0].wrm_user_color;
                 result.human_name = human_info[0].user_name;
                 io.to(room.get('room_idx')).emit('get final result', result);
+                printErrorLog('exitGameAndRoom', room.get('room_idx')+"최종 결과 소켓 이벤트 전송");
 
                 // 게임 종료 처리 (game, gameMember, gameSet, gameVote 삭제)
                 await deleteAllAboutGame(memberList, game.get('game_idx'));
@@ -81,6 +82,7 @@ const exitGameAndRoom = async (user, io) => {
         if (isLeader) {
             const hostIdx = await changeHost(memberList, user.user_idx);
             io.to(room.get('room_idx')).emit('change host', { user_idx: hostIdx });
+            printErrorLog('exitGameAndRoom', room.get('room_idx')+"방장 변경 소켓 이벤트 전송");
         }
 
         if (roomMember) {
