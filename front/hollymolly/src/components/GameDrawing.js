@@ -215,7 +215,7 @@ const GameDrawing = (props) => {
         };
     }, [seconds]);
 
-    const currentItem = useRef();
+    
     // 순서 받기 타이머
     useEffect(() => {
         const waitcountdown = setInterval(() => {
@@ -228,10 +228,7 @@ const GameDrawing = (props) => {
                     readyNextOrder.current = false; // 다시 다음 순서 받을 준비
                     orderCount.current += 1; // 순서 바꾸기
                     setReDraw(!reDraw); // 그리기 준비
-                    drawingTime.current = true;
-
-                    // 현재 순서 유저 찾기 
-                    currentItem.current = userList.find((x) => x.game_member_order === orderCount.current);
+                    drawingTime.current = true;       
 
                     setPossible(true);
                     setSeconds(10);
@@ -247,9 +244,6 @@ const GameDrawing = (props) => {
                     orderCount.current += 1; // 순서 바꾸기
                     setReDraw(!reDraw); // 그리기 준비
                     drawingTime.current = true;
-
-                    // 현재 순서 유저 찾기 
-                    currentItem.current = userList.find((x) => x.game_member_order === orderCount.current);
                     
                     setPossible(true);
                     setSeconds(10);
@@ -346,12 +340,15 @@ const GameDrawing = (props) => {
 
     let ImgUrl; //타이머 이미지 URL이 들어갈 곳
 
-   
-
     // 순서에 따른 자기 순서 표시(하위 -> 상위)
     /* const sendOrder = () => {
         props.currentOrder(currentItem.user_idx);
     } */
+
+    const currentItem = useRef();
+
+    // 현재 순서 유저 찾기 
+    currentItem.current = userList.find((x) => x.game_member_order === orderCount.current);
 
     let cursor_status;
     // 순서에 따른 토스트 표시 

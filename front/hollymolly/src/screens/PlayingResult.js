@@ -288,9 +288,6 @@ const PlayingResult = (props) => {
         myItem.game_member_order = '나';
     }
 
-    console.log("reOrderList")
-    console.log(reOrderList)
-
     return (
         <React.Fragment>
             <Background>
