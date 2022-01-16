@@ -18,6 +18,7 @@ module.exports = async (socket, io, data) => {
 
     if(!timerResolveMap.get(room_idx)){
         let { member_count } = data;
+        console.log("member_count: " + member_count);
         startTimer(io, room_idx, user_idx, member_count, draw_order);
     }
     else{
