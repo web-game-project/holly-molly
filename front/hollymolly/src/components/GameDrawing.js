@@ -215,6 +215,7 @@ const GameDrawing = (props) => {
         };
     }, [seconds]);
 
+    const currentItem = useRef();
     // 순서 받기 타이머
     useEffect(() => {
         const waitcountdown = setInterval(() => {
@@ -228,6 +229,10 @@ const GameDrawing = (props) => {
                     orderCount.current += 1; // 순서 바꾸기
                     setReDraw(!reDraw); // 그리기 준비
                     drawingTime.current = true;
+
+                    // 현재 순서 유저 찾기 
+                    currentItem.current = userList.find((x) => x.game_member_order === orderCount.current);
+
                     setPossible(true);
                     setSeconds(10);
                 }
@@ -242,6 +247,10 @@ const GameDrawing = (props) => {
                     orderCount.current += 1; // 순서 바꾸기
                     setReDraw(!reDraw); // 그리기 준비
                     drawingTime.current = true;
+
+                    // 현재 순서 유저 찾기 
+                    currentItem.current = userList.find((x) => x.game_member_order === orderCount.current);
+                    
                     setPossible(true);
                     setSeconds(10);
                 } else {
@@ -337,8 +346,7 @@ const GameDrawing = (props) => {
 
     let ImgUrl; //타이머 이미지 URL이 들어갈 곳
 
-    // 현재 순서 유저 찾기 
-    var currentItem = userList.find((x) => x.game_member_order === orderCount.current);
+   
 
     // 순서에 따른 자기 순서 표시(하위 -> 상위)
     /* const sendOrder = () => {
@@ -349,18 +357,20 @@ const GameDrawing = (props) => {
     // 순서에 따른 토스트 표시 
     const toast = () => {
         if (drawingTime.current === true) {
-            if (currentItem.user_idx === save_user_idx) {
-                cursor_status = true;
-                return <div><Toast>🎨 {currentItem.user_name} 님이 그림을 그릴 차례입니다.</Toast></div>;
-            } else {
-                cursor_status = false;
-                return <div><Toast>🎨 {currentItem.user_name} 님이 그림을 그리고 있습니다.</Toast></div>;
+            if(currentItem.current){
+                if (currentItem.current.user_idx === save_user_idx) {
+                    cursor_status = true;
+                    return <div><Toast>🎨 {currentItem.current.user_name} 님이 그림을 그릴 차례입니다.</Toast></div>;
+                } else {
+                    cursor_status = false;
+                    return <div><Toast>🎨 {currentItem.current.user_name} 님이 그림을 그리고 있습니다.</Toast></div>;
+                }
             }
         }
     }
 
     // 지정 색 코드로 바꿔주기 
-    let border_user_color = currentItem && currentItem.user_color;
+    let border_user_color = currentItem.current && currentItem.current.user_color;
 
     if (drawingTime.current === true) {
         if (border_user_color === 'RED') {

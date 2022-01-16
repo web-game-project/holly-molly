@@ -53,9 +53,6 @@ const PlayingVote = (props) => {
     if(exitSocket.current === false){
         userList = location.state.userList; //그림판에서 넘어온 유저리스트
     }
-     
-    console.log("vote props");
-    console.log(userList);
 
     let roomIdx = location.state.roomIdx; //그림판에서 넘어온 룸인덱스
     let role = location.state.role; //그림판에서 넘어온 역할
@@ -141,7 +138,13 @@ const PlayingVote = (props) => {
             console.log('exit room');
             var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
  
+            console.log("나가기 전");
+            console.log(userList);
+
             userList = userList.filter(x => x.user_idx !== data.user_idx);
+
+            console.log("나가기 후");
+            console.log(userList);
 
             if(exitPerson){
                 for (let i = 0; i < userList.length; i++) {
