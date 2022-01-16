@@ -36,6 +36,12 @@ const PlayingRoom = (props) => {
     
     let beforeUserList  = location.state.userList;
 
+    console.log("beforeUserList");
+    console.log(beforeUserList);
+
+    console.log("userList");
+    console.log(userList);
+
     let gameSetNo = location.state.gameSetNo;
     
     let isSet = location.state.isSet;
