@@ -93,57 +93,6 @@ const makeRoomCode = async () => {
     return roomCode;
 };
 
-const exitRoom = async (io, roomMember, roomIdx) => {
-    try {
-        await WaitingRoomMember.destroy({
-            // exit room
-            where: { user_user_idx: userIdx, room_room_idx: roomIdx },
-        });
-
-        let memberCount = getMemberCount(roomIdx);
-        if (memberCount < 1) {
-            // delete room
-            await Room.destroy({ where: { room_idx: roomIdx } });
-            io.to(0).emit('delete room', { room_idx: roomIdx });
-        } else {
-            if (roomMember.get('wrm_leader')) {
-                // change host
-                const newLeader = await WaitingRoomMember.findOne({
-                    attributes: ['user_user_idx'],
-                    where: { room_room_idx: roomIdx },
-                    order: sequelize.literal('rand()'),
-                });
-                await WaitingRoomMember.update(
-                    {
-                        wrm_leader: true,
-                    },
-                    {
-                        where: {
-                            user_user_idx: newLeader.get('user_user_idx'),
-                            room_room_idx: roomIdx,
-                        },
-                    }
-                );
-                io.to(roomIdx).emit('change host', { user_idx: newLeaderIdx });
-            }
-
-            // 방 member count 변경
-            await Room.update(
-                {
-                    room_current_member_cnt: memberCount,
-                },
-                { where: { room_idx: roomIdx } }
-            );
-            io.to(0).emit('change member count', {
-                room_idx: roomIdx,
-                room_member_count: memberCount,
-            });
-        }
-    } catch (error) {
-        printErrorLog('makeRoom', '방 퇴장 중 에러 발생 - 게임 시작한 경우 에러 발생');
-    }
-};
-
 const getMemberCount = async (roomIdx) => {
     const member = await WaitingRoomMember.findAll({
         attributes: [
