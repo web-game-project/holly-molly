@@ -31,6 +31,9 @@ const PlayingVote = (props) => {
     let location = useLocation();
     const history = useHistory();
 
+    let exitSocket = useRef(false);
+    let finalSocket = useRef(false);
+
     // 투표 10초 타이머 세기, 투표 10초 후에 1초 더 여유롭게.
     const [seconds, setSeconds] = useState(11);
 
@@ -46,7 +49,13 @@ const PlayingVote = (props) => {
     let gameSetIdx = location.state.gameSetIdx; //그림판에서 넘어온 게임 세트 인덱스
     let gameSetNo = location.state.gameSetNo;
     let gameIdx = location.state.gameIdx;
-    userList = location.state.userList; //그림판에서 넘어온 유저리스트
+
+    if(exitSocket.current === false){
+        userList = location.state.userList; //그림판에서 넘어온 유저리스트
+    }
+     
+    console.log("vote props");
+    console.log(userList);
 
     let roomIdx = location.state.roomIdx; //그림판에서 넘어온 룸인덱스
     let role = location.state.role; //그림판에서 넘어온 역할
@@ -56,8 +65,7 @@ const PlayingVote = (props) => {
 
     let chatAvailable = useRef(true);
 
-    let exitSocket = useRef(false);
-    let finalSocket = useRef(false);
+    
 
     //토큰 검사
     let verify = RefreshVerification.verification()
@@ -131,11 +139,9 @@ const PlayingVote = (props) => {
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
             console.log('exit room');
-
             var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
-
-            var exitIndex = userList.findIndex(v => v.user_idx === data.user_idx);
-            userList.splice(exitIndex,1);
+ 
+            userList = userList.filter(x => x.user_idx !== data.user_idx);
 
             if(exitPerson){
                 for (let i = 0; i < userList.length; i++) {
@@ -144,16 +150,31 @@ const PlayingVote = (props) => {
                     }
                 }
             }
-
             exitSocket.current = true;
         });
 
         // 비정상 종료 감지 최종 결과 전송
         props.socket.on('get final result', (data) => {
-            
-            detectExit(data);
-            
             finalSocket.current = true;
+
+            // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+            let myIndex = userList.find((x) => x.user_idx === save_user_idx);
+            if (myIndex) {
+                myIndex.game_member_order = 0;
+            }
+
+            // 그림 그리기 순서 대로 유저 리스트 재정렬
+            userList.sort(function (a, b) {
+                return a.game_member_order - b.game_member_order;
+            });
+
+            // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+            var myItem = userList.find((x) => x.user_idx === save_user_idx);
+            if (myItem) {
+                myItem.game_member_order = '나';
+            }
+
+            detectExit(data);
             /* if(exitSocket.current === true){
                 history.push({
                     pathname: '/playingresult/' + roomIdx,
