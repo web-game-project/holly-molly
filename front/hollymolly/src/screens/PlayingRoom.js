@@ -28,19 +28,18 @@ const PlayingRoom = (props) => {
     const location = useLocation();
     const history = useHistory();
 
+    let exitSocket = useRef(false);
+    let finalSocket = useRef(false);
+
     let room_idx = location.state.room;
     let leaderIdx = location.state.leaderIdx; //리더인지 아닌지 
 
     let gameIdx = location.state.gameIdx;
     let gameSetIdx = useRef(location.state.gameSetIdx);
     
-    let beforeUserList  = location.state.userList;
+    let beforeUserList = location.state.userList;
 
-    console.log("beforeUserList");
-    console.log(beforeUserList);
-
-    console.log("userList");
-    console.log(userList);
+    const [afterExitUserList, setAfterExitUserList] = useState(); 
 
     let gameSetNo = location.state.gameSetNo;
     
@@ -49,9 +48,6 @@ const PlayingRoom = (props) => {
     let setBeforeImg = useRef('');
     let setBeforeHumanAnswer = useRef('');
     let setBeforeKeyword = useRef('');
-
-    let exitSocket = useRef(false);
-    let finalSocket = useRef(false);
 
     const [role, setRole] = React.useState('');
     const [keyword, setKeyWord] = React.useState('');
@@ -127,6 +123,8 @@ const PlayingRoom = (props) => {
                         userList[i].user_role = "ghost";
                     }
                 }
+
+
             })
             .catch(function (error) {
                 alert('error 게임멤버정보조회 : ' + error.message);
@@ -225,14 +223,8 @@ const PlayingRoom = (props) => {
         props.socket.on('exit room', (data) => {
             console.log('exit room');   
             var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
- 
-            console.log("나가기 전");
-            console.log(userList);
 
             userList = userList.filter(x => x.user_idx !== data.user_idx);
-
-            console.log("나가기 후");
-            console.log(userList);
             
             if(exitPerson){
                 for (let i = 0; i < userList.length; i++) {
@@ -242,12 +234,33 @@ const PlayingRoom = (props) => {
                 }
             }
 
+            let copyList = _.cloneDeep(userList);
+
+            // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+            let myIndex = copyList.find((x) => x.user_idx === save_user_idx);
+            if (myIndex) {
+                myIndex.game_member_order = 0;
+            }
+
+            // 그림 그리기 순서 대로 유저 리스트 재정렬
+            copyList.sort(function (a, b) {
+                return a.game_member_order - b.game_member_order;
+            });
+            
+            // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+            var myItem = copyList.find((x) => x.user_idx === save_user_idx);
+            if (myItem) {
+                myItem.game_member_order = '나';
+            }
+
             exitSocket.current = true;
+
+            setAfterExitUserList(copyList);
         });
 
         // 비정상 종료 감지 최종 결과 전송
         props.socket.on('get final result', (data) => {
-        
+            console.log('get final result');  
             finalSocket.current = true;
 
             // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
@@ -291,11 +304,7 @@ const PlayingRoom = (props) => {
 
     useEffect(() => {
 
-        //userList = beforeUserList;
-
-        if(exitSocket.current === false){
-            userList = beforeUserList;; //그림판에서 넘어온 유저리스트
-        }
+        userList = beforeUserList;; //그림판에서 넘어온 유저리스트
 
         if (gameSetIdx.current !== undefined && isSet === true) {
             if (leaderIdx === save_user_idx) { //리더만 세트시작 api 요청 가능
@@ -320,29 +329,25 @@ const PlayingRoom = (props) => {
     let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
     let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트
     
-
-        // 유저 리스트 중 내 정보 배열 및 내 순서 저장
-        let myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
+    // 유저 리스트 중 내 정보 배열 및 내 순서 저장
+    let myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
     
-        // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
-        let myIndex = reOrderList.find((x) => x.user_idx === save_user_idx);
-        if (myIndex) {
-            myIndex.game_member_order = 0;
-        }
+    // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+    let myIndex = reOrderList.find((x) => x.user_idx === save_user_idx);
+    if (myIndex) {
+        myIndex.game_member_order = 0;
+    }
     
-        // 그림 그리기 순서 대로 유저 리스트 재정렬
-        reOrderList.sort(function (a, b) {
-            return a.game_member_order - b.game_member_order;
-        });
+    // 그림 그리기 순서 대로 유저 리스트 재정렬
+    reOrderList.sort(function (a, b) {
+        return a.game_member_order - b.game_member_order;
+    });
     
-        // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
-        var myItem = reOrderList.find((x) => x.user_idx === save_user_idx);
-        if (myItem) {
-            myItem.game_member_order = '나';
-        }
-    
-
-    
+    // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+    var myItem = reOrderList.find((x) => x.user_idx === save_user_idx);
+    if (myItem) {
+        myItem.game_member_order = '나';
+    }
 
     const highOrderFunction = (text) => {
         console.log(text); // 현재 유저 이름 
@@ -427,17 +432,29 @@ const PlayingRoom = (props) => {
                                         {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
                                         <MissionWord text={keyword} role={role}></MissionWord>
                                         {/* 유저 컴포넌트 */}
-
-                                        {reOrderList.map((index, key) => (
-                                            <GameUserCard
-                                                user_idx={reOrderList[key].user_idx}
-                                                user_color={reOrderList[key].user_color}
-                                                user_name={reOrderList[key].user_name}
-                                                user_role={reOrderList[key].user_role}
-                                                user_order={reOrderList[key].game_member_order}
-                                                user_exit={reOrderList[key].user_exit}
-                                            ></GameUserCard>
-                                        ))}
+                                        {exitSocket.current  === false? 
+                                            (reOrderList && (reOrderList.map((values) => (
+                                                <GameUserCard
+                                                    user_idx={values.user_idx}
+                                                    user_color={values.user_color}
+                                                    user_name={values.user_name}
+                                                    user_role={values.user_role}
+                                                    user_order={values.game_member_order}
+                                                    user_exit={values.user_exit}
+                                                ></GameUserCard>
+                                            )))) : 
+                                            (afterExitUserList && (
+                                                afterExitUserList.map((values) => (
+                                                    <GameUserCard
+                                                        user_idx={values.user_idx}
+                                                        user_color={values.user_color}
+                                                        user_name={values.user_name}
+                                                        user_role={values.user_role}
+                                                        user_order={values.game_member_order}
+                                                        user_exit={values.user_exit}
+                                                ></GameUserCard>
+                                                )))) 
+                                        }
                                     </UserDiv>
 
                                     {seconds < 0 ? (

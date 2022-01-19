@@ -236,7 +236,6 @@ const GameDrawing = (props) => {
 
             } else if (parseInt(waitSeconds) === 0) {
                 // 3초가 지나도 받지 못하면 네트워크 에러 및 서버에서 강제 퇴장 처리
-                console.log("readyNextOrder: " + readyNextOrder);
                 if (readyNextOrder.current) {
                     console.log('다음 순서 받기');
                     setWaitSeconds(-1);
