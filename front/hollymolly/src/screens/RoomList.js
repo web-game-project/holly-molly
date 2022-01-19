@@ -65,9 +65,9 @@ const RoomList = (props) => {
 
         //방 생성 시, 마지막 페이지에 방 추가
         props.socket.on('create room', (data) => {
-            //setCreateRoomData(data);
-            console.log('create room');
-            setIsSocket(!isSocket);
+            setCreateRoomData(data);
+            //console.log('create room');
+            //setIsSocket(!isSocket);
         });
 
         // 방 삭제 - 대기실 삭제

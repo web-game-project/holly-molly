@@ -6,12 +6,12 @@ import RefreshVerification from "../server/RefreshVerification";
 
 const GameMissionPerformance = (props) => {
     
-    const {gameSet,role} = props;
-   
+    const {gameSet,role,socket} = props;
+
     const [isHuman, setIsHuman] = useState(false);
     const [seconds, setSeconds] = useState(10); 
 
-    const inputRef = useRef();
+    const inputRef = useRef('');
 
     let user_role = role;
 
@@ -30,6 +30,11 @@ const GameMissionPerformance = (props) => {
             setIsHuman(true);
         }else{ // ghost 일 때 마피아 미션 수행 기다림 
             setIsHuman(false);
+
+            socket.emit('wait human answer', {
+                game_set_idx: gameSet,
+            });
+
         }
     }, []);
 

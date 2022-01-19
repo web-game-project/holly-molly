@@ -119,6 +119,15 @@ const Chatting = (props) => {
                 setRecentChatUserIdx('00');
 
                 setOnMessage(true);
+            }else{
+                let msg = data.user_idx + " 님이 퇴장하셨습니다."
+
+                setRecentChatColor('#fff');
+                setRecentChatUserName('📢 관리자');
+                setRecentChat(msg);
+                setRecentChatUserIdx('00');
+
+                setOnMessage(true);
             }
             
         });

@@ -47,6 +47,8 @@ const PlayingResult = (props) => {
         userList = location.state.userList; //그림판에서 넘어온 유저리스트
     }
 
+    const [afterExitUserList, setAfterExitUserList] = useState(); 
+
     const roomIdx = location.state.roomIdx;
     const role = location.state.role;
 
@@ -153,17 +155,11 @@ const PlayingResult = (props) => {
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
-            console.log('exit room');
+            console.log('exit room');   
             var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
 
-            console.log("나가기 전");
-            console.log(userList);
-
             userList = userList.filter(x => x.user_idx !== data.user_idx);
-
-            console.log("나가기 후");
-            console.log(userList);
-
+            
             if(exitPerson){
                 for (let i = 0; i < userList.length; i++) {
                     if(exitPerson.game_member_order < userList[i].game_member_order){
@@ -171,9 +167,30 @@ const PlayingResult = (props) => {
                     }
                 }
             }
-   
-            exitSocket.current = true;
+
+            let copyList = _.cloneDeep(userList);
+
+            // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+            let myIndex = copyList.find((x) => x.user_idx === save_user_idx);
+            if (myIndex) {
+                myIndex.game_member_order = 0;
+            }
+
+            // 그림 그리기 순서 대로 유저 리스트 재정렬
+            copyList.sort(function (a, b) {
+                return a.game_member_order - b.game_member_order;
             });
+            
+            // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+            var myItem = copyList.find((x) => x.user_idx === save_user_idx);
+            if (myItem) {
+                myItem.game_member_order = '나';
+            }
+
+            exitSocket.current = true;
+
+            setAfterExitUserList(copyList);
+        });
     }, []);
 
     useEffect(() => {
@@ -298,16 +315,28 @@ const PlayingResult = (props) => {
                             {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
                             <MissionWord text={keyword} role={role}></MissionWord>
                             {/* 유저 컴포넌트 */}
-                            {
-                                reOrderList.map((index, key) => (
-                                    <GameUserCard
-                                        user_idx={reOrderList[key].user_idx}
-                                        user_color={reOrderList[key].user_color}
-                                        user_name={reOrderList[key].user_name}
-                                        user_role={reOrderList[key].user_role}
-                                        user_order={reOrderList[key].game_member_order}
-                                    ></GameUserCard>
-                                ))
+                            {exitSocket.current  === false? 
+                                            (reOrderList && (reOrderList.map((values) => (
+                                                <GameUserCard
+                                                    user_idx={values.user_idx}
+                                                    user_color={values.user_color}
+                                                    user_name={values.user_name}
+                                                    user_role={values.user_role}
+                                                    user_order={values.game_member_order}
+                                                    user_exit={values.user_exit}
+                                                ></GameUserCard>
+                                            )))) : 
+                                            (afterExitUserList && (
+                                                afterExitUserList.map((values) => (
+                                                    <GameUserCard
+                                                        user_idx={values.user_idx}
+                                                        user_color={values.user_color}
+                                                        user_name={values.user_name}
+                                                        user_role={values.user_role}
+                                                        user_order={values.game_member_order}
+                                                        user_exit={values.user_exit}
+                                                ></GameUserCard>
+                                                )))) 
                             }
                         </UserDiv>
 
