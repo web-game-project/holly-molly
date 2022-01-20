@@ -22,7 +22,7 @@ module.exports.startTimer = async (io, room_idx, user_idx, member_count, draw_or
             timerResolveMap.set(room_idx, resolve);
         });
     }
-    else {
+    else { // 처음 순서가 아니고, 다음 순서로 넘어갈 땐 3초
         promise = new Promise((resolve, reject) => {
             timer = setTimeout(() => resolve('time out'), 3 * 1000);
             timerResolveMap.set(room_idx, resolve);
@@ -33,6 +33,8 @@ module.exports.startTimer = async (io, room_idx, user_idx, member_count, draw_or
     timerResolveMap.delete(room_idx);
     memberCountMap.delete(room_idx);
 
+    console.log('timer result');
+    console.log(result);
     io.to(room_idx).emit('get next turn', { data: 'success' });
     
     if (result == 'time out') {
@@ -42,10 +44,11 @@ module.exports.startTimer = async (io, room_idx, user_idx, member_count, draw_or
 };
 
 const exitGameAndRoomAndDeleteUser = async (io, room_idx, acceptedMember) => {
-    let query = "SELECT WaitingRoomMember.user_user_idx "
-              + "FROM WaitingRoomMember "
-              + "JOIN GameMember on WaitingRoomMember.wrm_idx = GameMember.wrm_wrm_idx "
-              + `where WaitingRoomMember.room_room_idx=${room_idx} and WaitingRoomMember.user_user_idx not in (`;
+    let query = "SELECT wrm.user_user_idx as user_idx, u.user_name "
+              + "FROM WaitingRoomMember wrm "
+              + "JOIN GameMember gm on wrm.wrm_idx = gm.wrm_wrm_idx "
+              + "JOIN User u on wrm.user_user_idx = u.user_idx "
+              + `where wrm.room_room_idx=${room_idx} and wrm.user_user_idx not in (`;
 
     for(let i in acceptedMember){
         if(i == acceptedMember.length - 1)
@@ -63,8 +66,9 @@ const exitGameAndRoomAndDeleteUser = async (io, room_idx, acceptedMember) => {
         });
 
     for(let i in NotAcceptedMembers){
-        let { user_user_idx } = NotAcceptedMembers[i];
-        const isSuccess = await exitGameAndRoom({user_idx: user_user_idx}, io);
+        let user = NotAcceptedMembers[i];
+        console.log("timer exit: " + user);
+        const isSuccess = await exitGameAndRoom(user, io);
         if(!isSuccess)  throw "exitGame fail";
         deleteUser(user_user_idx);
     }

@@ -11,6 +11,7 @@ const getTopVoteResult = async (req, res, next) => {
         );
   
         res.json({ vote_rank: topVoteRankList });
+        printLog("상위권투표결과", { vote_rank: topVoteRankList });
     } catch (error) {
         printErrorLog('getTopVoteResult', error);
         res.status(400).json({

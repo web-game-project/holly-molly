@@ -1,6 +1,6 @@
 const { Room, Game, GameSet, GameMember, GameVote, WaitingRoomMember, User } = require('../../models');
-const {printErrorLog} = require('../../util/log');
-const {selectFinalResult,makeTotalScoreData,selectHuman, deleteAllAboutGame, updateRoomStatus} = require('./getFinalResult');
+const {printErrorLog, printLog} = require('../../util/log');
+const {selectFinalResult, selectHuman, deleteAllAboutGame, updateRoomStatus, updateMemberReady} = require('./getFinalResult');
 
 const exitGame = async (req, res, next) => {
     try {
@@ -23,6 +23,8 @@ const exitGame = async (req, res, next) => {
 
 const exitGameAndRoom = async (user, io) => {
     try {
+        printErrorLog('exitGameAndRoom', user.user_idx+"번  퇴장 시작");
+
         const { game, gameMember } = await getGameAndMember(user.user_idx);
         const { room, roomMember } = await getRoomAndMember(user.user_idx);
         if(!gameMember && !roomMember)  return true;
@@ -43,15 +45,21 @@ const exitGameAndRoom = async (user, io) => {
             return true;
         }
 
+        io.to(room.get('room_idx')).emit('exit room', {
+            user_idx: user.user_idx,
+            user_name: user.user_name,
+        });
+        printLog('exitGameAndRoom', user.user_idx+"번 유저 퇴장 소켓 이벤트 전송");
+
         if (game) { // in game
-            if (gameMember.get('game_member_role') == 'human') { // human role
+            if (gameMember.get('game_member_role') == 'human' || memberList.length <= 3) { // human role or member count
                 // 최종 결과 이벤트
-                const finalResult = await selectFinalResult(game.get('game_idx'));
-                let result = await makeTotalScoreData(finalResult);
-                let human_info = await selectHuman(gameIdx);
+                const result = await selectFinalResult(game.get('game_idx'));
+                let human_info = await selectHuman(game.get('game_idx'));
                 result.human_color = human_info[0].wrm_user_color;
                 result.human_name = human_info[0].user_name;
                 io.to(room.get('room_idx')).emit('get final result', result);
+                printLog('exitGameAndRoom', room.get('room_idx')+"번 room 최종 결과 소켓 이벤트 전송");
 
                 // 게임 종료 처리 (game, gameMember, gameSet, gameVote 삭제)
                 await deleteAllAboutGame(memberList, game.get('game_idx'));
@@ -62,6 +70,9 @@ const exitGameAndRoom = async (user, io) => {
                     room_idx: room.get('room_idx'),
                     room_status: 'waiting',
                 });
+
+                // ready 상태 변경
+                updateMemberReady(room.get('room_idx'));
             }else{ // ghost role
                 await deleteGameVote(gameMember.game_member_idx);
                 await deleteGameMember(gameMember.game_member_idx);
@@ -71,6 +82,7 @@ const exitGameAndRoom = async (user, io) => {
         if (isLeader) {
             const hostIdx = await changeHost(memberList, user.user_idx);
             io.to(room.get('room_idx')).emit('change host', { user_idx: hostIdx });
+            printLog('exitGameAndRoom', room.get('room_idx')+"번 room 방장 변경 소켓 이벤트 전송");
         }
 
         if (roomMember) {
@@ -81,10 +93,8 @@ const exitGameAndRoom = async (user, io) => {
             room_idx: room.get('room_idx'),
             room_member_count: memberList.length - 1,
         });
-        io.to(room.get('room_idx')).emit('exit room', {
-            user_idx: user.user_idx,
-        });
 
+        printLog('exitGameAndRoom', user.user_idx+"번 유저 퇴장 완료");
         return true;
     } catch (error) {
         printErrorLog('exitGame-exitGameAndRoom', error);
@@ -144,6 +154,7 @@ const deleteUser = async (userIdx) => {
             user_idx: userIdx,
         },
     });
+    printLog("deleteUser",userIdx+" 유저 삭제 완료");
 };
 const changeHost = async (memberList, userIdx) => {
     const hostIdx =
