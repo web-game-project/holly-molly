@@ -44,10 +44,11 @@ module.exports.startTimer = async (io, room_idx, user_idx, member_count, draw_or
 };
 
 const exitGameAndRoomAndDeleteUser = async (io, room_idx, acceptedMember) => {
-    let query = "SELECT WaitingRoomMember.user_user_idx "
-              + "FROM WaitingRoomMember "
-              + "JOIN GameMember on WaitingRoomMember.wrm_idx = GameMember.wrm_wrm_idx "
-              + `where WaitingRoomMember.room_room_idx=${room_idx} and WaitingRoomMember.user_user_idx not in (`;
+    let query = "SELECT wrm.user_user_idx as user_idx, u.user_name "
+              + "FROM WaitingRoomMember wrm "
+              + "JOIN GameMember gm on wrm.wrm_idx = gm.wrm_wrm_idx "
+              + "JOIN User u on wrm.user_user_idx = u.user_idx "
+              + `where wrm.room_room_idx=${room_idx} and wrm.user_user_idx not in (`;
 
     for(let i in acceptedMember){
         if(i == acceptedMember.length - 1)
@@ -65,9 +66,9 @@ const exitGameAndRoomAndDeleteUser = async (io, room_idx, acceptedMember) => {
         });
 
     for(let i in NotAcceptedMembers){
-        let { user_user_idx } = NotAcceptedMembers[i];
-        console.log("timer exit: " + user_user_idx);
-        const isSuccess = await exitGameAndRoom({user_idx: user_user_idx}, io);
+        let user = NotAcceptedMembers[i];
+        console.log("timer exit: " + user);
+        const isSuccess = await exitGameAndRoom(user, io);
         if(!isSuccess)  throw "exitGame fail";
         deleteUser(user_user_idx);
     }
