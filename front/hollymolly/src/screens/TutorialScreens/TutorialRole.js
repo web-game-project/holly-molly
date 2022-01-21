@@ -14,7 +14,6 @@ function TutorialRole() {
         <Background>
             <Header goMain />
             <Container>{
-                console.log('롤은? ' + role),
                 role && role === "ghost" ?
                     <HollyRole role={role}/>
                 :   

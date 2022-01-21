@@ -82,7 +82,7 @@ const RoomList = (props) => {
 
         //방 생성 시, 마지막 페이지에 방 추가
         props.socket.on('create room', (data) => {
-            console.log('create room');
+           // console.log('create room');
 
             let socketRoomData = {
                 type: 'create_room',
@@ -97,7 +97,7 @@ const RoomList = (props) => {
 
         // 방 삭제 - 대기방 삭제
         props.socket.on('delete room', (data) => {
-            console.log('delete room');
+           // console.log('delete room');
 
             let socketRoomData = {
                 type: 'delete_room',
@@ -110,7 +110,7 @@ const RoomList = (props) => {
 
         //방 정보 수정  - 특정 대기방에서 대기방 정보 수정 시
         props.socket.on('edit room', (data) => {
-            console.log('edit room');
+          //  console.log('edit room');
 
             let socketRoomData = {
                 type: 'edit_room',
@@ -123,7 +123,7 @@ const RoomList = (props) => {
 
         // 방 멤버 변동 - 특정 대기방 사용자 입장/퇴장 시
         props.socket.on('change member count', (data) => {
-            console.log('change member count');
+           // console.log('change member count');
 
             let socketRoomData = {
                 type: 'change_member_count',
@@ -136,7 +136,7 @@ const RoomList = (props) => {
 
         //방 상태 변동 - 특정 대기방 게임이 시작할 때
         props.socket.on('change game status', (data) => {
-            console.log('change game status');
+           // console.log('change game status');
 
             let socketRoomData = {
                 type: 'change_game_status',
@@ -182,7 +182,7 @@ const RoomList = (props) => {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response.data);
+              //  console.log(response.data);
                 total_room_cnt = response.data.total_room_cnt;
                 if (total_room_cnt % 6 === 0) {
                     TOTAL_SLIDES.current = total_room_cnt / 6 - 1;
@@ -195,7 +195,7 @@ const RoomList = (props) => {
                 setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
             })
             .catch(function (error) {
-                console.log(error.data);
+                alert(error.response.data.message);
             });
     };
 
@@ -214,7 +214,7 @@ const RoomList = (props) => {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response.data);
+               // console.log(response.data);
                 total_room_cnt = response.data.total_room_cnt;
                 if (total_room_cnt % 6 === 0) {
                     TOTAL_SLIDES.current = total_room_cnt / 6 - 1;
@@ -227,7 +227,7 @@ const RoomList = (props) => {
                 setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
             })
             .catch(function (error) {
-                console.log(error.data);
+                alert(error.response.data.message);
             });
     };
 
@@ -326,7 +326,7 @@ const RoomList = (props) => {
             }
             return forArray;
         } else {
-            return <EmptyText>😲 해당 필터에 맞는 방이 없습니다.😲</EmptyText>;
+            return <EmptyText>😲 방이 없습니다. 생성해보세요😲</EmptyText>;
         }
     }
 
@@ -373,8 +373,8 @@ const RoomList = (props) => {
         let modeFilterArray = modeFilterList();
         let personFilterArray = personFilterList();
 
-        console.log(modeFilterArray);
-        console.log(personFilterArray);
+       // console.log(modeFilterArray);
+       // console.log(personFilterArray);
         const reqURL = baseURL + 'room/random'; //parameter : 방 타입
         const reqHeaders = {
             headers: {
@@ -392,14 +392,14 @@ const RoomList = (props) => {
                 reqHeaders
             )
             .then(function (response) {
-                console.log(response.data);
+              //  console.log(response.data);
                 // 대기실로 이동
                 history.push({
                     pathname: '/waitingroom/' + response.data.room_idx,
                 });
             })
             .catch(function (error) {
-                console.log(error.response);
+                alert(error.response.data.message);
             });
     };
 
@@ -492,9 +492,14 @@ const RoomList = (props) => {
                                     {/* 필터 div*/}
                                     <Filter result={result} getResult={getResult} />
                                 </RoomGrid>
-                                <div style={styles.pageContainer}>
-                                    {currentSlide + 1} / {totalSlide + 1}
-                                </div>
+                                {
+                                    totalSlide < 0 ?
+                                     null
+                                     :
+                                     <div style={styles.pageContainer}>
+                                         {currentSlide + 1} / {totalSlide + 1}
+                                     </div>
+                                }
                             </RoomGrid>
                         </Container>
                     </div>

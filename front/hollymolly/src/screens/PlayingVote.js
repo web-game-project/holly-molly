@@ -116,7 +116,7 @@ const PlayingVote = (props) => {
 
     useEffect(() => {
         props.socket.on('connect', () => {
-            console.log('playing vote');
+            //console.log('playing vote');
         });
 
         /* props.socket.on('vote', (data) => {
@@ -128,7 +128,7 @@ const PlayingVote = (props) => {
 
         // 인간 답안 제출 완료 
         props.socket.on('submit human answer', (data) => {
-            console.log('submit human answer' + data.human_submit);
+           // console.log('submit human answer' + data.human_submit);
 
             if (data.human_submit === true) {
                 setIsHumanSubmit(true);
@@ -137,7 +137,7 @@ const PlayingVote = (props) => {
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
-            console.log('exit room');   
+            //console.log('exit room');   
             var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
 
             userList = userList.filter(x => x.user_idx !== data.user_idx);
@@ -242,7 +242,7 @@ const PlayingVote = (props) => {
 
     // 비정상 종료
     const exit = async () => {
-        console.log("exit!!!");
+        //console.log("exit!!!");
         const restURL = 'http://3.17.55.178:3002/game/exit';
 
         const reqHeaders = {
@@ -253,14 +253,14 @@ const PlayingVote = (props) => {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response);
+                //console.log(response);
                 history.push({
                     pathname: '/',  
                 });
                 //window.location.replace('/');
             })
             .catch(function (error) {
-                alert(error);
+                alert(error.response.data.message);
             });
     };
 

@@ -93,11 +93,11 @@ const PlayingRoom = (props) => {
                 reqHeaders
             )
             .then(function (response) {
-                console.log('game set success');
+               // console.log('game set success');
                 //possible.current = true;
             })
             .catch(function (error) {
-                alert('set Rest API' + error);
+                alert(error.response.data.message);
             });
     }
 
@@ -127,7 +127,7 @@ const PlayingRoom = (props) => {
 
             })
             .catch(function (error) {
-                alert('error 게임멤버정보조회 : ' + error.message);
+                alert(error.response.data.message);
             });
     }
 
@@ -144,7 +144,7 @@ const PlayingRoom = (props) => {
                     setWaitSeconds(-1);
                 } else {
                     // 못받음
-                    console.log('순서 받기 시간 끝');
+                    //e.log('순서 받기 시간 끝');
                     alert('네트워크가 불안정합니다.');
                     window.location.replace('/');
 
@@ -167,7 +167,7 @@ const PlayingRoom = (props) => {
                 }
 
                 if (parseInt(seconds) === 0) {
-                    console.log('역할 부여 초 끝');
+                    //console.log('역할 부여 초 끝');
                     //그림판 시작 되기 전 다음 순서 준비
                     setIsDrawReady(false);
                     props.socket.emit('send next turn', {
@@ -193,7 +193,7 @@ const PlayingRoom = (props) => {
 
     useEffect(() => {
         props.socket.on('get next turn', (data) => {
-            console.log(data.data); // success 메시지
+           // console.log(data.data); // success 메시지
             setIsDrawReady(true);
         });
 
@@ -221,7 +221,7 @@ const PlayingRoom = (props) => {
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
-            console.log('exit room');   
+            //console.log('exit room');   
             var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
 
             userList = userList.filter(x => x.user_idx !== data.user_idx);
@@ -260,7 +260,7 @@ const PlayingRoom = (props) => {
 
         // 비정상 종료 감지 최종 결과 전송
         props.socket.on('get final result', (data) => {
-            console.log('get final result');  
+            //console.log('get final result');  
             finalSocket.current = true;
 
             // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
@@ -350,12 +350,12 @@ const PlayingRoom = (props) => {
     }
 
     const highOrderFunction = (text) => {
-        console.log(text); // 현재 유저 이름 
+        //console.log(text); // 현재 유저 이름 
     }
 
     // 비정상 종료
     const exit = async () => {
-        console.log("playing room exit");
+        //console.log("playing room exit");
         const restURL = 'http://3.17.55.178:3002/game/exit';
 
         const reqHeaders = {
@@ -366,14 +366,14 @@ const PlayingRoom = (props) => {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response);
+                //console.log(response);
                 history.push({
                     pathname: '/',  
                 });
                 //window.location.replace('/');
             })
             .catch(function (error) {
-                alert(error);
+                alert(error.response.data.message);
             });
     };
 
