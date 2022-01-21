@@ -64,6 +64,10 @@ const RefreshVerification = {
             })
             .catch(function (error) {
               alert(error.response.data.message);
+              //메인으로
+              history.push({
+                pathname: '/',  
+              });             
             });
         }
       });  
