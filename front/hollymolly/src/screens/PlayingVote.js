@@ -260,7 +260,7 @@ const PlayingVote = (props) => {
                 //window.location.replace('/');
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+               // alert(error.response.data.message);
             });
     };
 

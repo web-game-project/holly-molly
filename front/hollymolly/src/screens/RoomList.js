@@ -195,7 +195,7 @@ const RoomList = (props) => {
                 setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+                //alert(error.response.data.message);
             });
     };
 
@@ -227,7 +227,7 @@ const RoomList = (props) => {
                 setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+               // alert(error.response.data.message);
             });
     };
 
@@ -399,7 +399,7 @@ const RoomList = (props) => {
                 });
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+                //alert(error.response.data.message);
             });
     };
 

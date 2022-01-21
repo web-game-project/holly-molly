@@ -79,7 +79,7 @@ const PlayingResult = (props) => {
                 //startSetAPI(3);
             })
             .catch(function (error) {
-                alert('Error ' + error.response.data.message);
+               // alert('Error ' + error.response.data.message);
             });
     };
 
@@ -103,7 +103,7 @@ const PlayingResult = (props) => {
             .then(function (response) {
             })
             .catch(function (error) {
-                alert('Error ' + error.response.data.message);
+               // alert('Error ' + error.response.data.message);
             });
     }
 
@@ -231,7 +231,7 @@ const PlayingResult = (props) => {
                 //window.location.replace('/');
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+              //  alert(error.response.data.message);
             });
     };
 

@@ -488,7 +488,7 @@ export default function WaitingRoom(props) {
               //  console.log('레디 rest: ' + readyStatus);
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+                //alert(error.response.data.message);
             });
     }
 
@@ -516,7 +516,7 @@ export default function WaitingRoom(props) {
                 setGameStart(true);
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+                //alert(error.response.data.message);
             });
     }
 
@@ -545,7 +545,7 @@ export default function WaitingRoom(props) {
                 //setSelectColor(str); //내가 선택한 색
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+                //alert(error.response.data.message);
             });
     }
 
@@ -569,7 +569,7 @@ export default function WaitingRoom(props) {
               //  console.log('getRoomInfo 성공');
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+               // alert(error.response.data.message);
             });
     };
 
@@ -591,7 +591,7 @@ export default function WaitingRoom(props) {
                 });
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+               // alert(error.response.data.message);
             });
     };
 
@@ -613,7 +613,7 @@ export default function WaitingRoom(props) {
                 });
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+               // alert(error.response.data.message);
             });
     };
 
@@ -664,7 +664,7 @@ export default function WaitingRoom(props) {
                 //window.location.replace('/');
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+              //  alert(error.response.data.message);
             });
     };
 
