@@ -74,7 +74,7 @@ export default function InfoSetModal({ title, mode, room_private, member, room_i
             .catch(function (error) {
                 //console.log('UpdateRoomInfo 실패');
                 //console.log(error.response);
-                alert(error.response.data.message);
+                //alert(error.response.data.message);
             });
     };
 

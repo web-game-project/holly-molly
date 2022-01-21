@@ -166,7 +166,7 @@ export default function ModalBase() {
                 .catch(function (error) {
                     //console.log('생성 실패');
                     //console.log(error.response);
-                    alert(error.response.data.message);
+                    //alert(error.response.data.message);
                 });
         }
     };

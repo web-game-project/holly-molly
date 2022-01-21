@@ -118,7 +118,7 @@ export default function ModalBase({ tutorial }) {
                     window.location.replace('/roomlist');
                 })
                 .catch(function (error) {
-                    alert(error.response.data.message);
+                    //alert(error.response.data.message);
                 });
         }
 
