@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import style from '../styles/styles.js';
-import exit from '../assets/exit.png';
+import exitPng from '../assets/exit.png';
 
 import UserCard from '../components/UserCard';
 
@@ -956,7 +956,7 @@ export default function WaitingRoom(props) {
                                             cursor: 'grab',
                                         }}
                                     >
-                                        <Exit src={exit} />
+                                        <Exit src={exitPng} />
                                         <ExitText>나가기</ExitText>
                                     </div>
                                 </SelectDiv>
