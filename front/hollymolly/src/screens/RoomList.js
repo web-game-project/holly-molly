@@ -242,9 +242,13 @@ const RoomList = (props) => {
                 roomListCheckPage(currentSlide);
             } 
         }else if(changeRoomData.type === 'delete_room'){
-            
-            if(totalSlide > currentSlide){ // 현재 페이지 아니라면 총 갯수에서 하나 삭제 후 전체 슬라이드 갯수 다시 계산
-                console.log(total_room_cnt);
+            let changeRooms = rooms.filter(x => x.room_idx !== parseInt(changeRoomData.data.room_idx));
+
+            // 현재 페이지에 삭제할 방 있다면 삭제 후 다시 조회 
+            if(changeRooms){
+                setRooms(changeRooms);
+                roomListCheckPage(currentSlide);
+            }else{ // 현재 페이지 아니라면 총 갯수에서 하나 삭제 후 전체 슬라이드 갯수 다시 계산
                 total_room_cnt -= 1;
                 if (total_room_cnt % 6 === 0) {
                     TOTAL_SLIDES.current = total_room_cnt / 6 - 1;
@@ -254,13 +258,7 @@ const RoomList = (props) => {
                     setTotalSlide(TOTAL_SLIDES.current);
                 }
                 setTotalSlide(TOTAL_SLIDES.current)
-
-            }else{ // 현재 페이지에 삭제할 방 있다면 삭제 후 다시 조회 
-                let changeRooms = rooms.filter(x => x.room_idx !== parseInt(changeRoomData.data.room_idx));
-                setRooms(changeRooms);
-                roomListCheckPage(currentSlide);
             }
-            
         }else if(changeRoomData.type === 'edit_room'){
             // 현재 페이지에 방 정보가 수정된 방 있다면 수정
             for(let i = 0; i < rooms.length; i++){
