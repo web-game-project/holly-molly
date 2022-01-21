@@ -36,7 +36,7 @@ export default function WaitingRoom(props) {
     const history = useHistory();
 
     let room_index = parseInt(props.match.params.name); // url에 입력해준 방 인덱스
-    console.log('방 번호는 ?' + room_index);
+ //   console.log('방 번호는 ?' + room_index);
 
     // 뒤로가기 감지 
     const [isBlocking, setIsBlocking] = useState(false);
@@ -101,7 +101,7 @@ export default function WaitingRoom(props) {
     const leader_idx = useRef(0);
 
     const getWaiting = () => {
-        console.log("getWaiting: " + room_index);
+     //   console.log("getWaiting: " + room_index);
         const restURL = 'http://3.17.55.178:3002/room/' + room_index;
 
         const reqHeaders = {
@@ -113,7 +113,7 @@ export default function WaitingRoom(props) {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response.data);
+             //   console.log(response.data);
                 setRoomEnterInfo(response.data);
                 //room index 설정
                 room_idx = response.data.room_idx; //이렇게 받아오면 number타입으로 api, 소켓 에러 X\
@@ -121,7 +121,7 @@ export default function WaitingRoom(props) {
                 //방장 인덱스 받아오기, save_user_idx 이게 내 인덱스 저장된 변수
                 //받아와서 리더인지 아닌지 state 설정
                 if (response.data.leader_idx === save_user_idx) {
-                    console.log('방장 오케이');
+                 //   console.log('방장 오케이');
                     setIsLeader(1); //리더다
                 }
 
@@ -141,7 +141,7 @@ export default function WaitingRoom(props) {
                         }
                     }
 
-                    console.log('ready 카운트 ' + ready_cnt);
+                 //   console.log('ready 카운트 ' + ready_cnt);
 
                     const currentColor = locationUserList[i].wrm_user_color;
 
@@ -164,7 +164,7 @@ export default function WaitingRoom(props) {
                 }
 
                 //햔재 인원 받아오기
-                console.log('수정인데 세팅룸함수 안에 현재 인원 값 : ' + response.data.room_current_member_cnt);
+              //  console.log('수정인데 세팅룸함수 안에 현재 인원 값 : ' + response.data.room_current_member_cnt);
                 setCurrentMember(response.data.room_current_member_cnt);
 
                 //게임 시작 인원 받아오기
@@ -175,16 +175,15 @@ export default function WaitingRoom(props) {
                 leader_idx.current = response.data.leader_idx;
             })
             .catch(function (error) {
-                console.log('대기실 데이터 실패');
-                console.log(error.response);
+                alert(error.response.data.message);
             });
 
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }
 
     useEffect(() => {
-        console.log("waiting room");
-        console.log(props.socket);
+      //  console.log("waiting room");
+      //  console.log(props.socket);
 
         if (props.socket.connected) {
             getWaiting();
@@ -201,7 +200,7 @@ export default function WaitingRoom(props) {
 
         //방장 변경 leaderIdx
         props.socket.on('change host', (data) => {
-            console.log('방장 탈출');
+           // console.log('방장 탈출');
 
             // setLeaderIdx(data.user_idx);
             getWaiting();
@@ -210,7 +209,7 @@ export default function WaitingRoom(props) {
         //방퇴장
         props.socket.on('exit room', (data) => {
             let exitUserColor = data.user_color;
-            console.log('나감 : ' + exitUserColor);
+          //  console.log('나감 : ' + exitUserColor);
             colorList &&
                 colorList.map((element) => {
                     if (element.color === exitUserColor) {
@@ -436,7 +435,7 @@ export default function WaitingRoom(props) {
 
         //방 정보 수정 소켓
         props.socket.on('edit room', (data) => {
-            console.log('수정) 방정보! ');
+          //  console.log('수정) 방정보! ');
             //setRoomUpdate(data);
             getWaiting();
         });
@@ -444,8 +443,8 @@ export default function WaitingRoom(props) {
 
         //게임 시작 정보 socket
         props.socket.on('start game', (data) => {
-            console.log('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
-            console.log(leader_idx.current);
+         //   console.log('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
+         //   console.log(leader_idx.current);
 
             // getWaiting();
             //플레잉룸으로 이동, 데이터 전달
@@ -466,7 +465,7 @@ export default function WaitingRoom(props) {
     function readyClick(readyStatus) {
         setChangeReady(readyStatus);
 
-        console.log('클릭 시 레디 값 : ' + ready_cnt + '정원 : ' + startMember);
+      //  console.log('클릭 시 레디 값 : ' + ready_cnt + '정원 : ' + startMember);
 
         const restURL = BaseURL + '/waiting-room/user-ready   ';
 
@@ -486,10 +485,10 @@ export default function WaitingRoom(props) {
                 reqHeaders
             )
             .then(function (response) {
-                console.log('레디 rest: ' + readyStatus);
+              //  console.log('레디 rest: ' + readyStatus);
             })
             .catch(function (error) {
-                alert('error Start' + error.message);
+                alert(error.response.data.message);
             });
     }
 
@@ -512,7 +511,7 @@ export default function WaitingRoom(props) {
             )
             .then(function (response) {
                 //response로 jwt token 반환
-                console.log('success! 게임시작');
+              //  console.log('success! 게임시작');
                 //플레잉룸으로 이동 동시에, 게임시장 정보 call 데이터 함께 전달
                 setGameStart(true);
             })
@@ -542,7 +541,7 @@ export default function WaitingRoom(props) {
                 reqHeaders
             )
             .then(function (response) {
-                console.log('색깔 rest: ' + response.data);
+             //   console.log('색깔 rest: ' + response.data);
                 //setSelectColor(str); //내가 선택한 색
             })
             .catch(function (error) {
@@ -564,14 +563,13 @@ export default function WaitingRoom(props) {
             .get(restURL, reqHeaders)
             .then(function (response) {
                 setRoomInfo(response.data);
-                console.log('response.data.room_start_member_cnt');
-                console.log(response.data.room_idx);
+              //  console.log('response.data.room_start_member_cnt');
+              //  console.log(response.data.room_idx);
                 setCount(response.data.room_start_member_cnt);
-                console.log('getRoomInfo 성공');
+              //  console.log('getRoomInfo 성공');
             })
             .catch(function (error) {
-                console.log('getRoomInfo 실패');
-                console.log(error.response);
+                alert(error.response.data.message);
             });
     };
 
@@ -587,14 +585,13 @@ export default function WaitingRoom(props) {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-                console.log('방 삭제 성공');
+             //   console.log('방 삭제 성공');
                 history.push({
                     pathname: '/roomlist', // 나가기 성공하면 룸리스트로 이동
                 });
             })
             .catch(function (error) {
-                console.log('방 삭제  실패');
-                console.log(error.response);
+                alert(error.response.data.message);
             });
     };
 
@@ -609,15 +606,14 @@ export default function WaitingRoom(props) {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response.status);
-                console.log('exitWaitingRoom 성공');
+             //   console.log(response.status);
+             //   console.log('exitWaitingRoom 성공');
                 history.push({
                     pathname: '/roomlist', // 나가기 성공하면 룸리스트로 이동
                 });
             })
             .catch(function (error) {
-                console.log('exitWaitingRoom 실패');
-                console.log(error.response);
+                alert(error.response.data.message);
             });
     };
 
@@ -650,7 +646,7 @@ export default function WaitingRoom(props) {
 
     // 비정상 종료
     const exit = async () => {
-        console.log("playing room exit");
+       // console.log("playing room exit");
         const restURL = 'http://3.17.55.178:3002/game/exit';
 
         const reqHeaders = {
@@ -661,14 +657,14 @@ export default function WaitingRoom(props) {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response);
+             //   console.log(response);
                 history.push({
                     pathname: '/',  
                 });
                 //window.location.replace('/');
             })
             .catch(function (error) {
-                alert(error);
+                alert(error.response.data.message);
             });
     };
 
@@ -783,26 +779,13 @@ export default function WaitingRoom(props) {
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }, []); */
 
-    const grayBoxOrigin = () => {
-        //일반 그레이 박스 함수
-        console.log('함수' + startMember + currentMember);
-        let cnt = startMember + 1 - currentMember;
-        const result = [];
-
-        for (let i = 0; i < cnt; i++) {
-            console.log('몇변 ' + i);
-            result.push(<UserCard color="gray" />);
-        }
-        return result;
-    }
-
     const grayBox = () => {
-        console.log('함수' + startMember + currentMember);
+       // console.log('함수' + startMember + currentMember);
         let cnt = startMember + 1 - currentMember;
         const result = [];
 
         for (let i = 0; i < cnt; i++) {
-            console.log('몇변 ' + cnt);
+          //  console.log('몇변 ' + cnt);
 
             result.push(<UserCard color="gray" />);
 
@@ -813,14 +796,13 @@ export default function WaitingRoom(props) {
     return (
         <Background>
             {props.socket.connected ? (
-                console.log("socket 연결!"),
+               // console.log("socket 연결!"),
                 roomEnterInfo && roomEnterInfo ? (
-                    console.log("정보 조회 성공!"),
+                  //  console.log("정보 조회 성공!"),
                     (
                         <div>
                             <Header />
                             <Container>
-                                {console.log('방장 인덱스 맞지? : ' + isLeader)}
                                 <SelectDiv>
                                     <br />
                                     {roomUpdate ? (
@@ -946,7 +928,7 @@ export default function WaitingRoom(props) {
                                     </UserDiv>
                                     <div
                                         onClick={() => {
-                                            console.log('눌림');
+                                         //   console.log('눌림');
                                             exitWaitingRoom();
                                         }}
                                         style={{
@@ -965,7 +947,7 @@ export default function WaitingRoom(props) {
                                     <StartDiv>
                                         {
                                             isLeader === 0 //방장 아님
-                                                ? (console.log(style.red),
+                                                ? (//console.log(style.red),
                                                     changeReady === true ? (
                                                         <BtnDiv
                                                             color="waiting"
@@ -986,7 +968,7 @@ export default function WaitingRoom(props) {
                                                         </BtnDiv>
                                                     ))
                                                 : //방장이다.
-                                                (console.log('방장이야'),
+                                                (//console.log('방장이야'),
                                                     (
                                                         //일단 플레잉룸으로 넘어가기 위한 하드코딩 밑에 주석임 지울 예정
                                                         startMember === ready_cnt ? (

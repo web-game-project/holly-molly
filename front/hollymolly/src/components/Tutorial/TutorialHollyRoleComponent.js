@@ -51,11 +51,7 @@ export default function TutorialHollyRoleComponent(props) {
             <UserCardDiv>
               <div className= "textDiv"> 
                 {usercard.split("\n").map((i, key) => {
-                        console.log('ㅑㅕ' + i);
-                        /* if(key === 0 || key === 2) */
                             return <p key={key}> {i}</p>;
-                       /*  else
-                        return <p key={key}>&nbsp;&nbsp;&nbsp;{i}</p>; */
                     })}
               </div>
             2

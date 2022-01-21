@@ -49,7 +49,7 @@ const RefreshVerification = {
             }, reqHeaders_room)
             .then(function (response) {
               //response로 access token 반환
-              console.log("토큰만료되고 리프레시 토큰 갱신 api 요청 성공! " + response.data.access_token);
+              //console.log("토큰만료되고 리프레시 토큰 갱신 api 요청 성공! " + response.data.access_token);
 
               //받은 access_token이랑 유저 인덱스로 다시 저장
               sessionStorage.setItem(

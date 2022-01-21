@@ -14,7 +14,6 @@ function TutorialVote() {
         <Background>
             <Header goMain />
             <Container>{
-                console.log('롤은? ' + role),
                 role && role === "ghost" ?
                 <TutorialVoteHollyComponent role={role}/>
                 :

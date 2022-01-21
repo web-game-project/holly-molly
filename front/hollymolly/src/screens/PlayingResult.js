@@ -53,8 +53,7 @@ const PlayingResult = (props) => {
     const role = location.state.role;
 
     //토큰 검사
-    let verify = RefreshVerification.verification()
-    //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
+    let verify = RefreshVerification.verification();
     let data, save_token, save_user_idx;
 
     if (normal === true) {
@@ -77,11 +76,10 @@ const PlayingResult = (props) => {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response);
                 //startSetAPI(3);
             })
             .catch(function (error) {
-                console.log(error.response);
+                alert('Error ' + error.response.data.message);
             });
     };
 
@@ -103,16 +101,14 @@ const PlayingResult = (props) => {
                 })
 
             .then(function (response) {
-                console.log('최종결과 성공');
             })
             .catch(function (error) {
-                console.log(error.response);
+                alert('Error ' + error.response.data.message);
             });
     }
 
     useEffect(() => {
         props.socket.on('connect', () => {
-            console.log('playing result connection server');
         });
 
         // 같은 대기실에 있는 클라이언트들에게 중간 결과 전송
@@ -141,7 +137,7 @@ const PlayingResult = (props) => {
                     myItem.game_member_order = '나';
                 }
 
-                console.log('중간결과 비정상' + JSON.stringify(data));
+                //console.log('중간결과 비정상' + JSON.stringify(data));
                 setKeyword("게임 종료");
                 setNormal(false);
                 setExitData(data);
@@ -155,7 +151,6 @@ const PlayingResult = (props) => {
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
-            console.log('exit room');   
             var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
 
             userList = userList.filter(x => x.user_idx !== data.user_idx);
@@ -212,7 +207,6 @@ const PlayingResult = (props) => {
                 getMiddleResult();
             }
             else if (gameSetNo === 3 && leaderIdx === save_user_idx) {
-                console.log('정상적인 3세트야');
                 getFinalResult();
             }
         }
@@ -220,7 +214,6 @@ const PlayingResult = (props) => {
 
     // 비정상 종료
     const exit = async () => {
-        console.log("exit!!!");
         const restURL = 'http://3.17.55.178:3002/game/exit';
 
         const reqHeaders = {
@@ -231,14 +224,14 @@ const PlayingResult = (props) => {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response);
+                //console.log(response);
                 history.push({
                     pathname: '/',  
                 });
                 //window.location.replace('/');
             })
             .catch(function (error) {
-                alert(error);
+                alert(error.response.data.message);
             });
     };
 
