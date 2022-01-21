@@ -90,7 +90,7 @@ const GameVoteComponent = (props) => {
             .catch(function (error) {
                 //console.log('postVote 실패');
                 //console.log(error.response);
-                alert(error.response.data.message);
+                //alert(error.response.data.message);
             });
 
         setSeconds(-1);

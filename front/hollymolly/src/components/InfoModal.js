@@ -81,7 +81,7 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
             .catch(function (error) {
                 //console.log('UpdateRoomInfo 실패');
                 //console.log(error.response);
-                alert(error.response.data.message);
+                //alert(error.response.data.message);
             });
     };
 
@@ -105,7 +105,7 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
             .catch(function (error) {
                 //console.log('getRoomInfo 실패 in madal');
                 //console.log(error.response);
-                alert(error.response.data.message);
+                //alert(error.response.data.message);
             });
     };
 

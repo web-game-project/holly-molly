@@ -324,7 +324,7 @@ const GameDrawing = (props) => {
                 //console.log('이미지 저장 성공');
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+                //alert(error.response.data.message);
             });
     }
 

@@ -100,7 +100,7 @@ const GameVoteResult = (props) => {
                     //console.log('전체 투표 결과야!' + JSON.stringify(voteList.current));
                 })
                 .catch(function (error) {
-                    alert(error.response.data.message);
+                    //alert(error.response.data.message);
                 });
         }
 
@@ -119,7 +119,7 @@ const GameVoteResult = (props) => {
                 setControl(true);
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+                //alert(error.response.data.message);
             });
 
     }
