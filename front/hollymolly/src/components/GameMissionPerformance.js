@@ -78,8 +78,7 @@ const GameMissionPerformance = (props) => {
                 //console.log(response);
             })
             .catch(function (error) {
-                //console.log(error.response);
-                alert(error.response.data.message);
+                //alert(error.response.data.message);
             });
     };
 
