@@ -206,13 +206,15 @@ const PlayingResult = (props) => {
     }, [seconds]);
 
     useEffect(() => {
+        //getFinalResult : 정상적으로 게임이 3세트가 진행되었을 때 API 요청하면 백쪽에서 최종결과 소켓을 전송함.
         if (normal === true) {
             if (gameSetNo === 2 && leaderIdx === save_user_idx) {
                 getMiddleResult();
             }
-        }
-        else if (gameSetNo === 3 && leaderIdx === save_user_idx) {
-            getFinalResult();
+            else if (gameSetNo === 3 && leaderIdx === save_user_idx) {
+                console.log('정상적인 3세트야');
+                getFinalResult();
+            }
         }
     }, []);
 
