@@ -97,7 +97,7 @@ const PlayingRoom = (props) => {
                 //possible.current = true;
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+               // alert(error.response.data.message);
             });
     }
 
@@ -123,11 +123,9 @@ const PlayingRoom = (props) => {
                         userList[i].user_role = "ghost";
                     }
                 }
-
-
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+               // alert(error.response.data.message);
             });
     }
 
@@ -373,7 +371,7 @@ const PlayingRoom = (props) => {
                 //window.location.replace('/');
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+              //  alert(error.response.data.message);
             });
     };
 
