@@ -52,7 +52,7 @@ const MissionWord = (props) => {
   `;
 
   const TextContainer = styled.span `
-    font-family: "Black Han Sans";
+    font-family: "Gowun Dodum";
     background: linear-gradient(to bottom, #DB4843, #ff0000);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
