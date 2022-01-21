@@ -10,7 +10,7 @@ import { useHistory} from 'react-router';
 const GameFinalResult = (props) => {
     const history = useHistory();
 
-    console.log('이름, 칼라 : ' + props.name + props.color );
+    //console.log('이름, 칼라 : ' + props.name + props.color );
 
     let name = props.name;
     let color = props.color;

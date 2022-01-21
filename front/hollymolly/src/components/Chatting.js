@@ -96,7 +96,7 @@ const Chatting = (props) => {
 
     useEffect(() => {
         props.socket.on('connect', () => {
-            console.log('chatting connection server');
+            //console.log('chatting connection server');
         });
         
         props.socket.on("chat", (data) => {

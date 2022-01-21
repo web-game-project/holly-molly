@@ -163,7 +163,7 @@ const GameDrawing = (props) => {
 
         socket.on('get next turn', (data) => {
             // 그림 좌표 받기
-            console.log(data.data); // success 메시지
+            //console.log(data.data); // success 메시지
             readyNextOrder.current = true;
         });
 
@@ -181,13 +181,13 @@ const GameDrawing = (props) => {
                 setSeconds(parseInt(seconds) - 1);
             } else if (parseInt(seconds) === 0) {
                 // 타이머 종료,
-                console.log('그림 그리기 시간 끝');
+                //console.log('그림 그리기 시간 끝');
 
                 drawingTime.current = false; // 그림 그리기 시간 끝
                 setPossible(false);
                 if (orderCount.current === user_member_count) {
                     clearInterval(countdown);
-                    console.log('모든 순서 끝!');
+                    //console.log('모든 순서 끝!');
                     //세트 이미지 저장 api 요청
                     saveCanvas();
                     //투표 로딩 타이머 시작 
@@ -223,7 +223,7 @@ const GameDrawing = (props) => {
                 setWaitSeconds(parseInt(waitSeconds) - 1);
 
                 if (readyNextOrder.current) {
-                    console.log('다음 순서 받기');
+                    //console.log('다음 순서 받기');
                     setWaitSeconds(-1);
                     readyNextOrder.current = false; // 다시 다음 순서 받을 준비
                     orderCount.current += 1; // 순서 바꾸기
@@ -237,7 +237,7 @@ const GameDrawing = (props) => {
             } else if (parseInt(waitSeconds) === 0) {
                 // 3초가 지나도 받지 못하면 네트워크 에러 및 서버에서 강제 퇴장 처리
                 if (readyNextOrder.current) {
-                    console.log('다음 순서 받기');
+                    //console.log('다음 순서 받기');
                     setWaitSeconds(-1);
                     readyNextOrder.current = false; // 다시 다음 순서 받을 준비
                     orderCount.current += 1; // 순서 바꾸기
@@ -247,7 +247,7 @@ const GameDrawing = (props) => {
                     setPossible(true);
                     setSeconds(10);
                 } else {
-                    console.log('순서 받기 시간 끝');
+                    //console.log('순서 받기 시간 끝');
                     alert('네트워크가 불안정합니다.');
                     history.push({
                         pathname: '/',  
@@ -321,10 +321,10 @@ const GameDrawing = (props) => {
                 reqHeaders
             )
             .then(function (response) {
-                console.log('이미지 저장 성공');
+                //console.log('이미지 저장 성공');
             })
             .catch(function (error) {
-                alert('이미지 error ' + error.message);
+                alert(error.response.data.message);
             });
     }
 

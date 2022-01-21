@@ -64,7 +64,7 @@ export default function ModalBase({ tutorial }) {
 
     useEffect(() => {
         localStorage.removeItem('token');
-        console.log('내 인덱스 delete 후 : ' + JSON.stringify(localStorage.getItem('token')));
+        //console.log('내 인덱스 delete 후 : ' + JSON.stringify(localStorage.getItem('token')));
     });
 
     const createNickname = async () => {
@@ -74,7 +74,7 @@ export default function ModalBase({ tutorial }) {
 
         const usable = regex.test(str); // 정규식 테스트
 
-        console.log('usable: ' + usable);
+        //console.log('usable: ' + usable);
 
         if (str.length < 2 || str.length > 10 || usable === false) {
             setNickName('');
@@ -89,7 +89,7 @@ export default function ModalBase({ tutorial }) {
                 })
                 .then(function (response) {
                     //response로 jwt token 반환
-                    console.log('success!' + response.data.user_idx);
+                    //console.log('success!' + response.data.user_idx);
                     //  alert('success! ' + response.data.access_token);
 
                     sessionStorage.setItem('token',
@@ -100,7 +100,7 @@ export default function ModalBase({ tutorial }) {
                         user_name: nickName,
                     }));
 
-                    console.log('세션스토리지 : ' + sessionStorage.getItem('token'));
+                    //console.log('세션스토리지 : ' + sessionStorage.getItem('token'));
                     
                     /* localStorage.setItem(
                         'token',
@@ -118,7 +118,7 @@ export default function ModalBase({ tutorial }) {
                     window.location.replace('/roomlist');
                 })
                 .catch(function (error) {
-                    alert(error);
+                    alert(error.response.data.message);
                 });
         }
 

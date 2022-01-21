@@ -43,7 +43,7 @@ const GameMissionPerformance = (props) => {
             if (parseInt(seconds) > 0) {
                 setSeconds(parseInt(seconds) - 1);
             }else{ // seconds == 0이면,
-                console.log('마피아 미션 수행 초 끝')
+                //console.log('마피아 미션 수행 초 끝')
                 inputHumanKeyword();
             }
         }, 1000);
@@ -75,10 +75,11 @@ const GameMissionPerformance = (props) => {
                 reqHeaders
             )
             .then(function (response) {
-                console.log(response);
+                //console.log(response);
             })
             .catch(function (error) {
-                console.log(error.response);
+                //console.log(error.response);
+                alert(error.response.data.message);
             });
     };
 
