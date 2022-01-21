@@ -22,7 +22,7 @@ const MissionWord = (props) => {
 
   const GhostMissionWordBox = styled.div`
     text-align: center;
-    font-family: "Black Han Sans";
+    font-family: "Gowun Dodum";
     font-size: 25px;
     width: 150px;
     height: 85px;
@@ -38,7 +38,7 @@ const MissionWord = (props) => {
 
   const HumanMissionWordBox = styled.div`
     text-align: center;
-    font-family: "Black Han Sans";
+    font-family: "Gowun Dodum";
     font-size: 25px;
     width: 150px;
     height: 85px;
