@@ -85,11 +85,12 @@ const GameVoteComponent = (props) => {
                 reqHeaders
             )
             .then(function (response) {
-                console.log('postVote 성공');
+                //console.log('postVote 성공');
             })
             .catch(function (error) {
-                console.log('postVote 실패');
-                console.log(error.response);
+                //console.log('postVote 실패');
+                //console.log(error.response);
+                alert(error.response.data.message);
             });
 
         setSeconds(-1);
@@ -108,7 +109,7 @@ const GameVoteComponent = (props) => {
                                 setVoteWho(element.user_color);
                                 //setVoteIndex(element.user_idx);
                                 voteIndex.current = element.user_idx;
-                                console.log('API: 게임세트? ' + gameSet + ', 유저인덱스? ' + voteIndex.current);
+                                //console.log('API: 게임세트? ' + gameSet + ', 유저인덱스? ' + voteIndex.current);
                             }}
                         >
                             <UserVote nick={element.user_name} color={element.user_color} click={clicked} voteWho={voteWho} />

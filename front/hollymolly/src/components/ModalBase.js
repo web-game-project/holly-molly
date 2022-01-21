@@ -54,40 +54,40 @@ export default function ModalBase() {
     const isHard = () => {
         // 하드로 만들어라
         if (isChecked === true) setIschecked(!isChecked); // 이지면 하드로 만들어라
-        console.log('선택) 난이도 상');
+        //console.log('선택) 난이도 상');
     };
     const isEasy = () => {
         //이지로 만들어라
         if (isChecked === false) setIschecked(!isChecked); //하드면 이지로 만들어라
-        console.log('선택) 난이도 하');
+        //console.log('선택) 난이도 하');
     };
 
     // 인원 useState
     const [people, setPeople] = React.useState(4); // 4명이 디폴트
     const click4 = () => {
         setPeople((people) => (people = 4));
-        console.log('선택) 인원수 4명');
+        //console.log('선택) 인원수 4명');
     };
 
     const click5 = () => {
         setPeople((people) => (people = 5));
-        console.log('선택) 인원수 5명');
+        //console.log('선택) 인원수 5명');
     };
 
     const click6 = () => {
         setPeople((people) => (people = 6));
-        console.log('선택) 인원수 6명');
+        //console.log('선택) 인원수 6명');
     };
 
     // 공개범위 useState
     const [ispublic, setIsPublic] = React.useState(true);
     const isPrivate = () => {
         if (ispublic == true) setIsPublic(!ispublic);
-        console.log('선택) 공개범위 전체');
+        //console.log('선택) 공개범위 전체');
     };
     const isPublic = () => {
         if (ispublic == false) setIsPublic(!ispublic);
-        console.log('선택) 공개범위 개인');
+        //console.log('선택) 공개범위 개인');
     };
 
     const result = () => {
@@ -96,8 +96,8 @@ export default function ModalBase() {
             setNotice(true);
         } else {
             setNotice(false);
-            console.log(':::최종결과:::');
-            console.log('방이름은? ' + inputRef.current.value);
+            //console.log(':::최종결과:::');
+            //console.log('방이름은? ' + inputRef.current.value);
 
             if (inputRef.current.value == null || inputRef.current.value == '') {
                 inputRef.current.value = '홀리-몰리! 기본방'; // 제목 안적으면 디폴트
@@ -106,18 +106,18 @@ export default function ModalBase() {
                 // 이지면
                 // easy
                 roomMode = 'easy';
-                console.log('모드는? easy');
+                //console.log('모드는? easy');
             } else {
                 roomMode = 'hard';
-                console.log('모드는? hard');
+                //console.log('모드는? hard');
             }
 
-            console.log('인원수는? ' + people + '명');
+            //console.log('인원수는? ' + people + '명');
 
-            if (ispublic) {
+            /* if (ispublic) {
                 // public
                 console.log('공개범위는? public'); // 반대로 나옴
-            } else console.log('공개범위는? private'); // 반대로 나옴
+            } else console.log('공개범위는? private'); // 반대로 나옴 */
 
             roomCreate();
             // setTimeout(() => enterRoomInfo(), 1000);
@@ -136,7 +136,7 @@ export default function ModalBase() {
             // alert('방 제목은 2~12글자 이내여야 합니다.');
             notice = true;
         } else {
-            console.log('방 생성 api 시작');
+            //console.log('방 생성 api 시작');
             const restURL = 'http://3.17.55.178:3002/room';
             const reqHeaders = {
                 headers: {
@@ -164,8 +164,9 @@ export default function ModalBase() {
                     });
                 })
                 .catch(function (error) {
-                    console.log('생성 실패');
-                    console.log(error.response);
+                    //console.log('생성 실패');
+                    //console.log(error.response);
+                    alert(error.response.data.message);
                 });
         }
     };
