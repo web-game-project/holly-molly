@@ -175,7 +175,7 @@ export default function WaitingRoom(props) {
                 leader_idx.current = response.data.leader_idx;
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+               // alert(error.response.data.message);
             });
 
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
