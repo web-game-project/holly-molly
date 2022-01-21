@@ -14,7 +14,6 @@ function TutorialDraw() {
         <Background>
             <Header goMain />
             <Container>{
-                console.log('롤은? ' + role),
                 role && role === "ghost" ?
                 <TutorialDrawHollyComponent role={role}/>
                 :

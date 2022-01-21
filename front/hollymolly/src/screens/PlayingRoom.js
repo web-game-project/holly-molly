@@ -15,6 +15,7 @@ import GameSetImageShow from '../components/GameSetImageShow';
 
 //통신
 import axios from 'axios';
+
 //깊은 복제
 import * as _ from 'lodash';
 
@@ -23,21 +24,25 @@ import RefreshVerification from '../server/RefreshVerification.js';
 import Loading from '../components/Loading';
 
 let userList = [{}];
-
 const PlayingRoom = (props) => {
-    let location = useLocation();
+    const location = useLocation();
     const history = useHistory();
+
+    let exitSocket = useRef(false);
+    let finalSocket = useRef(false);
 
     let room_idx = location.state.room;
     let leaderIdx = location.state.leaderIdx; //리더인지 아닌지 
 
     let gameIdx = location.state.gameIdx;
     let gameSetIdx = useRef(location.state.gameSetIdx);
-
+    
     let beforeUserList = location.state.userList;
 
+    const [afterExitUserList, setAfterExitUserList] = useState(); 
+
     let gameSetNo = location.state.gameSetNo;
-    ;
+    
     let isSet = location.state.isSet;
 
     let setBeforeImg = useRef('');
@@ -57,11 +62,12 @@ const PlayingRoom = (props) => {
 
     const BaseURL = 'http://3.17.55.178:3002/';
 
-    let u = RefreshVerification.verification()
-    console.log('리플시? ' + u);
+    //토큰 검사
+    let verify = RefreshVerification.verification()
     let data, save_token, save_user_idx;
-    if(u === true){
-        data = localStorage.getItem('token');
+
+    if(verify === true){
+        data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     }
@@ -87,11 +93,11 @@ const PlayingRoom = (props) => {
                 reqHeaders
             )
             .then(function (response) {
-                console.log('game set success');
+               // console.log('game set success');
                 //possible.current = true;
             })
             .catch(function (error) {
-                alert('set Rest API' + error);
+               // alert(error.response.data.message);
             });
     }
 
@@ -109,9 +115,17 @@ const PlayingRoom = (props) => {
             .then(function (response) {
                 setRole(response.data.user_role);
                 setKeyWord(response.data.keyword);
+
+                for (let i = 0; i < userList.length; i++) {
+                    if (userList[i].user_idx === save_user_idx) {
+                        userList[i].user_role = response.data.user_role;
+                    } else {
+                        userList[i].user_role = "ghost";
+                    }
+                }
             })
             .catch(function (error) {
-                alert('error 게임멤버정보조회 : ' + error.message);
+               // alert(error.response.data.message);
             });
     }
 
@@ -128,8 +142,9 @@ const PlayingRoom = (props) => {
                     setWaitSeconds(-1);
                 } else {
                     // 못받음
-                    console.log('순서 받기 시간 끝');
-                    console.log('네트워크가 불안정합니다.');
+                    //e.log('순서 받기 시간 끝');
+                    alert('네트워크가 불안정합니다.');
+                    window.location.replace('/');
 
                     setWaitSeconds(-1);
                 }
@@ -150,7 +165,7 @@ const PlayingRoom = (props) => {
                 }
 
                 if (parseInt(seconds) === 0) {
-                    console.log('역할 부여 초 끝');
+                    //console.log('역할 부여 초 끝');
                     //그림판 시작 되기 전 다음 순서 준비
                     setIsDrawReady(false);
                     props.socket.emit('send next turn', {
@@ -160,7 +175,7 @@ const PlayingRoom = (props) => {
 
                         draw_order: 1,
                     });
-                    //alert(isDrawReady);
+                    
                     setWaitSeconds(10); // 10초 기다림
 
                     setSeconds(-1);
@@ -175,12 +190,8 @@ const PlayingRoom = (props) => {
 
 
     useEffect(() => {
-        props.socket.on('connect', () => {
-            console.log('playing room connection server');
-        });
-
         props.socket.on('get next turn', (data) => {
-            console.log(data.data); // success 메시지
+           // console.log(data.data); // success 메시지
             setIsDrawReady(true);
         });
 
@@ -191,18 +202,107 @@ const PlayingRoom = (props) => {
             gameSetIdx.current = data.current_game_set_idx;
 
             setBeforeImg.current = data.before_game_set_img;
-            setBeforeHumanAnswer.current = data.before_game_set_human_answer;
+
+            if(data.before_game_set_human_answer === null){                
+                setBeforeHumanAnswer.current = "기 권";
+            }
+            else{
+                setBeforeHumanAnswer.current = data.before_game_set_human_answer;
+            }
+
             setBeforeKeyword.current = data.before_game_set_keyword;
 
             getGameMember();
 
             //setSeconds(4); // 이전 그림 보여주는 초는 4초!
         });
+
+        // 방 퇴장 
+        props.socket.on('exit room', (data) => {
+            //console.log('exit room');   
+            var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
+
+            userList = userList.filter(x => x.user_idx !== data.user_idx);
+            
+            if(exitPerson){
+                for (let i = 0; i < userList.length; i++) {
+                    if(exitPerson.game_member_order < userList[i].game_member_order){
+                        userList[i].game_member_order = userList[i].game_member_order - 1;
+                    }
+                }
+            }
+
+            let copyList = _.cloneDeep(userList);
+
+            // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+            let myIndex = copyList.find((x) => x.user_idx === save_user_idx);
+            if (myIndex) {
+                myIndex.game_member_order = 0;
+            }
+
+            // 그림 그리기 순서 대로 유저 리스트 재정렬
+            copyList.sort(function (a, b) {
+                return a.game_member_order - b.game_member_order;
+            });
+            
+            // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+            var myItem = copyList.find((x) => x.user_idx === save_user_idx);
+            if (myItem) {
+                myItem.game_member_order = '나';
+            }
+
+            exitSocket.current = true;
+
+            setAfterExitUserList(copyList);
+        });
+
+        // 비정상 종료 감지 최종 결과 전송
+        props.socket.on('get final result', (data) => {
+            //console.log('get final result');  
+            finalSocket.current = true;
+
+            // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+            let myIndex = userList.find((x) => x.user_idx === save_user_idx);
+            if (myIndex) {
+                myIndex.game_member_order = 0;
+            }
+
+            // 그림 그리기 순서 대로 유저 리스트 재정렬
+            userList.sort(function (a, b) {
+                return a.game_member_order - b.game_member_order;
+            });
+
+            // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+            var myItem = userList.find((x) => x.user_idx === save_user_idx);
+            if (myItem) {
+                myItem.game_member_order = '나';
+            }
+
+            detectExit(data);
+            /* if(exitSocket.current === true){
+                history.push({
+                    pathname: '/playingresult/' + room_idx,
+                    state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
+                })
+            } */
+            
+        });   
     }, []);
+
+    // 비정상 종료 감지 후 최종 결과 페이지로 이동 
+    const detectExit = async (data) => {
+        if(exitSocket.current === true && finalSocket.current === true){
+            history.push({
+                pathname: '/playingresult/' + room_idx,
+                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx.current, keyword: "게임종료", role: role, exitData: data, normal: false},
+            })
+        }
+    }
+
 
     useEffect(() => {
 
-        userList = beforeUserList;
+        userList = beforeUserList;; //그림판에서 넘어온 유저리스트
 
         if (gameSetIdx.current !== undefined && isSet === true) {
             if (leaderIdx === save_user_idx) { //리더만 세트시작 api 요청 가능
@@ -223,32 +323,24 @@ const PlayingRoom = (props) => {
 
     }, []);
 
-    for (let i = 0; i < userList.length; i++) {
-        if (userList[i].user_idx === save_user_idx) {
-            userList[i].user_role = role;
-        } else {
-            userList[i].user_role = "ghost";
-        }
-    }
-
     // 깊은 복사 
     let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
-    let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트 
-
+    let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트
+    
     // 유저 리스트 중 내 정보 배열 및 내 순서 저장
-    const myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
-
+    let myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
+    
     // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
     let myIndex = reOrderList.find((x) => x.user_idx === save_user_idx);
     if (myIndex) {
         myIndex.game_member_order = 0;
     }
-
+    
     // 그림 그리기 순서 대로 유저 리스트 재정렬
     reOrderList.sort(function (a, b) {
         return a.game_member_order - b.game_member_order;
     });
-
+    
     // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
     var myItem = reOrderList.find((x) => x.user_idx === save_user_idx);
     if (myItem) {
@@ -256,12 +348,12 @@ const PlayingRoom = (props) => {
     }
 
     const highOrderFunction = (text) => {
-        console.log(text); // 현재 유저 이름 
+        //console.log(text); // 현재 유저 이름 
     }
 
     // 비정상 종료
     const exit = async () => {
-        console.log("playing room exit");
+        //console.log("playing room exit");
         const restURL = 'http://3.17.55.178:3002/game/exit';
 
         const reqHeaders = {
@@ -272,39 +364,43 @@ const PlayingRoom = (props) => {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response);
-                window.location.replace('/');
+                //console.log(response);
+                history.push({
+                    pathname: '/',  
+                });
+                //window.location.replace('/');
             })
             .catch(function (error) {
-                alert(error);
+              //  alert(error.response.data.message);
             });
     };
 
     // 게임 중 비정상 종료 감지
-    //useEffect(() => {
-        //window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
-        //window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
-        /* return () => {
+    useEffect(() => {
+        window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
+        window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
+        
+        return () => {
             window.removeEventListener('beforeunload', alertUser)
             window.removeEventListener('unload', handleEndConcert)
-        } */
-    //}, [])
+        }  
+    }, [])
 
     // 경고창 
-    /* const alertUser = (e) => {
+    const alertUser = (e) => {
         e.preventDefault(); // 페이지가 리프레쉬 되는 고유의 브라우저 동작 막기
         e.returnValue = "";
-
+        
         exit();
     };
 
     // 종료시 실행 
     const handleEndConcert = async () => {
         exit();
-    } */
+    } 
 
     // 뒤로 가기 감지 시 비정상종료 처리 
-    useEffect(()=> {
+    /* useEffect(()=> {
         const unblock = history.block((loc, action) => {
             if (action === 'POP') {
                 if(window.confirm('게임방에서 나가게됩니다. 뒤로 가시겠습니까?')){
@@ -319,7 +415,7 @@ const PlayingRoom = (props) => {
 
         return () => unblock()
         
-    },[]) 
+    },[])  */
 
     return (
         <React.Fragment>
@@ -334,16 +430,29 @@ const PlayingRoom = (props) => {
                                         {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
                                         <MissionWord text={keyword} role={role}></MissionWord>
                                         {/* 유저 컴포넌트 */}
-
-                                        {reOrderList.map((index, key) => (
-                                            <GameUserCard
-                                                user_idx={reOrderList[key].user_idx}
-                                                user_color={reOrderList[key].user_color}
-                                                user_name={reOrderList[key].user_name}
-                                                user_role={reOrderList[key].user_role}
-                                                user_order={reOrderList[key].game_member_order}
-                                            ></GameUserCard>
-                                        ))}
+                                        {exitSocket.current  === false? 
+                                            (reOrderList && (reOrderList.map((values) => (
+                                                <GameUserCard
+                                                    user_idx={values.user_idx}
+                                                    user_color={values.user_color}
+                                                    user_name={values.user_name}
+                                                    user_role={values.user_role}
+                                                    user_order={values.game_member_order}
+                                                    user_exit={values.user_exit}
+                                                ></GameUserCard>
+                                            )))) : 
+                                            (afterExitUserList && (
+                                                afterExitUserList.map((values) => (
+                                                    <GameUserCard
+                                                        user_idx={values.user_idx}
+                                                        user_color={values.user_color}
+                                                        user_name={values.user_name}
+                                                        user_role={values.user_role}
+                                                        user_order={values.game_member_order}
+                                                        user_exit={values.user_exit}
+                                                ></GameUserCard>
+                                                )))) 
+                                        }
                                     </UserDiv>
 
                                     {seconds < 0 ? (
@@ -353,7 +462,6 @@ const PlayingRoom = (props) => {
                                                     keyword={keyword}
                                                     setIdx={gameSetIdx.current}
                                                     role={role}
-                                                    order={myList.game_member_order}
                                                     color={myList.user_color}
                                                     room_idx={room_idx}
                                                     idx={save_user_idx}
@@ -364,6 +472,8 @@ const PlayingRoom = (props) => {
                                                     gameSetNo={gameSetNo}
                                                     leaderIdx={leaderIdx}
                                                     currentOrder={highOrderFunction}
+                                                    reOrderList={reOrderList}
+                                                    myList={myList}
                                                 />
                                             )}
                                         </DrawDiv>
@@ -385,10 +495,10 @@ const PlayingRoom = (props) => {
 
 
                                     <ChatDiv>
-                                        <Chatting socket={props.socket} room_idx={room_idx} height="615px" available={true} color={myList.user_color}></Chatting>
+                                        <Chatting socket={props.socket} room_idx={room_idx} height="615px" available={true} color={myList&&myList.user_color}></Chatting>
                                     </ChatDiv>
                                 </BackGroundDiv>
-                            </Container>
+                            </Container> 
                         </div>
                     ) : (
                         <Loading />

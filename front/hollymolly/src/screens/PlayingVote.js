@@ -25,9 +25,14 @@ import * as _ from 'lodash';
 import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
 
+let userList = [{}];
+
 const PlayingVote = (props) => {
     let location = useLocation();
     const history = useHistory();
+
+    let exitSocket = useRef(false);
+    let finalSocket = useRef(false);
 
     // 투표 10초 타이머 세기, 투표 10초 후에 1초 더 여유롭게.
     const [seconds, setSeconds] = useState(11);
@@ -44,7 +49,12 @@ const PlayingVote = (props) => {
     let gameSetIdx = location.state.gameSetIdx; //그림판에서 넘어온 게임 세트 인덱스
     let gameSetNo = location.state.gameSetNo;
     let gameIdx = location.state.gameIdx;
-    let userList = location.state.userList; //그림판에서 넘어온 유저리스트
+
+    if(exitSocket.current === false){
+        userList = location.state.userList; //그림판에서 넘어온 유저리스트
+    }
+
+    const [afterExitUserList, setAfterExitUserList] = useState(); 
 
     let roomIdx = location.state.roomIdx; //그림판에서 넘어온 룸인덱스
     let role = location.state.role; //그림판에서 넘어온 역할
@@ -52,18 +62,17 @@ const PlayingVote = (props) => {
     let keyword = location.state.keyword; //그림판에서 넘어온 키워드
     let leader = location.state.leaderIdx;
 
-   // let voteTotalList = useRef([]);
+    let chatAvailable = useRef(true);
 
-    // local storage에 있는지 확인
-    /* let data = localStorage.getItem('token');
-    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-    let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx; */
+    
 
-    let u = RefreshVerification.verification()
-    console.log('리플시? ' + u);
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token, save_user_idx;
-    if(u === true){
-        data = localStorage.getItem('token');
+
+    if(verify === true){
+        data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     }
@@ -96,6 +105,7 @@ const PlayingVote = (props) => {
             }
 
             if (parseInt(seconds) === 0) {
+                chatAvailable.current = false;
                 setSeconds(-1);  // -1인 이유 -1일 때 voteComponent call                  
             }
         }, 1000);
@@ -106,7 +116,7 @@ const PlayingVote = (props) => {
 
     useEffect(() => {
         props.socket.on('connect', () => {
-            console.log('playing vote');
+            //console.log('playing vote');
         });
 
         /* props.socket.on('vote', (data) => {
@@ -118,13 +128,93 @@ const PlayingVote = (props) => {
 
         // 인간 답안 제출 완료 
         props.socket.on('submit human answer', (data) => {
-            console.log('submit human answer' + data.human_submit);
+           // console.log('submit human answer' + data.human_submit);
 
             if (data.human_submit === true) {
                 setIsHumanSubmit(true);
             }
         });
+
+        // 방 퇴장 
+        props.socket.on('exit room', (data) => {
+            //console.log('exit room');   
+            var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
+
+            userList = userList.filter(x => x.user_idx !== data.user_idx);
+            
+            if(exitPerson){
+                for (let i = 0; i < userList.length; i++) {
+                    if(exitPerson.game_member_order < userList[i].game_member_order){
+                        userList[i].game_member_order = userList[i].game_member_order - 1;
+                    }
+                }
+            }
+
+            let copyList = _.cloneDeep(userList);
+
+            // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+            let myIndex = copyList.find((x) => x.user_idx === save_user_idx);
+            if (myIndex) {
+                myIndex.game_member_order = 0;
+            }
+
+            // 그림 그리기 순서 대로 유저 리스트 재정렬
+            copyList.sort(function (a, b) {
+                return a.game_member_order - b.game_member_order;
+            });
+            
+            // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+            var myItem = copyList.find((x) => x.user_idx === save_user_idx);
+            if (myItem) {
+                myItem.game_member_order = '나';
+            }
+
+            exitSocket.current = true;
+
+            setAfterExitUserList(copyList);
+        });
+
+        // 비정상 종료 감지 최종 결과 전송
+        props.socket.on('get final result', (data) => {
+            finalSocket.current = true;
+
+            // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
+            let myIndex = userList.find((x) => x.user_idx === save_user_idx);
+            if (myIndex) {
+                myIndex.game_member_order = 0;
+            }
+
+            // 그림 그리기 순서 대로 유저 리스트 재정렬
+            userList.sort(function (a, b) {
+                return a.game_member_order - b.game_member_order;
+            });
+
+            // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
+            var myItem = userList.find((x) => x.user_idx === save_user_idx);
+            if (myItem) {
+                myItem.game_member_order = '나';
+            }
+
+            detectExit(data);
+            /* if(exitSocket.current === true){
+                history.push({
+                    pathname: '/playingresult/' + roomIdx,
+                    state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leader, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
+                })
+            } */
+
+        });  
     }, []);
+
+    // 비정상 종료 감지 후 최종 결과 페이지로 이동 
+    const detectExit = async (data) => {
+        if(exitSocket.current === true && finalSocket.current === true){
+            history.push({
+                pathname: '/playingresult/' + roomIdx,
+                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leader, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx.current, keyword: "게임종료", role: role, exitData: data, normal: false},
+            })
+        }
+    }
 
     // 깊은 복사 
     let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
@@ -152,7 +242,7 @@ const PlayingVote = (props) => {
 
     // 비정상 종료
     const exit = async () => {
-        console.log("exit!!!");
+        //console.log("exit!!!");
         const restURL = 'http://3.17.55.178:3002/game/exit';
 
         const reqHeaders = {
@@ -163,42 +253,43 @@ const PlayingVote = (props) => {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response);
-                /* history.push({
-                    pathname: '/inputname', // 성공하면 닉네임 설정 창으로 이동 
-                }); */
-                window.location.replace('/');
+                //console.log(response);
+                history.push({
+                    pathname: '/',  
+                });
+                //window.location.replace('/');
             })
             .catch(function (error) {
-                alert(error);
+               // alert(error.response.data.message);
             });
     };
 
     // 게임 중 비정상 종료 감지
-    //useEffect(() => {
-        //window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
-        //window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
-        /* return () => {
+    useEffect(() => {
+        window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
+        window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
+        
+        return () => {
             window.removeEventListener('beforeunload', alertUser)
             window.removeEventListener('unload', handleEndConcert)
-        } */
-    //}, [])
+        }  
+    }, [])
 
     // 경고창 
-    /* const alertUser = (e) => {
+    const alertUser = (e) => {
         e.preventDefault(); // 페이지가 리프레쉬 되는 고유의 브라우저 동작 막기
         e.returnValue = "";
-
+        
         exit();
     };
 
     // 종료시 실행 
     const handleEndConcert = async () => {
         exit();
-    } */
+    } 
 
     // 뒤로 가기 감지 시 비정상종료 처리 
-    useEffect(()=> {
+    /* useEffect(()=> {
         const unblock = history.block((loc, action) => {
             if (action === 'POP') {
                 if(window.confirm('게임방에서 나가게됩니다. 뒤로 가시겠습니까?')){
@@ -213,7 +304,7 @@ const PlayingVote = (props) => {
 
         return () => unblock()
         
-    },[]) 
+    },[])  */
 
     return (
         <React.Fragment>
@@ -228,27 +319,39 @@ const PlayingVote = (props) => {
                                     {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
                                     <MissionWord text={keyword} role={role}></MissionWord>
                                     {/* 유저 컴포넌트 */}
-                                    {
-                                        reOrderList.map((index, key) => (
-                                            <GameUserCard
-                                                user_idx={reOrderList[key].user_idx}
-                                                user_color={reOrderList[key].user_color}
-                                                user_name={reOrderList[key].user_name}
-                                                user_role={reOrderList[key].user_role}
-                                                user_order={reOrderList[key].game_member_order}
-                                            ></GameUserCard>
-                                        ))
-                                    }
+                                    {exitSocket.current  === false? 
+                                            (reOrderList && (reOrderList.map((values) => (
+                                                <GameUserCard
+                                                    user_idx={values.user_idx}
+                                                    user_color={values.user_color}
+                                                    user_name={values.user_name}
+                                                    user_role={values.user_role}
+                                                    user_order={values.game_member_order}
+                                                    user_exit={values.user_exit}
+                                                ></GameUserCard>
+                                            )))) : 
+                                            (afterExitUserList && (
+                                                afterExitUserList.map((values) => (
+                                                    <GameUserCard
+                                                        user_idx={values.user_idx}
+                                                        user_color={values.user_color}
+                                                        user_name={values.user_name}
+                                                        user_role={values.user_role}
+                                                        user_order={values.game_member_order}
+                                                        user_exit={values.user_exit}
+                                                ></GameUserCard>
+                                                )))) 
+                                        }
                                 </UserDiv>
 
                                 {
                                     (seconds !== -1) ? (<GameVoteComponent leaderIdx={leader} userList={userList} gameSet={gameSetIdx} />) :
-                                        (!isHumanSubmit ? <GameMissionPerformance leaderIdx={leader} gameSet={gameSetIdx} role={role} /> :
+                                        (!isHumanSubmit ? <GameMissionPerformance socket={props.socket} leaderIdx={leader} gameSet={gameSetIdx} role={role} /> :
                                            <GameVoteResult leaderIdx={leader} gameSetNo={gameSetNo} gameIdx={gameIdx} userList={userList} gameSet={gameSetIdx} roomIdx={roomIdx} keyword={keyword} role={role} cnt={userList.length} />)
                                 }
                                 
                                 <ChatDiv>
-                                    <Chatting socket={props.socket} room_idx={roomIdx} available={false}></Chatting> {/* 채팅 비활성화 */}
+                                    <Chatting socket={props.socket} room_idx={roomIdx} available={chatAvailable.current} color={myList&&myList.user_color}></Chatting> {/* 채팅 비활성화 */}
                                 </ChatDiv>
                             </BackGroundDiv>
                         </Container>

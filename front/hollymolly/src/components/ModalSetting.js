@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import style from '../styles/styles';
 import { ReactComponent as SettingIcon } from '../assets/settingIcon.svg'; // 방 세팅 버튼
 import { ReactComponent as SettingsIcon } from '../assets/SettingsIcon.svg';
+import RefreshVerification from '../server/RefreshVerification';
 
 // 소켓
 import { io } from 'socket.io-client';
@@ -13,18 +14,9 @@ import colors from '../styles/styles';
 
 const BaseURL = 'http://3.17.55.178:3002';
 
-// RefreshVerification.verification();
-
-// local storage에 있는지 확인
-let data = localStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
-
 export default function ModalSetting({ title, mode, room_private, member, room_idx, clickedSetting, resultt }) {
     // 인원수 0 제목 0 난이도
-    console.log(title, mode, member, room_private);
+    //console.log(title, mode, member, room_private);
     // 방 설정 수정
     const [roomdata, setRoomdata] = useState();
     const [roomInfo, setRoomInfo] = useState('');
@@ -49,6 +41,16 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
         },
     };
 
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+    //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
+    let data, save_token;
+
+    if (verify === true) {
+        data = sessionStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    }
+    
     useEffect(() => {
         // getRoomInfo();
     }, []);
@@ -74,12 +76,13 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
                 reqHeaders
             )
             .then(function (response) {
-                console.log(response.status);
-                console.log('UpdateRoomInfo 성공');
+                //console.log(response.status);
+                //console.log('UpdateRoomInfo 성공');
             })
             .catch(function (error) {
-                console.log('UpdateRoomInfo 실패');
-                console.log(error.response);
+                //console.log('UpdateRoomInfo 실패');
+                //console.log(error.response);
+                //alert(error.response.data.message);
             });
     };
 
@@ -97,12 +100,13 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
             .get(restURL, reqHeaders)
             .then(function (response) {
                 setRoomInfo(response.data);
-                console.log(response.data);
-                console.log('getRoomInfo 성공 in madal');
+                //console.log(response.data);
+                //console.log('getRoomInfo 성공 in madal');
             })
             .catch(function (error) {
-                console.log('getRoomInfo 실패 in madal');
-                console.log(error.response);
+                //console.log('getRoomInfo 실패 in madal');
+                //console.log(error.response);
+                //alert(error.response.data.message);
             });
     };
 
@@ -111,55 +115,55 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
 
     let a;
     mode == 'easy' ? (a = true) : (a = false); //  이지면 true 하드면 false
-    console.log('넘오온' + a);
+    //console.log('넘오온' + a);
     // 난이도 useState
     const [isChecked, setIschecked] = React.useState(true);
     const isEasy = () => {
         if (isChecked === false) setIschecked(!isChecked); // 하드면 이지로 만들어라
-        console.log('선택) 난이도 하');
+        //console.log('선택) 난이도 하');
     };
     const isHard = () => {
         if (isChecked === true) setIschecked(!isChecked); // 이지면 하드로 만들어라
-        console.log('선택) 난이도 상');
+        //console.log('선택) 난이도 상');
     };
 
     // 인원 useState
 
     let clicked;
     let b;
-    console.log(member);
+    //console.log(member);
     member == 6 ? (b = 6) : member == 5 ? (b = 5) : (b = 4);
     const [people, setPeople] = useState(4);
-    console.log(people);
-    console.log('people');
+    //console.log(people);
+    //console.log('people');
 
     const click4 = () => {
         setPeople((people) => (people = 4));
         clicked = 4;
-        console.log('선택) 인원수 4명');
+        //console.log('선택) 인원수 4명');
     };
 
     const click5 = () => {
         setPeople((people) => (people = 5));
         clicked = 5;
-        console.log('선택) 인원수 5명');
+        //console.log('선택) 인원수 5명');
     };
 
     const click6 = () => {
         setPeople((people) => (people = 6));
         clicked = 6;
-        console.log('선택) 인원수 6명');
+        //console.log('선택) 인원수 6명');
     };
 
     // 공개범위 useState
     const [ispublic, setIsPublic] = React.useState(true);
     const isPrivate = () => {
         if (ispublic == true) setIsPublic(!ispublic);
-        console.log('선택) 공개범위 전체');
+        //console.log('선택) 공개범위 전체');
     };
     const isPublic = () => {
         if (ispublic == false) setIsPublic(!ispublic);
-        console.log('선택) 공개범위 개인');
+        //console.log('선택) 공개범위 개인');
     };
 
     const result = () => {
@@ -168,10 +172,10 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
             setNotice(true);
         } else {
             setNotice(false);
-            console.log('오케이 눌림');
+            //console.log('오케이 눌림');
             // UpdateRoomInfo();
-            console.log(':::최종결과:::');
-            console.log('방이름은? ' + inputRef.current.value);
+            //console.log(':::최종결과:::');
+            //console.log('방이름은? ' + inputRef.current.value);
 
             if (inputRef.current.value == null || inputRef.current.value == '') {
                 inputRef.current.value = title; // 제목 안적으면 수정 전 디폴트
@@ -180,13 +184,13 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
             if (isChecked) {
                 // easy
                 roomMode = 'easy';
-                console.log('모드는? easy');
+                //console.log('모드는? easy');
             } else {
                 roomMode = 'hard';
-                console.log('모드는? hard');
+                //console.log('모드는? hard');
             }
 
-            console.log('인원수는? ' + people + '명');
+            //console.log('인원수는? ' + people + '명');
 
             UpdateRoomInfo();
             setIsOpen(false);

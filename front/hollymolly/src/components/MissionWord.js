@@ -9,7 +9,7 @@ const MissionWord = (props) => {
         <React.Fragment>
           {role === "ghost" ? 
               <GhostMissionWordBox >{text}</GhostMissionWordBox> : 
-              <HumanMissionWordBox ><TextContainer>{text}</TextContainer></HumanMissionWordBox> 
+              <HumanMissionWordBox >{text}</HumanMissionWordBox> 
           }
         </React.Fragment>
       );
@@ -22,7 +22,7 @@ const MissionWord = (props) => {
 
   const GhostMissionWordBox = styled.div`
     text-align: center;
-    font-family: "Black Han Sans";
+    font-family: "Gowun Dodum";
     font-size: 25px;
     width: 150px;
     height: 85px;
@@ -38,10 +38,11 @@ const MissionWord = (props) => {
 
   const HumanMissionWordBox = styled.div`
     text-align: center;
-    font-family: "Black Han Sans";
+    font-family: "Gowun Dodum";
     font-size: 25px;
     width: 150px;
     height: 85px;
+    color: white; 
     margin-bottom: 5px;
     display: flex;
     justify-content: center;
@@ -51,11 +52,4 @@ const MissionWord = (props) => {
     border: 5px solid #FFBBC5;
   `;
 
-  const TextContainer = styled.span `
-    font-family: "Black Han Sans";
-    background: linear-gradient(to bottom, #DB4843, #ff0000);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  `;
   export default MissionWord;
-

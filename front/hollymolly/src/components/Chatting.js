@@ -1,16 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import io from 'socket.io-client';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ChatContext from '../components/ChatContext';
-import RefreshVerification from '../server/RefreshVerification';
-
-//RefreshVerification.verification();
-
-let data = localStorage.getItem("token");
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-let save_refresh_token = JSON.parse(data) && JSON.parse(data).refresh_token;
-let save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-let save_user_name = JSON.parse(data) && JSON.parse(data).user_name;
 
 const Chatting = (props) => { 
     const [recentChatColor, setRecentChatColor] = useState(); // 기본 화이트 색
@@ -56,7 +46,7 @@ const Chatting = (props) => {
     }else if(user_color === 'WHITE'){
         user_color = '#FFFFFF'
     }else{
-        user_color = '#823BDB'
+        user_color = '#946CEE'
     }
 
     // 입력값을 저장하는 상태값
@@ -106,7 +96,7 @@ const Chatting = (props) => {
 
     useEffect(() => {
         props.socket.on('connect', () => {
-            console.log('chatting connection server');
+            //console.log('chatting connection server');
         });
         
         props.socket.on("chat", (data) => {
@@ -117,6 +107,29 @@ const Chatting = (props) => {
 
             setOnMessage(true);
 
+        });
+
+        props.socket.on('exit room', (data) => {
+            if(data.user_name !== undefined){
+                let msg = data.user_name + " 님이 퇴장하셨습니다."
+
+                setRecentChatColor('#fff');
+                setRecentChatUserName('📢 관리자');
+                setRecentChat(msg);
+                setRecentChatUserIdx('00');
+
+                setOnMessage(true);
+            }else{
+                let msg = data.user_idx + " 님이 퇴장하셨습니다."
+
+                setRecentChatColor('#fff');
+                setRecentChatUserName('📢 관리자');
+                setRecentChat(msg);
+                setRecentChatUserIdx('00');
+
+                setOnMessage(true);
+            }
+            
         });
 
     }, []);
@@ -182,7 +195,7 @@ const Container = styled.div`
     justify-content: space-between;
     flex-direction: column;
     color: white;
-    opacity: 0.7;
+    opacity: 1.5;
 `;
 
 const ChatContainer = styled.div`

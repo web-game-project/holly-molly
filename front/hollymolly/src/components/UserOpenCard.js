@@ -8,70 +8,78 @@ import roundVote from '../assets/roundVote.png';
 import { ReactComponent as HumanCharacter } from '../assets/human.svg';
 
 export default function UserOpenCard({ nick, color }) {
-    const [clicked, isClicked] = useState(0);
-
-    function Click() {
-        if (clicked == 1) {
-            isClicked(0);
-        } else {
-            isClicked(1);
-        }
-        //alert(nick + clicked);
-    }
-
+    
     return (
         <div>
             {(function () {
                 if (color == 'RED') {
-                        return (
-                            <RedContainer>
-                                <Name>{nick}</Name>                                
-                                <RedInnerContainer> 
-                                    <RoundVote src={roundVote} /> 
-                                    <HumanCharacter className="ghost" width="250" height="180" />
-                                </RedInnerContainer>
-                            </RedContainer>
-                        );                    
+                    return (
+                        <RedContainer>
+                            <Name>{nick}</Name>
+                            <RedInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </RedInnerContainer>
+                        </RedContainer>
+                    );
                 } else if (color == 'ORANGE') {
                     return (
-                        <OrangeContainer onClick={Click}>
+                        <OrangeContainer>
                             <Name>{nick}</Name>
-                            <OrangeInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</OrangeInnerContainer>
+                            <OrangeInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </OrangeInnerContainer>
                         </OrangeContainer>
                     );
                 } else if (color == 'YELLOW') {
                     return (
-                        <YellowContainer onClick={Click}>
+                        <YellowContainer>
                             <Name>{nick}</Name>
-                            <YellowInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</YellowInnerContainer>
+                            <YellowInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </YellowInnerContainer>
                         </YellowContainer>
                     );
                 } else if (color == 'GREEN') {
                     return (
-                        <GreenContainer onClick={Click}>
+                        <GreenContainer>
                             <Name>{nick}</Name>
-                            <GreenInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</GreenInnerContainer>
+                            <GreenInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </GreenInnerContainer>
                         </GreenContainer>
                     );
                 } else if (color == 'BLUE') {
                     return (
-                        <BlueContainer onClick={Click}>
+                        <BlueContainer>
                             <Name>{nick}</Name>
-                            <BlueInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</BlueInnerContainer>
+                            <BlueInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </BlueInnerContainer>
                         </BlueContainer>
                     );
                 } else if (color == 'PURPLE') {
                     return (
-                        <PurpleContainer onClick={Click}>
+                        <PurpleContainer>
                             <Name>{nick}</Name>
-                            <PurpleInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</PurpleInnerContainer>
+                            <PurpleInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </PurpleInnerContainer>
                         </PurpleContainer>
                     );
                 } else if (color == 'PINK') {
                     return (
-                        <PinkContainer onClick={Click}>
+                        <PinkContainer>
                             <Name>{nick}</Name>
-                            <PinkInnerContainer>{clicked == 1 ? <RoundVote src={roundVote} /> : <></>}</PinkInnerContainer>
+                            <PinkInnerContainer>
+                                <RoundVote src={roundVote} />
+                                <HumanCharacter className="ghost" width="250" height="180" />
+                            </PinkInnerContainer>
                         </PinkContainer>
                     );
                 }
@@ -98,8 +106,8 @@ const RedContainer = styled.div`
 `;
 
 const OrangeContainer = styled.div`
-    width: 160px;
-    height: 165px;
+    width: 250px;
+    height: 255px;
     background-color: ${style.orange_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -114,8 +122,8 @@ const OrangeContainer = styled.div`
 `;
 
 const YellowContainer = styled.div`
-    width: 160px;
-    height: 165px;
+    width: 250px;
+    height: 255px;  
     background-color: ${style.yellow_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -130,8 +138,8 @@ const YellowContainer = styled.div`
 `;
 
 const GreenContainer = styled.div`
-    width: 160px;
-    height: 165px;
+    width: 250px;
+    height: 255px;
     background-color: ${style.green_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -146,8 +154,8 @@ const GreenContainer = styled.div`
 `;
 
 const BlueContainer = styled.div`
-    width: 160px;
-    height: 165px;
+    width: 250px;
+    height: 255px;
     background-color: ${style.blue_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -162,8 +170,8 @@ const BlueContainer = styled.div`
 `;
 
 const PurpleContainer = styled.div`
-    width: 160px;
-    height: 165px;
+    width: 250px;
+    height: 255px;
     background-color: ${style.purple_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -178,8 +186,8 @@ const PurpleContainer = styled.div`
 `;
 
 const PinkContainer = styled.div`
-    width: 160px;
-    height: 165px;
+    width: 250px;
+    height: 255px;
     background-color: ${style.pink_bg};
     margin: 10px auto;
     border-radius: 23px;
@@ -214,8 +222,8 @@ const RedInnerContainer = styled.div`
 `;
 
 const OrangeInnerContainer = styled.div`
-    width: 160px;
-    height: 130px;
+    width: 250px;
+    height: 220px;
     background-color: ${style.orange_fill};
     display: flex;
     align-items: center;
@@ -224,8 +232,8 @@ const OrangeInnerContainer = styled.div`
 `;
 
 const YellowInnerContainer = styled.div`
-    width: 160px;
-    height: 130px;
+    width: 250px;
+    height: 220px;
     background-color: ${style.yellow_fill};
     display: flex;
     align-items: center;
@@ -234,8 +242,8 @@ const YellowInnerContainer = styled.div`
 `;
 
 const GreenInnerContainer = styled.div`
-    width: 160px;
-    height: 130px;
+    width: 250px;
+    height: 220px;
     background-color: ${style.green_fill};
     display: flex;
     align-items: center;
@@ -244,8 +252,8 @@ const GreenInnerContainer = styled.div`
 `;
 
 const BlueInnerContainer = styled.div`
-    width: 160px;
-    height: 130px;
+    width: 250px;
+    height: 220px;
     background-color: ${style.blue_fill};
     display: flex;
     align-items: center;
@@ -254,8 +262,8 @@ const BlueInnerContainer = styled.div`
 `;
 
 const PurpleInnerContainer = styled.div`
-    width: 160px;
-    height: 130px;
+    width: 250px;
+    height: 220px;
     background-color: ${style.purple_fill};
     display: flex;
     align-items: center;
@@ -264,8 +272,8 @@ const PurpleInnerContainer = styled.div`
 `;
 
 const PinkInnerContainer = styled.div`
-    width: 160px;
-    height: 130px;
+    width: 250px;
+    height: 220px;
     background-color: ${style.pink_fill};
     display: flex;
     align-items: center;

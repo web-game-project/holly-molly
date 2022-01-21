@@ -4,7 +4,7 @@ import '../assets/font.css';
 
 import { ReactComponent as RedCharacter } from '../assets/red.svg';
 import { ReactComponent as OOO } from '../assets/orange.svg';
-import orangePng from '../assets/orange.png'; // 일단 오렌지만 png로 쓰는 걸로
+import orangePng from '../assets/orange.svg'; // 일단 오렌지만 png로 쓰는 걸로
 import { ReactComponent as YellowCharacter } from '../assets/yellow.svg';
 import { ReactComponent as GreenCharacter } from '../assets/green.svg';
 import { ReactComponent as BlueCharacter } from '../assets/blue.svg';
@@ -22,7 +22,7 @@ export default function UserCard({ leader, id, nickname, color, ready }) {
         ready: false,
     };
 
-    console.log('유저카드 : ' + leader);
+    //console.log('유저카드 : ' + leader);
     let leader_idx = leader; // response에서 넘겨줄 임의의 방장 인덱스 값
 
     return (

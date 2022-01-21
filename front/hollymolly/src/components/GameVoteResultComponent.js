@@ -1,24 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import style from '../styles/styles';
 import styled from 'styled-components';
+import RefreshVerification from '../server/RefreshVerification';
+//페이지 이동
+import { useHistory, useLocation, Prompt } from 'react-router';
 
 //통신
 import axios from 'axios';
-
 //깊은 복제
 import * as _ from 'lodash';
 
 import UserTotalVoteCard from './UserTotalVoteCard';
 
-//페이지 이동
-import { useHistory, useLocation, Prompt } from 'react-router';
-
 const GameVoteResult = (props) => {
     const history = useHistory();
-
-    // local storage에 있는지 확인
-    let data = localStorage.getItem('token');
-    let save_token = JSON.parse(data) && JSON.parse(data).access_token;
 
     //전 페이지 즉, 플레잉 보트 안에서 넘겨준 데이터 세팅
     const userList = props.userList;
@@ -42,25 +37,14 @@ const GameVoteResult = (props) => {
 
     let voteTotalList = useRef([]);
 
-    const settingVoteList = async () => {
-        copyVoteList.current = _.cloneDeep(voteList.current); // 유저 리스트 중 순서 정리를 위한 리스트 
-        voteListLength.current = voteList.current.length;
+    //토큰 검사
+    let verify = RefreshVerification.verification()
+   // console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
+    let data, save_token;
 
-        for (let j = 0; j < userList.length; j++) {
-            for (let i = 0; i < voteListLength.current; i++) {
-                isSame.current = (userList[i].user_idx === copyVoteList.current[j].user_idx) ? true : false
-
-                if (isSame.current === true) {
-                    copyVoteList.current[j].user_color = userList[i].user_color;
-                } else if (isSame.current === false) {
-                    let overlap = copyVoteList.current.find((x) => x.user_idx === userList[i].user_idx)
-
-                    if (!overlap) {
-                        copyVoteList.current.push({ user_idx: userList[i].user_idx, user_name: userList[i].user_name, vote_cnt: 0, user_color: userList[i].user_color });
-                    }
-                }
-            }
-        }
+    if (verify === true) {
+        data = sessionStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
 
     // 투표 10초 타이머 세기, 투표 10초 후에 1초 더 여유롭게.
@@ -84,7 +68,7 @@ const GameVoteResult = (props) => {
                 else {
                     history.push({
                         pathname: '/playingresult/' + roomIdx,
-                        state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx, keyword: keyword, role: role },
+                        state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: roomIdx, gameSetIdx: gameSetIdx, keyword: keyword, role: role, normal: true, exitData: null},
                     })
                 }
                 setSeconds(-1);
@@ -113,10 +97,10 @@ const GameVoteResult = (props) => {
                 .get(restURL, reqHeaders)
                 .then(function (response) {
                     voteList.current = response.data.vote_result;
-                    settingVoteList();
+                    //console.log('전체 투표 결과야!' + JSON.stringify(voteList.current));
                 })
                 .catch(function (error) {
-                    alert('error voteResult : ' + error.message);
+                    //alert(error.response.data.message);
                 });
         }
 
@@ -135,7 +119,7 @@ const GameVoteResult = (props) => {
                 setControl(true);
             })
             .catch(function (error) {
-                alert('error voteResult human : ' + error.message);
+                //alert(error.response.data.message);
             });
 
     }
@@ -186,14 +170,14 @@ const GameVoteResult = (props) => {
                                         <div style={{ display: 'flex', flexDirection: 'row', marginLeft: '60px' }}>
                                             {
                                                 arrSize <= 4 ?
-                                                    copyVoteList.current && copyVoteList.current.map((element, key) =>
+                                                voteList.current && voteList.current.map((element, key) =>
                                                         <UserTotalVoteCard nickname={element.user_name} color={element.user_color} vote_cnt={element.vote_cnt} width="120px" height="125px" innerHeight="90px" size="30px" />)
                                                     :
                                                     arrSize === 5 ?
-                                                        copyVoteList.current && copyVoteList.current.map((element, key) =>
+                                                    voteList.current && voteList.current.map((element, key) =>
                                                             <UserTotalVoteCard nickname={element.user_name} color={element.user_color} vote_cnt={element.vote_cnt} width="90px" height="95px" innerHeight="60px" size="20px" />)
                                                         :
-                                                        copyVoteList.current && copyVoteList.current.map((element, key) =>
+                                                        voteList.current && voteList.current.map((element, key) =>
                                                             <UserTotalVoteCard nickname={element.user_name} color={element.user_color} vote_cnt={element.vote_cnt} width="70px" height="75px" innerHeight="40px" size="14px" />)
                                             }
                                         </div>
