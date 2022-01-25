@@ -70,6 +70,7 @@ const exitGameAndRoom = async (user, io) => {
                     room_idx: room.get('room_idx'),
                     room_status: 'waiting',
                 });
+                printLog('exitGameAndRoom', room.get('room_idx')+"번 room 게임 종료");
 
                 // ready 상태 변경
                 updateMemberReady(room.get('room_idx'));
