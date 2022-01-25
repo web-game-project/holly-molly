@@ -6,7 +6,7 @@ const moveRoom = require('../../socket/moveRoom');
 module.exports = async (req, res, next) => {
     let { roomIdx } = req.params;
     roomIdx = Number(roomIdx);
-    let { user_idx } = res.locals.user.dataValues;
+    let { user_idx, user_name } = res.locals.user.dataValues;
     let { color }  = res.locals;
 
     try {
@@ -38,7 +38,7 @@ module.exports = async (req, res, next) => {
         let member_data = { room_idx: roomIdx, room_member_count: memberCount };
         io.to(roomIdx).emit('change member count', member_data);
         io.to(0).emit('change member count', member_data);
-        io.to(roomIdx).emit('exit room', { user_idx, user_color: color });
+        io.to(roomIdx).emit('exit room', { user_idx, user_color: color, user_name });
 
         // socket : join room room_idx
         moveRoom(io, socket, 0);
