@@ -38,6 +38,7 @@
 
 ## 아키텍쳐
 <img width="1000" alt="architecture" src="https://user-images.githubusercontent.com/69183944/154490816-c557f7fa-3212-468b-9162-0a06465a755c.png">
+
 ## :hammer_and_wrench: 기술 스택
 
 ### Front-end Stack
