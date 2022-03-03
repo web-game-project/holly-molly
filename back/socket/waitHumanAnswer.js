@@ -3,6 +3,8 @@ const { Op } = require("sequelize");
 const { exitGameAndRoom, deleteUser } = require('../service/game/exitGame');
 const { gameSchema } = require('../util/joi/schema');
 const { printLog, printErrorLog } = require('../util/log');
+//const { startTimer } = require('../util/startTimer');
+//const { waitMap } = require('../util/startTimer').mapObject;
 
 module.exports = async (socket, io, data) => {
     const { error, value } = gameSchema.waitHumanAnswer.validate(data);
@@ -25,8 +27,10 @@ module.exports = async (socket, io, data) => {
     }
 
     if(!waitingMap.get(game_set_idx)){ // first ghost
+        //startTimer("waitMap", game_set_idx, new Set([socket.user_idx]), 15, false, exitUnConnectedMembers, [io]); 
         startWaitingTimer(game_set_idx,new Set([socket.user_idx]),15,io);
     }else{
+        //waitMap.get(game_set_idx)["value"].add(socket.user_idx);
         waitingMap.get(game_set_idx)["members"].add(socket.user_idx);
     }
     printLog('waitHumanAnswer', `${socket.user_idx}번 user ${game_set_idx}세트 게임, 유령리스트:${[...waitingMap.get(game_set_idx)["members"]]}`);
@@ -111,6 +115,19 @@ const resolveWaitingMap = async (gameSetIdx) => {
         const timerResolve = waitingMap.get(gameSetIdx)["timerResolve"];
         timerResolve(true);
         printLog('waitingGhost-resolveWaitingMap', gameSetIdx+"세트 waitingMap Resolve");
+    }
+};
+
+const exitUnConnectedMembers = async (gameSetIdx, connectedMemberSet, io) => {
+    const gameIdx = await findGameIdx(gameSetIdx);
+    // wait event 보내지 않은 게임멤버(유저+인간) 비정상 종료
+    const unConnectedMembers = await getNonListedMembers(gameIdx, [
+        ...connectedMemberSet,
+    ]);
+    for (let member of unConnectedMembers) {
+        let userToLeave = await findUser(member['wrm_user_idx']);
+        await exitGameAndRoom(userToLeave, io);
+        await deleteUser(member['wrm_user_idx']);
     }
 };
 
