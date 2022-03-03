@@ -1,6 +1,6 @@
 const signJWT = require('../../util/jwt/signJWT');
 const { User } = require('../../models');
-const {printErrorLog} = require('../../util/log')
+const {printErrorLog, printLog } = require('../../util/log')
 const { userSchema } = require('../../util/joi/schema');
 
 module.exports = async (req, res, next) => {
@@ -22,6 +22,7 @@ module.exports = async (req, res, next) => {
         const refreshToken = signJWT.makeRefreshToken(user);
         await updateRefreshTokenOfUser(refreshToken, user.user_idx);
 
+        printLog("LOGIN-", user.user_idx+"번 "+name+"님 로그인 성공");
         res.json({
             access_token: accessToken,
             refresh_token: refreshToken,
