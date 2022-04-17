@@ -25,9 +25,14 @@ import * as _ from 'lodash';
 import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
 
+import BGM from '../assets/sound/backgroundSound.mp3';
+import BGMSound from '../components/BGMSound';
+
 let userList = [{}];
 
 const PlayingVote = (props) => {
+    BGMSound(BGM, 1, 2000);
+
     let location = useLocation();
     const history = useHistory();
 

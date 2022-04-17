@@ -13,6 +13,9 @@ import axios from 'axios';
 import html2canvas from 'html2canvas';
 import { useHistory, useLocation } from 'react-router';
 
+import effectSound from '../components/EffectSound';
+import Effect from '../assets/sound/effect1.mp3';
+
 let userList = [{}];
 
 const GameDrawing = (props) => {
@@ -230,6 +233,9 @@ const GameDrawing = (props) => {
                     setReDraw(!reDraw); // 그리기 준비
                     drawingTime.current = true;       
 
+                    const es = effectSound(Effect, 5)
+                    es.play();
+    
                     setPossible(true);
                     setSeconds(10);
                 }

@@ -23,8 +23,13 @@ import RefreshVerification from '../server/RefreshVerification.js';
 
 import Loading from '../components/Loading';
 
+import BGM from '../assets/sound/backgroundSound.mp3';
+import BGMSound from '../components/BGMSound';
+
 let userList = [{}];
 const PlayingRoom = (props) => {
+    BGMSound(BGM, 1, 2000);
+
     const location = useLocation();
     const history = useHistory();
 

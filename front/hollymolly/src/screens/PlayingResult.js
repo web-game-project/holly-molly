@@ -20,9 +20,14 @@ import axios from 'axios';
 //깊은 복제
 import * as _ from 'lodash';
 
+import BGM from '../assets/sound/backgroundSound.mp3';
+import BGMSound from '../components/BGMSound';
+
 let userList = [{}];
 
 const PlayingResult = (props) => {
+    BGMSound(BGM, 1, 2000);
+    
     let location = useLocation();
     const history = useHistory();
     let exitSocket = useRef(false);
