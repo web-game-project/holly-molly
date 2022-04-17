@@ -10,6 +10,7 @@ const GameMissionPerformance = (props) => {
 
     const [isHuman, setIsHuman] = useState(false);
     const [seconds, setSeconds] = useState(10); 
+    const [hintLength, setHintLength] = useState(0);
 
     const inputRef = useRef('');
 
@@ -25,6 +26,30 @@ const GameMissionPerformance = (props) => {
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
     
+    const getHintLength = async () => {
+        setHintLength(2);
+       /*  const restURL = 'http://3.17.55.178:3002/game/keyword-length/' + gameSet;
+
+        const reqHeaders = {
+            headers: {
+                //1번 토큰 이용
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        axios
+            .get(restURL, reqHeaders)
+            .then(function (response) {
+                setHintLength(response.data.length);
+            })
+            .catch(function (error) {
+                // alert(error.response.data.message);
+            }) */
+    };
+
+    useEffect(() => { 
+        getHintLength();
+    }, []);
+
     useEffect(() => {
         if(user_role === "human"){ // human 일 때 마피아 미션 수행 
             setIsHuman(true);
@@ -95,6 +120,7 @@ const GameMissionPerformance = (props) => {
                 <Container> 
                     <TimerContext>{seconds}초</TimerContext>
                     <Context>예상 제시어를 적어주세요</Context>
+                    <Hint>* 힌트 : {hintLength} 자 *</Hint>
                     <InputHumanKeyword><input  onKeyPress={onEnter} style={styles.input} type="text" placeholder="입력하세요..." ref={inputRef} /></InputHumanKeyword>
                     <SubmitContainer onClick={inputHumanKeyword}><SubmitContext>제출</SubmitContext></SubmitContainer>
                 </Container> :
@@ -119,6 +145,13 @@ const Container = styled.div`
 const Context = styled.text`
     color: #ffffff;
     font-size: 40px;
+    font-family: Nanum Pen Script;
+    -webkit-text-stroke: 1px #4d1596;
+`;
+
+const Hint = styled.text`
+    color: #ffffff;
+    font-size: 32px;
     font-family: Nanum Pen Script;
     -webkit-text-stroke: 1px #4d1596;
 `;

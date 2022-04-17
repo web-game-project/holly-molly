@@ -35,6 +35,8 @@ export default function WaitingRoom(props) {
     let location = useLocation();
     const history = useHistory();
 
+    const dummyChatData = [];
+
     let room_index = parseInt(props.match.params.name); // url에 입력해준 방 인덱스
  //   console.log('방 번호는 ?' + room_index);
 
@@ -75,6 +77,8 @@ export default function WaitingRoom(props) {
 
     //사용자가 색을 바꾸었을 때, 변경중입니다 toast 띄우기 위해서
     const [modify, setModifiy] = React.useState(false);
+
+    const [ready , setReady] = React.useState(false);
 
     //무슨 색을 선택할 수 있는가
     const [selectColor, setSelectColor] = React.useState([]);
@@ -157,6 +161,8 @@ export default function WaitingRoom(props) {
                                     setSelectColor(element.color);
                                     //내 준비 상태
                                     setChangeReady(locationUserList[i].wrm_user_ready);
+
+                                    setReady(false);
                                 }
                             }
                             setColorList(colorList);
@@ -281,6 +287,18 @@ export default function WaitingRoom(props) {
 
             getWaiting();
 
+           /*  console.log('idx : ' + save_user_idx + data.user_idx);
+            if(save_user_idx === data.user_idx){
+                console.log('dd : ' + changeReady);
+                setChangeReady(!changeReady);
+               /*  if(changeReady){
+                    setReadyTxt("준비 완료");
+                }
+                else{
+                    setReadyTxt("준비 시작");
+                } 
+            } */
+          
             //임시방편으로 주석 푼 코드
             /* const changeReadyResult = data.user_ready;
             if(ready_cnt > startMember){ // 레디카운트가 시작 멤버보다 값이 크게 바꼈다면 레디카운트에 시작 멤버 값 대입
@@ -463,7 +481,8 @@ export default function WaitingRoom(props) {
     };
 
     function readyClick(readyStatus) {
-        setChangeReady(readyStatus);
+       // setChangeReady(readyStatus);
+       setReady(true);
 
       //  console.log('클릭 시 레디 값 : ' + ready_cnt + '정원 : ' + startMember);
 
@@ -943,7 +962,7 @@ export default function WaitingRoom(props) {
                                     </div>
                                 </SelectDiv>
                                 <RightDiv>
-                                    <Chatting socket={props.socket} room_idx={room_idx} height="520px" available={true} color={'WHITE'}></Chatting>
+                                <Chatting chats={dummyChatData} socket={props.socket} room_idx={room_idx} height="520px" available={true} color={'WHITE'}></Chatting>
                                     <StartDiv>
                                         {
                                             isLeader === 0 //방장 아님
@@ -982,6 +1001,12 @@ export default function WaitingRoom(props) {
                                                                     게임 시작</BtnDiv>
                                                             )
                                                     )) //게임 시작 api 요청 onclick 달기
+                                        }
+                                        {
+                                        ready ?
+                                            <ReadyToast>처리 중 입니다....</ReadyToast>
+                                            :
+                                            null
                                         }
                                     </StartDiv>
                                 </RightDiv>
@@ -1045,6 +1070,14 @@ const ColorToast = styled.div`
    /*  border-radius: 18px;
     border: 3px solid #a274d5; */
 `;
+
+const ReadyToast = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+    text-align: center;
+`;
+
 const NameContainer = styled.text`
     font-size: 45px;
     font-family: Black Han Sans;
@@ -1104,7 +1137,7 @@ const StartDiv = styled.div`
 const BtnDiv = styled.div`
   width: 210px;
   height: 38px;
-  margin-top: 20px;
+  margin-top: 30px;
   background-color: #ffffff;
   border-radius: 18px;
   border: 3px solid #a274d5;
