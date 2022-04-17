@@ -54,7 +54,7 @@ const GameMiddleResult = (props) => {
         {draw ? (
           <WinnerContext>현재 동점입니다.</WinnerContext>
         ) : (
-          <WinnerContext>현재 {role}이 이기고 있습니다.</WinnerContext>
+          <WinnerContext>현재 {role}가 이기고 있습니다.</WinnerContext>
         )}
       </Container>
     </React.Fragment>

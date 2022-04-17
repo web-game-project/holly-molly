@@ -27,6 +27,24 @@ let userList = [{}];
 
 const PlayingResult = (props) => {
     BGMSound(BGM, 1, 2000);
+
+    const dummyChatData = [
+        {
+            recentChat: "1",
+            recentChatColor: "RED",
+            recentChatUserName: "1"
+        },
+        {
+            recentChat: "2",
+            recentChatColor: "RED",
+            recentChatUserName: "2"
+        },
+        {
+            recentChat: "3",
+            recentChatColor: "RED",
+            recentChatUserName: "3"
+        }
+    ];
     
     let location = useLocation();
     const history = useHistory();
@@ -380,7 +398,7 @@ const PlayingResult = (props) => {
                         <ChatDiv>
                             {/* <Chatting /> */}
                             {/* <Chatting room_idx={location.state.data.room_idx}></Chatting> */}
-                            <Chatting socket={props.socket} room_idx={53} available={true}></Chatting> {/* 채팅 비활성화 */}
+                            <Chatting chats={dummyChatData} socket={props.socket} room_idx={53} available={true}></Chatting> {/* 채팅 비활성화 */}
                         </ChatDiv>
                     </BackGroundDiv>
                 </Container>
