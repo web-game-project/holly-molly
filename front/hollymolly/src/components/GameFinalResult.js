@@ -15,11 +15,11 @@ const GameFinalResult = ({ data }) => {
     //console.log('data 치종' + JSON.stringify(data));
 
     if (data.total_game_set_ghost_score > data.total_game_set_human_score) {
-        winner = '유령';
+        winner = '홀리';
     } else if (data.total_game_set_ghost_score == data.total_game_set_human_score) {
         winner = 'draw';
     } else if (data.total_game_set_ghost_score < data.total_game_set_human_score) {
-        winner = '인간';
+        winner = '몰리';
     }
 
     useEffect(() => {
@@ -61,8 +61,8 @@ const GameFinalResult = ({ data }) => {
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>인간</th>
-                                <th>유령</th>
+                                <th>몰리</th>
+                                <th>홀리</th>
                             </tr>
                         </thead>
                         <tbody>

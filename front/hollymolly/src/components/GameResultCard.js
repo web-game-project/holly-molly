@@ -8,6 +8,11 @@ import Human from '../assets/human.svg';
 const GameResultCard = (props) => {
     const { role, engRole, final, win } = props;
 
+    if(engRole == 'GHOST')
+        engRole = 'HOLLY';
+    else
+        engRole = 'MOLLY';
+
     return (
         <React.Fragment>
             {!final ? ( // 중간 결과시 사용
