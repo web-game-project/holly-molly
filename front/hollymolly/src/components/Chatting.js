@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ChatContext from '../components/ChatContext';
+import style from '../styles/styles';
 
 const Chatting = (props) => { 
     const [recentChatColor, setRecentChatColor] = useState(); // 기본 화이트 색
@@ -32,21 +33,21 @@ const Chatting = (props) => {
     let user_color = props.color; 
     
     if(user_color === 'RED'){
-        user_color = '#FF0000';
+        user_color = style.red_bg;
     }else if(user_color === 'ORANGE'){
-        user_color = '#FF5C00'
+        user_color = style.orange_bg;
     }else if(user_color === 'YELLOW'){
-        user_color = '#FFB800'
+        user_color = style.yellow_bg;
     }else if(user_color === 'GREEN'){
-        user_color = '#95DB3B'
+        user_color = style.green_bg;
     }else if(user_color === 'BLUE'){
-        user_color = '#3B8EDB'
+        user_color = style.blue_bg;
     }else if(user_color === 'PINK'){
-        user_color = '#CE3BDB'
+        user_color = style.pink_bg;
     }else if(user_color === 'WHITE'){
         user_color = '#FFFFFF'
     }else{
-        user_color = '#946CEE'
+        user_color = style.purple_bg;
     }
 
     // 입력값을 저장하는 상태값

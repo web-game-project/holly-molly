@@ -21,9 +21,9 @@ const colors = {
     green_fill: '#F5FFF1',
     blue_bg: '#3B8EDB',
     blue_fill: '#F1FDFF',
-    purple_bg: '#823BDB',
+    purple_bg: '#946CEE',
     purple_fill: '#FDF1FF',
-    pink_bg: '#CE3BDB',
+    pink_bg: '#FF0A9D',
     pink_fill: '#FEF1FF',
 
     //written by jh, 211023
