@@ -4,6 +4,7 @@ import ChatContext from '../components/ChatContext';
 import style from '../styles/styles';
 
 const Chatting = (props) => { 
+
     const [recentChatColor, setRecentChatColor] = useState(); // 기본 화이트 색
     
     // 입력된 채팅 메시지 상태 값
@@ -15,7 +16,7 @@ const Chatting = (props) => {
     // 로컬의 입장에서 계속 전체 값이 바뀌는 것이기에 내용 전체가 다시 렌더링 되는 것을 막기 위해 상태값을 두 종류로 나누어 관리
 
     // 하나는 기존의 채팅 내용을 담아두고 UI와 직접 연결되는 상태값
-    const [chatMonitor, setChatMonitor] = useState([]);
+    const [chatMonitor, setChatMonitor] = useState(props.chats);
 
     // 서버에서 메시지 받았을 때 변경되는 상태값 
     const [onMessage, setOnMessage] = useState(false);
@@ -28,6 +29,8 @@ const Chatting = (props) => {
 
     // 서버에서 받은 갱신된(새로 추가된) 유저 인덱스 받는 상태값
     const [recentChatUserIdx, setRecentChatUserIdx] = useState('');
+
+    
 
     // 지정 색 코드로 바꿔주기 
     let user_color = props.color; 
@@ -150,6 +153,8 @@ const Chatting = (props) => {
         scrollToBottom();
         setRecentChat('');
         };
+
+        console.log(chatMonitor);
 
         scrollUpdate();
     }, [recentChat]);
