@@ -189,6 +189,7 @@ const Chatting = (props) => {
 };
 
 const Container = styled.div`
+    font-family: Gowun Dodum;
     width: 220px;
     height: 620px;
     display: flex;
@@ -196,9 +197,11 @@ const Container = styled.div`
     flex-direction: column;
     color: white;
     opacity: 1.5;
+    font-weight: bold;
 `;
 
 const ChatContainer = styled.div`
+    font-family: Gowun Dodum;
     width: 200px;
     height: 520px;
     padding: 10px;
@@ -225,6 +228,7 @@ const ChatContainer = styled.div`
 `;
 
 const InputMsgContainer = styled.div`
+    font-family: Gowun Dodum;
     width: 200px;
     height: 80px;
     padding: 10px;
@@ -232,9 +236,11 @@ const InputMsgContainer = styled.div`
     border-radius: 0.5rem;
     display: flex;
     justify-content: space-between;
+    font-weight: bold;
 `;
 
 const InputMsg = styled.textarea`
+    font-family: Gowun Dodum;
     width: 160px;
     height: 60px;
     padding: 10px;
@@ -244,6 +250,7 @@ const InputMsg = styled.textarea`
     border: none;
     outline: none !important;
     resize: none;
+    font-weight: bold;
 
     &:hover {
         cursor: grab;
@@ -273,6 +280,7 @@ const InputMsg = styled.textarea`
 `;
 
 const InputMsgBtn = styled.div`
+    font-family: Gowun Dodum;
     width: 40px;
     height: 80px;
     background-color: #000000;
@@ -281,6 +289,7 @@ const InputMsgBtn = styled.div`
     align-items: center;
     justify-content: center;
     color: white;
+    font-weight: bold;
 
     &:hover {
         cursor: grab;
