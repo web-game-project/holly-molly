@@ -964,7 +964,7 @@ export default function WaitingRoom(props) {
                                                                 readyClick(!changeReady);
                                                             }}
                                                         >
-                                                            게임 준비
+                                                            준비 시작
                                                         </BtnDiv>
                                                     ))
                                                 : //방장이다.
@@ -1102,51 +1102,68 @@ const StartDiv = styled.div`
 `;
 
 const BtnDiv = styled.div`
-    width: 210px;
-    height: 38px;
-    margin-top: 20px;
-    background-color: #ffffff;
-    border-radius: 18px;
-    border: 3px solid #a274d5;
-    color: #a274d5;
-    box-shadow: 2px 2px 2px #878787, 4px 4px 4px #878787;
-    font-size: 27px;
-    text-align: center;
-    display: flow;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
+  width: 210px;
+  height: 38px;
+  margin-top: 20px;
+  background-color: #ffffff;
+  border-radius: 18px;
+  border: 3px solid #a274d5;
+  color: #a274d5;
+  //box-shadow: 2px 2px 2px #878787, 4px 4px 4px #878787;
+  font-size: 27px;
+  text-align: center;
+  display: flow;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
 
+  &:hover {
+    background: #a274d5;
+    color: white;
+    border: 3px solid #a274d5;
+    cursor: grab;
+  }
+
+  ${(props) =>
+    props.color == "waiting"
+      ? `
+    background-color: #a274d5; 
+    color: white; 
     &:hover {
-        background: #a274d5;
-        color: white;
+        background: white;
+        color: #a274d5; 
         border: 3px solid #a274d5;
         cursor: grab;
-    }
-   
-    ${(props) => (props.isStart == 'yes' ? `` : props.isStart == 'no' ? `&:hover { cursor: not-allowed;}opacity: 0.5;` : ``)}
+    }`
+      : ""}
+
+  ${(props) =>
+    props.isStart == "yes"
+      ? ``
+      : props.isStart == "no"
+      ? `&:hover { cursor: not-allowed;}opacity: 0.5;`
+      : ``}
 
     &:hover .textDiv {
-        background-color:  ${style.white};
-        color: ${style.black};
-        border: 2px solid #000;
-        border-radius: 10px;        
-        display: inline;
-    }
+    background-color: ${style.white};
+    color: ${style.black};
+    border: 2px solid #000;
+    border-radius: 10px;
+    display: inline;
+  }
 
-    .textDiv{
-        z-index: 1;
-        overflow: hidden;
-        position: absolute;  
-        top: -35px;
-        left: -60px;
-        width: 320px;
-        display: none;
-        padding: 5px;
-        font-size: 15px;
-    }
-
-    `;
+  .textDiv {
+    z-index: 1;
+    overflow: hidden;
+    position: absolute;
+    top: -35px;
+    left: -60px;
+    width: 320px;
+    display: none;
+    padding: 5px;
+    font-size: 15px;
+  }
+`;
 
 const TitleDiv = styled.div`
     width: 625px;
