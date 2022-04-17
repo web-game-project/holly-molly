@@ -21,8 +21,8 @@ function GameRoleComponent(props) {
     const ghost = "유령 친구들과 수다를 떨고 있는 Holly!\n그런데.. 동작 그만! 자꾸 생뚱맞은 이야기를 하는 너, \n대체 누구야?\n아무리 봐도 지금 우리 사이에 인간이 들어 온 것 같다!\n겁없이 유령 사이에 끼어든 인간을 찾아 혼쭐을 내주자.\n동안 유령 친구들과 함께 최선을 다해서 \n인간을 찾아보자구!";
     const human = "공포영화를 보다가 잠에 빠진 Molly!\n눈 떠보니 유령세계라고?\n을 들키지 않고 지내야 인간세계로 가는 길이 열린다.\n이 유령들 수다떠는 걸 엄청 좋아하는데\n그 사이에서 인간임을 들키지 않아야 산다.\n한 번 유령인척을 열심히 해보자구!";
 
-    //게임 시작 5초 후, 타이머
-    const [seconds, setSeconds] = useState(5);
+    //게임 시작 5초 후, 타이머 -> 10초로 변경
+    const [seconds, setSeconds] = useState(10);
 
     //let timer = 5;
     useEffect(() => {
@@ -46,9 +46,11 @@ function GameRoleComponent(props) {
                 {
                     props.role == "human" ?                        
                     <RoleContainer>
+                           
                             <RoleImg>
                                 <HumanCharacter className="ghost" width="80" height="117" />
                             </RoleImg>
+
                             <RoleTitle role="human" color={style.red}> 인간 </RoleTitle>
                             
                             <RoleContent role="human">
@@ -59,12 +61,17 @@ function GameRoleComponent(props) {
                                         return <p key={key}><RoleTxt color={style.red}>3일</RoleTxt>{i}</p>;
                                 })}
                             </RoleContent>
+
+                            <RoleKeyword>* 왼쪽 상단에 있는 키워드 확인 필수 *</RoleKeyword>
+
                         </RoleContainer>
                         :
                         <RoleContainer>
+
                             <RoleImg>
                                 <GhostCharacter className="ghost" width="80" height="117" />
                             </RoleImg>
+
                             <RoleTitle role="ghost" color={style.blue}> 유령 </RoleTitle>
                             
                             <RoleContent role="ghost" >
@@ -75,6 +82,9 @@ function GameRoleComponent(props) {
                                         return <p key={key}><RoleTxt color={style.red}>3일 </RoleTxt>{i}</p>;
                                 })}
                             </RoleContent>
+
+                            <RoleKeyword>* 왼쪽 상단에 있는 키워드 확인 필수 *</RoleKeyword>
+
                         </RoleContainer>
                 }
 
@@ -85,6 +95,13 @@ function GameRoleComponent(props) {
     );
 }
 
+const RoleKeyword = styled.div`
+    width: 100%;
+    font-size: 16px;
+    color: #ff0000;
+    font-weight: 600;
+    margin-top: 20px;
+`;
 const Container = styled.div`
     width: 480px;
     height: 500px;

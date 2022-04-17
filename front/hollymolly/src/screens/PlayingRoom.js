@@ -52,8 +52,8 @@ const PlayingRoom = (props) => {
     const [role, setRole] = React.useState('');
     const [keyword, setKeyWord] = React.useState('');
 
-    //게임 시작 5초 후, 타이머
-    const [seconds, setSeconds] = useState(5);
+    //게임 시작 5초 후, 타이머 -> 10초로 변경
+    const [seconds, setSeconds] = useState(10);
 
     const [playInfo, setPlayInfo] = React.useState(''); //웨이팅룸에서 넘어온 데이터 저장
 
