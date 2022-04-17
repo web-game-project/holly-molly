@@ -66,7 +66,7 @@ export default function WaitingRoom(props) {
         { color: 'GREEN', choose: 'true', code: '#95DB3B' },
         { color: 'BLUE', choose: 'true', code: '#3B8EDB' },
         { color: 'PURPLE', choose: 'true', code: '#823BDB' },
-        { color: 'PINK', choose: 'true', code: '#CE3BDB' },
+        { color: 'PINK', choose: 'true', code: '#FF0A9D' },
     ]);
 
     const [roomEnterInfo, setRoomEnterInfo] = useState();
@@ -1221,7 +1221,7 @@ const BarColorBox = styled.div`
     ${(props) =>
         props.color == '#FF0000' || props.data == '#FF0000'
             ? `background-color: ${props.color}; border-top-left-radius: 15px; border-bottom-left-radius: 15px;`
-            : props.color == '#CE3BDB' || props.data == '#CE3BDB'
+            : props.color == '#FF0A9D' || props.data == '#FF0A9D'
                 ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
                 : `background-color: ${props.color};`}
 `;
