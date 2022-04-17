@@ -99,7 +99,7 @@ const GameVoteComponent = (props) => {
     return (
         <Container>
             {/* <br /> */}
-            몰리, 인간으로 의심되는 유령을 <text style={{ color: style.red, textShadow: '3px 3px #980000' }}>투표</text> 해주세요.
+            몰리로 의심되는 홀리를 <text style={{ color: style.red, textShadow: '3px 3px #980000' }}>투표</text> 해주세요.
             <div style={styles.userListContainer}>
                 {userList &&
                     userList.map((element) => (
