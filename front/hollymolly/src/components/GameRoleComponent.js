@@ -19,7 +19,7 @@ import colors from '../styles/styles';
 function GameRoleComponent(props) {
 
     const ghost = "친구들과 수다를 떨고 있는 Holly!\n그런데.. 동작 그만! 자꾸 생뚱맞은 이야기를 하는 너, \n대체 누구야?\n아무리 봐도 지금 우리 사이에 인간이 들어 온 것 같다!\n 겁없이 우리 세계로 들어온 몰리를 찾아 혼쭐을 내주자.\n동안 친구들과 함께 최선을 다해서 \n몰리를 찾아보자구!";
-    const human = "공포영화를 보다가 잠에 빠진 Molly!\n눈 떠보니 홀리세계라고?\n을 들키지 않고 지내야 원래 세계로 돌아가는 길이 열린다.\n이 홀리들 수다떠는 걸 엄청 좋아하는데\n그 사이에서 몰리라는 존재를 들키지 않아야 산다.\n한 번 홀리인척을 열심히 해보자구!";
+    const human = "공포영화를 보다가 잠에 빠진 Molly!\n눈 떠보니 홀리세계라고?\n을 들키지 않고 지내야\n 원래 세계로 돌아가는 길이 열린다.\n이 홀리들 수다떠는 걸 엄청 좋아하는데\n그 사이에서 몰리라는 존재를 들키지 않아야 산다.\n한 번 홀리인척을 열심히 해보자구!";
 
     //게임 시작 5초 후, 타이머 -> 10초로 변경
     const [seconds, setSeconds] = useState(10);
@@ -51,7 +51,7 @@ function GameRoleComponent(props) {
                                 <HumanCharacter className="ghost" width="80" height="117" />
                             </RoleImg>
 
-                            <RoleTitle role="human" color={style.red}> 인간 </RoleTitle>
+                            <RoleTitle role="human" color={style.red}> 몰리 </RoleTitle>
                             
                             <RoleContent role="human">
                                 {human.split("\n").map((i, key) => {
@@ -72,7 +72,7 @@ function GameRoleComponent(props) {
                                 <GhostCharacter className="ghost" width="80" height="117" />
                             </RoleImg>
 
-                            <RoleTitle role="ghost" color={style.blue}> 유령 </RoleTitle>
+                            <RoleTitle role="ghost" color={style.blue}> 홀리 </RoleTitle>
                             
                             <RoleContent role="ghost" >
                                 {ghost.split("\n").map((i, key) => {
@@ -124,7 +124,7 @@ const SubContainer = styled.div`
 const TimerBtnContainer = styled.div`
     width: 130px;
     height: 30px;
-    margin-top: 15px;
+    margin-top: 5px;
     margin-left: 300px;   
     font-size: 20px;
     background-color: #fff;

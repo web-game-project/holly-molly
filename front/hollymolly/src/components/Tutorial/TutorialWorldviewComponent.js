@@ -40,7 +40,7 @@ export default function TutorialWorldviewComponent({}) {
     return (
         <Container>
             {/* 인간 유령 설명 페이지로 연결해주면 됨 div */}
-            <HumanDiv onClick={() => {moveRolePage("human");}}>
+            <HumanDiv>
                 <Div>
                     <MollyCharacter src={molly}></MollyCharacter>
                     <MollyTitle>
@@ -55,7 +55,7 @@ export default function TutorialWorldviewComponent({}) {
                     <br />
                 </Div>
 
-                <Link to="/">
+                <Link onClick={() => {moveRolePage("human");}}>
                     <CardContainer>
                         <CharacterContainer className="ghost">
                             <HumanCharacter />
@@ -65,8 +65,8 @@ export default function TutorialWorldviewComponent({}) {
             </HumanDiv>
 
             {/* 유령 설명 페이지로 연결해주면 됨 div */}
-            <GhostDiv onClick={() => {moveRolePage("ghost");}}>
-                <Link to="/">
+            <GhostDiv>
+                <Link onClick={() => {moveRolePage("ghost");}}>
                     <CardContainer>
                         <CharacterContainer className="ghost">
                             <GhostCharacter />

@@ -16,7 +16,7 @@ function BGMSound(src, volume = 1, fadeoutTime = 0) {
         sound.on('play', () => {
             const fadeouttime = fadeoutTime;
             setTimeout(() => sound.fade(volume, 0, fadeouttime), (sound.duration() - sound.seek()) * 1000 - fadeouttime);
-            console.log('sound : ' + sound.duration() + ' ' + sound.seek());
+          //  console.log('sound : ' + sound.duration() + ' ' + sound.seek());
         });
         return soundStop;
     }, []);

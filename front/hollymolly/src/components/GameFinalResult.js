@@ -40,7 +40,7 @@ const GameFinalResult = ({ data }) => {
                 <ResultTitle>최종 &nbsp; 결과</ResultTitle>
                 <Timer>{seconds-5}초 후 몰리를 공개합니다.</Timer>
                 <CardContainer>
-                    {winner == '유령' ? (
+                    {winner == '홀리' ? (
                         <GameResultCard role={'유령'} engRole={'GHOST'} final win></GameResultCard>
                     ) : (
                         <GameResultCard role={'유령'} engRole={'GHOST'} final></GameResultCard>
@@ -50,7 +50,7 @@ const GameFinalResult = ({ data }) => {
                             {data.total_game_set_ghost_score} : {data.total_game_set_human_score}
                         </ScoreTitle>
                     </div>
-                    {winner == '인간' ? (
+                    {winner == '몰리' ? (
                         <GameResultCard role={'인간'} engRole={'HUMAN'} final win></GameResultCard>
                     ) : (
                         <GameResultCard role={'인간'} engRole={'HUMAN'} final></GameResultCard>
