@@ -14,6 +14,7 @@ const enterRoom = async (req, res, next) => {
         const { type } = req.params;
 
         const { error, value } = roomSchema.join.validate(req.body);
+        
         if(error){
             res.status(400).json({
                 error: error.details[0].message
@@ -86,7 +87,7 @@ const enterRoom = async (req, res, next) => {
 
         // socket : get socket
         if (!io || !socket) {
-            console.log('[error]-getRoomList: 소켓 커넥션 에러');
+            printErrorLog("enterRoom","소켓 커넥션 에러-io or socket이 undefined");
             res.status(400).json({
                 message: 'socket connection을 다시 해주세요.',
             });
