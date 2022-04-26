@@ -5,7 +5,7 @@ const {printErrorLog} = require('../util/log')
 module.exports = (req, res, next) => {
     try {
         const { authorization } = req.headers;
-
+       
         if (authorization == undefined) {
             res.status(401).send({
                 message: '로그인 후 이용해주세요.',
