@@ -1,7 +1,8 @@
 const signJWT = require('../../util/jwt/signJWT');
 const { User } = require('../../models');
-const {printErrorLog} = require('../../util/log')
+const {printErrorLog, printLog } = require('../../util/log')
 const { userSchema } = require('../../util/joi/schema');
+const axios = require('axios');
 
 module.exports = async (req, res, next) => {
     try {
@@ -22,11 +23,14 @@ module.exports = async (req, res, next) => {
         const refreshToken = signJWT.makeRefreshToken(user);
         await updateRefreshTokenOfUser(refreshToken, user.user_idx);
 
+        printLog("LOGIN-", user.user_idx+"번 "+name+"님 로그인 성공");
         res.json({
             access_token: accessToken,
             refresh_token: refreshToken,
             user_idx: user.user_idx,
         });
+
+        await postSlackMsg(user.user_idx, name);
     } catch (error) {
         printErrorLog('login', error);
         res.status(400).send({
@@ -44,3 +48,21 @@ const updateRefreshTokenOfUser = async (refreshToken, userIdx) => {
         { where: { user_idx: userIdx } }
     );
 };
+
+const postSlackMsg = async (userIdx, name) => {
+    await axios({
+        url: 'https://hooks.slack.com/services/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',
+        method: 'post',
+        data: {
+            "text": `${userIdx}번 ${name} 님 로그인 성공`,
+            "username": "HollyMolly Server",
+            "icon_emoji": ":purple_ghost:"
+        }
+    })
+    .then(function (response) {
+        printErrorLog('SLACK_SUCCESS -', error);
+    })
+    .catch(function (error) {
+        printErrorLog('SLACK_ERROR - ', error);
+    });
+}
