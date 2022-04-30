@@ -9,6 +9,7 @@ const { getVoteResult } = require('./getVoteResult');
 const saveSetImage = require('./saveSetImage');
 const writeHumanKeyword = require('./writeHumanKeyword');
 const {getTopVoteResult} = require('./getTopVoteResult');
+const getChat = require('./getChat');
 const {getKeywordLength} = require('./getKeywordLength');
 
 module.exports = {
@@ -23,5 +24,6 @@ module.exports = {
     getTopVoteResult,
     writeHumanKeyword,
     saveSetImage,
+    getChat,
     getKeywordLength
 };
