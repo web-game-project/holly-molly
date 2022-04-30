@@ -6,7 +6,7 @@ module.exports = async (req, res, next) => {
     try {
         let chats = await getGameChat(roomIdx);
 
-        res.status(200).json({keyword, user_role: userRole});
+        res.status(200).json(chats);
     } catch (error) {
         console.log('getChat Error: ', error);
         res.status(400).json({

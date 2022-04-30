@@ -23,7 +23,7 @@ module.exports = async (socket, io, data) => {
             msg: msg,
         });
 
-        await createChatMsg(msg, roomIdx, user_udx);
+        await createChatMsg(msg, currentRoom, user_udx);
     }
 };
 
