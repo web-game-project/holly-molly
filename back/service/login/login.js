@@ -30,7 +30,7 @@ module.exports = async (req, res, next) => {
             user_idx: user.user_idx,
         });
 
-        await postSlackMsg(user.user_idx, name);
+        //await postSlackMsg(user.user_idx, name);
     } catch (error) {
         printErrorLog('login', error);
         res.status(400).send({
