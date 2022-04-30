@@ -6,7 +6,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true
     },
-    chat_message: {
+    chat_msg: {
       type: DataTypes.STRING(1000),
       allowNull: false
     },
