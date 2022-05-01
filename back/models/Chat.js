@@ -2,11 +2,12 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Chat', {
     chat_idx: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    chat_message: {
+    chat_msg: {
       type: DataTypes.STRING(1000),
       allowNull: false
     },
