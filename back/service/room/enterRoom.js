@@ -23,6 +23,14 @@ const enterRoom = async (req, res, next) => {
         }
 
         let room = await findRoom(type, value);
+        if (room.room_status != 'waiting') {
+            res.status(400).json({
+                message: '게임이 이미 시작되었습니다.',
+            });
+            return;
+        }
+
+        // user가 이미 방에 들어가 있는 상태는 아닌지 체크하기
         const beforeWaitingRoomMember = await getWaitingRoomMember(
             user.user_idx
         );
@@ -34,24 +42,21 @@ const enterRoom = async (req, res, next) => {
             return;
         }
 
-        const flagTodeleteBeforeMember =
+        // 이미 다른 방에 입장해 있는 경우
+        const flagToDeleteBeforeMember =
             beforeWaitingRoomMember &&
-            beforeWaitingRoomMember.get('room_room_idx') != room.room_idx;
+            (beforeWaitingRoomMember.get('room_room_idx') != room.room_idx);
+        // 이미 room.room_idx 방에 입장해 있는 경우
+        const flagToReconnect =
+            beforeWaitingRoomMember &&
+            (beforeWaitingRoomMember.get('room_room_idx') == room.room_idx);
 
-        if (flagTodeleteBeforeMember) {
-            await exitGameAndRoom(user, io);
-            room = await Room.findOne({
-                where: { room_idx: room.room_idx },
-            });
+        // 이미 다른 방에 입장해 있는 경우 과거방에서 퇴장
+        if (flagToDeleteBeforeMember) {
+            await exitGameAndRoom(user, io); 
         }
 
-        if (room.room_status != 'waiting') {
-            res.status(400).json({
-                message: '게임이 이미 시작되었습니다.',
-            });
-            return;
-        }
-
+        // 들어가고자 하는 방에 있는 멤버 리스트와 방장 구하기
         const { waitingRoomMemberList, leader_idx } =
             await getWaitingRoomMemberListAndLeader(room.room_idx);
 
@@ -63,28 +68,31 @@ const enterRoom = async (req, res, next) => {
             return;
         }
 
-        if (room.room_start_member_cnt <= waitingRoomMemberList.length) {
-            const flagReconnect =
-                beforeWaitingRoomMember &&
-                beforeWaitingRoomMember.get('room_room_idx') == room.room_idx;
-            if (!flagReconnect) {
+        let insertedMember;
+        // 방에 입장해있지 않은 경우
+        if(!flagToReconnect){
+            // 이미 방 정원이 가득 찬 경우
+            if (room.room_start_member_cnt <= waitingRoomMemberList.length) {
                 res.status(400).json({
                     message: '방의 정원이 가득 찼습니다.',
                 });
                 return;
             }
+
+            // 방에 입장 처리
+            insertedMember = await insertWaitingRoomMember(
+                waitingRoomMemberList,
+                user,
+                room.room_idx
+            );
+            await updateCurrentMemberCnt(
+                waitingRoomMemberList.length+1,
+                room.room_idx
+            );
+        }else{
+            insertedMember = beforeWaitingRoomMember;
         }
-
-        const insertedMember = await insertWaitingRoomMember(
-            waitingRoomMemberList,
-            user,
-            room.room_idx
-        );
-        await updateCurrentMemberCnt(
-            waitingRoomMemberList.length,
-            room.room_idx
-        );
-
+        
         // socket : get socket
         if (!io || !socket) {
             printErrorLog("enterRoom","소켓 커넥션 에러-io or socket이 undefined");
@@ -93,6 +101,7 @@ const enterRoom = async (req, res, next) => {
             });
             return;
         }
+
         // socket : enter room
         io.to(room.room_idx).emit('enter room', {
             user_idx: user.user_idx,
@@ -107,7 +116,7 @@ const enterRoom = async (req, res, next) => {
         // socket : change member count
         io.to(0).emit('change member count', {
             room_idx: room.room_idx,
-            room_member_count: waitingRoomMemberList.length,
+            room_member_count: (flagToReconnect) ? waitingRoomMemberList.length : waitingRoomMemberList.length+1 ,
         });
 
         res.status(201).json({
@@ -193,8 +202,8 @@ const getWaitingRoomMemberListAndLeader = async (roomIdx) => {
     try {
         const waitingRoomMemberList = await db.sequelize.query(
             `SELECT user_idx, user_name, wrm_user_color, wrm_user_ready 
-            FROM hollymolly.WaitingRoomMember
-            INNER JOIN hollymolly.User
+            FROM WaitingRoomMember
+            INNER JOIN User
             ON User.user_idx = user_user_idx
             WHERE room_room_idx = ${roomIdx}`,
             { type: db.sequelize.QueryTypes.SELECT }
@@ -240,33 +249,17 @@ const insertWaitingRoomMember = async (
             .add('PINK');
         let insertedMember = undefined;
         for (let roomMember of waitingRoomMemberList) {
-            roomMember.wrm_user_ready = roomMember.wrm_user_ready
-                ? true
-                : false;
-            if (roomMember.user_idx == user.user_idx) {
-                insertedMember = roomMember;
-                break;
-            }
             colorSet.delete(roomMember.wrm_user_color);
         }
         let color = colorSet.values().next().value;
 
-        if (!insertedMember) {
-            insertedMember = await WaitingRoomMember.create({
-                wrm_user_color: color,
-                wrm_leader: false,
-                wrm_user_ready: false,
-                room_room_idx: roomIdx,
-                user_user_idx: user.user_idx,
-            });
-            waitingRoomMemberList.push({
-                user_idx: user.user_idx,
-                user_name: user.user_name,
-                wrm_user_color: insertedMember.wrm_user_color,
-                wrm_user_ready: false,
-            });
-        }
-
+        insertedMember = await WaitingRoomMember.create({
+            wrm_user_color: color,
+            wrm_leader: false,
+            wrm_user_ready: false,
+            room_room_idx: roomIdx,
+            user_user_idx: user.user_idx,
+        });
         return insertedMember;
     } catch (error) {
         printErrorLog('enterRoom-insertWaitingRoomMember', error);
