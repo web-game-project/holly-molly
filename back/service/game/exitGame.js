@@ -1,4 +1,4 @@
-const { Room, Game, GameSet, GameMember, GameVote, WaitingRoomMember, User } = require('../../models');
+const { Chat, Room, Game, GameSet, GameMember, GameVote, WaitingRoomMember, User } = require('../../models');
 const {printErrorLog, printLog} = require('../../util/log');
 const {selectFinalResult, selectHuman, deleteAllAboutGame, updateRoomStatus, updateMemberReady} = require('./getFinalResult');
 
@@ -8,7 +8,7 @@ const exitGame = async (req, res, next) => {
         const io = req.app.get('io');
 
         const isSuccess = await exitGameAndRoom(user, io);
-        if(!isSuccess)  throw "exitGame fail";
+        if(!isSuccess)  throw "exitGame fail"; 
         await deleteUser(user.user_idx);
 
         res.status(204).end();
@@ -27,10 +27,13 @@ const exitGameAndRoom = async (user, io) => {
         const { room, roomMember } = await getRoomAndMember(user.user_idx);
         if(!gameMember && !roomMember)  return true;
 
+        await deleteChatByUserIdx(user.user_idx);
+
         const memberList = await getMemberList(room.get('room_idx')); //roomMember+gameMemberIdx
         const isLeader = roomMember.get('wrm_leader');
 
-        if (memberList.length <= 1) {
+        if (memberList.length <= 1) { // 방 폭파
+            await deleteChatByRoomIdx(room.get('room_idx'));
             if(game){
                 await deleteAllAboutGame(memberList, game.get('game_idx')); // game, gameMember, gameSet, gameVote 삭제
             }
@@ -57,7 +60,8 @@ const exitGameAndRoom = async (user, io) => {
                 result.human_name = human_info[0].user_name;
                 io.to(room.get('room_idx')).emit('get final result', result);
 
-                // 게임 종료 처리 (game, gameMember, gameSet, gameVote 삭제)
+                // 게임 종료 처리 (chat / game, gameMember, gameSet, gameVote 삭제)
+                await deleteChatByRoomIdx(room.get('room_idx'));
                 await deleteAllAboutGame(memberList, game.get('game_idx'));
                 // game status
                 await updateRoomStatus(room.get('room_idx'), 'waiting');
@@ -187,6 +191,20 @@ const deleteRoomMember = async (wrmIdx) => {
         },
     });
 };
+const deleteChatByRoomIdx = async (roomIdx) => {
+    await Chat.destroy({
+        where: {
+            room_room_idx: roomIdx,
+        },
+    });
+}
+const deleteChatByUserIdx = async (userIdx) => {
+    await Chat.destroy({
+        where: {
+            user_user_idx: userIdx,
+        },
+    });
+}
 
 module.exports = {
     exitGame,
