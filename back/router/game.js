@@ -14,7 +14,8 @@ const {
     getTopVoteResult,
     writeHumanKeyword,
     saveSetImage,
-    getKeywordLength
+    getKeywordLength,
+    getChat
 } = require('../service').gameService;
 const { roomMiddleware, gameMiddleware } = require('../middleware');
 
@@ -30,5 +31,6 @@ router.get('/top-vote-result/:gameSetIdx', gameMiddleware, getTopVoteResult);
 router.patch('/human-keyword', gameMiddleware, writeHumanKeyword);
 router.patch('/set/image/:gameSetIdx', gameMiddleware, upload.single("set_image"), saveSetImage);
 router.get('/keyword-length/:gameSetIdx', gameMiddleware, getKeywordLength);
+router.get('/chat/:roomIdx', roomMiddleware, getChat);
 
 module.exports = router;
