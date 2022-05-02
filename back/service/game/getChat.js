@@ -1,4 +1,4 @@
-const { Chat } = require('../../models');
+const { Chat, sequelize } = require('../../models');
 
 module.exports = async (req, res, next) => {
     let { roomIdx } = req.params;
@@ -17,11 +17,18 @@ module.exports = async (req, res, next) => {
 };
 
 const getGameChat = async (roomIdx) => {
-    const chats = await Chat.findAll({
-        where: { room_room_idx: roomIdx }, 
-        limit: 50, 
-        order: [["created_at", "DESC"]]
-    });
+    let sql = "SELECT u.user_idx, u.user_name, wrm.wrm_user_color, c.chat_msg "
+            + "FROM Chat c "
+            + "JOIN WaitingRoomMember wrm ON c.room_room_idx = wrm.room_room_idx AND c.user_user_idx = wrm.user_user_idx "
+            + "JOIN User u ON wrm.user_user_idx = u.user_idx "
+            + `WHERE c.room_room_idx = ${roomIdx} `
+            + "ORDER BY c.created_at DESC, c.chat_idx DESC "
+            + "LIMIT 50";
+    const chats = await sequelize.query(sql,
+        {
+            type: sequelize.QueryTypes.SELECT, 
+            raw: true
+        });
 
     return chats;
 }
