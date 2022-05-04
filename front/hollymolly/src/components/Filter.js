@@ -89,7 +89,6 @@ function Filter({ result, getResult }) {
                                             }}
                                             checked={CheckList.includes(item.id)}
                                             ref={inputRef}
-                                            label={item.id}
                                         ></input>
                                     </ListDiv>
                                     {item.id == 2 ? <Line></Line> : <></>}

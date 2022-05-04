@@ -647,7 +647,7 @@ export default function WaitingRoom(props) {
     };
 
     // 뒤로 가기 감지 시 대기방 나가기 처리 
-    useEffect(() => {
+    /*useEffect(() => {
         const unblock = history.block((loc, action) => {
             if (action === 'POP') {
                 //if(window.confirm('대기방에서 나가게됩니다. \n뒤로 가시겠습니까?')){
@@ -661,7 +661,7 @@ export default function WaitingRoom(props) {
         })
 
         return () => unblock()
-    }, [])
+    }, [])*/
 
     // 비정상 종료
     const exit = async () => {

@@ -154,7 +154,7 @@ const Chatting = (props) => {
         setRecentChat('');
         };
 
-        console.log(chatMonitor);
+        //console.log(chatMonitor);
 
         scrollUpdate();
     }, [recentChat]);
