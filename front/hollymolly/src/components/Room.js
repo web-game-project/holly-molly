@@ -2,21 +2,17 @@ import React, { useState, useEffect } from 'react';
 import RoomGrid from '../components/RoomGrid';
 import style from '../styles/styles';
 import RoomText from '../components/RoomText';
-import RoomGridDiv from './RoomGridDiv';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
 import RefreshVerification from '../server/RefreshVerification';
-
-// 소켓
-import { io } from 'socket.io-client';
 
 const Room = (props) => {
     const history = useHistory();
     const [clicked, setClicked] = useState(false);
 
     //토큰 검사
-    let verify = RefreshVerification.verification()
+    let verify = RefreshVerification.verification();
    // console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
 
@@ -51,8 +47,8 @@ const Room = (props) => {
             });
     };
 
-    const onClick = () => {
-        if (props.disabled === 'false') {
+    const roomClick = () => {
+        if (!props.disabled) {
             setClicked(!clicked);
             enterRoom();
         }
@@ -61,24 +57,19 @@ const Room = (props) => {
     return (
         <React.Fragment>
             {props.empty !== 'true' ? (
-                <RoomGridDiv
+                <RoomContainer
                     disabled={props.disabled}
-                    onClick={onClick}
-                    boxShadow
+                    onClick={roomClick}
                     cursor={props.cursor}
-                    padding="10px"
-                    margin="10px"
-                    width="320px"
-                    height="115px"
                 >
                     {/* 방 제목 */}
-                    <RoomGrid is_flex_start border="" boxShadow="" padding="15px" width="300px" height="25px">
+                    <RoomGrid is_flex_start border="" boxShadow="" padding="15px" width="300px" height="25px" cursor={props.cursor}>
                         <RoomText bold size="20px" color="#FF2222">
                             {props.room_name}
                         </RoomText>
                     </RoomGrid>
                     {/* 방 모드  방 현재 인원 / 총 인원 */}
-                    <RoomGrid is_flex_space border="" boxShadow="" padding="15px" width="300px" height="25px">
+                    <RoomGrid is_flex_space border="" boxShadow="" padding="15px" width="300px" height="25px" cursor={props.cursor}>
                         {props.room_mode === 'easy' && (
                             <RoomText bold textStroke={props.textStroke} color={style.white}>
                                 Easy Mode
@@ -98,7 +89,7 @@ const Room = (props) => {
                         </RoomGrid>
                     </RoomGrid>
                     {/* 방 진행중 여부 */}
-                    <RoomGrid is_flex_end border="" boxShadow="" padding="15px" width="300px" height="25px">
+                    <RoomGrid is_flex_end border="" boxShadow="" padding="15px" width="300px" height="25px" cursor={props.cursor}>
                         {props.room_status === 'waiting' && (
                             <RoomText bold size="24px" textStroke={props.textStroke} color={style.light_green}>
                                 WAITING
@@ -110,9 +101,9 @@ const Room = (props) => {
                             </RoomText>
                         )}
                     </RoomGrid>
-                </RoomGridDiv>
+                </RoomContainer>
             ) : (
-                <RoomGridDiv boxShadow bg="#ffffff" padding="10px" margin="10px" width="320px" height="115px">
+                <EmptyRoomContainer>
                     <RoomGrid
                         borderRadius
                         is_flex_start
@@ -123,20 +114,22 @@ const Room = (props) => {
                         width="280px"
                         height="25px"
                         bg="#eeeeee"
+                        cursor="false"
                     ></RoomGrid>
-                    <RoomGrid borderRadius is_flex_space border="" boxShadow="" margin="5px" width="280px" height="25px">
-                        <RoomGrid borderRadius is_flex_end border="" boxShadow="" width="140px" height="25px" bg="#eeeeee"></RoomGrid>
-                        <RoomGrid borderRadius is_flex_end border="" boxShadow="" width="100px" height="25px" bg="#eeeeee"></RoomGrid>
+                    <RoomGrid borderRadius is_flex_space border="" boxShadow="" margin="5px" width="280px" height="25px" cursor="false">
+                        <RoomGrid borderRadius is_flex_end border="" boxShadow="" width="140px" height="25px" bg="#eeeeee" cursor="false"></RoomGrid>
+                        <RoomGrid borderRadius is_flex_end border="" boxShadow="" width="100px" height="25px" bg="#eeeeee" cursor="false"></RoomGrid>
                     </RoomGrid>
-                    <RoomGrid borderRadius is_flex_end border="" boxShadow="" margin="5px" width="280px" height="25px">
-                        <RoomGrid borderRadius is_flex_end border="" boxShadow="" width="120px" height="25px" bg="#eeeeee"></RoomGrid>
+                    <RoomGrid borderRadius is_flex_end border="" boxShadow="" margin="5px" width="280px" height="25px" cursor="false">
+                        <RoomGrid borderRadius is_flex_end border="" boxShadow="" width="120px" height="25px" bg="#eeeeee" cursor="false"></RoomGrid>
                     </RoomGrid>
-                </RoomGridDiv>
+                </EmptyRoomContainer>
             )}
         </React.Fragment>
     );
 };
 // 컴포넌트 그리는데 꼭 필요한 데이터가 없을 시 나는 오류 방지하기 위해 필요한 데이터 미리 선언
+
 Room.defaultProps = {
     room_idx: '9999',
     room_name: 'Test',
@@ -147,3 +140,33 @@ Room.defaultProps = {
 };
 
 export default Room;
+
+const RoomContainer = styled.div`
+    box-shadow: 7px 5px 5px #2D2C2C;
+    padding: 10px;
+    margin: 10px;
+    width: 320px;
+    height: 115px;
+    background-color: #ffffff;
+    border: white;
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 1.5rem;
+
+    ${(props) => props.cursor === "true" ? `cursor: grab; `: `cursor: not-allowed; `} 
+    ${(props) => props.disabled === true ? `opacity: 0.7;` : `&:hover {background-color: #CFCFCF}`}
+`;
+
+const EmptyRoomContainer = styled.div`
+    box-shadow: 7px 5px 5px #2D2C2C;
+    padding: 10px;
+    margin: 10px;
+    width: 320px;
+    height: 115px;
+    background-color: #ffffff;
+    border: white;
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 1.5rem;
+    cursor: not-allowed;
+`;
