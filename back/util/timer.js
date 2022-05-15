@@ -70,6 +70,6 @@ const exitGameAndRoomAndDeleteUser = async (io, room_idx, acceptedMember) => {
         console.log("timer exit: " + user);
         const isSuccess = await exitGameAndRoom(user, io);
         if(!isSuccess)  throw "exitGame fail";
-        deleteUser(user_user_idx);
+        deleteUser(user.user_idx);
     }
 };
