@@ -136,9 +136,10 @@ const PlayingRoom = (props) => {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
+                
                 setRole(response.data.user_role);
                 setKeyWord(response.data.keyword);
-
+                
                 for (let i = 0; i < userList.length; i++) {
                     if (userList[i].user_idx === save_user_idx) {
                         userList[i].user_role = response.data.user_role;
@@ -148,7 +149,6 @@ const PlayingRoom = (props) => {
                 }
             })
             .catch(function (error) {
-               // alert(error.response.data.message);
             });
     }
 
@@ -214,7 +214,6 @@ const PlayingRoom = (props) => {
 
     useEffect(() => {
         props.socket.on('get next turn', (data) => {
-           // console.log(data.data); // success 메시지
             setIsDrawReady(true);
         });
 
@@ -378,7 +377,7 @@ const PlayingRoom = (props) => {
     const exit = async () => {
         //console.log("playing room exit");
         const restURL = 'http://3.17.55.178:3002/game/exit';
-
+        
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,
@@ -444,7 +443,7 @@ const PlayingRoom = (props) => {
         <React.Fragment>
             <Background>
                 {isDrawReady ? (
-                    role !== '' && keyword !== '' ? (
+                    role !== ''? (
                         <div>
                             <Header />
                             <Container>
