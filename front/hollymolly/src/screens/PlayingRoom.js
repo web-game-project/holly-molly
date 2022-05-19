@@ -12,6 +12,7 @@ import PlayingLoading from '../components/PlayingLoading';
 import Header from '../components/Header';
 import { useLocation, useHistory } from 'react-router';
 import GameSetImageShow from '../components/GameSetImageShow';
+import style from '../styles/styles';
 
 //통신
 import axios from 'axios';
@@ -29,7 +30,7 @@ import BGMSound from '../components/BGMSound';
 let userList = [{}];
 const PlayingRoom = (props) => {
     BGMSound(BGM, 1, 2000);
-
+/*
     const dummyChatData = [
         {
             recentChat: "더미데이터1",
@@ -46,13 +47,16 @@ const PlayingRoom = (props) => {
             recentChatColor: "RED",
             recentChatUserName: "더미유저3"
         }
-    ];
+    ]; 
+
+    const [chatHistoryData, setChatHistoryData] = React.useState([]); */
 
     const location = useLocation();
     const history = useHistory();
 
     let exitSocket = useRef(false);
     let finalSocket = useRef(false);
+    let chatAvailable = useRef(false);
 
     let room_idx = location.state.room;
     let leaderIdx = location.state.leaderIdx; //리더인지 아닌지 
@@ -152,6 +156,60 @@ const PlayingRoom = (props) => {
             });
     }
 
+    function changeColor(color){
+        if(color === 'RED'){
+            color = style.red_bg;
+        }else if(color === 'ORANGE'){
+            color = style.orange_bg;
+        }else if(color === 'YELLOW'){
+            color = style.yellow_bg;
+        }else if(color === 'GREEN'){
+            color = style.green_bg;
+        }else if(color === 'BLUE'){
+            color = style.blue_bg;
+        }else if(color === 'PINK'){
+            color = style.pink_bg;
+        }else if(color === 'WHITE'){
+            color = '#FFFFFF'
+        }else{
+            color = style.purple_bg;
+        }
+    
+        return color;
+    }
+
+    //이전 채팅 이력 정보 조회
+    let chats = useRef([]);
+    const getChatHistory = async () => {
+        
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        const restURL = BaseURL + 'game/chat/' + room_idx;
+
+        axios
+            .get(restURL, reqHeaders)
+            .then(function (response) {
+                console.log(response.data);  
+                for(let i = 0; i < response.data.length; i++){
+                    const chat = {
+                        recentChat: response.data[i].chat_msg,
+                        recentChatColor: changeColor(response.data[i].wrm_user_color),
+                        recentChatUserName: response.data[i].user_name
+                    }
+
+                    chats.current.push(chat); 
+                    
+                }   
+                console.log(chats.current);  
+            })
+            .catch(function (error) {
+                console.log(error.response.data.message);
+            });
+    }
+
     useEffect(() => {
         const waitcountdown = setInterval(() => {
             //console.log('waitcountdown 값: ' + parseInt(waitSeconds));
@@ -213,8 +271,12 @@ const PlayingRoom = (props) => {
 
 
     useEffect(() => {
+
+        getChatHistory();
+
         props.socket.on('get next turn', (data) => {
             setIsDrawReady(true);
+            chatAvailable.current = true;
         });
 
         //세트 시작 소켓
@@ -235,7 +297,6 @@ const PlayingRoom = (props) => {
             setBeforeKeyword.current = data.before_game_set_keyword;
 
             getGameMember();
-
             //setSeconds(4); // 이전 그림 보여주는 초는 4초!
         });
 
@@ -517,7 +578,7 @@ const PlayingRoom = (props) => {
 
 
                                     <ChatDiv>
-                                        <Chatting chats={dummyChatData} socket={props.socket} room_idx={room_idx} height="615px" available={true} color={myList&&myList.user_color}></Chatting>
+                                        <Chatting chats={chats.current} socket={props.socket} room_idx={room_idx} height="615px" available={chatAvailable.current} color={myList&&myList.user_color}></Chatting>
                                     </ChatDiv>
                                 </BackGroundDiv>
                             </Container> 

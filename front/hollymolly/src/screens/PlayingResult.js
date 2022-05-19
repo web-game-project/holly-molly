@@ -12,6 +12,7 @@ import GameOpenResult from '../components/GameOpenResult';
 import GameSetImageShow from '../components/GameSetImageShow';
 import Loading from '../components/Loading';
 import RefreshVerification from '../server/RefreshVerification.js';
+import style from '../styles/styles';
 
 //페이지 이동
 import { useHistory, useLocation } from 'react-router';
@@ -87,6 +88,60 @@ const PlayingResult = (props) => {
         }
     }
 
+    function changeColor(color){
+        if(color === 'RED'){
+            color = style.red_bg;
+        }else if(color === 'ORANGE'){
+            color = style.orange_bg;
+        }else if(color === 'YELLOW'){
+            color = style.yellow_bg;
+        }else if(color === 'GREEN'){
+            color = style.green_bg;
+        }else if(color === 'BLUE'){
+            color = style.blue_bg;
+        }else if(color === 'PINK'){
+            color = style.pink_bg;
+        }else if(color === 'WHITE'){
+            color = '#FFFFFF'
+        }else{
+            color = style.purple_bg;
+        }
+    
+        return color;
+    }
+
+    //이전 채팅 이력 정보 조회
+    let chats = useRef([]);
+    const getChatHistory = async () => {
+        
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        const restURL = BaseURL + 'game/chat/' + roomIdx;
+
+        axios
+            .get(restURL, reqHeaders)
+            .then(function (response) {
+                console.log(response.data);  
+                for(let i = 0; i < response.data.length; i++){
+                    const chat = {
+                        recentChat: response.data[i].chat_msg,
+                        recentChatColor: changeColor(response.data[i].wrm_user_color),
+                        recentChatUserName: response.data[i].user_name
+                    }
+
+                    chats.current.push(chat); 
+                    
+                }   
+                console.log(chats.current);  
+            })
+            .catch(function (error) {
+                console.log(error.response);
+            });
+    }
+
     // 중간 결과 (방장만 부를 수 있음)
     const getMiddleResult = async () => {
         const restURL = 'http://3.17.55.178:3002/game/interim-result/' + gameIdx;
@@ -133,6 +188,8 @@ const PlayingResult = (props) => {
     useEffect(() => {
         props.socket.on('connect', () => {
         });
+
+        getChatHistory();
 
         // 같은 대기실에 있는 클라이언트들에게 중간 결과 전송
         props.socket.on('get interim result', (data) => {
@@ -398,7 +455,7 @@ const PlayingResult = (props) => {
                         <ChatDiv>
                             {/* <Chatting /> */}
                             {/* <Chatting room_idx={location.state.data.room_idx}></Chatting> */}
-                            <Chatting chats={dummyChatData} socket={props.socket} room_idx={53} available={true}></Chatting> {/* 채팅 비활성화 */}
+                            <Chatting chats={chats.current} socket={props.socket} room_idx={53} available={true}></Chatting> {/* 채팅 비활성화 */}
                         </ChatDiv>
                     </BackGroundDiv>
                 </Container>
