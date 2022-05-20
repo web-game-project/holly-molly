@@ -17,13 +17,18 @@ module.exports = async (req, res, next) => {
 };
 
 const getGameChat = async (roomIdx) => {
-    let sql = "SELECT u.user_idx, u.user_name, wrm.wrm_user_color, c.chat_msg "
-            + "FROM Chat c "
-            + "JOIN WaitingRoomMember wrm ON c.room_room_idx = wrm.room_room_idx AND c.user_user_idx = wrm.user_user_idx "
-            + "JOIN User u ON wrm.user_user_idx = u.user_idx "
-            + `WHERE c.room_room_idx = ${roomIdx} `
-            + "ORDER BY c.created_at DESC, c.chat_idx DESC "
-            + "LIMIT 50";
+    let sql = "SELECT * "
+            + "FROM ("
+                + "SELECT u.user_idx, u.user_name, wrm.wrm_user_color, c.chat_msg, c.created_at, c.chat_idx "
+                + "FROM Chat c "
+                + "JOIN WaitingRoomMember wrm ON c.room_room_idx = wrm.room_room_idx AND c.user_user_idx = wrm.user_user_idx "
+                + "JOIN User u ON wrm.user_user_idx = u.user_idx "
+                + `WHERE c.room_room_idx = ${roomIdx} `
+                + "ORDER BY c.created_at DESC, c.chat_idx DESC "
+                + "LIMIT 50"
+            + ") A "
+            + "ORDER BY created_at ASC, chat_idx ASC";
+    console.log(sql);
     const chats = await sequelize.query(sql,
         {
             type: sequelize.QueryTypes.SELECT, 
