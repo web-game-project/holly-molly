@@ -30,26 +30,6 @@ import BGMSound from '../components/BGMSound';
 let userList = [{}];
 const PlayingRoom = (props) => {
     BGMSound(BGM, 1, 2000);
-/*
-    const dummyChatData = [
-        {
-            recentChat: "더미데이터1",
-            recentChatColor: "RED",
-            recentChatUserName: "더미유저1"
-        },
-        {
-            recentChat: "더미데이터2",
-            recentChatColor: "RED",
-            recentChatUserName: "더미유저2"
-        },
-        {
-            recentChat: "더미데이터3",
-            recentChatColor: "RED",
-            recentChatUserName: "더미유저3"
-        }
-    ]; 
-
-    const [chatHistoryData, setChatHistoryData] = React.useState([]); */
 
     const location = useLocation();
     const history = useHistory();
@@ -192,7 +172,7 @@ const PlayingRoom = (props) => {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response.data);  
+                //console.log(response.data);  
                 for(let i = 0; i < response.data.length; i++){
                     const chat = {
                         recentChat: response.data[i].chat_msg,
@@ -203,10 +183,10 @@ const PlayingRoom = (props) => {
                     chats.current.push(chat); 
                     
                 }   
-                console.log(chats.current);  
+                //console.log(chats.current);  
             })
             .catch(function (error) {
-                console.log(error.response.data.message);
+                console.log("ERROR:: ",error.response);
             });
     }
 
@@ -299,6 +279,8 @@ const PlayingRoom = (props) => {
             getGameMember();
             //setSeconds(4); // 이전 그림 보여주는 초는 4초!
         });
+
+        if (gameSetNo !== 1) setSeconds(6);
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {

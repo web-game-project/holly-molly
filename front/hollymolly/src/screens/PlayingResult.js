@@ -29,24 +29,8 @@ let userList = [{}];
 const PlayingResult = (props) => {
     BGMSound(BGM, 1, 2000);
 
-    const dummyChatData = [
-        {
-            recentChat: "1",
-            recentChatColor: "RED",
-            recentChatUserName: "1"
-        },
-        {
-            recentChat: "2",
-            recentChatColor: "RED",
-            recentChatUserName: "2"
-        },
-        {
-            recentChat: "3",
-            recentChatColor: "RED",
-            recentChatUserName: "3"
-        }
-    ];
-    
+    //const BaseURL = 'http://3.17.55.178:3002';
+
     let location = useLocation();
     const history = useHistory();
     let exitSocket = useRef(false);
@@ -58,8 +42,6 @@ const PlayingResult = (props) => {
     const [normal, setNormal] = useState(location.state.normal); //props로 받음 비정상 종료인지 구분하는 변수
     const [exitData, setExitData] = useState(location.state.exitData); //props로 받는 비정상 종료 후 최종결과 데이터
     const [keyword, setKeyword] = useState(location.state.keyword);
-
-    const BaseURL = 'http://3.17.55.178:3002';
 
     // 전 페에지 (GameVoteResultComponet) 넘어온 데이터 
     let gameSetNo = location.state.gameSetNo;
@@ -119,12 +101,12 @@ const PlayingResult = (props) => {
                 authorization: 'Bearer ' + save_token,
             },
         };
-        const restURL = BaseURL + 'game/chat/' + roomIdx;
-
+        const restURL = 'http://3.17.55.178:3002/game/chat/' + roomIdx;
+       
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response.data);  
+                //console.log(response.data);  
                 for(let i = 0; i < response.data.length; i++){
                     const chat = {
                         recentChat: response.data[i].chat_msg,
@@ -135,10 +117,10 @@ const PlayingResult = (props) => {
                     chats.current.push(chat); 
                     
                 }   
-                console.log(chats.current);  
+                //console.log(chats.current);  
             })
             .catch(function (error) {
-                console.log(error.response);
+                console.log("ERROR:: ",error.response);
             });
     }
 
@@ -194,11 +176,12 @@ const PlayingResult = (props) => {
         // 같은 대기실에 있는 클라이언트들에게 중간 결과 전송
         props.socket.on('get interim result', (data) => {
             setWinner(data.winner);
+            //getChatHistory();
         });
 
         // 같은 대기실에 있는 클라이언트들에게 최종 결과 전송
         props.socket.on('get final result', (data) => {           
-
+            //getChatHistory();
             if (gameSetNo === 2 && exitSocket.current === true) { //게임 세트가 2인데 최종결과 전송이 왔다? 비정상 종료다.
                 // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
                 let myIndex = userList.find((x) => x.user_idx === save_user_idx);

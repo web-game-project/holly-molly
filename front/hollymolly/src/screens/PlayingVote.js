@@ -34,25 +34,6 @@ let userList = [{}];
 const PlayingVote = (props) => {
     BGMSound(BGM, 1, 2000);
 
-    /*
-    const dummyChatData = [
-        {
-            recentChat: "1",
-            recentChatColor: "RED",
-            recentChatUserName: "1"
-        },
-        {
-            recentChat: "2",
-            recentChatColor: "RED",
-            recentChatUserName: "2"
-        },
-        {
-            recentChat: "3",
-            recentChatColor: "RED",
-            recentChatUserName: "3"
-        }
-    ];*/
-
     //const [chatHistoryData, setChatHistoryData] = React.useState([]);
     const BaseURL = 'http://3.17.55.178:3002/';
 
@@ -159,7 +140,7 @@ const PlayingVote = (props) => {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
-                console.log(response.data);  
+                //console.log(response.data);  
                 for(let i = 0; i < response.data.length; i++){
                     const chat = {
                         recentChat: response.data[i].chat_msg,
@@ -170,10 +151,10 @@ const PlayingVote = (props) => {
                     chats.current.push(chat); 
                     
                 }   
-                console.log(chats.current);  
+                //console.log(chats.current);  
             })
             .catch(function (error) {
-                console.log(error.response.data.message);
+                console.log("ERROR:: ",error.response);
             });
     }
 
