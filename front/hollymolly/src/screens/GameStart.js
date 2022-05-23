@@ -13,8 +13,8 @@ import BGM from '../assets/sound/backgroundSound.mp3';
 import BGMSound from '../components/BGMSound';
 
 function GameStart() {
-  
-    BGMSound(BGM, 1, 2000);
+ 
+  //  BGMSound(BGM, 1, 2000);
 
     return (
         <Background>

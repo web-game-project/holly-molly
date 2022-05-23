@@ -10,6 +10,8 @@ import ModalSetting from '../components/ModalSetting.js';
 
 import Chatting from '../components/Chatting.js';
 
+import api from '../api/api';
+
 //import { useLocation } from 'react-router';
 import RefreshVerification from '../server/RefreshVerification.js';
 import { useHistory, useLocation } from 'react-router';
@@ -542,30 +544,11 @@ export default function WaitingRoom(props) {
     function colorClick(str) {
         setModifiy(true);
 
-        const restURL = BaseURL + '/waiting-room/user-color';
+        const res = api.patchChangeColor('/waiting-room/user-color', {
+            room_idx: parseInt(room_idx), //룸 인덱스 변수로 들어가야함.
+            user_color: str, //클릭했을 때 해당 색
+        });
 
-        const reqHeaders = {
-            headers: {
-                authorization: 'Bearer ' + save_token,
-            },
-        };
-
-        axios
-            .patch(
-                restURL,
-                {
-                    room_idx: parseInt(room_idx), //룸 인덱스 변수로 들어가야함.
-                    user_color: str, //클릭했을 때 해당 색
-                },
-                reqHeaders
-            )
-            .then(function (response) {
-             //   console.log('색깔 rest: ' + response.data);
-                //setSelectColor(str); //내가 선택한 색
-            })
-            .catch(function (error) {
-                //alert(error.response.data.message);
-            });
     }
 
     const getRoomInfo = async () => {
@@ -594,24 +577,13 @@ export default function WaitingRoom(props) {
 
     const deleteRoom = async () => {
         //방 삭제
-        const restURL = BaseURL + '/room/' + room_idx;
-
-        const reqHeaders = {
-            headers: {
-                authorization: 'Bearer ' + save_token,
-            },
-        };
-        axios
-            .delete(restURL, reqHeaders)
-            .then(function (response) {
-             //   console.log('방 삭제 성공');
-                history.push({
-                    pathname: '/roomlist', // 나가기 성공하면 룸리스트로 이동
-                });
-            })
-            .catch(function (error) {
-               // alert(error.response.data.message);
+        const res = api.deleteRoom('/room/'+room_idx)
+        
+        if(res){
+            history.push({
+                pathname: '/roomlist', // 나가기 성공하면 룸리스트로 이동
             });
+        }
     };
 
     const exitRoom = async () => {

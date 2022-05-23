@@ -4,6 +4,8 @@ import Modal from 'react-modal';
 import styled from 'styled-components';
 import style from '../styles/styles';
 
+import api from '../api/api';
+
 import axios from 'axios';
 
 import startBtn from '../assets/startBtn.png';
@@ -81,49 +83,24 @@ export default function ModalBase({ tutorial }) {
             alert('2~10자의 한글, 영문, 숫자만 사용할 수 있습니다.');
         }
         else if (usable === true) {
-            const url = 'http://3.17.55.178:3002/login';
+            const res = await api.postNickName(nickName);
 
-            axios
-                .post(url, {
-                    name: nickName,
-                })
-                .then(function (response) {
-                    //response로 jwt token 반환
-                    //console.log('success!' + response.data.user_idx);
-                    //  alert('success! ' + response.data.access_token);
+           // alert(JSON.stringify(res));
 
-                    sessionStorage.setItem('token',
-                    JSON.stringify({
-                        access_token: response.data.access_token,
-                        refresh_token: response.data.refresh_token,
-                        user_idx: response.data.user_idx,
-                        user_name: nickName,
-                    }));
+            sessionStorage.setItem('token',
+            JSON.stringify({
+                access_token: res.access_token,
+                refresh_token: res.refresh_token,
+                user_idx: res.user_idx,
+                user_name: nickName,
+            }));
 
-                    //console.log('세션스토리지 : ' + sessionStorage.getItem('token'));
-                    
-                    /* localStorage.setItem(
-                        'token',
-                        JSON.stringify({
-                            access_token: response.data.access_token,
-                            refresh_token: response.data.refresh_token,
-                            user_idx: response.data.user_idx,
-                            user_name: nickName,
-                        })
-                    ); */
+             // 리덕스 store에 baseURL 넣기
+            dispatch(socketActions.socketAction('http://3.17.55.178:3002/'));
+      
+            window.location.replace('/roomlist');
 
-                    // 리덕스 store에 baseURL 넣기
-                    dispatch(socketActions.socketAction('http://3.17.55.178:3002/'));
-                    //history.push("/roomlist");
-                    window.location.replace('/roomlist');
-                })
-                .catch(function (error) {
-                    //alert(error.response.data.message);
-                });
         }
-
-        //window.location.href = '/roomlist';
-        //history.push("/roomlist");
     };
 
     const onChange = (e) => {
