@@ -10,7 +10,9 @@ import Modal from '../components/ModalNickName';
 import style from '../styles/styles.js';
 
 function GameStart() {
-  
+ 
+  //  BGMSound(BGM, 1, 2000);
+
     return (
         <Background>
             <Backgroundimg>

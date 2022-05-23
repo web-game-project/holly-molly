@@ -7,6 +7,8 @@ import { ReactComponent as SettingIcon } from '../assets/settingIcon.svg'; // �
 import { ReactComponent as SettingsIcon } from '../assets/SettingsIcon.svg';
 import RefreshVerification from '../server/RefreshVerification';
 
+import api from '../api/api';
+
 // 소켓
 import { io } from 'socket.io-client';
 import axios from 'axios';
@@ -56,33 +58,12 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
 
     const UpdateRoomInfo = async () => {
         // 대기실 정보 수정 api
-        const restURL = BaseURL + '/room/info/';
-
-        const reqHeaders = {
-            headers: {
-                authorization: 'Bearer ' + save_token,
-            },
-        };
-        axios
-            .put(
-                restURL,
-                {
-                    room_idx: room_idx,
-                    room_name: inputRef.current.value,
-                    room_mode: roomMode,
-                    room_start_member_cnt: people,
-                },
-                reqHeaders
-            )
-            .then(function (response) {
-                //console.log(response.status);
-                //console.log('UpdateRoomInfo 성공');
-            })
-            .catch(function (error) {
-                //console.log('UpdateRoomInfo 실패');
-                //console.log(error.response);
-                //alert(error.response.data.message);
-            });
+        const res = await api.putUpdateRoomInfo('/room/info', {
+            room_idx: room_idx,
+            room_name: inputRef.current.value,
+            room_mode: roomMode,
+            room_start_member_cnt: people,
+        });
     };
 
     const getRoomInfo = async () => {

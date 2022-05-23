@@ -9,6 +9,8 @@ import ModalBase from '../components/ModalBase';
 import Header from '../components/Header.js';
 import { useHistory } from 'react-router';
 
+import api from '../api/api';
+
 // import Child from '../components/Child';
 import RefreshVerification from '../server/RefreshVerification';
 
@@ -201,35 +203,39 @@ const RoomList = (props) => {
 
     const roomListCheck = async () => {
         const currentPage = currentSlide + 1;
-        var restURL = baseURL + 'room?page=' + currentPage;
+
+        var restURL = '/room?page=' + currentPage;
 
         restURL = filterUrl(restURL, resultArray);
 
-        const reqHeaders = {
-            headers: {
-                authorization: 'Bearer ' + save_token,
-            },
-        };
+        const res = await api.getRoomList(restURL);
 
-        axios
-            .get(restURL, reqHeaders)
-            .then(function (response) {
-               // console.log(response.data);
-                total_room_cnt = response.data.total_room_cnt;
-                if (total_room_cnt % 6 === 0) {
-                    TOTAL_SLIDES.current = total_room_cnt / 6 - 1;
-                    setTotalSlide(TOTAL_SLIDES.current);
-                } else {
-                    TOTAL_SLIDES.current = Math.floor(total_room_cnt / 6);
-                    setTotalSlide(TOTAL_SLIDES.current);
-                }
-                setRooms(response.data.room_list);
-                setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
-            })
-            .catch(function (error) {
-               // alert(error.response.data.message);
-            });
-    };
+        total_room_cnt = res.total_room_cnt;
+        if (total_room_cnt % 6 === 0) {
+            TOTAL_SLIDES.current = total_room_cnt / 6 - 1;
+            setTotalSlide(TOTAL_SLIDES.current);
+        } else {
+            TOTAL_SLIDES.current = Math.floor(total_room_cnt / 6);
+            setTotalSlide(TOTAL_SLIDES.current);
+        }
+
+        if(res.room_list !== undefined)
+            setRooms(res.room_list);
+
+        let room_len = 0;
+        
+        if(res.room_list.length === undefined)
+            room_len = 0;
+        else
+            room_len = res.room_list.length;
+
+        setEmptyRoomsLength(6 - room_len); // empty room list length
+    }; 
+
+    useEffect(() => {   
+        // 룸 리스트 조회
+        roomListCheck();
+    }, [currentSlide, resultArray]);
 
     // 방 생성, 삭제, 정보 수정, 멤버 변동, 상태 변동 시 사용자에게 보이는 방 정보 수정
     if (isSocket === true) {
