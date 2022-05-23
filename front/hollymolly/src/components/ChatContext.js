@@ -9,7 +9,7 @@ const ChatContext = (props) => {
 
       return (
         <React.Fragment>
-              <ChatContextBox {...styles}><span styles={{fontWeight: 'bold'}}>{name} : {text}</span></ChatContextBox>
+              <ChatContextBox {...styles}>{name} : {text}</ChatContextBox>
         </React.Fragment>
       );
   };
@@ -19,14 +19,15 @@ const ChatContext = (props) => {
   };
 
   const ChatContextBox = styled.div`
+    font-family: Gowun Dodum;
+    font-weight: 600;
     width: 200px;
     border-radius: 0.5rem;
     font-size: 15px;
     color: ${(props) => props.color};
-    font-family: 'Gowun Dodum';
     display: flex
     margin-bottom: 5px;
     white-space: normal;
-  `;
+  `; 
 
   export default ChatContext;

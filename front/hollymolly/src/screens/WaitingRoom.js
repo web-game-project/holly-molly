@@ -37,6 +37,8 @@ export default function WaitingRoom(props) {
     let location = useLocation();
     const history = useHistory();
 
+    const dummyChatData = [];
+
     let room_index = parseInt(props.match.params.name); // url에 입력해준 방 인덱스
  //   console.log('방 번호는 ?' + room_index);
 
@@ -68,7 +70,7 @@ export default function WaitingRoom(props) {
         { color: 'GREEN', choose: 'true', code: '#95DB3B' },
         { color: 'BLUE', choose: 'true', code: '#3B8EDB' },
         { color: 'PURPLE', choose: 'true', code: '#823BDB' },
-        { color: 'PINK', choose: 'true', code: '#CE3BDB' },
+        { color: 'PINK', choose: 'true', code: '#FF0A9D' },
     ]);
 
     const [roomEnterInfo, setRoomEnterInfo] = useState();
@@ -77,6 +79,8 @@ export default function WaitingRoom(props) {
 
     //사용자가 색을 바꾸었을 때, 변경중입니다 toast 띄우기 위해서
     const [modify, setModifiy] = React.useState(false);
+
+    const [ready , setReady] = React.useState(false);
 
     //무슨 색을 선택할 수 있는가
     const [selectColor, setSelectColor] = React.useState([]);
@@ -159,6 +163,8 @@ export default function WaitingRoom(props) {
                                     setSelectColor(element.color);
                                     //내 준비 상태
                                     setChangeReady(locationUserList[i].wrm_user_ready);
+
+                                    setReady(false);
                                 }
                             }
                             setColorList(colorList);
@@ -283,6 +289,18 @@ export default function WaitingRoom(props) {
 
             getWaiting();
 
+           /*  console.log('idx : ' + save_user_idx + data.user_idx);
+            if(save_user_idx === data.user_idx){
+                console.log('dd : ' + changeReady);
+                setChangeReady(!changeReady);
+               /*  if(changeReady){
+                    setReadyTxt("준비 완료");
+                }
+                else{
+                    setReadyTxt("준비 시작");
+                } 
+            } */
+          
             //임시방편으로 주석 푼 코드
             /* const changeReadyResult = data.user_ready;
             if(ready_cnt > startMember){ // 레디카운트가 시작 멤버보다 값이 크게 바꼈다면 레디카운트에 시작 멤버 값 대입
@@ -465,7 +483,8 @@ export default function WaitingRoom(props) {
     };
 
     function readyClick(readyStatus) {
-        setChangeReady(readyStatus);
+       // setChangeReady(readyStatus);
+       setReady(true);
 
       //  console.log('클릭 시 레디 값 : ' + ready_cnt + '정원 : ' + startMember);
 
@@ -600,7 +619,7 @@ export default function WaitingRoom(props) {
     };
 
     // 뒤로 가기 감지 시 대기방 나가기 처리 
-    useEffect(() => {
+    /*useEffect(() => {
         const unblock = history.block((loc, action) => {
             if (action === 'POP') {
                 //if(window.confirm('대기방에서 나가게됩니다. \n뒤로 가시겠습니까?')){
@@ -614,7 +633,7 @@ export default function WaitingRoom(props) {
         })
 
         return () => unblock()
-    }, [])
+    }, [])*/
 
     // 비정상 종료
     const exit = async () => {
@@ -915,7 +934,7 @@ export default function WaitingRoom(props) {
                                     </div>
                                 </SelectDiv>
                                 <RightDiv>
-                                    <Chatting socket={props.socket} room_idx={room_idx} height="520px" available={true} color={'WHITE'}></Chatting>
+                                <Chatting chats={dummyChatData} socket={props.socket} room_idx={room_idx} height="520px" available={true} color={'WHITE'}></Chatting>
                                     <StartDiv>
                                         {
                                             isLeader === 0 //방장 아님
@@ -936,7 +955,7 @@ export default function WaitingRoom(props) {
                                                                 readyClick(!changeReady);
                                                             }}
                                                         >
-                                                            게임 준비
+                                                            준비 시작
                                                         </BtnDiv>
                                                     ))
                                                 : //방장이다.
@@ -954,6 +973,12 @@ export default function WaitingRoom(props) {
                                                                     게임 시작</BtnDiv>
                                                             )
                                                     )) //게임 시작 api 요청 onclick 달기
+                                        }
+                                        {
+                                        ready ?
+                                            <ReadyToast>처리 중 입니다....</ReadyToast>
+                                            :
+                                            null
                                         }
                                     </StartDiv>
                                 </RightDiv>
@@ -1017,6 +1042,14 @@ const ColorToast = styled.div`
    /*  border-radius: 18px;
     border: 3px solid #a274d5; */
 `;
+
+const ReadyToast = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+    text-align: center;
+`;
+
 const NameContainer = styled.text`
     font-size: 45px;
     font-family: Black Han Sans;
@@ -1074,51 +1107,68 @@ const StartDiv = styled.div`
 `;
 
 const BtnDiv = styled.div`
-    width: 210px;
-    height: 38px;
-    margin-top: 20px;
-    background-color: #ffffff;
-    border-radius: 18px;
-    border: 3px solid #a274d5;
-    color: #a274d5;
-    box-shadow: 2px 2px 2px #878787, 4px 4px 4px #878787;
-    font-size: 27px;
-    text-align: center;
-    display: flow;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
+  width: 210px;
+  height: 38px;
+  margin-top: 30px;
+  background-color: #ffffff;
+  border-radius: 18px;
+  border: 3px solid #a274d5;
+  color: #a274d5;
+  //box-shadow: 2px 2px 2px #878787, 4px 4px 4px #878787;
+  font-size: 27px;
+  text-align: center;
+  display: flow;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
 
+  &:hover {
+    background: #a274d5;
+    color: white;
+    border: 3px solid #a274d5;
+    cursor: grab;
+  }
+
+  ${(props) =>
+    props.color == "waiting"
+      ? `
+    background-color: #a274d5; 
+    color: white; 
     &:hover {
-        background: #a274d5;
-        color: white;
+        background: white;
+        color: #a274d5; 
         border: 3px solid #a274d5;
         cursor: grab;
-    }
-   
-    ${(props) => (props.isStart == 'yes' ? `` : props.isStart == 'no' ? `&:hover { cursor: not-allowed;}opacity: 0.5;` : ``)}
+    }`
+      : ""}
+
+  ${(props) =>
+    props.isStart == "yes"
+      ? ``
+      : props.isStart == "no"
+      ? `&:hover { cursor: not-allowed;}opacity: 0.5;`
+      : ``}
 
     &:hover .textDiv {
-        background-color:  ${style.white};
-        color: ${style.black};
-        border: 2px solid #000;
-        border-radius: 10px;        
-        display: inline;
-    }
+    background-color: ${style.white};
+    color: ${style.black};
+    border: 2px solid #000;
+    border-radius: 10px;
+    display: inline;
+  }
 
-    .textDiv{
-        z-index: 1;
-        overflow: hidden;
-        position: absolute;  
-        top: -35px;
-        left: -60px;
-        width: 320px;
-        display: none;
-        padding: 5px;
-        font-size: 15px;
-    }
-
-    `;
+  .textDiv {
+    z-index: 1;
+    overflow: hidden;
+    position: absolute;
+    top: -35px;
+    left: -60px;
+    width: 320px;
+    display: none;
+    padding: 5px;
+    font-size: 15px;
+  }
+`;
 
 const TitleDiv = styled.div`
     width: 625px;
@@ -1193,7 +1243,7 @@ const BarColorBox = styled.div`
     ${(props) =>
         props.color == '#FF0000' || props.data == '#FF0000'
             ? `background-color: ${props.color}; border-top-left-radius: 15px; border-bottom-left-radius: 15px;`
-            : props.color == '#CE3BDB' || props.data == '#CE3BDB'
+            : props.color == '#FF0A9D' || props.data == '#FF0A9D'
                 ? `background-color: ${props.color}; border-right: 0px solid #000000; border-top-right-radius: 15px; border-bottom-right-radius: 15px;`
                 : `background-color: ${props.color};`}
 `;

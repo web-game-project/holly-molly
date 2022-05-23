@@ -8,11 +8,19 @@ import Human from '../assets/human.svg';
 const GameResultCard = (props) => {
     const { role, engRole, final, win } = props;
 
+    let eng = '';
+
+    if(engRole == 'GHOST'){
+        eng = 'HOLLY';
+    }else{
+        eng = 'MOLLY';
+    }
+
     return (
         <React.Fragment>
             {!final ? ( // 중간 결과시 사용
                 <CardContainer>
-                    <WinnerRoleContext>{engRole}</WinnerRoleContext>
+                    <WinnerRoleContext>{eng}</WinnerRoleContext>
                     <CharacterContainer className="ghost">
                         {role === '유령' ? <CharacterGhost></CharacterGhost> : <CharacterHuman></CharacterHuman>}
                     </CharacterContainer>
@@ -20,14 +28,14 @@ const GameResultCard = (props) => {
             ) : // 최종 결과시 사용
             win ? (
                 <CardFinalWinContainer>
-                    <FinalWinnerRoleContext>{engRole}</FinalWinnerRoleContext>
+                    <FinalWinnerRoleContext>{eng}</FinalWinnerRoleContext>
                     <CharacterFinalContainer className="ghost">
                         {role === '유령' ? <CharacterFinalGhost></CharacterFinalGhost> : <CharacterFinalHuman></CharacterFinalHuman>}
                     </CharacterFinalContainer>
                 </CardFinalWinContainer>
             ) : (
                 <CardFinalLoseContainer>
-                    <FinalWinnerRoleContext>{engRole}</FinalWinnerRoleContext>
+                    <FinalWinnerRoleContext>{eng}</FinalWinnerRoleContext>
                     <CharacterFinalContainer className="ghost">
                         {role === '유령' ? <CharacterFinalGhost></CharacterFinalGhost> : <CharacterFinalHuman></CharacterFinalHuman>}
                     </CharacterFinalContainer>

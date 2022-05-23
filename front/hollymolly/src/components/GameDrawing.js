@@ -13,6 +13,9 @@ import axios from 'axios';
 import html2canvas from 'html2canvas';
 import { useHistory, useLocation } from 'react-router';
 
+import effectSound from '../components/EffectSound';
+import Effect from '../assets/sound/effect1.mp3';
+
 let userList = [{}];
 
 const GameDrawing = (props) => {
@@ -54,20 +57,20 @@ const GameDrawing = (props) => {
     let user_color = color;
 
     // 지정 색 코드로 바꿔주기 
-    if (user_color === 'RED') {
-        user_color = '#FF0000';
-    } else if (user_color === 'ORANGE') {
-        user_color = '#FF5C00'
-    } else if (user_color === 'YELLOW') {
-        user_color = '#FFB800'
-    } else if (user_color === 'GREEN') {
-        user_color = '#95DB3B'
-    } else if (user_color === 'BLUE') {
-        user_color = '#3B8EDB'
-    } else if (user_color === 'PINK') {
-        user_color = '#CE3BDB'
-    } else {
-        user_color = '#823BDB'
+    if(user_color === 'RED'){
+        user_color = style.red_bg;
+    }else if(user_color === 'ORANGE'){
+        user_color = style.orange_bg;
+    }else if(user_color === 'YELLOW'){
+        user_color = style.yellow_bg;
+    }else if(user_color === 'GREEN'){
+        user_color = style.green_bg;
+    }else if(user_color === 'BLUE'){
+        user_color = style.blue_bg;
+    }else if(user_color === 'PINK'){
+        user_color = style.pink_bg;
+    }else{
+        user_color = style.purple_bg;
     }
 
     let user_room_index = parseInt(room_idx);
@@ -230,6 +233,9 @@ const GameDrawing = (props) => {
                     setReDraw(!reDraw); // 그리기 준비
                     drawingTime.current = true;       
 
+                    const es = effectSound(Effect, 5)
+                    es.play();
+    
                     setPossible(true);
                     setSeconds(10);
                 }
@@ -368,23 +374,21 @@ const GameDrawing = (props) => {
     // 지정 색 코드로 바꿔주기 
     let border_user_color = currentItem.current && currentItem.current.user_color;
 
-    if (drawingTime.current === true) {
-        if (border_user_color === 'RED') {
-            border_user_color = '#FF0000';
-        } else if (border_user_color === 'ORANGE') {
-            border_user_color = '#FF5C00'
-        } else if (border_user_color === 'YELLOW') {
-            border_user_color = '#FFB800'
-        } else if (border_user_color === 'GREEN') {
-            border_user_color = '#95DB3B'
-        } else if (border_user_color === 'BLUE') {
-            border_user_color = '#3B8EDB'
-        } else if (border_user_color === 'PINK') {
-            border_user_color = '#CE3BDB'
-        } else if (border_user_color === 'WHITE') {
-            border_user_color = '#FFFFFF'
-        } else {
-            border_user_color = '#823BDB'
+    if(drawingTime.current === true){
+        if(border_user_color === 'RED'){
+            border_user_color = style.red_bg;
+        }else if(border_user_color === 'ORANGE'){
+            border_user_color = style.orange_bg;
+        }else if(border_user_color === 'YELLOW'){
+            border_user_color = style.yellow_bg;
+        }else if(border_user_color === 'GREEN'){
+            border_user_color = style.green_bg;
+        }else if(border_user_color === 'BLUE'){
+            border_user_color = style.blue_bg;
+        }else if(border_user_color === 'PINK'){
+            border_user_color = style.pink_bg;
+        }else{
+            border_user_color = style.purple_bg;
         }
     }
     else {

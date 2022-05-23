@@ -19,7 +19,6 @@ const RoomGrid = (props) => {
         border,
         boxShadow,
         borderRadius,
-        onClick,
         flexDirection,
         cursor,
         disabled,
@@ -44,8 +43,6 @@ const RoomGrid = (props) => {
         border: border,
         boxShadow: boxShadow,
         borderRadius: borderRadius,
-        onClick: onClick,
-
         cursor: cursor,
         disabled: disabled,
     };
@@ -75,21 +72,16 @@ RoomGrid.defaultProps = {
     boxShadow: false,
     // borderRadius: '1.5rem',
     borderRadius: false,
-    onClick: false,
     flexDirection: 'row',
-
     cursor: 'true',
-    disabled: 'false',
+    disabled: false,
 };
 
 const RoomGridBox = styled.div`
     width: ${(props) => props.width};
     height: ${(props) => props.height};
     box-sizing: border-box;
-    &:hover {
-        cursor: grab;
-    }
-
+    
     ${(props) => (props.padding ? `padding: ${props.padding};` : '')}
     ${(props) => (props.margin ? `margin: ${props.margin};` : '')}
     ${(props) => (props.bg ? `background-color: ${props.bg};` : '')}
@@ -106,7 +98,7 @@ const RoomGridBox = styled.div`
     // border-radius: ${(props) => props.borderRadius};
 
     ${(props) => (props.borderRadius ? `border-radius: 1.5rem` : '')}
-
+    ${(props) => props.cursor === "true" ? `&:hover {cursor: grab;} `: `cursor: not-allowed; `} 
     ${(props) => (props.boxShadow ? `box-shadow: 7px 5px 5px #2D2C2C;` : '')}
 `;
 

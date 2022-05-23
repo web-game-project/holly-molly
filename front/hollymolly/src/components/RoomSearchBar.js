@@ -5,9 +5,7 @@ import RoomText from '../components/RoomText';
 import axios from 'axios';
 import { useHistory } from 'react-router';
 import RefreshVerification from '../server/RefreshVerification';
-
-// 소켓
-import { io } from 'socket.io-client';
+import styled from 'styled-components';
 
 const RoomSearchBar = (props) => {
     const history = useHistory();
@@ -56,7 +54,7 @@ const RoomSearchBar = (props) => {
             });
     };
 
-    const onClick = () => {
+    const btnClick = () => {
         setClicked(!clicked);
         enterRoom();
     };
@@ -69,20 +67,46 @@ const RoomSearchBar = (props) => {
 
     return (
         <React.Fragment>
-            <RoomGrid borderRadius is_flex_space padding="10px" width="410px" height="40px" border="" bg="white">
+            <SearchContainer>
                 <input onKeyPress={onEnter} style={styles.input} type="text" placeholder="입력하세요..." ref={inputRef} />
                 {/* 검색 버튼 */}
-                <RoomGrid borderRadius onClick={onClick} is_flex_center width="160px" height="32px" border="1px solid white" bg="#4D1596">
+                <SearchBtn onClick={btnClick}>
                     <RoomText size="17px" color={style.white}>
                         코드로 입장하기
                     </RoomText>
-                </RoomGrid>
-            </RoomGrid>
+                </SearchBtn>
+            </SearchContainer>
         </React.Fragment>
     );
 };
 
 export default RoomSearchBar;
+
+const SearchContainer = styled.div`
+    border-radius: 1.5rem;
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    padding: 10px;
+    width: 410px;
+    height: 40px;
+    background-color: white;
+    box-sizing: border-box;
+    &:hover {
+        cursor: grab;
+    }
+`;
+
+const SearchBtn = styled.div`
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    border-radius: 1.5rem;
+    width: 160px; 
+    height: 32px; 
+    border: 1px solid white; 
+    background-color: #4D1596;
+`;
 
 const styles = {
     input: {

@@ -40,22 +40,22 @@ export default function TutorialWorldviewComponent({}) {
     return (
         <Container>
             {/* 인간 유령 설명 페이지로 연결해주면 됨 div */}
-            <HumanDiv onClick={() => {moveRolePage("human");}}>
+            <HumanDiv>
                 <Div>
                     <MollyCharacter src={molly}></MollyCharacter>
                     <MollyTitle>
-                        당신의 역할이 <text style={{ ...style, color: style.red }}>인간</text>이라면?
+                        당신의 역할이 <text style={{ ...style, color: style.red }}>몰리</text>라면?
                     </MollyTitle>
                     <MollyText>
-                        공포영화를 보다가 잠에 빠진 Molly! 눈 떠보니 유령세계라고? <text style={{ ...style, color: style.red }}>3일</text>을
-                        들키지 않고 지내야 인간세계로 가는 길이 열린다.
-                        <br /> 이 유령들 수다떠는 걸 엄청 좋아하는데 그 사이에서 인간임을 들키지 않아야 산다. 한 번 유령인척을 열심히
+                        공포영화를 보다가 잠에 빠진 Molly! 눈 떠보니 홀리세계라고? <text style={{ ...style, color: style.red }}>3일</text>을
+                        들키지 않고 지내야 몰리세계로 가는 길이 열린다.
+                        <br /> 이 홀리들 수다떠는 걸 엄청 좋아하는데 그 사이에서 몰리임을 들키지 않아야 산다. 한 번 홀리인척을 열심히
                         해보자구!
                     </MollyText>
                     <br />
                 </Div>
 
-                <Link to="/">
+                <Link onClick={() => {moveRolePage("human");}}>
                     <CardContainer>
                         <CharacterContainer className="ghost">
                             <HumanCharacter />
@@ -65,8 +65,8 @@ export default function TutorialWorldviewComponent({}) {
             </HumanDiv>
 
             {/* 유령 설명 페이지로 연결해주면 됨 div */}
-            <GhostDiv onClick={() => {moveRolePage("ghost");}}>
-                <Link to="/">
+            <GhostDiv>
+                <Link onClick={() => {moveRolePage("ghost");}}>
                     <CardContainer>
                         <CharacterContainer className="ghost">
                             <GhostCharacter />
@@ -76,13 +76,13 @@ export default function TutorialWorldviewComponent({}) {
                 <Div>
                     <HollyCharacter src={holly}></HollyCharacter>
                     <HollyTitle>
-                        당신의 역할이 <text style={{ ...style, color: style.red }}>유령</text>이라면?
+                        당신의 역할이 <text style={{ ...style, color: style.red }}>홀리</text>라면?
                     </HollyTitle>
                     <HollyText>
-                        유령 친구들과 수다를 떨고 있는 Holly! 그런데.. 동작 그만! <br />
-                        자꾸 생뚱맞은 이야기를 하는 너, 대체 누구야? 아무리 봐도 지금 우리 사이에 인간이 들어 온 것 같다! 겁없이 유령 사이에
-                        끼어든 인간을 찾아 혼쭐을 내주자. <text style={{ ...style, color: style.red }}>3일</text>동안 유령 친구들과 함께
-                        최선을 다해서 인간을 찾아보자구!
+                        친구들과 수다를 떨고 있는 Holly! 그런데.. 동작 그만! <br />
+                        자꾸 생뚱맞은 이야기를 하는 너, 대체 누구야? 아무리 봐도 지금 우리 사이에 몰리가 들어 온 것 같다! 겁없이 우리 세계로
+                        들어온 몰리를 찾아 혼쭐을 내주자. <text style={{ ...style, color: style.red }}>3일</text>동안 친구들과 함께
+                        최선을 다해서 몰리를 찾아보자구!
                     </HollyText>
                     <br />
                 </Div>

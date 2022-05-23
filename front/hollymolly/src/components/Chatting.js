@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ChatContext from '../components/ChatContext';
+import style from '../styles/styles';
 
 const Chatting = (props) => { 
+
     const [recentChatColor, setRecentChatColor] = useState(); // 기본 화이트 색
     
     // 입력된 채팅 메시지 상태 값
@@ -14,7 +16,7 @@ const Chatting = (props) => {
     // 로컬의 입장에서 계속 전체 값이 바뀌는 것이기에 내용 전체가 다시 렌더링 되는 것을 막기 위해 상태값을 두 종류로 나누어 관리
 
     // 하나는 기존의 채팅 내용을 담아두고 UI와 직접 연결되는 상태값
-    const [chatMonitor, setChatMonitor] = useState([]);
+    const [chatMonitor, setChatMonitor] = useState(props.chats);
 
     // 서버에서 메시지 받았을 때 변경되는 상태값 
     const [onMessage, setOnMessage] = useState(false);
@@ -28,25 +30,27 @@ const Chatting = (props) => {
     // 서버에서 받은 갱신된(새로 추가된) 유저 인덱스 받는 상태값
     const [recentChatUserIdx, setRecentChatUserIdx] = useState('');
 
+    
+
     // 지정 색 코드로 바꿔주기 
     let user_color = props.color; 
     
     if(user_color === 'RED'){
-        user_color = '#FF0000';
+        user_color = style.red_bg;
     }else if(user_color === 'ORANGE'){
-        user_color = '#FF5C00'
+        user_color = style.orange_bg;
     }else if(user_color === 'YELLOW'){
-        user_color = '#FFB800'
+        user_color = style.yellow_bg;
     }else if(user_color === 'GREEN'){
-        user_color = '#95DB3B'
+        user_color = style.green_bg;
     }else if(user_color === 'BLUE'){
-        user_color = '#3B8EDB'
+        user_color = style.blue_bg;
     }else if(user_color === 'PINK'){
-        user_color = '#CE3BDB'
+        user_color = style.pink_bg;
     }else if(user_color === 'WHITE'){
         user_color = '#FFFFFF'
     }else{
-        user_color = '#946CEE'
+        user_color = style.purple_bg;
     }
 
     // 입력값을 저장하는 상태값
@@ -150,6 +154,8 @@ const Chatting = (props) => {
         setRecentChat('');
         };
 
+        //console.log(chatMonitor);
+
         scrollUpdate();
     }, [recentChat]);
 
@@ -189,6 +195,7 @@ const Chatting = (props) => {
 };
 
 const Container = styled.div`
+    font-family: Gowun Dodum;
     width: 220px;
     height: 620px;
     display: flex;
@@ -196,9 +203,11 @@ const Container = styled.div`
     flex-direction: column;
     color: white;
     opacity: 1.5;
+    font-weight: bold;
 `;
 
 const ChatContainer = styled.div`
+    font-family: Gowun Dodum;
     width: 200px;
     height: 520px;
     padding: 10px;
@@ -225,6 +234,7 @@ const ChatContainer = styled.div`
 `;
 
 const InputMsgContainer = styled.div`
+    font-family: Gowun Dodum;
     width: 200px;
     height: 80px;
     padding: 10px;
@@ -232,9 +242,11 @@ const InputMsgContainer = styled.div`
     border-radius: 0.5rem;
     display: flex;
     justify-content: space-between;
+    font-weight: bold;
 `;
 
 const InputMsg = styled.textarea`
+    font-family: Gowun Dodum;
     width: 160px;
     height: 60px;
     padding: 10px;
@@ -244,6 +256,7 @@ const InputMsg = styled.textarea`
     border: none;
     outline: none !important;
     resize: none;
+    font-weight: bold;
 
     &:hover {
         cursor: grab;
@@ -273,6 +286,7 @@ const InputMsg = styled.textarea`
 `;
 
 const InputMsgBtn = styled.div`
+    font-family: Gowun Dodum;
     width: 40px;
     height: 80px;
     background-color: #000000;
@@ -281,6 +295,7 @@ const InputMsgBtn = styled.div`
     align-items: center;
     justify-content: center;
     color: white;
+    font-weight: bold;
 
     &:hover {
         cursor: grab;

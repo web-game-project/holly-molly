@@ -16,11 +16,11 @@ const GameMiddleResult = (props) => {
   let draw = false;
 
   if (winner === "ghost") { // 유령이 이겼을 때 
-    role = "유령";
+    role = "홀리";
     engRole = "GHOST";
   } else if (winner === "human") { // 인간이 이겼을 때 
     // human
-    role = "인간";
+    role = "몰리";
     engRole = "HUMAN";
   } else { // 동점일 때 
     draw = true;
@@ -54,7 +54,7 @@ const GameMiddleResult = (props) => {
         {draw ? (
           <WinnerContext>현재 동점입니다.</WinnerContext>
         ) : (
-          <WinnerContext>현재 {role}이 이기고 있습니다.</WinnerContext>
+          <WinnerContext>현재 {role}가 이기고 있습니다.</WinnerContext>
         )}
       </Container>
     </React.Fragment>

@@ -7,6 +7,7 @@ import Chatting from '../components/Chatting';
 import GameUserCard from '../components/GameUserCard';
 import Header from '../components/Header';
 import PlayingLoading from '../components/PlayingLoading';
+import style from '../styles/styles';
 //투표 컴포넌트
 import GameVoteComponent from '../components/GameVoteComponent';
 //투표 결과 컴포넌트
@@ -25,9 +26,17 @@ import * as _ from 'lodash';
 import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
 
+import BGM from '../assets/sound/backgroundSound.mp3';
+import BGMSound from '../components/BGMSound';
+
 let userList = [{}];
 
 const PlayingVote = (props) => {
+    BGMSound(BGM, 1, 2000);
+
+    //const [chatHistoryData, setChatHistoryData] = React.useState([]);
+    const BaseURL = 'http://3.17.55.178:3002/';
+
     let location = useLocation();
     const history = useHistory();
 
@@ -64,8 +73,6 @@ const PlayingVote = (props) => {
 
     let chatAvailable = useRef(true);
 
-    
-
     //토큰 검사
     let verify = RefreshVerification.verification()
     //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
@@ -97,6 +104,60 @@ const PlayingVote = (props) => {
         }
     }, [secondsLoading]); */
 
+    function changeColor(color){
+        if(color === 'RED'){
+            color = style.red_bg;
+        }else if(color === 'ORANGE'){
+            color = style.orange_bg;
+        }else if(color === 'YELLOW'){
+            color = style.yellow_bg;
+        }else if(color === 'GREEN'){
+            color = style.green_bg;
+        }else if(color === 'BLUE'){
+            color = style.blue_bg;
+        }else if(color === 'PINK'){
+            color = style.pink_bg;
+        }else if(color === 'WHITE'){
+            color = '#FFFFFF'
+        }else{
+            color = style.purple_bg;
+        }
+    
+        return color;
+    }
+
+    //이전 채팅 이력 정보 조회
+    let chats = useRef([]);
+    const getChatHistory = async () => {
+        
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        const restURL = BaseURL + 'game/chat/' + roomIdx;
+
+        axios
+            .get(restURL, reqHeaders)
+            .then(function (response) {
+                //console.log(response.data);  
+                for(let i = 0; i < response.data.length; i++){
+                    const chat = {
+                        recentChat: response.data[i].chat_msg,
+                        recentChatColor: changeColor(response.data[i].wrm_user_color),
+                        recentChatUserName: response.data[i].user_name
+                    }
+
+                    chats.current.push(chat); 
+                    
+                }   
+                //console.log(chats.current);  
+            })
+            .catch(function (error) {
+                console.log("ERROR:: ",error.response);
+            });
+    }
+
     //투표 시간 10초 세기
     useEffect(() => {
         const countdown = setInterval(() => {
@@ -115,9 +176,12 @@ const PlayingVote = (props) => {
     }, [seconds]);
 
     useEffect(() => {
+
         props.socket.on('connect', () => {
             //console.log('playing vote');
         });
+
+        getChatHistory();
 
         /* props.socket.on('vote', (data) => {
             console.log('socket 투표 결과 ' + JSON.stringify(data.vote_rank)); // success 메시지
@@ -351,7 +415,7 @@ const PlayingVote = (props) => {
                                 }
                                 
                                 <ChatDiv>
-                                    <Chatting socket={props.socket} room_idx={roomIdx} available={chatAvailable.current} color={myList&&myList.user_color}></Chatting> {/* 채팅 비활성화 */}
+                                    <Chatting chats={chats.current} socket={props.socket} roomIdx={roomIdx} available={chatAvailable.current} color={myList&&myList.user_color}></Chatting> {/* 채팅 비활성화 */}
                                 </ChatDiv>
                             </BackGroundDiv>
                         </Container>

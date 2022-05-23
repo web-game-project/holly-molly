@@ -46,7 +46,7 @@ const GameFinalResult = (props) => {
                </HumanContainer>
 
                     <HumanWhoTxt>
-                        인간 몰리는 <ResultSubtitle>{name} </ResultSubtitle>이였습니다.
+                        몰리는 <ResultSubtitle>{name} </ResultSubtitle>이였습니다.
                     </HumanWhoTxt>
                 
             </Container>

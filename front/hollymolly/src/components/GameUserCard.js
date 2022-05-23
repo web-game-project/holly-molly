@@ -20,9 +20,15 @@ const GameUserCard = (props) => {
     let characterImg = '';
     let fillColor = ''; // 배경 색
     let isHuman = false;
+
+    let role = '';
     
     if(user_role === "human"){
+        role = "molly";
         isHuman = true;
+    }
+    else{
+        role = "holly";
     }
 
     if (user_color === 'RED') {
@@ -83,7 +89,7 @@ const GameUserCard = (props) => {
                     <UserInfoContainer>
                         <ImgContainer src={Human}></ImgContainer>
                         <RoleNameContainer>
-                            <RoleContainer {...styles}>{user_role}</RoleContainer>
+                            <RoleContainer {...styles}>{role}</RoleContainer>
                             <NameContainer>{user_name}</NameContainer>
                         </RoleNameContainer>
                     </UserInfoContainer>
@@ -93,7 +99,7 @@ const GameUserCard = (props) => {
                     <UserInfoContainer>
                         <ImgContainer src={characterImg}></ImgContainer>
                         <RoleNameContainer>
-                            <RoleContainer {...styles}>{user_role}</RoleContainer>
+                            <RoleContainer {...styles}>{role}</RoleContainer>
                             <NameContainer>{user_name}</NameContainer>
                         </RoleNameContainer>
                     </UserInfoContainer>

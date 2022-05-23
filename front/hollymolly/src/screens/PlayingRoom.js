@@ -12,6 +12,7 @@ import PlayingLoading from '../components/PlayingLoading';
 import Header from '../components/Header';
 import { useLocation, useHistory } from 'react-router';
 import GameSetImageShow from '../components/GameSetImageShow';
+import style from '../styles/styles';
 
 //통신
 import axios from 'axios';
@@ -23,13 +24,19 @@ import RefreshVerification from '../server/RefreshVerification.js';
 
 import Loading from '../components/Loading';
 
+import BGM from '../assets/sound/backgroundSound.mp3';
+import BGMSound from '../components/BGMSound';
+
 let userList = [{}];
 const PlayingRoom = (props) => {
+    BGMSound(BGM, 1, 2000);
+
     const location = useLocation();
     const history = useHistory();
 
     let exitSocket = useRef(false);
     let finalSocket = useRef(false);
+    let chatAvailable = useRef(false);
 
     let room_idx = location.state.room;
     let leaderIdx = location.state.leaderIdx; //리더인지 아닌지 
@@ -52,8 +59,8 @@ const PlayingRoom = (props) => {
     const [role, setRole] = React.useState('');
     const [keyword, setKeyWord] = React.useState('');
 
-    //게임 시작 5초 후, 타이머
-    const [seconds, setSeconds] = useState(5);
+    //게임 시작 5초 후, 타이머 -> 10초로 변경
+    const [seconds, setSeconds] = useState(10);
 
     const [playInfo, setPlayInfo] = React.useState(''); //웨이팅룸에서 넘어온 데이터 저장
 
@@ -113,9 +120,10 @@ const PlayingRoom = (props) => {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
+                
                 setRole(response.data.user_role);
                 setKeyWord(response.data.keyword);
-
+                
                 for (let i = 0; i < userList.length; i++) {
                     if (userList[i].user_idx === save_user_idx) {
                         userList[i].user_role = response.data.user_role;
@@ -125,7 +133,60 @@ const PlayingRoom = (props) => {
                 }
             })
             .catch(function (error) {
-               // alert(error.response.data.message);
+            });
+    }
+
+    function changeColor(color){
+        if(color === 'RED'){
+            color = style.red_bg;
+        }else if(color === 'ORANGE'){
+            color = style.orange_bg;
+        }else if(color === 'YELLOW'){
+            color = style.yellow_bg;
+        }else if(color === 'GREEN'){
+            color = style.green_bg;
+        }else if(color === 'BLUE'){
+            color = style.blue_bg;
+        }else if(color === 'PINK'){
+            color = style.pink_bg;
+        }else if(color === 'WHITE'){
+            color = '#FFFFFF'
+        }else{
+            color = style.purple_bg;
+        }
+    
+        return color;
+    }
+
+    //이전 채팅 이력 정보 조회
+    let chats = useRef([]);
+    const getChatHistory = async () => {
+        
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        const restURL = BaseURL + 'game/chat/' + room_idx;
+
+        axios
+            .get(restURL, reqHeaders)
+            .then(function (response) {
+                //console.log(response.data);  
+                for(let i = 0; i < response.data.length; i++){
+                    const chat = {
+                        recentChat: response.data[i].chat_msg,
+                        recentChatColor: changeColor(response.data[i].wrm_user_color),
+                        recentChatUserName: response.data[i].user_name
+                    }
+
+                    chats.current.push(chat); 
+                    
+                }   
+                //console.log(chats.current);  
+            })
+            .catch(function (error) {
+                console.log("ERROR:: ",error.response);
             });
     }
 
@@ -190,9 +251,12 @@ const PlayingRoom = (props) => {
 
 
     useEffect(() => {
+
+        getChatHistory();
+
         props.socket.on('get next turn', (data) => {
-           // console.log(data.data); // success 메시지
             setIsDrawReady(true);
+            chatAvailable.current = true;
         });
 
         //세트 시작 소켓
@@ -213,9 +277,10 @@ const PlayingRoom = (props) => {
             setBeforeKeyword.current = data.before_game_set_keyword;
 
             getGameMember();
-
             //setSeconds(4); // 이전 그림 보여주는 초는 4초!
         });
+
+        if (gameSetNo !== 1) setSeconds(6);
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
@@ -355,7 +420,7 @@ const PlayingRoom = (props) => {
     const exit = async () => {
         //console.log("playing room exit");
         const restURL = 'http://3.17.55.178:3002/game/exit';
-
+        
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,
@@ -421,7 +486,7 @@ const PlayingRoom = (props) => {
         <React.Fragment>
             <Background>
                 {isDrawReady ? (
-                    role !== '' && keyword !== '' ? (
+                    role !== ''? (
                         <div>
                             <Header />
                             <Container>
@@ -495,7 +560,7 @@ const PlayingRoom = (props) => {
 
 
                                     <ChatDiv>
-                                        <Chatting socket={props.socket} room_idx={room_idx} height="615px" available={true} color={myList&&myList.user_color}></Chatting>
+                                        <Chatting chats={chats.current} socket={props.socket} room_idx={room_idx} height="615px" available={chatAvailable.current} color={myList&&myList.user_color}></Chatting>
                                     </ChatDiv>
                                 </BackGroundDiv>
                             </Container> 

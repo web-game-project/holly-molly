@@ -12,6 +12,7 @@ import GameOpenResult from '../components/GameOpenResult';
 import GameSetImageShow from '../components/GameSetImageShow';
 import Loading from '../components/Loading';
 import RefreshVerification from '../server/RefreshVerification.js';
+import style from '../styles/styles';
 
 //페이지 이동
 import { useHistory, useLocation } from 'react-router';
@@ -20,9 +21,16 @@ import axios from 'axios';
 //깊은 복제
 import * as _ from 'lodash';
 
+import BGM from '../assets/sound/backgroundSound.mp3';
+import BGMSound from '../components/BGMSound';
+
 let userList = [{}];
 
 const PlayingResult = (props) => {
+    BGMSound(BGM, 1, 2000);
+
+    //const BaseURL = 'http://3.17.55.178:3002';
+
     let location = useLocation();
     const history = useHistory();
     let exitSocket = useRef(false);
@@ -34,8 +42,6 @@ const PlayingResult = (props) => {
     const [normal, setNormal] = useState(location.state.normal); //props로 받음 비정상 종료인지 구분하는 변수
     const [exitData, setExitData] = useState(location.state.exitData); //props로 받는 비정상 종료 후 최종결과 데이터
     const [keyword, setKeyword] = useState(location.state.keyword);
-
-    const BaseURL = 'http://3.17.55.178:3002';
 
     // 전 페에지 (GameVoteResultComponet) 넘어온 데이터 
     let gameSetNo = location.state.gameSetNo;
@@ -62,6 +68,60 @@ const PlayingResult = (props) => {
             save_token = JSON.parse(data) && JSON.parse(data).access_token;
             save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
         }
+    }
+
+    function changeColor(color){
+        if(color === 'RED'){
+            color = style.red_bg;
+        }else if(color === 'ORANGE'){
+            color = style.orange_bg;
+        }else if(color === 'YELLOW'){
+            color = style.yellow_bg;
+        }else if(color === 'GREEN'){
+            color = style.green_bg;
+        }else if(color === 'BLUE'){
+            color = style.blue_bg;
+        }else if(color === 'PINK'){
+            color = style.pink_bg;
+        }else if(color === 'WHITE'){
+            color = '#FFFFFF'
+        }else{
+            color = style.purple_bg;
+        }
+    
+        return color;
+    }
+
+    //이전 채팅 이력 정보 조회
+    let chats = useRef([]);
+    const getChatHistory = async () => {
+        
+        const reqHeaders = {
+            headers: {
+                authorization: 'Bearer ' + save_token,
+            },
+        };
+        const restURL = 'http://3.17.55.178:3002/game/chat/' + roomIdx;
+       
+        axios
+            .get(restURL, reqHeaders)
+            .then(function (response) {
+                //console.log(response.data);  
+                for(let i = 0; i < response.data.length; i++){
+                    const chat = {
+                        recentChat: response.data[i].chat_msg,
+                        recentChatColor: changeColor(response.data[i].wrm_user_color),
+                        recentChatUserName: response.data[i].user_name
+                    }
+
+                    chats.current.push(chat); 
+                    
+                }   
+                //console.log(chats.current);  
+            })
+            .catch(function (error) {
+                console.log("ERROR:: ",error.response);
+            });
     }
 
     // 중간 결과 (방장만 부를 수 있음)
@@ -111,14 +171,17 @@ const PlayingResult = (props) => {
         props.socket.on('connect', () => {
         });
 
+        getChatHistory();
+
         // 같은 대기실에 있는 클라이언트들에게 중간 결과 전송
         props.socket.on('get interim result', (data) => {
             setWinner(data.winner);
+            //getChatHistory();
         });
 
         // 같은 대기실에 있는 클라이언트들에게 최종 결과 전송
         props.socket.on('get final result', (data) => {           
-
+            //getChatHistory();
             if (gameSetNo === 2 && exitSocket.current === true) { //게임 세트가 2인데 최종결과 전송이 왔다? 비정상 종료다.
                 // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
                 let myIndex = userList.find((x) => x.user_idx === save_user_idx);
@@ -375,7 +438,7 @@ const PlayingResult = (props) => {
                         <ChatDiv>
                             {/* <Chatting /> */}
                             {/* <Chatting room_idx={location.state.data.room_idx}></Chatting> */}
-                            <Chatting socket={props.socket} room_idx={53} available={false}></Chatting> {/* 채팅 비활성화 */}
+                            <Chatting chats={chats.current} socket={props.socket} room_idx={53} available={true}></Chatting> {/* 채팅 비활성화 */}
                         </ChatDiv>
                     </BackGroundDiv>
                 </Container>
