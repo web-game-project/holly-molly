@@ -1,5 +1,5 @@
 const getInterimResult = require('./getInterimResult');
-const getFinalResult = require('./getFinalResult');
+const { getFinalResult } = require('./getFinalResult');
 const { startGame } = require('./startGame');
 const getGameMemberInfo = require('./getGameMemberInfo');
 const { exitGame } = require('./exitGame');

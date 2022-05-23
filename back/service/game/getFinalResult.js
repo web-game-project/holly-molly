@@ -1,7 +1,7 @@
 const { GameSet, GameMember, Game, sequelize, Room,  GameVote, WaitingRoomMember } = require('../../models');
 const {printErrorLog} = require('../../util/log');
 
-module.exports = async (req, res, next) => {
+const getFinalResult = async (req, res, next) => {
     let { gameIdx } = req.params;
 
     if (!res.locals.leader) {
@@ -29,6 +29,7 @@ module.exports = async (req, res, next) => {
         // finishGame
         const gameMembers = await getGameMemberIndex(gameIdx);
         await deleteAllAboutGame(gameMembers, gameIdx);
+        await deleteChatByRoomIdx(room_idx);
         await updateRoomStatus(room_idx, 'waiting');
         await updateMemberReady(room_idx);
 
@@ -183,11 +184,23 @@ const updateMemberReady = async (room_idx) => {
         },
         { where: { room_room_idx: room_idx } }
     );
-}
+};
 
-module.exports.getGame = getGame;
-module.exports.selectFinalResult = selectFinalResult;
-module.exports.selectHuman = selectHuman;
-module.exports.deleteAllAboutGame = deleteAllAboutGame;
-module.exports.updateRoomStatus = updateRoomStatus;
-module.exports.updateMemberReady = updateMemberReady ;
+const deleteChatByRoomIdx = async (roomIdx) => {
+    await Chat.destroy({
+        where: {
+            room_room_idx: roomIdx,
+        },
+    });
+};
+
+module.exports = {
+    getFinalResult,
+    getGame,
+    selectFinalResult,
+    selectHuman,
+    deleteAllAboutGame,
+    updateRoomStatus,
+    updateMemberReady,
+    deleteChatByRoomIdx
+};

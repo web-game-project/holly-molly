@@ -1,6 +1,6 @@
 const { Chat, Room, Game, GameSet, GameMember, GameVote, WaitingRoomMember, User } = require('../../models');
 const {printErrorLog, printLog} = require('../../util/log');
-const {selectFinalResult, selectHuman, deleteAllAboutGame, updateRoomStatus, updateMemberReady} = require('./getFinalResult');
+const {selectFinalResult, selectHuman, deleteAllAboutGame, updateRoomStatus, updateMemberReady, deleteChatByRoomIdx} = require('./getFinalResult');
 
 const exitGame = async (req, res, next) => {
     try {
@@ -191,13 +191,7 @@ const deleteRoomMember = async (wrmIdx) => {
         },
     });
 };
-const deleteChatByRoomIdx = async (roomIdx) => {
-    await Chat.destroy({
-        where: {
-            room_room_idx: roomIdx,
-        },
-    });
-}
+
 const deleteChatByUserIdx = async (userIdx) => {
     await Chat.destroy({
         where: {
