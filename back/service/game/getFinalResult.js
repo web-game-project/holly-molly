@@ -1,4 +1,4 @@
-const { GameSet, GameMember, Game, sequelize, Room,  GameVote, WaitingRoomMember } = require('../../models');
+const { GameSet, GameMember, Game, sequelize, Room,  GameVote, WaitingRoomMember, Chat } = require('../../models');
 const {printErrorLog} = require('../../util/log');
 
 const getFinalResult = async (req, res, next) => {
