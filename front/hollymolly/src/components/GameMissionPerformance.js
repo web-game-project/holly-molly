@@ -27,8 +27,8 @@ const GameMissionPerformance = (props) => {
     }
     
     const getHintLength = async () => {
-        setHintLength(2);
-       /*  const restURL = 'http://3.17.55.178:3002/game/keyword-length/' + gameSet;
+        
+       const restURL = 'http://3.17.55.178:3002/game/keyword-length/' + gameSet;
 
         const reqHeaders = {
             headers: {
@@ -43,7 +43,7 @@ const GameMissionPerformance = (props) => {
             })
             .catch(function (error) {
                 // alert(error.response.data.message);
-            }) */
+            }) 
     };
 
     useEffect(() => { 
