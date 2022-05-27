@@ -112,8 +112,6 @@
 <img width="600" alt="timer" src="https://user-images.githubusercontent.com/69183944/154488596-3a8b1cc1-7a30-439d-8f4f-f88fd4d096a0.png">
 <br>
 
-### 예외 처리
-<br>
 
 ## 개발 기간
 날짜 | 내용
