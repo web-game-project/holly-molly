@@ -81,7 +81,8 @@ const GameMissionPerformance = (props) => {
                 setSeconds(parseInt(seconds) - 1);
             }else{ // seconds == 0이면,
                 //console.log('마피아 미션 수행 초 끝')
-                inputHumanKeyword();
+                if(user_role === "human")
+                    inputHumanKeyword();
             }
         }, 1000);
 
