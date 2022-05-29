@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { ConnectedRouter } from "connected-react-router";
 import { history } from "./redux/configureStore";
@@ -28,12 +28,19 @@ import TutorialHollyVoteResult from './screens/TutorialScreens/TutorialHollyVote
 //토큰 만료 확인
 import RefreshVerification from './server/RefreshVerification';
 
+import styled from 'styled-components';
+import BGM from './assets/sound/backgroundSound.mp3';
+import { Howl } from 'howler';
+import mute from './assets/mute.png';
+import unmute from './assets/unmute.png';
+import { useSelector } from 'react-redux';
+
 const htmlTitle = document.querySelector('title');
 htmlTitle.innerHTML = '홀리몰리';
 
 let data = sessionStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
-      
+
 const socket = io('http://3.17.55.178:3002/', {
               auth: {
                   token: save_token,
@@ -41,22 +48,48 @@ const socket = io('http://3.17.55.178:3002/', {
               transports: ['websocket']
 });
 
- socket.on('connect', () => {
-  //console.log("app.js");
-  //console.log(socket);
+socket.on('connect', () => {
 });
 
 socket.on('disconnect', (reason) => {
     socket.connect();
 });
 
-export default function App() {
+let sound;
+const soundPlay = (src) => {
+    sound = new Howl({ src, autoplay : true, loop : true });
+    sound.volume(1);
+    sound.play();  
+}
 
+const soundMute = () => {
+    sound.mute(true)
+};
+
+const soundUnMute = () => {
+    sound.mute(false)
+};
+
+export default function App() {
+    useEffect(() => {
+        JSON.parse(data) && soundPlay(BGM);
+    }, []);
+    
     return (
         <div>
             <div>
                 <BrowserRouter>
-                    <ConnectedRouter history={history}>
+                    <ConnectedRouter history={history}>          
+                    {JSON.parse(data) ? 
+                    <Background>
+                        <Container>
+                            <SountTxt>Sound </SountTxt>
+                            <UnMuteBtn onClick={soundUnMute}></UnMuteBtn>
+                            <MuteBtn onClick={soundMute}></MuteBtn> 
+                            
+                        </Container>
+                    </Background>
+                    : ""}
                     
                     {/* 튜토리얼 페이지 Route */}
                     <Route path="/tutorial" component={Tutorial}></Route>
@@ -122,3 +155,58 @@ export default function App() {
         </div>
     );
 }
+const Background = styled.div`
+    height: 10vh;
+    display: flex; 
+    backround-color: green;
+    position: absolute;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-left: 100px;
+`;
+
+const Container = styled.div`
+    position: absolute;
+    backround-color: red;
+    display: flex;
+    flex-direction: row;
+    margin-top: 7%;
+    margin-left: 10px;
+`;
+
+const SountTxt = styled.text`
+    color: white;
+    z-index: 30;
+`;
+
+const MuteBtn = styled.button`
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    margin-right: 17px;
+    border: 0px;
+    filter: invert(1);
+    background-color: #ffffff;
+    background-size: cover;
+    background-image: url(${mute});
+
+    &:hover {
+        cursor: pointer;
+    }
+`;
+
+const UnMuteBtn = styled.button`
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    border: 0px;
+    filter: invert(1);
+    background-color: #ffffff;
+    background-size: cover;
+    background-image: url(${unmute});
+
+    &:hover {
+        cursor: pointer;
+    }
+`;

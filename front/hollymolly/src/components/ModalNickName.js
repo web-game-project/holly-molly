@@ -63,7 +63,7 @@ export default function ModalBase({ tutorial }) {
     }
 
     useEffect(() => {
-        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
         //console.log('내 인덱스 delete 후 : ' + JSON.stringify(localStorage.getItem('token')));
     });
 
