@@ -43,15 +43,15 @@ const GameDrawing = (props) => {
     //토큰 검사
     let data, save_token, save_user_idx;
 
+    data = sessionStorage.getItem('token');
+    save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+
     function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     }
-
-    useEffect(() => {
-        getToken();
-    }, [])
 
     //let user_order = parseInt(order);
 

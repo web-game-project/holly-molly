@@ -71,9 +71,9 @@ const soundUnMute = () => {
 };
 
 export default function App() {
-    /* useEffect(() => {
+    useEffect(() => {
         JSON.parse(data) && soundPlay(BGM);
-    }, []); */
+    }, []);
     
     return (
         <div>
