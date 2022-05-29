@@ -16,11 +16,15 @@ import { useHistory, useLocation } from 'react-router';
 import effectSound from '../components/EffectSound';
 import Effect from '../assets/sound/effect1.mp3';
 
+import { useSelector } from 'react-redux';
+
 let userList = [{}];
 
 const GameDrawing = (props) => {
     const history = useHistory();
 
+    const BaseURL = useSelector((state) => state.socket.base_url);
+    
     const { gameSetNo, gameIdx, socket, leaderIdx, order, color, room_idx, idx, member_count, role, setIdx, keyword } = props;
 
     const [possible, setPossible] = useState(true);
@@ -315,7 +319,7 @@ const GameDrawing = (props) => {
         formData.append('set_image', file, fileName);
         //formData.append('file', file, "21_1202");
 
-        const restURL = 'http://3.17.55.178:3002/game/set/image/' + setIdx; //게임세트 인덱스 넣기
+        const restURL = BaseURL + '/game/set/image/' + setIdx; //게임세트 인덱스 넣기
 
         const reqHeaders = {
             headers: {

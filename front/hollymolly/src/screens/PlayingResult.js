@@ -21,12 +21,17 @@ import axios from 'axios';
 //깊은 복제
 import * as _ from 'lodash';
 
+import { useSelector } from 'react-redux';
+
 let userList = [{}];
 
 const PlayingResult = (props) => {
 
     let location = useLocation();
     const history = useHistory();
+
+    const BaseURL = useSelector((state) => state.socket.base_url);
+
     let exitSocket = useRef(false);
 
     const [seconds, setSeconds] = useState(15); //10초 보여주기
@@ -102,7 +107,7 @@ const PlayingResult = (props) => {
                 authorization: 'Bearer ' + save_token,
             },
         };
-        const restURL = 'http://3.17.55.178:3002/game/chat/' + roomIdx;
+        const restURL = BaseURL + '/game/chat/' + roomIdx;
        
         axios
             .get(restURL, reqHeaders)
@@ -135,7 +140,7 @@ const PlayingResult = (props) => {
 
     // 중간 결과 (방장만 부를 수 있음)
     const getMiddleResult = async () => {
-        const restURL = 'http://3.17.55.178:3002/game/interim-result/' + gameIdx;
+        const restURL = BaseURL + '/game/interim-result/' + gameIdx;
 
         const reqHeaders = {
             headers: {
@@ -161,7 +166,7 @@ const PlayingResult = (props) => {
     };
 
     const getFinalResult = async () => {
-        const restURL = 'http://3.17.55.178:3002/game/final/' + gameIdx;
+        const restURL = BaseURL + '/game/final/' + gameIdx;
 
         const reqHeaders = {
             headers: {
@@ -304,7 +309,7 @@ const PlayingResult = (props) => {
 
     // 비정상 종료
     const exit = async () => {
-        const restURL = 'http://3.17.55.178:3002/game/exit';
+        const restURL = BaseURL + '/game/exit';
 
         const reqHeaders = {
             headers: {

@@ -11,11 +11,15 @@ import { io } from 'socket.io-client';
 import axios from 'axios';
 import colors from '../styles/styles';
 
-const BaseURL = 'http://3.17.55.178:3002';
+import { useSelector } from 'react-redux';
 
 export default function InfoSetModal({ title, mode, room_private, member, room_idx }) {
     // 인원수 0 제목 0 난이도
     //console.log(title, mode, member, room_private);
+
+    // 리덕스에 저장된 값
+    const BaseURL = useSelector((state) => state.socket.base_url);
+
     // 방 설정 수정
     const [roomdata, setRoomdata] = useState();
     const customStyles = {

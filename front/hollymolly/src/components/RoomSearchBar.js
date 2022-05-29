@@ -6,12 +6,15 @@ import axios from 'axios';
 import { useHistory } from 'react-router';
 import RefreshVerification from '../server/RefreshVerification';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
 
 const RoomSearchBar = (props) => {
     const history = useHistory();
 
     const inputRef = useRef();
     const [clicked, setClicked] = useState(false);
+
+    const BaseURL = useSelector((state) => state.socket.base_url);
 
     let data, save_token;
 
@@ -26,7 +29,7 @@ const RoomSearchBar = (props) => {
 
 
     const enterRoom = async () => {
-        const reqURL = 'http://3.17.55.178:3002/room/code'; //parameter : 방 타입
+        const reqURL = BaseURL + '/room/code'; //parameter : 방 타입
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,

@@ -2,9 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import style from '../styles/styles';
 import styled from 'styled-components';
 
-//통신
-import axios from 'axios';
-
 //깊은 복제
 import * as _ from 'lodash';
 

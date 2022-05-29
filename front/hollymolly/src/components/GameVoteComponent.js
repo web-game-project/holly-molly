@@ -16,7 +16,7 @@ const GameVoteComponent = (props) => {
     const [clicked, setClicked] = useState(false); // 클릭리스너
     const [voteWho, setVoteWho] = useState(''); // 내가 투표한 사람의 컬러
     //const [voteIndex, setVoteIndex] = useState(); // 내가 투표한 사람의 인덱스
-    const baseURL = useSelector((state) => state.socket.base_url);
+    const BaseURL = useSelector((state) => state.socket.base_url);
 
     //투표 유저 인덱스
     const voteIndex = useRef(-1); // orderCount
@@ -67,7 +67,7 @@ const GameVoteComponent = (props) => {
         if (voteIndex !== null || voteIndex !== '')
             str = voteIndex.current; */
 
-        const restURL = baseURL + 'game/vote';
+        const restURL = BaseURL + '/game/vote';
 
         const reqHeaders = {
             headers: {

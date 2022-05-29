@@ -11,6 +11,8 @@ const Room = (props) => {
     const history = useHistory();
     const [clicked, setClicked] = useState(false);
 
+    const BaseURL = 'http://api.hollymolly.kr';
+
     //토큰 검사
     // console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
@@ -25,7 +27,7 @@ const Room = (props) => {
     }, [])
 
     const enterRoom = async () => {
-        const reqURL = 'http://3.17.55.178:3002/room/idx'; //parameter : 방 타입
+        const reqURL = BaseURL + '/room/idx'; //parameter : 방 타입
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,

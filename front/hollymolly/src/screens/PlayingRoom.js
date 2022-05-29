@@ -23,12 +23,15 @@ import * as _ from 'lodash';
 import RefreshVerification from '../server/RefreshVerification.js';
 
 import Loading from '../components/Loading';
+import { useSelector } from 'react-redux';
 
 let userList = [{}];
 const PlayingRoom = (props) => {
 
     const location = useLocation();
     const history = useHistory();
+
+    const BaseURL = useSelector((state) => state.socket.base_url);
 
     let exitSocket = useRef(false);
     let finalSocket = useRef(false);
@@ -63,8 +66,6 @@ const PlayingRoom = (props) => {
     const [isDrawReady, setIsDrawReady] = React.useState(true); // 나중에 false로 바꿔놓아야 함
     const [waitSeconds, setWaitSeconds] = useState(-1); // 게임 시작 전 10초 기다리는 타이머,
 
-    const BaseURL = 'http://3.17.55.178:3002/';
-
     //토큰 검사
     let data, save_token, save_user_idx;
 
@@ -79,7 +80,7 @@ const PlayingRoom = (props) => {
     }
 
     const startSetAPI = async (str) => {
-        const restURL = BaseURL + 'game/set';
+        const restURL = BaseURL + '/game/set';
 
         //gameSetNo = str;
 
@@ -122,7 +123,7 @@ const PlayingRoom = (props) => {
                 authorization: 'Bearer ' + save_token,
             },
         };
-        const restURL = BaseURL + 'game/member/' + gameSetIdx.current;
+        const restURL = BaseURL + '/game/member/' + gameSetIdx.current;
 
         axios
             .get(restURL, reqHeaders)
@@ -183,7 +184,7 @@ const PlayingRoom = (props) => {
                 authorization: 'Bearer ' + save_token,
             },
         };
-        const restURL = BaseURL + 'game/chat/' + room_idx;
+        const restURL = BaseURL + '/game/chat/' + room_idx;
 
         axios
             .get(restURL, reqHeaders)
@@ -445,7 +446,7 @@ const PlayingRoom = (props) => {
     // 비정상 종료
     const exit = async () => {
         //console.log("playing room exit");
-        const restURL = 'http://3.17.55.178:3002/game/exit';
+        const restURL = BaseURL + '/game/exit';
 
         const reqHeaders = {
             headers: {
