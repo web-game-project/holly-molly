@@ -44,16 +44,13 @@ export default function ModalBase() {
 
     //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
+    data = sessionStorage.getItem('token');
+    save_token = JSON.parse(data) && JSON.parse(data).access_token;
 
     function getToken() {
-
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
-
-    useEffect(() => {
-        getToken();
-    }, []);
 
     // 난이도 useState
     const [isChecked, setIschecked] = React.useState(true); // 디폴트 이지 -> true
