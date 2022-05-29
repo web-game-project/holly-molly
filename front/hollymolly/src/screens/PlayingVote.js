@@ -26,12 +26,13 @@ import * as _ from 'lodash';
 import RefreshVerification from '../server/RefreshVerification.js';
 //RefreshVerification.verification();
 
+import { useSelector } from 'react-redux';
+
 let userList = [{}];
 
 const PlayingVote = (props) => {
 
-    //const [chatHistoryData, setChatHistoryData] = React.useState([]);
-    const BaseURL = 'http://3.17.55.178:3002/';
+    const BaseURL = useSelector((state) => state.socket.base_url);
 
     let location = useLocation();
     const history = useHistory();
@@ -129,7 +130,7 @@ const PlayingVote = (props) => {
                 authorization: 'Bearer ' + save_token,
             },
         };
-        const restURL = BaseURL + 'game/chat/' + roomIdx;
+        const restURL = BaseURL + '/game/chat/' + roomIdx;
 
         axios
             .get(restURL, reqHeaders)
@@ -312,7 +313,7 @@ const PlayingVote = (props) => {
     // 비정상 종료
     const exit = async () => {
         //console.log("exit!!!");
-        const restURL = 'http://3.17.55.178:3002/game/exit';
+        const restURL = BaseURL + '/game/exit';
 
         const reqHeaders = {
             headers: {

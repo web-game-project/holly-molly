@@ -41,7 +41,7 @@ htmlTitle.innerHTML = '홀리몰리';
 let data = sessionStorage.getItem('token');
 let save_token = JSON.parse(data) && JSON.parse(data).access_token;
 
-const socket = io('http://3.17.55.178:3002/', {
+const socket = io('http://api.hollymolly.kr/', {
               auth: {
                   token: save_token,
               },

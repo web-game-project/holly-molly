@@ -11,6 +11,7 @@ import axios from 'axios';
 import * as _ from 'lodash';
 
 import UserTotalVoteCard from './UserTotalVoteCard';
+import { useSelector } from 'react-redux';
 
 const GameVoteResult = (props) => {
     const history = useHistory();
@@ -25,7 +26,7 @@ const GameVoteResult = (props) => {
     const leaderIdx = props.leaderIdx;
     const keyword = props.keyword;
 
-    const BaseURL = 'http://3.17.55.178:3002/';
+    const BaseURL = useSelector((state) => state.socket.base_url);
 
     const [arrSize, setArrSize] = useState();  //넘어온 유저 리스트 길이 값
     const [control, setControl] = useState(false); 
@@ -92,7 +93,7 @@ const GameVoteResult = (props) => {
                     authorization: 'Bearer ' + save_token,
                 },
             };
-            const restURL = BaseURL + 'game/vote-result/' + gameSetIdx;
+            const restURL = BaseURL + '/game/vote-result/' + gameSetIdx;
 
             axios
                 .get(restURL, reqHeaders)
@@ -119,7 +120,7 @@ const GameVoteResult = (props) => {
                 authorization: 'Bearer ' + save_token,
             },
         };
-        const restURLVoteResult = BaseURL + 'game/top-vote-result/' + gameSetIdx;
+        const restURLVoteResult = BaseURL + '/game/top-vote-result/' + gameSetIdx;
 
         axios
             .get(restURLVoteResult, reqHeadersVoteResult)

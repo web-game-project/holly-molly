@@ -11,8 +11,11 @@ import RefreshVerification from '../server/RefreshVerification';
 import { io } from 'socket.io-client';
 import axios from 'axios';
 
+import { useSelector } from 'react-redux';
+
 export default function ModalBase() {
     const history = useHistory();
+    const BaseURL = useSelector((state) => state.socket.base_url);
     const [roomdata, setRoomdata] = useState();
     const [notice, setNotice] = useState(false);
     let idx;
@@ -137,7 +140,7 @@ export default function ModalBase() {
         //방 생성
         
             //console.log('방 생성 api 시작' + inputRef.current.value);
-            const restURL = 'http://3.17.55.178:3002/room';
+            const restURL = BaseURL + '/room';
             const reqHeaders = {
                 headers: {
                     authorization: 'Bearer ' + save_token,

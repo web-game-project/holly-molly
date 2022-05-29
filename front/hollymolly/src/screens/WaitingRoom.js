@@ -17,9 +17,7 @@ import InfoModal from '../components/InfoModal.js';
 import Header from '../components/Header.js';
 
 import Loading from '../components/Loading';
-
-
-const BaseURL = 'http://3.17.55.178:3002';
+import { useSelector } from 'react-redux';
 
 // room_idx 변수
 let room_idx = 0;
@@ -32,6 +30,8 @@ let locationUserList = [{}]; //location에서 받아온 유저리스트 담는 �
 export default function WaitingRoom(props) {
     let location = useLocation();
     const history = useHistory();
+
+    const BaseURL = useSelector((state) => state.socket.base_url);
 
     const dummyChatData = [];
 
@@ -107,7 +107,7 @@ export default function WaitingRoom(props) {
 
     const getWaiting = () => {
         //   console.log("getWaiting: " + room_index);
-        const restURL = 'http://3.17.55.178:3002/room/' + room_index;
+        const restURL = BaseURL + '/room/' + room_index;
 
         const reqHeaders = {
             headers: {
@@ -614,7 +614,7 @@ export default function WaitingRoom(props) {
 
     const getRoomInfo = async () => {
         // 대기실 정보 조회 api
-        const restURL = 'http://3.17.55.178:3002/room/info/' + room_idx;
+        const restURL = BaseURL + '/room/info/' + room_idx;
 
         const reqHeaders = {
             headers: {
@@ -737,7 +737,7 @@ export default function WaitingRoom(props) {
     // 비정상 종료
     const exit = async () => {
         // console.log("playing room exit");
-        const restURL = 'http://3.17.55.178:3002/game/exit';
+        const restURL = BaseURL + '/game/exit';
 
         const reqHeaders = {
             headers: {

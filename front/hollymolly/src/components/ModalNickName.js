@@ -81,7 +81,7 @@ export default function ModalBase({ tutorial }) {
             alert('2~10자의 한글, 영문, 숫자만 사용할 수 있습니다.');
         }
         else if (usable === true) {
-            const url = 'http://3.17.55.178:3002/login';
+            const url = 'http://api.hollymolly.kr/login';
 
             axios
                 .post(url, {
@@ -104,7 +104,7 @@ export default function ModalBase({ tutorial }) {
 
 
                     // 리덕스 store에 baseURL 넣기
-                    dispatch(socketActions.socketAction('http://3.17.55.178:3002/'));
+                    dispatch(socketActions.socketAction('http://api.hollymolly.kr'));
                     //history.push("/roomlist");
                     window.location.replace('/roomlist');
                 })

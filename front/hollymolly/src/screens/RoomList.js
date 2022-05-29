@@ -29,7 +29,7 @@ const RoomList = (props) => {
     const history = useHistory();
 
     // 리덕스에 저장된 값
-    const baseURL = useSelector((state) => state.socket.base_url);
+    const BaseURL = useSelector((state) => state.socket.base_url);
 
     const [emptyRoomsLength, setEmptyRoomsLength] = useState(0);
     const [createRoomData, setCreateRoomData] = useState('');
@@ -175,7 +175,7 @@ const RoomList = (props) => {
     const roomListCheck = async () => {
         const currentPage = currentSlide + 1;
 
-        var restURL = baseURL + 'room?page=' + currentPage;
+        var restURL = BaseURL + '/room?page=' + currentPage;
 
         restURL = filterUrl(restURL, resultArray);
 
@@ -365,7 +365,7 @@ const RoomList = (props) => {
 
         // console.log(modeFilterArray);
         // console.log(personFilterArray);
-        const reqURL = baseURL + 'room/random'; //parameter : 방 타입
+        const reqURL = BaseURL + '/room/random'; //parameter : 방 타입
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,

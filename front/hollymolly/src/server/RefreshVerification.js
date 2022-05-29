@@ -11,7 +11,7 @@ const RefreshVerification = {
   //API는 방 리스트 조회 사용 -> 각 각 request body나 parameter에 필요한 데이터들이 앞부분에는 없어서 가장 처음 사용하는 api로 결정
 
   verification() {
-    const BaseURL = 'http://3.17.55.178:3002/';
+    const BaseURL = 'http://api.hollymolly.kr';
     let data = sessionStorage.getItem('token');
     let save_token = JSON.parse(data) && JSON.parse(data).access_token;
     let save_refreshToken = JSON.parse(data) && JSON.parse(data).refresh_token;
@@ -26,7 +26,7 @@ const RefreshVerification = {
       },
     };
 
-    const restURL_refresh = BaseURL + "login/refresh";
+    const restURL_refresh = BaseURL + "/login/refresh";
 
     console.log('refresh!');
 

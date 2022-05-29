@@ -3,10 +3,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import style from '../styles/styles';
 import axios from 'axios';
 import RefreshVerification from "../server/RefreshVerification";
+import { useSelector } from 'react-redux';
 
 const GameMissionPerformance = (props) => {
     
     const {gameSet,role,socket} = props;
+
+    const BaseURL = useSelector((state) => state.socket.base_url);
 
     const [isHuman, setIsHuman] = useState(false);
     const [seconds, setSeconds] = useState(10); 
@@ -26,7 +29,7 @@ const GameMissionPerformance = (props) => {
     
     const getHintLength = async () => {
         
-       const restURL = 'http://3.17.55.178:3002/game/keyword-length/' + gameSet;
+       const restURL = BaseURL + '/game/keyword-length/' + gameSet;
 
         const reqHeaders = {
             headers: {
@@ -84,7 +87,7 @@ const GameMissionPerformance = (props) => {
     }, [seconds]);
 
     const inputHumanKeyword = async () => {
-        const reqURL = 'http://3.17.55.178:3002/game/human-keyword'; //parameter : 방 타입
+        const reqURL = BaseURL + '/game/human-keyword'; //parameter : 방 타입
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,

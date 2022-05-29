@@ -12,11 +12,12 @@ import { io } from 'socket.io-client';
 import axios from 'axios';
 import colors from '../styles/styles';
 
-const BaseURL = 'http://3.17.55.178:3002';
+import { useSelector } from 'react-redux';
 
 export default function ModalSetting({ title, mode, room_private, member, room_idx, clickedSetting, resultt }) {
     // 인원수 0 제목 0 난이도
     //console.log(title, mode, member, room_private);
+    const BaseURL = useSelector((state) => state.socket.base_url);
     // 방 설정 수정
     const [roomdata, setRoomdata] = useState();
     const [roomInfo, setRoomInfo] = useState('');
@@ -53,10 +54,10 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
         getToken();
     }, []);
 
-    const UpdateRoomInfo = async () => {
+    const UpdateRoomInfo = async (str) => {
         // 대기실 정보 수정 api
         const restURL = BaseURL + '/room/info/';
-
+        console.log("token " + save_token);
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,
@@ -67,7 +68,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
                 restURL,
                 {
                     room_idx: room_idx,
-                    room_name: inputRef.current.value,
+                    room_name: str,
                     room_mode: roomMode,
                     room_start_member_cnt: people,
                 },
@@ -83,7 +84,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
                 if ("로그인 후 이용해주세요." === resErr) { //401 err
                     let refresh = RefreshVerification.verification();
                     getToken();
-                    UpdateRoomInfo();
+                    UpdateRoomInfo(str);
 
                 }
                 else {
@@ -174,7 +175,7 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
 
             //console.log('인원수는? ' + people + '명');
 
-            UpdateRoomInfo();
+            UpdateRoomInfo(inputRef.current.value);
             setIsOpen(false);
             // clickedSetting(resultt + 1);
             //closeModal();

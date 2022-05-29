@@ -5,8 +5,6 @@ import styled from 'styled-components';
 //이미지
 import gameBackground from '../assets/night.png';
 
-//통신
-import axios from 'axios';
 // 소켓
 import { io, Socket } from 'socket.io-client';
 import GameStart from '../screens/GameStart';
