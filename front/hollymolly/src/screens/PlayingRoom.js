@@ -277,8 +277,6 @@ const PlayingRoom = (props) => {
 
 
     useEffect(() => {
-
-        getToken();
         getChatHistory();
 
         props.socket.on('get next turn', (data) => {
