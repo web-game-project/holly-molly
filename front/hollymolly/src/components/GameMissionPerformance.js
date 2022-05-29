@@ -17,11 +17,9 @@ const GameMissionPerformance = (props) => {
     let user_role = role;
 
     //토큰 검사
-    let verify = RefreshVerification.verification()
-    //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
 
-    if (verify === true) {
+    function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
@@ -42,11 +40,20 @@ const GameMissionPerformance = (props) => {
                 setHintLength(response.data.length);
             })
             .catch(function (error) {
-                // alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    getHintLength();
+                }
+                else
+                    alert(resErr);
             }) 
     };
 
     useEffect(() => { 
+        getToken();
         getHintLength();
     }, []);
 
@@ -103,7 +110,15 @@ const GameMissionPerformance = (props) => {
                 //console.log(response);
             })
             .catch(function (error) {
-                //alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    inputHumanKeyword();
+                }
+                else
+                    alert(resErr);
             });
     };
 

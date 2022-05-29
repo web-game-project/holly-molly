@@ -37,15 +37,17 @@ const GameDrawing = (props) => {
     userList = props.userList;
 
     //토큰 검사
-    let verify = RefreshVerification.verification()
-    //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token, save_user_idx;
 
-    if (verify === true) {
+    function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     }
+
+    useEffect(() => {
+        getToken();
+    }, [])
 
     //let user_order = parseInt(order);
 
@@ -57,19 +59,19 @@ const GameDrawing = (props) => {
     let user_color = color;
 
     // 지정 색 코드로 바꿔주기 
-    if(user_color === 'RED'){
+    if (user_color === 'RED') {
         user_color = style.red_bg;
-    }else if(user_color === 'ORANGE'){
+    } else if (user_color === 'ORANGE') {
         user_color = style.orange_bg;
-    }else if(user_color === 'YELLOW'){
+    } else if (user_color === 'YELLOW') {
         user_color = style.yellow_bg;
-    }else if(user_color === 'GREEN'){
+    } else if (user_color === 'GREEN') {
         user_color = style.green_bg;
-    }else if(user_color === 'BLUE'){
+    } else if (user_color === 'BLUE') {
         user_color = style.blue_bg;
-    }else if(user_color === 'PINK'){
+    } else if (user_color === 'PINK') {
         user_color = style.pink_bg;
-    }else{
+    } else {
         user_color = style.purple_bg;
     }
 
@@ -170,7 +172,7 @@ const GameDrawing = (props) => {
             readyNextOrder.current = true;
         });
 
-         // 방 퇴장 
+        // 방 퇴장 
         socket.on('exit room', (data) => {
             setSeconds(10);
         });
@@ -218,7 +220,7 @@ const GameDrawing = (props) => {
         };
     }, [seconds]);
 
-    
+
     // 순서 받기 타이머
     useEffect(() => {
         const waitcountdown = setInterval(() => {
@@ -231,11 +233,11 @@ const GameDrawing = (props) => {
                     readyNextOrder.current = false; // 다시 다음 순서 받을 준비
                     orderCount.current += 1; // 순서 바꾸기
                     setReDraw(!reDraw); // 그리기 준비
-                    drawingTime.current = true;       
+                    drawingTime.current = true;
 
                     const es = effectSound(Effect, 5)
                     es.play();
-    
+
                     setPossible(true);
                     setSeconds(10);
                 }
@@ -249,14 +251,14 @@ const GameDrawing = (props) => {
                     orderCount.current += 1; // 순서 바꾸기
                     setReDraw(!reDraw); // 그리기 준비
                     drawingTime.current = true;
-                    
+
                     setPossible(true);
                     setSeconds(10);
                 } else {
                     //console.log('순서 받기 시간 끝');
                     alert('네트워크가 불안정합니다.');
                     history.push({
-                        pathname: '/',  
+                        pathname: '/',
                     });
                     setWaitSeconds(-1);
                 }
@@ -330,7 +332,15 @@ const GameDrawing = (props) => {
                 //console.log('이미지 저장 성공');
             })
             .catch(function (error) {
-                //alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    saveCanvas();
+                }
+                else
+                    alert(resErr);
             });
     }
 
@@ -359,7 +369,7 @@ const GameDrawing = (props) => {
     // 순서에 따른 토스트 표시 
     const toast = () => {
         if (drawingTime.current === true) {
-            if(currentItem.current){
+            if (currentItem.current) {
                 if (currentItem.current.user_idx === save_user_idx) {
                     cursor_status = true;
                     return <div><Toast>🎨 {currentItem.current.user_name} 님이 그림을 그릴 차례입니다.</Toast></div>;
@@ -374,20 +384,20 @@ const GameDrawing = (props) => {
     // 지정 색 코드로 바꿔주기 
     let border_user_color = currentItem.current && currentItem.current.user_color;
 
-    if(drawingTime.current === true){
-        if(border_user_color === 'RED'){
+    if (drawingTime.current === true) {
+        if (border_user_color === 'RED') {
             border_user_color = style.red_bg;
-        }else if(border_user_color === 'ORANGE'){
+        } else if (border_user_color === 'ORANGE') {
             border_user_color = style.orange_bg;
-        }else if(border_user_color === 'YELLOW'){
+        } else if (border_user_color === 'YELLOW') {
             border_user_color = style.yellow_bg;
-        }else if(border_user_color === 'GREEN'){
+        } else if (border_user_color === 'GREEN') {
             border_user_color = style.green_bg;
-        }else if(border_user_color === 'BLUE'){
+        } else if (border_user_color === 'BLUE') {
             border_user_color = style.blue_bg;
-        }else if(border_user_color === 'PINK'){
+        } else if (border_user_color === 'PINK') {
             border_user_color = style.pink_bg;
-        }else{
+        } else {
             border_user_color = style.purple_bg;
         }
     }
