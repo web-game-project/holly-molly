@@ -41,8 +41,6 @@ const RefreshVerification = {
         //받은 access_token이랑 유저 인덱스로 다시 저장
         sessionStorage.clear();
 
-        console.log("after clear toekn : " + sessionStorage.getItem("token"));
-        
         sessionStorage.setItem(
           "token",
           JSON.stringify({
