@@ -122,7 +122,7 @@ export default function ModalBase() {
                 console.log('공개범위는? public'); // 반대로 나옴
             } else console.log('공개범위는? private'); // 반대로 나옴 */
 
-            roomCreate();
+            roomCreate(inputRef.current.value);
             // setTimeout(() => enterRoomInfo(), 1000);
             // enterRoom();
             setIsOpen(false);
@@ -133,13 +133,10 @@ export default function ModalBase() {
         }
     };
 
-    const roomCreate = async () => {
+    const roomCreate = async (str) => {
         //방 생성
-        if (inputRef.current.value.length < 2 || inputRef.current.value.length > 12) {
-            // alert('방 제목은 2~12글자 이내여야 합니다.');
-            notice = true;
-        } else {
-            //console.log('방 생성 api 시작');
+        
+            //console.log('방 생성 api 시작' + inputRef.current.value);
             const restURL = 'http://3.17.55.178:3002/room';
             const reqHeaders = {
                 headers: {
@@ -150,7 +147,7 @@ export default function ModalBase() {
                 .post(
                     restURL,
                     {
-                        room_name: inputRef.current.value,
+                        room_name: str,
                         room_mode: roomMode,
                         room_private: !ispublic, // false면 공개
                         room_start_member_cnt: people,
@@ -172,13 +169,13 @@ export default function ModalBase() {
                     if ("로그인 후 이용해주세요." === resErr) { //401 err
                         let refresh = RefreshVerification.verification();
                         getToken();
-                        roomCreate();
+                        roomCreate(str);
 
                     }
                     else
                         alert(resErr);
                 });
-        }
+        
     };
 
     // 방 생성 후에 방 접속까지 해줌
