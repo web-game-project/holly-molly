@@ -70,11 +70,9 @@ const PlayingVote = (props) => {
     let chatAvailable = useRef(true);
 
     //토큰 검사
-    let verify = RefreshVerification.verification()
-    //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token, save_user_idx;
 
-    if(verify === true){
+    function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
@@ -151,6 +149,17 @@ const PlayingVote = (props) => {
             })
             .catch(function (error) {
                 console.log("ERROR:: ",error.response);
+
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    getChatHistory();
+
+                }
+                else
+                    alert(resErr);
             });
     }
 
@@ -176,7 +185,7 @@ const PlayingVote = (props) => {
         props.socket.on('connect', () => {
             //console.log('playing vote');
         });
-
+        getToken();
         getChatHistory();
 
         /* props.socket.on('vote', (data) => {

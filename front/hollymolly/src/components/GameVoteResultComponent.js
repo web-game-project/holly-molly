@@ -42,7 +42,7 @@ const GameVoteResult = (props) => {
    // console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
 
-    if (verify === true) {
+    function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
@@ -81,6 +81,7 @@ const GameVoteResult = (props) => {
     }, [seconds]);
 
     useEffect(() => {
+        getToken();
         getVoteResult();
     }, []);
 
@@ -100,7 +101,16 @@ const GameVoteResult = (props) => {
                     //console.log('전체 투표 결과야!' + JSON.stringify(voteList.current));
                 })
                 .catch(function (error) {
-                    //alert(error.response.data.message);
+                    let resErr = error.response.data.message;
+
+                    if ("로그인 후 이용해주세요." === resErr) { //401 err
+                        let refresh = RefreshVerification.verification();
+                        getToken();
+                        getVoteResult();
+    
+                    }
+                    else
+                        alert(resErr);
                 });
         }
 
@@ -119,7 +129,16 @@ const GameVoteResult = (props) => {
                 setControl(true);
             })
             .catch(function (error) {
-                //alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                    if ("로그인 후 이용해주세요." === resErr) { //401 err
+                        let refresh = RefreshVerification.verification();
+                        getToken();
+                        getVoteResult();
+    
+                    }
+                    else
+                        alert(resErr);
             });
 
     }
