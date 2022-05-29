@@ -39,13 +39,13 @@ const PlayingRoom = (props) => {
 
     let gameIdx = location.state.gameIdx;
     let gameSetIdx = useRef(location.state.gameSetIdx);
-    
+
     let beforeUserList = location.state.userList;
 
-    const [afterExitUserList, setAfterExitUserList] = useState(); 
+    const [afterExitUserList, setAfterExitUserList] = useState();
 
     let gameSetNo = location.state.gameSetNo;
-    
+
     let isSet = location.state.isSet;
 
     let setBeforeImg = useRef('');
@@ -66,15 +66,18 @@ const PlayingRoom = (props) => {
     const BaseURL = 'http://3.17.55.178:3002/';
 
     //토큰 검사
-    let verify = RefreshVerification.verification()
     let data, save_token, save_user_idx;
 
-    if(verify === true){
+    data = sessionStorage.getItem('token');
+    save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+
+    function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     }
-    
+
     const startSetAPI = async (str) => {
         const restURL = BaseURL + 'game/set';
 
@@ -96,11 +99,19 @@ const PlayingRoom = (props) => {
                 reqHeaders
             )
             .then(function (response) {
-               // console.log('game set success');
+                // console.log('game set success');
                 //possible.current = true;
             })
             .catch(function (error) {
-               // alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    startSetAPI(str);
+                }
+                else
+                    alert(resErr);
             });
     }
 
@@ -116,10 +127,10 @@ const PlayingRoom = (props) => {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
-                
+
                 setRole(response.data.user_role);
                 setKeyWord(response.data.keyword);
-                
+
                 for (let i = 0; i < userList.length; i++) {
                     if (userList[i].user_idx === save_user_idx) {
                         userList[i].user_role = response.data.user_role;
@@ -129,35 +140,44 @@ const PlayingRoom = (props) => {
                 }
             })
             .catch(function (error) {
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    getGameMember();
+                }
+                else
+                    alert(resErr);
             });
     }
 
-    function changeColor(color){
-        if(color === 'RED'){
+    function changeColor(color) {
+        if (color === 'RED') {
             color = style.red_bg;
-        }else if(color === 'ORANGE'){
+        } else if (color === 'ORANGE') {
             color = style.orange_bg;
-        }else if(color === 'YELLOW'){
+        } else if (color === 'YELLOW') {
             color = style.yellow_bg;
-        }else if(color === 'GREEN'){
+        } else if (color === 'GREEN') {
             color = style.green_bg;
-        }else if(color === 'BLUE'){
+        } else if (color === 'BLUE') {
             color = style.blue_bg;
-        }else if(color === 'PINK'){
+        } else if (color === 'PINK') {
             color = style.pink_bg;
-        }else if(color === 'WHITE'){
+        } else if (color === 'WHITE') {
             color = '#FFFFFF'
-        }else{
+        } else {
             color = style.purple_bg;
         }
-    
+
         return color;
     }
 
     //이전 채팅 이력 정보 조회
     let chats = useRef([]);
     const getChatHistory = async () => {
-        
+
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,
@@ -169,20 +189,29 @@ const PlayingRoom = (props) => {
             .get(restURL, reqHeaders)
             .then(function (response) {
                 //console.log(response.data);  
-                for(let i = 0; i < response.data.length; i++){
+                for (let i = 0; i < response.data.length; i++) {
                     const chat = {
                         recentChat: response.data[i].chat_msg,
                         recentChatColor: changeColor(response.data[i].wrm_user_color),
                         recentChatUserName: response.data[i].user_name
                     }
 
-                    chats.current.push(chat); 
-                    
-                }   
+                    chats.current.push(chat);
+
+                }
                 //console.log(chats.current);  
             })
             .catch(function (error) {
-                console.log("ERROR:: ",error.response);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    getChatHistory();
+                }
+                else
+                    alert(resErr);
+
             });
     }
 
@@ -232,7 +261,7 @@ const PlayingRoom = (props) => {
 
                         draw_order: 1,
                     });
-                    
+
                     setWaitSeconds(10); // 10초 기다림
 
                     setSeconds(-1);
@@ -248,6 +277,7 @@ const PlayingRoom = (props) => {
 
     useEffect(() => {
 
+        getToken();
         getChatHistory();
 
         props.socket.on('get next turn', (data) => {
@@ -263,10 +293,10 @@ const PlayingRoom = (props) => {
 
             setBeforeImg.current = data.before_game_set_img;
 
-            if(data.before_game_set_human_answer === null){                
+            if (data.before_game_set_human_answer === null) {
                 setBeforeHumanAnswer.current = "기 권";
             }
-            else{
+            else {
                 setBeforeHumanAnswer.current = data.before_game_set_human_answer;
             }
 
@@ -281,13 +311,13 @@ const PlayingRoom = (props) => {
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
             //console.log('exit room');   
-            var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
+            var exitPerson = userList.find((x) => x.user_idx === data.user_idx);
 
             userList = userList.filter(x => x.user_idx !== data.user_idx);
-            
-            if(exitPerson){
+
+            if (exitPerson) {
                 for (let i = 0; i < userList.length; i++) {
-                    if(exitPerson.game_member_order < userList[i].game_member_order){
+                    if (exitPerson.game_member_order < userList[i].game_member_order) {
                         userList[i].game_member_order = userList[i].game_member_order - 1;
                     }
                 }
@@ -305,7 +335,7 @@ const PlayingRoom = (props) => {
             copyList.sort(function (a, b) {
                 return a.game_member_order - b.game_member_order;
             });
-            
+
             // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
             var myItem = copyList.find((x) => x.user_idx === save_user_idx);
             if (myItem) {
@@ -346,16 +376,16 @@ const PlayingRoom = (props) => {
                     state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx.current, keyword: keyword, role: role, exitData: data, normal: false},
                 })
             } */
-            
-        });   
+
+        });
     }, []);
 
     // 비정상 종료 감지 후 최종 결과 페이지로 이동 
     const detectExit = async (data) => {
-        if(exitSocket.current === true && finalSocket.current === true){
+        if (exitSocket.current === true && finalSocket.current === true) {
             history.push({
                 pathname: '/playingresult/' + room_idx,
-                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx.current, keyword: "게임종료", role: role, exitData: data, normal: false},
+                state: { gameSetNo: gameSetNo, gameIdx: gameIdx, leaderIdx: leaderIdx, userList: userList, roomIdx: room_idx, gameSetIdx: gameSetIdx.current, keyword: "게임종료", role: role, exitData: data, normal: false },
             })
         }
     }
@@ -387,21 +417,21 @@ const PlayingRoom = (props) => {
     // 깊은 복사 
     let onlyUserList = _.cloneDeep(userList); // 내 정보 저장 
     let reOrderList = _.cloneDeep(userList); // 유저 리스트 중 순서 정리를 위한 리스트
-    
+
     // 유저 리스트 중 내 정보 배열 및 내 순서 저장
     let myList = onlyUserList.find((x) => x.user_idx === save_user_idx);
-    
+
     // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
     let myIndex = reOrderList.find((x) => x.user_idx === save_user_idx);
     if (myIndex) {
         myIndex.game_member_order = 0;
     }
-    
+
     // 그림 그리기 순서 대로 유저 리스트 재정렬
     reOrderList.sort(function (a, b) {
         return a.game_member_order - b.game_member_order;
     });
-    
+
     // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
     var myItem = reOrderList.find((x) => x.user_idx === save_user_idx);
     if (myItem) {
@@ -416,7 +446,7 @@ const PlayingRoom = (props) => {
     const exit = async () => {
         //console.log("playing room exit");
         const restURL = 'http://3.17.55.178:3002/game/exit';
-        
+
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,
@@ -427,12 +457,12 @@ const PlayingRoom = (props) => {
             .then(function (response) {
                 //console.log(response);
                 history.push({
-                    pathname: '/',  
+                    pathname: '/',
                 });
                 //window.location.replace('/');
             })
             .catch(function (error) {
-              //  alert(error.response.data.message);
+                //  alert(error.response.data.message);
             });
     };
 
@@ -440,25 +470,25 @@ const PlayingRoom = (props) => {
     useEffect(() => {
         window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
         window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
-        
+
         return () => {
             window.removeEventListener('beforeunload', alertUser)
             window.removeEventListener('unload', handleEndConcert)
-        }  
+        }
     }, [])
 
     // 경고창 
     const alertUser = (e) => {
         e.preventDefault(); // 페이지가 리프레쉬 되는 고유의 브라우저 동작 막기
         e.returnValue = "";
-        
+
         exit();
     };
 
     // 종료시 실행 
     const handleEndConcert = async () => {
         exit();
-    } 
+    }
 
     // 뒤로 가기 감지 시 비정상종료 처리 
     /* useEffect(()=> {
@@ -482,7 +512,7 @@ const PlayingRoom = (props) => {
         <React.Fragment>
             <Background>
                 {isDrawReady ? (
-                    role !== ''? (
+                    role !== '' ? (
                         <div>
                             <Header />
                             <Container>
@@ -491,7 +521,7 @@ const PlayingRoom = (props) => {
                                         {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
                                         <MissionWord text={keyword} role={role}></MissionWord>
                                         {/* 유저 컴포넌트 */}
-                                        {exitSocket.current  === false? 
+                                        {exitSocket.current === false ?
                                             (reOrderList && (reOrderList.map((values) => (
                                                 <GameUserCard
                                                     user_idx={values.user_idx}
@@ -501,7 +531,7 @@ const PlayingRoom = (props) => {
                                                     user_order={values.game_member_order}
                                                     user_exit={values.user_exit}
                                                 ></GameUserCard>
-                                            )))) : 
+                                            )))) :
                                             (afterExitUserList && (
                                                 afterExitUserList.map((values) => (
                                                     <GameUserCard
@@ -511,8 +541,8 @@ const PlayingRoom = (props) => {
                                                         user_role={values.user_role}
                                                         user_order={values.game_member_order}
                                                         user_exit={values.user_exit}
-                                                ></GameUserCard>
-                                                )))) 
+                                                    ></GameUserCard>
+                                                ))))
                                         }
                                     </UserDiv>
 
@@ -556,10 +586,10 @@ const PlayingRoom = (props) => {
 
 
                                     <ChatDiv>
-                                        <Chatting chats={chats.current} socket={props.socket} room_idx={room_idx} height="615px" available={chatAvailable.current} color={myList&&myList.user_color}></Chatting>
+                                        <Chatting chats={chats.current} socket={props.socket} room_idx={room_idx} height="615px" available={chatAvailable.current} color={myList && myList.user_color}></Chatting>
                                     </ChatDiv>
                                 </BackGroundDiv>
-                            </Container> 
+                            </Container>
                         </div>
                     ) : (
                         <Loading />
