@@ -41,18 +41,16 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
         },
     };
 
-    //토큰 검사
-    let verify = RefreshVerification.verification()
     //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
 
-    if (verify === true) {
+    function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
-    
+
     useEffect(() => {
-        // getRoomInfo();
+        getToken();
     }, []);
 
     const UpdateRoomInfo = async () => {
@@ -80,33 +78,17 @@ export default function ModalSetting({ title, mode, room_private, member, room_i
                 //console.log('UpdateRoomInfo 성공');
             })
             .catch(function (error) {
-                //console.log('UpdateRoomInfo 실패');
-                //console.log(error.response);
-                //alert(error.response.data.message);
-            });
-    };
+                let resErr = error.response.data.message;
 
-    const getRoomInfo = async () => {
-        // 대기실 정보 조회 api
-        const restURL = BaseURL + '/room/info/' + room_idx;
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    UpdateRoomInfo();
 
-        const reqHeaders = {
-            headers: {
-                //1번 토큰 이용
-                authorization: 'Bearer ' + save_token,
-            },
-        };
-        axios
-            .get(restURL, reqHeaders)
-            .then(function (response) {
-                setRoomInfo(response.data);
-                //console.log(response.data);
-                //console.log('getRoomInfo 성공 in madal');
-            })
-            .catch(function (error) {
-                //console.log('getRoomInfo 실패 in madal');
-                //console.log(error.response);
-                //alert(error.response.data.message);
+                }
+                else {
+                    alert(resErr);
+                }
             });
     };
 

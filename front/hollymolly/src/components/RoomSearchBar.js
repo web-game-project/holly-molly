@@ -13,15 +13,17 @@ const RoomSearchBar = (props) => {
     const inputRef = useRef();
     const [clicked, setClicked] = useState(false);
 
-    //토큰 검사
-    let verify = RefreshVerification.verification()
-    //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
 
-    if (verify === true) {
+    function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
+    
+    useEffect(() => {
+        getToken();
+    }, [])
+
 
     const enterRoom = async () => {
         const reqURL = 'http://3.17.55.178:3002/room/code'; //parameter : 방 타입
@@ -45,12 +47,20 @@ const RoomSearchBar = (props) => {
                 });
             })
             .catch(function (error) {
-                if(error.response.data.message === undefined){
-                    alert("올바른 코드값을 입력해주세요")
-                }else{
-                    alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    enterRoom();
+
                 }
-                
+                else if (resErr === undefined) {
+                    alert("올바른 코드값을 입력해주세요")
+                } else {
+                    alert(resErr);
+                }
+
             });
     };
 
@@ -60,7 +70,7 @@ const RoomSearchBar = (props) => {
     };
 
     const onEnter = (e) => {
-        if(e.key === 'Enter'){
+        if (e.key === 'Enter') {
             enterRoom();
         }
     }

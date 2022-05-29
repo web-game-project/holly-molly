@@ -13,8 +13,6 @@ import Chatting from '../components/Chatting.js';
 //import { useLocation } from 'react-router';
 import RefreshVerification from '../server/RefreshVerification.js';
 import { useHistory, useLocation } from 'react-router';
-import colors from '../styles/styles.js';
-import InfoSetModal from '../components/InfoSetModal.js';
 import InfoModal from '../components/InfoModal.js';
 import Header from '../components/Header.js';
 
@@ -38,7 +36,7 @@ export default function WaitingRoom(props) {
     const dummyChatData = [];
 
     let room_index = parseInt(props.match.params.name); // url에 입력해준 방 인덱스
- //   console.log('방 번호는 ?' + room_index);
+    //   console.log('방 번호는 ?' + room_index);
 
     // 뒤로가기 감지 
     const [isBlocking, setIsBlocking] = useState(false);
@@ -49,11 +47,10 @@ export default function WaitingRoom(props) {
     let userList = useRef([]);
 
     //토큰 검사
-    let verify = RefreshVerification.verification()
     //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token, save_user_idx;
 
-    if (verify === true) {
+    function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
         save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
@@ -78,7 +75,7 @@ export default function WaitingRoom(props) {
     //사용자가 색을 바꾸었을 때, 변경중입니다 toast 띄우기 위해서
     const [modify, setModifiy] = React.useState(false);
 
-    const [ready , setReady] = React.useState(false);
+    const [ready, setReady] = React.useState(false);
 
     //무슨 색을 선택할 수 있는가
     const [selectColor, setSelectColor] = React.useState([]);
@@ -105,7 +102,7 @@ export default function WaitingRoom(props) {
     const leader_idx = useRef(0);
 
     const getWaiting = () => {
-     //   console.log("getWaiting: " + room_index);
+        //   console.log("getWaiting: " + room_index);
         const restURL = 'http://3.17.55.178:3002/room/' + room_index;
 
         const reqHeaders = {
@@ -117,7 +114,7 @@ export default function WaitingRoom(props) {
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
-             //   console.log(response.data);
+                //   console.log(response.data);
                 setRoomEnterInfo(response.data);
                 //room index 설정
                 room_idx = response.data.room_idx; //이렇게 받아오면 number타입으로 api, 소켓 에러 X\
@@ -125,7 +122,7 @@ export default function WaitingRoom(props) {
                 //방장 인덱스 받아오기, save_user_idx 이게 내 인덱스 저장된 변수
                 //받아와서 리더인지 아닌지 state 설정
                 if (response.data.leader_idx === save_user_idx) {
-                 //   console.log('방장 오케이');
+                    //   console.log('방장 오케이');
                     setIsLeader(1); //리더다
                 }
 
@@ -145,7 +142,7 @@ export default function WaitingRoom(props) {
                         }
                     }
 
-                 //   console.log('ready 카운트 ' + ready_cnt);
+                    //   console.log('ready 카운트 ' + ready_cnt);
 
                     const currentColor = locationUserList[i].wrm_user_color;
 
@@ -170,7 +167,7 @@ export default function WaitingRoom(props) {
                 }
 
                 //햔재 인원 받아오기
-              //  console.log('수정인데 세팅룸함수 안에 현재 인원 값 : ' + response.data.room_current_member_cnt);
+                //  console.log('수정인데 세팅룸함수 안에 현재 인원 값 : ' + response.data.room_current_member_cnt);
                 setCurrentMember(response.data.room_current_member_cnt);
 
                 //게임 시작 인원 받아오기
@@ -181,15 +178,26 @@ export default function WaitingRoom(props) {
                 leader_idx.current = response.data.leader_idx;
             })
             .catch(function (error) {
-               // alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    getWaiting();
+
+                }
+                else
+                    alert(resErr);
             });
 
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
     }
 
     useEffect(() => {
-      //  console.log("waiting room");
-      //  console.log(props.socket);
+        //  console.log("waiting room");
+        //  console.log(props.socket);
+
+        getToken();
 
         if (props.socket.connected) {
             getWaiting();
@@ -206,7 +214,7 @@ export default function WaitingRoom(props) {
 
         //방장 변경 leaderIdx
         props.socket.on('change host', (data) => {
-           // console.log('방장 탈출');
+            // console.log('방장 탈출');
 
             // setLeaderIdx(data.user_idx);
             getWaiting();
@@ -215,7 +223,7 @@ export default function WaitingRoom(props) {
         //방퇴장
         props.socket.on('exit room', (data) => {
             let exitUserColor = data.user_color;
-          //  console.log('나감 : ' + exitUserColor);
+            //  console.log('나감 : ' + exitUserColor);
             colorList &&
                 colorList.map((element) => {
                     if (element.color === exitUserColor) {
@@ -287,18 +295,18 @@ export default function WaitingRoom(props) {
 
             getWaiting();
 
-           /*  console.log('idx : ' + save_user_idx + data.user_idx);
-            if(save_user_idx === data.user_idx){
-                console.log('dd : ' + changeReady);
-                setChangeReady(!changeReady);
-               /*  if(changeReady){
-                    setReadyTxt("준비 완료");
-                }
-                else{
-                    setReadyTxt("준비 시작");
-                } 
-            } */
-          
+            /*  console.log('idx : ' + save_user_idx + data.user_idx);
+             if(save_user_idx === data.user_idx){
+                 console.log('dd : ' + changeReady);
+                 setChangeReady(!changeReady);
+                /*  if(changeReady){
+                     setReadyTxt("준비 완료");
+                 }
+                 else{
+                     setReadyTxt("준비 시작");
+                 } 
+             } */
+
             //임시방편으로 주석 푼 코드
             /* const changeReadyResult = data.user_ready;
             if(ready_cnt > startMember){ // 레디카운트가 시작 멤버보다 값이 크게 바꼈다면 레디카운트에 시작 멤버 값 대입
@@ -453,7 +461,7 @@ export default function WaitingRoom(props) {
 
         //방 정보 수정 소켓
         props.socket.on('edit room', (data) => {
-          //  console.log('수정) 방정보! ');
+            //  console.log('수정) 방정보! ');
             //setRoomUpdate(data);
             getWaiting();
         });
@@ -461,8 +469,8 @@ export default function WaitingRoom(props) {
 
         //게임 시작 정보 socket
         props.socket.on('start game', (data) => {
-         //   console.log('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
-         //   console.log(leader_idx.current);
+            //   console.log('게임 스타트, 게임 시작 인덱스 ' + data.game_idx);
+            //   console.log(leader_idx.current);
 
             // getWaiting();
             //플레잉룸으로 이동, 데이터 전달
@@ -470,8 +478,8 @@ export default function WaitingRoom(props) {
                 pathname: '/playingroom/' + room_idx,
                 state: { isSet: false, gameIdx: data.game_idx, userList: data.user_list, gameSetIdx: data.game_set_idx, room: room_idx, leaderIdx: leader_idx.current, gameSetNo: 1 },
             });
-            
-            
+
+
         });
     }, []);
 
@@ -481,10 +489,12 @@ export default function WaitingRoom(props) {
     };
 
     function readyClick(readyStatus) {
-       // setChangeReady(readyStatus);
-       setReady(true);
+        // setChangeReady(readyStatus);
+        setReady(true);
 
-      //  console.log('클릭 시 레디 값 : ' + ready_cnt + '정원 : ' + startMember);
+        let readyVal = readyStatus;
+
+        //  console.log('클릭 시 레디 값 : ' + ready_cnt + '정원 : ' + startMember);
 
         const restURL = BaseURL + '/waiting-room/user-ready   ';
 
@@ -499,15 +509,25 @@ export default function WaitingRoom(props) {
                 restURL,
                 {
                     room_idx: parseInt(room_idx), //룸 인덱스 넘버여야함.
-                    user_ready: readyStatus,
+                    user_ready: readyVal,
                 },
                 reqHeaders
             )
             .then(function (response) {
-              //  console.log('레디 rest: ' + readyStatus);
+                //  console.log('레디 rest: ' + readyStatus);
             })
             .catch(function (error) {
-                //alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+
+                    getToken();
+                    readyClick(readyVal);
+
+                }
+                else
+                    alert(resErr);
             });
     }
 
@@ -530,17 +550,28 @@ export default function WaitingRoom(props) {
             )
             .then(function (response) {
                 //response로 jwt token 반환
-              //  console.log('success! 게임시작');
+                //  console.log('success! 게임시작');
                 //플레잉룸으로 이동 동시에, 게임시장 정보 call 데이터 함께 전달
                 setGameStart(true);
             })
             .catch(function (error) {
-                //alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    startClick();
+
+                }
+                else
+                    alert(resErr);
             });
     }
 
     function colorClick(str) {
         setModifiy(true);
+
+        let color = str;
 
         const restURL = BaseURL + '/waiting-room/user-color';
 
@@ -555,16 +586,25 @@ export default function WaitingRoom(props) {
                 restURL,
                 {
                     room_idx: parseInt(room_idx), //룸 인덱스 변수로 들어가야함.
-                    user_color: str, //클릭했을 때 해당 색
+                    user_color: color, //클릭했을 때 해당 색
                 },
                 reqHeaders
             )
             .then(function (response) {
-             //   console.log('색깔 rest: ' + response.data);
+                //   console.log('색깔 rest: ' + response.data);
                 //setSelectColor(str); //내가 선택한 색
             })
             .catch(function (error) {
-                //alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    colorClick(color);
+
+                }
+                else
+                    alert(resErr);
             });
     }
 
@@ -582,13 +622,22 @@ export default function WaitingRoom(props) {
             .get(restURL, reqHeaders)
             .then(function (response) {
                 setRoomInfo(response.data);
-              //  console.log('response.data.room_start_member_cnt');
-              //  console.log(response.data.room_idx);
+                //  console.log('response.data.room_start_member_cnt');
+                //  console.log(response.data.room_idx);
                 setCount(response.data.room_start_member_cnt);
-              //  console.log('getRoomInfo 성공');
+                //  console.log('getRoomInfo 성공');
             })
             .catch(function (error) {
-               // alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    getRoomInfo();
+
+                }
+                else
+                    alert(resErr);
             });
     };
 
@@ -604,14 +653,23 @@ export default function WaitingRoom(props) {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-             //   console.log('방 삭제 성공');
+                //   console.log('방 삭제 성공');
                 history.push({
                     pathname: '/roomlist', // 나가기 성공하면 룸리스트로 이동
                 });
             })
             .catch(function (error) {
-               // alert(error.response.data.message);
-        })
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    deleteRoom();
+
+                }
+                else
+                    alert(resErr);
+            })
     };
 
     const exitRoom = async () => {
@@ -625,14 +683,23 @@ export default function WaitingRoom(props) {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-             //   console.log(response.status);
-             //   console.log('exitWaitingRoom 성공');
+                //   console.log(response.status);
+                //   console.log('exitWaitingRoom 성공');
                 history.push({
                     pathname: '/roomlist', // 나가기 성공하면 룸리스트로 이동
                 });
             })
             .catch(function (error) {
-               // alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    exitRoom();
+
+                }
+                else
+                    alert(resErr);
             });
     };
 
@@ -665,7 +732,7 @@ export default function WaitingRoom(props) {
 
     // 비정상 종료
     const exit = async () => {
-       // console.log("playing room exit");
+        // console.log("playing room exit");
         const restURL = 'http://3.17.55.178:3002/game/exit';
 
         const reqHeaders = {
@@ -676,14 +743,14 @@ export default function WaitingRoom(props) {
         axios
             .delete(restURL, reqHeaders)
             .then(function (response) {
-             //   console.log(response);
+                //   console.log(response);
                 history.push({
-                    pathname: '/',  
+                    pathname: '/',
                 });
                 //window.location.replace('/');
             })
             .catch(function (error) {
-              //  alert(error.response.data.message);
+                //  alert(error.response.data.message);
             });
     };
 
@@ -691,25 +758,25 @@ export default function WaitingRoom(props) {
     useEffect(() => {
         window.addEventListener('beforeunload', alertUser) // 새로고침, 창 닫기, url 이동 감지 
         window.addEventListener('unload', handleEndConcert) //  사용자가 페이지를 떠날 때, 즉 문서를 완전히 닫을 때 실행
-        
+
         return () => {
             window.removeEventListener('beforeunload', alertUser)
             window.removeEventListener('unload', handleEndConcert)
-        }  
+        }
     }, [])
 
     // 경고창 
     const alertUser = (e) => {
         e.preventDefault(); // 페이지가 리프레쉬 되는 고유의 브라우저 동작 막기
         e.returnValue = "";
-        
+
         exit();
     };
 
     // 종료시 실행 
     const handleEndConcert = async () => {
         exit();
-    } 
+    }
 
     /*   useEffect(()=>{
           info && setIsBlocking(true)
@@ -799,12 +866,12 @@ export default function WaitingRoom(props) {
     }, []); */
 
     const grayBox = () => {
-       // console.log('함수' + startMember + currentMember);
+        // console.log('함수' + startMember + currentMember);
         let cnt = startMember + 1 - currentMember;
         const result = [];
 
         for (let i = 0; i < cnt; i++) {
-          //  console.log('몇변 ' + cnt);
+            //  console.log('몇변 ' + cnt);
 
             result.push(<UserCard color="gray" />);
 
@@ -815,9 +882,9 @@ export default function WaitingRoom(props) {
     return (
         <Background>
             {props.socket.connected ? (
-               // console.log("socket 연결!"),
+                // console.log("socket 연결!"),
                 roomEnterInfo && roomEnterInfo ? (
-                  //  console.log("정보 조회 성공!"),
+                    //  console.log("정보 조회 성공!"),
                     (
                         <div>
                             <Header />
@@ -947,7 +1014,7 @@ export default function WaitingRoom(props) {
                                     </UserDiv>
                                     <div
                                         onClick={() => {
-                                         //   console.log('눌림');
+                                            //   console.log('눌림');
                                             exitWaitingRoom();
                                         }}
                                         style={{
@@ -962,7 +1029,7 @@ export default function WaitingRoom(props) {
                                     </div>
                                 </SelectDiv>
                                 <RightDiv>
-                                <Chatting chats={dummyChatData} socket={props.socket} room_idx={room_idx} height="520px" available={true} color={'WHITE'}></Chatting>
+                                    <Chatting chats={dummyChatData} socket={props.socket} room_idx={room_idx} height="520px" available={true} color={'WHITE'}></Chatting>
                                     <StartDiv>
                                         {
                                             isLeader === 0 //방장 아님
@@ -1003,10 +1070,10 @@ export default function WaitingRoom(props) {
                                                     )) //게임 시작 api 요청 onclick 달기
                                         }
                                         {
-                                        ready ?
-                                            <ReadyToast>처리 중 입니다....</ReadyToast>
-                                            :
-                                            null
+                                            ready ?
+                                                <ReadyToast>처리 중 입니다....</ReadyToast>
+                                                :
+                                                null
                                         }
                                     </StartDiv>
                                 </RightDiv>
@@ -1158,8 +1225,8 @@ const BtnDiv = styled.div`
   }
 
   ${(props) =>
-    props.color == "waiting"
-      ? `
+        props.color == "waiting"
+            ? `
     background-color: #a274d5; 
     color: white; 
     &:hover {
@@ -1168,14 +1235,14 @@ const BtnDiv = styled.div`
         border: 3px solid #a274d5;
         cursor: grab;
     }`
-      : ""}
+            : ""}
 
   ${(props) =>
-    props.isStart == "yes"
-      ? ``
-      : props.isStart == "no"
-      ? `&:hover { cursor: not-allowed;}opacity: 0.5;`
-      : ``}
+        props.isStart == "yes"
+            ? ``
+            : props.isStart == "no"
+                ? `&:hover { cursor: not-allowed;}opacity: 0.5;`
+                : ``}
 
     &:hover .textDiv {
     background-color: ${style.white};
