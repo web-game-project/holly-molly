@@ -68,17 +68,15 @@ const RoomList = (props) => {
     save_token = JSON.parse(data) && JSON.parse(data).access_token;
     //save_token = '333333';
 
-    console.log(save_token)
-    console.log(JSON.parse(data) && JSON.parse(data).user_name);
-
-
     function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
+
+        console.log(save_token)
+        console.log(JSON.parse(data) && JSON.parse(data).user_name);
     }
 
     useEffect(() => {
-        getToken();
 
         props.socket.on('connect', () => {
             //console.log("room list");
@@ -204,6 +202,7 @@ const RoomList = (props) => {
                 let resErr = error.response.data.message;
 
                 if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
                     getToken();
                     roomListCheck();
                 }
@@ -395,7 +394,6 @@ const RoomList = (props) => {
                     let refresh = RefreshVerification.verification();
                     getToken();
                     randomEntry();
-
                 }
                 else
                     alert(resErr);

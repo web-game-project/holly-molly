@@ -17,14 +17,13 @@ const Room = (props) => {
     // console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
 
+    data = sessionStorage.getItem('token');
+    save_token = JSON.parse(data) && JSON.parse(data).access_token;
+   
     function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
-
-    useEffect(() => {
-        getToken();
-    }, [])
 
     const enterRoom = async () => {
         const reqURL = BaseURL + '/room/idx'; //parameter : 방 타입

@@ -18,15 +18,13 @@ const RoomSearchBar = (props) => {
 
     let data, save_token;
 
+    data = sessionStorage.getItem('token');
+    save_token = JSON.parse(data) && JSON.parse(data).access_token;
+
     function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
-    
-    useEffect(() => {
-        getToken();
-    }, [])
-
 
     const enterRoom = async () => {
         const reqURL = BaseURL + '/room/code'; //parameter : 방 타입

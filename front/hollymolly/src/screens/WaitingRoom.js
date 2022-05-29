@@ -10,7 +10,6 @@ import ModalSetting from '../components/ModalSetting.js';
 
 import Chatting from '../components/Chatting.js';
 
-//import { useLocation } from 'react-router';
 import RefreshVerification from '../server/RefreshVerification.js';
 import { useHistory, useLocation } from 'react-router';
 import InfoModal from '../components/InfoModal.js';
@@ -200,8 +199,6 @@ export default function WaitingRoom(props) {
     useEffect(() => {
         //  console.log("waiting room");
         //  console.log(props.socket);
-
-        getToken();
 
         if (props.socket.connected) {
             getWaiting();

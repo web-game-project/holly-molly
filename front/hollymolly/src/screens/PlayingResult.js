@@ -48,11 +48,11 @@ const PlayingResult = (props) => {
     const gameSetIdx = location.state.gameSetIdx;
     const leaderIdx = location.state.leaderIdx;
 
-    if(exitSocket.current === false){
+    if (exitSocket.current === false) {
         userList = location.state.userList; //그림판에서 넘어온 유저리스트
     }
 
-    const [afterExitUserList, setAfterExitUserList] = useState(); 
+    const [afterExitUserList, setAfterExitUserList] = useState();
 
     const roomIdx = location.state.roomIdx;
     const role = location.state.role;
@@ -61,68 +61,68 @@ const PlayingResult = (props) => {
     let data, save_token, save_user_idx;
 
     data = sessionStorage.getItem('token');
-            save_token = JSON.parse(data) && JSON.parse(data).access_token;
-            save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+    save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
 
     if (normal === true) {
-       data = sessionStorage.getItem('token');
-       save_token = JSON.parse(data) && JSON.parse(data).access_token;
-       save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
-    }
-
-    function getToken(){
         data = sessionStorage.getItem('token');
-            save_token = JSON.parse(data) && JSON.parse(data).access_token;
-            save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+        save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
     }
 
-    function changeColor(color){
-        if(color === 'RED'){
+    function getToken() {
+        data = sessionStorage.getItem('token');
+        save_token = JSON.parse(data) && JSON.parse(data).access_token;
+        save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
+    }
+
+    function changeColor(color) {
+        if (color === 'RED') {
             color = style.red_bg;
-        }else if(color === 'ORANGE'){
+        } else if (color === 'ORANGE') {
             color = style.orange_bg;
-        }else if(color === 'YELLOW'){
+        } else if (color === 'YELLOW') {
             color = style.yellow_bg;
-        }else if(color === 'GREEN'){
+        } else if (color === 'GREEN') {
             color = style.green_bg;
-        }else if(color === 'BLUE'){
+        } else if (color === 'BLUE') {
             color = style.blue_bg;
-        }else if(color === 'PINK'){
+        } else if (color === 'PINK') {
             color = style.pink_bg;
-        }else if(color === 'WHITE'){
+        } else if (color === 'WHITE') {
             color = '#FFFFFF'
-        }else{
+        } else {
             color = style.purple_bg;
         }
-    
+
         return color;
     }
 
     //이전 채팅 이력 정보 조회
     let chats = useRef([]);
     const getChatHistory = async () => {
-        
+
         const reqHeaders = {
             headers: {
                 authorization: 'Bearer ' + save_token,
             },
         };
         const restURL = BaseURL + '/game/chat/' + roomIdx;
-       
+
         axios
             .get(restURL, reqHeaders)
             .then(function (response) {
                 //console.log(response.data);  
-                for(let i = 0; i < response.data.length; i++){
+                for (let i = 0; i < response.data.length; i++) {
                     const chat = {
                         recentChat: response.data[i].chat_msg,
                         recentChatColor: changeColor(response.data[i].wrm_user_color),
                         recentChatUserName: response.data[i].user_name
                     }
 
-                    chats.current.push(chat); 
-                    
-                }   
+                    chats.current.push(chat);
+
+                }
                 //console.log(chats.current);  
             })
             .catch(function (error) {
@@ -198,8 +198,6 @@ const PlayingResult = (props) => {
     }
 
     useEffect(() => {
-        getToken();
-
         props.socket.on('connect', () => {
         });
 
@@ -212,7 +210,7 @@ const PlayingResult = (props) => {
         });
 
         // 같은 대기실에 있는 클라이언트들에게 최종 결과 전송
-        props.socket.on('get final result', (data) => {           
+        props.socket.on('get final result', (data) => {
             //getChatHistory();
             if (gameSetNo === 2 && exitSocket.current === true) { //게임 세트가 2인데 최종결과 전송이 왔다? 비정상 종료다.
                 // 정렬시, 유저 리스트에서 본인 인덱스 찾아서 제일 위로 올리기 위해 0으로 바꾸기
@@ -246,13 +244,13 @@ const PlayingResult = (props) => {
 
         // 방 퇴장 
         props.socket.on('exit room', (data) => {
-            var exitPerson = userList.find((x) => x.user_idx === data.user_idx); 
+            var exitPerson = userList.find((x) => x.user_idx === data.user_idx);
 
             userList = userList.filter(x => x.user_idx !== data.user_idx);
-            
-            if(exitPerson){
+
+            if (exitPerson) {
                 for (let i = 0; i < userList.length; i++) {
-                    if(exitPerson.game_member_order < userList[i].game_member_order){
+                    if (exitPerson.game_member_order < userList[i].game_member_order) {
                         userList[i].game_member_order = userList[i].game_member_order - 1;
                     }
                 }
@@ -270,7 +268,7 @@ const PlayingResult = (props) => {
             copyList.sort(function (a, b) {
                 return a.game_member_order - b.game_member_order;
             });
-            
+
             // 정렬된 리스트 중 본인 인덱스 찾아서 "나" 로 표시
             var myItem = copyList.find((x) => x.user_idx === save_user_idx);
             if (myItem) {
@@ -321,12 +319,12 @@ const PlayingResult = (props) => {
             .then(function (response) {
                 //console.log(response);
                 history.push({
-                    pathname: '/',  
+                    pathname: '/',
                 });
                 //window.location.replace('/');
             })
             .catch(function (error) {
-              //  alert(error.response.data.message);
+                //  alert(error.response.data.message);
             });
     };
 
@@ -405,28 +403,28 @@ const PlayingResult = (props) => {
                             {/* 제시어 role parameter 값 ghost/human -> 역할에 따라 배경색이 변함*/}
                             <MissionWord text={keyword} role={role}></MissionWord>
                             {/* 유저 컴포넌트 */}
-                            {exitSocket.current  === false? 
-                                            (reOrderList && (reOrderList.map((values) => (
-                                                <GameUserCard
-                                                    user_idx={values.user_idx}
-                                                    user_color={values.user_color}
-                                                    user_name={values.user_name}
-                                                    user_role={values.user_role}
-                                                    user_order={values.game_member_order}
-                                                    user_exit={values.user_exit}
-                                                ></GameUserCard>
-                                            )))) : 
-                                            (afterExitUserList && (
-                                                afterExitUserList.map((values) => (
-                                                    <GameUserCard
-                                                        user_idx={values.user_idx}
-                                                        user_color={values.user_color}
-                                                        user_name={values.user_name}
-                                                        user_role={values.user_role}
-                                                        user_order={values.game_member_order}
-                                                        user_exit={values.user_exit}
-                                                ></GameUserCard>
-                                                )))) 
+                            {exitSocket.current === false ?
+                                (reOrderList && (reOrderList.map((values) => (
+                                    <GameUserCard
+                                        user_idx={values.user_idx}
+                                        user_color={values.user_color}
+                                        user_name={values.user_name}
+                                        user_role={values.user_role}
+                                        user_order={values.game_member_order}
+                                        user_exit={values.user_exit}
+                                    ></GameUserCard>
+                                )))) :
+                                (afterExitUserList && (
+                                    afterExitUserList.map((values) => (
+                                        <GameUserCard
+                                            user_idx={values.user_idx}
+                                            user_color={values.user_color}
+                                            user_name={values.user_name}
+                                            user_role={values.user_role}
+                                            user_order={values.game_member_order}
+                                            user_exit={values.user_exit}
+                                        ></GameUserCard>
+                                    ))))
                             }
                         </UserDiv>
 

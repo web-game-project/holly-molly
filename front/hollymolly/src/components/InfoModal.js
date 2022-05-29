@@ -46,17 +46,14 @@ export default function InfoModal({ title, mode, room_private, member, room_idx 
 
     //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
+    
+    data = sessionStorage.getItem('token');
+    save_token = JSON.parse(data) && JSON.parse(data).access_token;
 
     function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
-
-
-    useEffect(() => {
-        // getRoomInfo();
-        getToken();
-    }, []);
 
     const UpdateRoomInfo = async () => {
         // 대기실 정보 수정 api
