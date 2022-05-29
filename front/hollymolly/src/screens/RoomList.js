@@ -33,7 +33,7 @@ const RoomList = (props) => {
 
     const [emptyRoomsLength, setEmptyRoomsLength] = useState(0);
     const [createRoomData, setCreateRoomData] = useState('');
-    
+
     let roomData = {
         type: '',
         data: ''
@@ -60,24 +60,33 @@ const RoomList = (props) => {
 
     const resultArray = result.sort();
 
+
     //토큰 검사
-    let verify = RefreshVerification.verification();
-    //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
 
-    if (verify === true) {
+    data = sessionStorage.getItem('token');
+    save_token = JSON.parse(data) && JSON.parse(data).access_token;
+    //save_token = '333333';
+
+    console.log(save_token)
+    console.log(JSON.parse(data) && JSON.parse(data).user_name);
+
+
+    function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
 
     useEffect(() => {
+        getToken();
+
         props.socket.on('connect', () => {
             //console.log("room list");
         });
 
         //방 생성 시, 마지막 페이지에 방 추가
         props.socket.on('create room', (data) => {
-           // console.log('create room');
+            // console.log('create room');
 
             let socketRoomData = {
                 type: 'create_room',
@@ -92,7 +101,7 @@ const RoomList = (props) => {
 
         // 방 삭제 - 대기방 삭제
         props.socket.on('delete room', (data) => {
-           // console.log('delete room');
+            // console.log('delete room');
 
             let socketRoomData = {
                 type: 'delete_room',
@@ -105,20 +114,20 @@ const RoomList = (props) => {
 
         //방 정보 수정  - 특정 대기방에서 대기방 정보 수정 시
         props.socket.on('edit room', (data) => {
-          //  console.log('edit room');
+            //  console.log('edit room');
 
             let socketRoomData = {
                 type: 'edit_room',
                 data: data
             }
-           
+
             setChangeRoomData(socketRoomData);
             setIsSocket(!isSocket);
         });
 
         // 방 멤버 변동 - 특정 대기방 사용자 입장/퇴장 시
         props.socket.on('change member count', (data) => {
-           // console.log('change member count');
+            // console.log('change member count');
 
             let socketRoomData = {
                 type: 'change_member_count',
@@ -131,7 +140,7 @@ const RoomList = (props) => {
 
         //방 상태 변동 - 특정 대기방 게임이 시작할 때
         props.socket.on('change game status', (data) => {
-           // console.log('change game status');
+            // console.log('change game status');
 
             let socketRoomData = {
                 type: 'change_game_status',
@@ -162,7 +171,7 @@ const RoomList = (props) => {
         }
     };
 
-    
+
     const roomListCheck = async () => {
         const currentPage = currentSlide + 1;
 
@@ -177,51 +186,58 @@ const RoomList = (props) => {
         };
 
         axios
-        .get(restURL, reqHeaders)
-        .then(function (response) {
-           // console.log(response.data);
-            total_room_cnt = response.data.total_room_cnt;
-            if (total_room_cnt % 6 === 0) {
-                TOTAL_SLIDES.current = total_room_cnt / 6 - 1;
-                setTotalSlide(TOTAL_SLIDES.current);
-            } else {
-                TOTAL_SLIDES.current = Math.floor(total_room_cnt / 6);
-                setTotalSlide(TOTAL_SLIDES.current);
-            }
-            setRooms(response.data.room_list);
-            setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
-        })
-        .catch(function (error) {
-           // alert(error.response.data.message);
-        });
-    }; 
+            .get(restURL, reqHeaders)
+            .then(function (response) {
+                // console.log(response.data);
+                total_room_cnt = response.data.total_room_cnt;
+                if (total_room_cnt % 6 === 0) {
+                    TOTAL_SLIDES.current = total_room_cnt / 6 - 1;
+                    setTotalSlide(TOTAL_SLIDES.current);
+                } else {
+                    TOTAL_SLIDES.current = Math.floor(total_room_cnt / 6);
+                    setTotalSlide(TOTAL_SLIDES.current);
+                }
+                setRooms(response.data.room_list);
+                setEmptyRoomsLength(6 - response.data.room_list.length); // empty room list length
+            })
+            .catch(function (error) {
+                let resErr = error.response.data.message;
 
-    useEffect(() => {   
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    getToken();
+                    roomListCheck();
+                }
+                else
+                    alert(resErr);
+            });
+    };
+
+    useEffect(() => {
         // 룸 리스트 조회
         roomListCheck();
     }, [currentSlide, resultArray]);
 
     // 방 생성, 삭제, 정보 수정, 멤버 변동, 상태 변동 시 사용자에게 보이는 방 정보 수정
     if (isSocket === true && rooms) {
-        if(changeRoomData.type === 'create_room'){
+        if (changeRoomData.type === 'create_room') {
             // 마지막 페이지 및 6개 미만이면 현재 페이지 다시 조회
-            if(currentSlide === totalSlide && rooms.length !== 6){ 
+            if (currentSlide === totalSlide && rooms.length !== 6) {
                 //roomListCheckPage(currentSlide);
                 roomListCheck();
-            }else{ // 마지막 페이지 아니면 전체 페이지 1개 추가(현재 페이지 + 1) 및 현재 페이지 조회
-                setTotalSlide(currentSlide+1);
+            } else { // 마지막 페이지 아니면 전체 페이지 1개 추가(현재 페이지 + 1) 및 현재 페이지 조회
+                setTotalSlide(currentSlide + 1);
                 //roomListCheckPage(currentSlide);
-               roomListCheck();
-            } 
-        }else if(changeRoomData.type === 'delete_room'){
+                roomListCheck();
+            }
+        } else if (changeRoomData.type === 'delete_room') {
             let changeRooms = rooms.filter(x => x.room_idx !== parseInt(changeRoomData.data.room_idx));
 
             // 현재 페이지에 삭제할 방 있다면 삭제 후 다시 조회 
-            if(changeRooms){
+            if (changeRooms) {
                 setRooms(changeRooms);
                 //roomListCheckPage(currentSlide);
                 roomListCheck();
-            }else{ // 현재 페이지 아니라면 총 갯수에서 하나 삭제 후 전체 슬라이드 갯수 다시 계산
+            } else { // 현재 페이지 아니라면 총 갯수에서 하나 삭제 후 전체 슬라이드 갯수 다시 계산
                 total_room_cnt -= 1;
                 if (total_room_cnt % 6 === 0) {
                     TOTAL_SLIDES.current = total_room_cnt / 6 - 1;
@@ -232,27 +248,27 @@ const RoomList = (props) => {
                 }
                 setTotalSlide(TOTAL_SLIDES.current)
             }
-        }else if(changeRoomData.type === 'edit_room'){
+        } else if (changeRoomData.type === 'edit_room') {
             // 현재 페이지에 방 정보가 수정된 방 있다면 수정
-            
-            for(let i = 0; i < rooms.length; i++){
-                if(rooms[i].room_idx === parseInt(changeRoomData.data.room_idx)){
+
+            for (let i = 0; i < rooms.length; i++) {
+                if (rooms[i].room_idx === parseInt(changeRoomData.data.room_idx)) {
                     rooms[i].room_name = changeRoomData.data.room_name
                     rooms[i].room_mode = changeRoomData.data.room_mode;
                     rooms[i].room_start_member_cnt = changeRoomData.data.room_start_member_cnt;
                 }
             }
-        }else if(changeRoomData.type === 'change_member_count'){
+        } else if (changeRoomData.type === 'change_member_count') {
             // 현재 페이지에 멤버 변동이 있는 방 있다면 수정
-            for(let i = 0; i < rooms.length; i++){
-                if(rooms[i].room_idx === parseInt(changeRoomData.data.room_idx)){
+            for (let i = 0; i < rooms.length; i++) {
+                if (rooms[i].room_idx === parseInt(changeRoomData.data.room_idx)) {
                     rooms[i].room_current_member_cnt = changeRoomData.data.room_member_count
                 }
             }
-        }else if(changeRoomData.type === 'change_game_status'){
+        } else if (changeRoomData.type === 'change_game_status') {
             // 현재 페이지에 방 상태가 수정된 방 있다면 수정
-            for(let i = 0; i < rooms.length; i++){
-                if(rooms[i].room_idx === parseInt(changeRoomData.data.room_idx)){
+            for (let i = 0; i < rooms.length; i++) {
+                if (rooms[i].room_idx === parseInt(changeRoomData.data.room_idx)) {
                     rooms[i].room_status = changeRoomData.data.room_status
                 }
             }
@@ -347,8 +363,8 @@ const RoomList = (props) => {
         let modeFilterArray = modeFilterList();
         let personFilterArray = personFilterList();
 
-       // console.log(modeFilterArray);
-       // console.log(personFilterArray);
+        // console.log(modeFilterArray);
+        // console.log(personFilterArray);
         const reqURL = baseURL + 'room/random'; //parameter : 방 타입
         const reqHeaders = {
             headers: {
@@ -366,14 +382,23 @@ const RoomList = (props) => {
                 reqHeaders
             )
             .then(function (response) {
-              //  console.log(response.data);
+                //  console.log(response.data);
                 // 대기실로 이동
                 history.push({
                     pathname: '/waitingroom/' + response.data.room_idx,
                 });
             })
             .catch(function (error) {
-                //alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    randomEntry();
+
+                }
+                else
+                    alert(resErr);
             });
     };
 
@@ -416,7 +441,7 @@ const RoomList = (props) => {
                                             {rooms &&
                                                 rooms.map((values, index) => {
                                                     return values.room_status === 'waiting' ? (
-                                                        <Room 
+                                                        <Room
                                                             socket={props.socket}
                                                             room_idx={values.room_idx}
                                                             room_name={values.room_name}
@@ -468,11 +493,11 @@ const RoomList = (props) => {
                                 </RoomGrid>
                                 {
                                     totalSlide < 0 ?
-                                     null
-                                     :
-                                     <div style={styles.pageContainer}>
-                                         {currentSlide + 1} / {totalSlide + 1}
-                                     </div>
+                                        null
+                                        :
+                                        <div style={styles.pageContainer}>
+                                            {currentSlide + 1} / {totalSlide + 1}
+                                        </div>
                                 }
                             </RoomGrid>
                         </Container>

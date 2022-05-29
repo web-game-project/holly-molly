@@ -39,16 +39,19 @@ export default function ModalBase() {
     const inputRef = useRef();
     let roomMode = '';
 
-    //토큰 검사
-    let verify = RefreshVerification.verification()
     //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
 
-    if (verify === true) {
+    function getToken() {
+
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
-    
+
+    useEffect(() => {
+        getToken();
+    }, []);
+
     // 난이도 useState
     const [isChecked, setIschecked] = React.useState(true); // 디폴트 이지 -> true
     const isHard = () => {
@@ -164,9 +167,16 @@ export default function ModalBase() {
                     });
                 })
                 .catch(function (error) {
-                    //console.log('생성 실패');
-                    //console.log(error.response);
-                    //alert(error.response.data.message);
+                    let resErr = error.response.data.message;
+
+                    if ("로그인 후 이용해주세요." === resErr) { //401 err
+                        let refresh = RefreshVerification.verification();
+                        getToken();
+                        roomCreate();
+
+                    }
+                    else
+                        alert(resErr);
                 });
         }
     };
@@ -217,7 +227,7 @@ export default function ModalBase() {
     }
 
     const onEnter = (e) => {
-        if(e.key === 'Enter'){
+        if (e.key === 'Enter') {
             result();
         }
     }

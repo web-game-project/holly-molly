@@ -12,15 +12,18 @@ const Room = (props) => {
     const [clicked, setClicked] = useState(false);
 
     //토큰 검사
-    let verify = RefreshVerification.verification();
-   // console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
+    // console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
     let data, save_token;
 
-    if (verify === true) {
+    function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
     }
-    
+
+    useEffect(() => {
+        getToken();
+    }, [])
+
     const enterRoom = async () => {
         const reqURL = 'http://3.17.55.178:3002/room/idx'; //parameter : 방 타입
         const reqHeaders = {
@@ -43,7 +46,16 @@ const Room = (props) => {
                 });
             })
             .catch(function (error) {
-                alert(error.response.data.message);
+                let resErr = error.response.data.message;
+
+                if ("로그인 후 이용해주세요." === resErr) { //401 err
+                    let refresh = RefreshVerification.verification();
+                    getToken();
+                    enterRoom();
+
+                }
+                else
+                    alert(resErr);
             });
     };
 
@@ -153,7 +165,7 @@ const RoomContainer = styled.div`
     box-sizing: border-box;
     border-radius: 1.5rem;
 
-    ${(props) => props.cursor === "true" ? `cursor: grab; `: `cursor: not-allowed; `} 
+    ${(props) => props.cursor === "true" ? `cursor: grab; ` : `cursor: not-allowed; `} 
     ${(props) => props.disabled === true ? `opacity: 0.7;` : `&:hover {background-color: #CFCFCF}`}
 `;
 
