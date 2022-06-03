@@ -28,6 +28,9 @@ const GameMissionPerformance = (props) => {
     function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
+        
+        console.log(save_token);
+
     }
     
     const getHintLength = async () => {
