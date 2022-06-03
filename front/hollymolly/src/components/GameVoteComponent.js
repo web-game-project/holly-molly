@@ -50,7 +50,7 @@ const GameVoteComponent = (props) => {
 
                 if (parseInt(seconds) === 0) {
                     setSeconds(0);
-                    postVote();
+                    postVote(gameSet);
                 }
             }, 1000);
 
@@ -60,7 +60,7 @@ const GameVoteComponent = (props) => {
         }
     }, [seconds]);
 
-    const postVote = async () => {
+    const postVote = async (str) => {
         //  타이머 카운트 주고 시간 다 되면 이 api 불러주면 됨
         // 투표 api
 
@@ -68,6 +68,8 @@ const GameVoteComponent = (props) => {
 
         if (voteIndex !== null || voteIndex !== '')
             str = voteIndex.current; */
+        
+        console.log('gameSet ' + str + ' user_idx ' + voteIndex.current);
 
         const restURL = BaseURL + '/game/vote';
 
@@ -80,7 +82,7 @@ const GameVoteComponent = (props) => {
             .post(
                 restURL,
                 {
-                    game_set_idx: gameSet,
+                    game_set_idx: str,
                     user_idx: voteIndex.current,
                 },
                 reqHeaders
@@ -94,11 +96,11 @@ const GameVoteComponent = (props) => {
                 if ("로그인 후 이용해주세요." === resErr) { //401 err
                     let refresh = RefreshVerification.verification();
                     getToken();
-                    postVote();
+                    postVote(str);
 
                 }
-                else
-                    alert(resErr);
+                //else
+                    //alert(resErr);
             });
 
         setSeconds(-1);

@@ -38,8 +38,9 @@ import { useSelector } from 'react-redux';
 const htmlTitle = document.querySelector('title');
 htmlTitle.innerHTML = '홀리몰리';
 
-let data = sessionStorage.getItem('token');
-let save_token = JSON.parse(data) && JSON.parse(data).access_token;
+let data, save_token;
+data = sessionStorage.getItem('token');
+save_token = JSON.parse(data) && JSON.parse(data).access_token;
 
 const socket = io('http://api.hollymolly.kr/', {
               auth: {
@@ -52,7 +53,18 @@ socket.on('connect', () => {
 });
 
 socket.on('disconnect', (reason) => {
+    console.log("끊김 후");
+    console.log(save_token);
+    data = sessionStorage.getItem('token');
+    save_token = JSON.parse(data) && JSON.parse(data).access_token;
+
+    socket.auth.token = save_token;
+
     socket.connect();
+
+    console.log("연결 후");
+    console.log(save_token);
+    
 });
 
 let sound;

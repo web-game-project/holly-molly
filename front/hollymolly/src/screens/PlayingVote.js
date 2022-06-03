@@ -206,6 +206,8 @@ const PlayingVote = (props) => {
             if (data.human_submit === true) {
                 setIsHumanSubmit(true);
             }
+
+            console.log('human 소켓 잘감!');
         });
 
         // 방 퇴장 
