@@ -79,10 +79,11 @@ const GameMissionPerformance = (props) => {
         const countdown = setInterval(() => {
             if (parseInt(seconds) > 0) {
                 setSeconds(parseInt(seconds) - 1);
-            }else{ // seconds == 0이면,
+            }else if(parseInt(seconds) === 0){ // seconds == 0이면,
                 //console.log('마피아 미션 수행 초 끝')
-                if(user_role === "human")
+                if(user_role === "human"){
                     inputHumanKeyword();
+                }
             }
         }, 1000);
 
@@ -90,6 +91,7 @@ const GameMissionPerformance = (props) => {
     }, [seconds]);
 
     const inputHumanKeyword = async () => {
+        console.log('save_token: ' + save_token);
         const reqURL = BaseURL + '/game/human-keyword'; //parameter : 방 타입
         const reqHeaders = {
             headers: {
@@ -113,18 +115,18 @@ const GameMissionPerformance = (props) => {
                 reqHeaders
             )
             .then(function (response) {
-                //console.log(response);
+                console.log(response);
             })
             .catch(function (error) {
                 let resErr = error.response.data.message;
-
                 if ("로그인 후 이용해주세요." === resErr) { //401 err
                     let refresh = RefreshVerification.verification();
                     getToken();
                     inputHumanKeyword();
                 }
-                else
-                    alert(resErr);
+                console.log("refresh 후 " + save_token);
+                //else
+                    //alert(resErr);
             });
     };
 
