@@ -153,7 +153,6 @@ const PlayingVote = (props) => {
                 //console.log(chats.current);  
             })
             .catch(function (error) {
-                console.log("ERROR:: ",error.response);
 
                 let resErr = error.response.data.message;
 
@@ -206,8 +205,6 @@ const PlayingVote = (props) => {
             if (data.human_submit === true) {
                 setIsHumanSubmit(true);
             }
-
-            console.log('human 소켓 잘감!');
         });
 
         // 방 퇴장 
