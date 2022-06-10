@@ -28,9 +28,6 @@ const GameMissionPerformance = (props) => {
     function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
-        
-        console.log(save_token);
-
     }
     
     const getHintLength = async () => {
@@ -94,7 +91,6 @@ const GameMissionPerformance = (props) => {
     }, [seconds]);
 
     const inputHumanKeyword = async () => {
-        console.log('save_token: ' + save_token);
         const reqURL = BaseURL + '/game/human-keyword'; //parameter : 방 타입
         const reqHeaders = {
             headers: {
@@ -118,7 +114,6 @@ const GameMissionPerformance = (props) => {
                 reqHeaders
             )
             .then(function (response) {
-                console.log(response);
             })
             .catch(function (error) {
                 let resErr = error.response.data.message;
@@ -127,7 +122,6 @@ const GameMissionPerformance = (props) => {
                     getToken();
                     inputHumanKeyword();
                 }
-                console.log("refresh 후 " + save_token);
                 //else
                     //alert(resErr);
             });

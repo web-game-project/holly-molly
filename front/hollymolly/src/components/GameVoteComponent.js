@@ -68,8 +68,6 @@ const GameVoteComponent = (props) => {
 
         if (voteIndex !== null || voteIndex !== '')
             str = voteIndex.current; */
-        
-        console.log('gameSet ' + str + ' user_idx ' + voteIndex.current);
 
         const restURL = BaseURL + '/game/vote';
 
