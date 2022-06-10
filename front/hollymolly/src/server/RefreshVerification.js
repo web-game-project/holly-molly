@@ -28,15 +28,12 @@ const RefreshVerification = {
 
     const restURL_refresh = BaseURL + "/login/refresh";
 
-    console.log('refresh!');
-
     axios
       .post(restURL_refresh, {
         refresh_token: save_refreshToken,
       }, reqHeaders_room)
       .then(function (response) {
         //response로 access token 반환
-        console.log("refresh success");
 
         //받은 access_token이랑 유저 인덱스로 다시 저장
         sessionStorage.clear();
