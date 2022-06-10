@@ -50,7 +50,7 @@ let socket = io('http://api.hollymolly.kr/', {
 });
 
 socket.on('connect', () => {
-    console.log('socket connection')
+    //console.log('socket connection')
 });
 
 socket.on('disconnect', (reason) => {
