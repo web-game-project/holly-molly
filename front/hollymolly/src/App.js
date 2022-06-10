@@ -42,30 +42,26 @@ let data, save_token;
 data = sessionStorage.getItem('token');
 save_token = JSON.parse(data) && JSON.parse(data).access_token;
 
-const socket = io('http://api.hollymolly.kr/', {
+let socket = io('http://api.hollymolly.kr/', {
               auth: {
                   token: save_token,
-              },
+              }, 
               transports: ['websocket']
 });
 
 socket.on('connect', () => {
+    console.log('socket connection')
 });
 
 socket.on('disconnect', (reason) => {
-    console.log("끊김 후");
-    console.log(save_token);
     data = sessionStorage.getItem('token');
     save_token = JSON.parse(data) && JSON.parse(data).access_token;
 
     socket.auth.token = save_token;
 
     socket.connect();
-
-    console.log("연결 후");
-    console.log(save_token);
-    
 });
+
 
 let sound;
 const soundPlay = (src) => {

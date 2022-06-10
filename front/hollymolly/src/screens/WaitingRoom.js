@@ -23,7 +23,7 @@ let room_idx = 0;
 
 //게임 시작 인원 세는 변수
 let ready_cnt = 0;
-
+let data, save_token, save_user_idx;
 let locationUserList = [{}]; //location에서 받아온 유저리스트 담는 배열
 
 export default function WaitingRoom(props) {
@@ -35,7 +35,7 @@ export default function WaitingRoom(props) {
     const dummyChatData = [];
 
     let room_index = parseInt(props.match.params.name); // url에 입력해준 방 인덱스
-    //   console.log('방 번호는 ?' + room_index);
+    room_idx = room_index;
 
     // 뒤로가기 감지 
     const [isBlocking, setIsBlocking] = useState(false);
@@ -47,8 +47,7 @@ export default function WaitingRoom(props) {
 
     //토큰 검사
     //console.log('토큰 유효한지 검사 t/f 값 : ' + verify);
-    let data, save_token, save_user_idx;
-
+    
     data = sessionStorage.getItem('token');
     save_token = JSON.parse(data) && JSON.parse(data).access_token;
     save_user_idx = JSON.parse(data) && JSON.parse(data).user_idx;
@@ -105,9 +104,7 @@ export default function WaitingRoom(props) {
     const leader_idx = useRef(0);
 
     const getWaiting = () => {
-        //   console.log("getWaiting: " + room_index);
         const restURL = BaseURL + '/room/' + room_index;
-
         const reqHeaders = {
             headers: {
                 //1번 토큰 이용
@@ -189,8 +186,8 @@ export default function WaitingRoom(props) {
                     getWaiting();
 
                 }
-                else
-                    alert(resErr);
+                //else
+                    //alert(resErr);
             });
 
         setTimeout(() => getRoomInfo(), 1000); //방 정보 조회 api + 모달창에 뿌리기용
@@ -527,8 +524,8 @@ export default function WaitingRoom(props) {
                     readyClick(readyVal);
 
                 }
-                else
-                    alert(resErr);
+                //else
+                    //alert(resErr);
             });
     }
 
@@ -564,8 +561,8 @@ export default function WaitingRoom(props) {
                     startClick();
 
                 }
-                else
-                    alert(resErr);
+                //else
+                    //alert(resErr);
             });
     }
 
@@ -573,7 +570,6 @@ export default function WaitingRoom(props) {
         setModifiy(true);
 
         let color = str;
-
         const restURL = BaseURL + '/waiting-room/user-color';
 
         const reqHeaders = {
@@ -604,8 +600,8 @@ export default function WaitingRoom(props) {
                     colorClick(color);
 
                 }
-                else
-                    alert(resErr);
+                //else
+                    //alert(resErr);
             });
     }
 
@@ -637,8 +633,8 @@ export default function WaitingRoom(props) {
                     getRoomInfo();
 
                 }
-                else
-                    alert(resErr);
+                //else
+                    //alert(resErr);
             });
     };
 
@@ -668,8 +664,8 @@ export default function WaitingRoom(props) {
                     deleteRoom();
 
                 }
-                else
-                    alert(resErr);
+                //else
+                    //alert(resErr);
             })
     };
 
@@ -699,8 +695,8 @@ export default function WaitingRoom(props) {
                     exitRoom();
 
                 }
-                else
-                    alert(resErr);
+                //else
+                    //alert(resErr);
             });
     };
 

@@ -71,9 +71,6 @@ const RoomList = (props) => {
     function getToken() {
         data = sessionStorage.getItem('token');
         save_token = JSON.parse(data) && JSON.parse(data).access_token;
-
-        console.log(save_token)
-        console.log(JSON.parse(data) && JSON.parse(data).user_name);
     }
 
     useEffect(() => {
