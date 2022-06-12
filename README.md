@@ -69,12 +69,10 @@
 </p>
 <br>
 
-## :memo: 화면 흐름도<br>
-<br><br>
-
 ## Wiki
 - [REST API 문서](https://github.com/web-game-project/holly-molly/wiki/REST-API)
 - [SOCKET API 문서](https://github.com/web-game-project/holly-molly/wiki/Socket-Server-API)
+<br>
 
 ## :star2: 주요 기능
 ### :loudspeaker: 실시간 채팅
@@ -87,6 +85,7 @@
 
 ※ Client 끼리 통신하지 않고, Server를 통해 통신하는 이유는 해당 room에 있는 사용자인지 확인하기 위해서입니다
 <img width="1000" alt="chat" src="https://user-images.githubusercontent.com/69183944/154488481-ef7f9886-904b-46c1-b4e1-36ef2cbb9b38.png">
+<br>
 
 ### :paintbrush: 실시간 그림 공유
 차례가 된 플레이어가 그리고 있는 그림을 실시간으로 그림을 공유하여 게임방에 있는 모든 플레이어가 볼 수 있습니다. 이를 통해 몰리는 홀리들의 그림을 통해 비밀 단어를 유추할 수 있고, 홀리는 엉뚱한 그림을 그리는 몰리를 유추할 수 있습니다. <br>
@@ -98,6 +97,7 @@
 
 ※ Client 끼리 통신하지 않고, Server를 통해 통신하는 이유는 해당 room에 있는 사용자인지 확인하기 위해서입니다
 <img width="1000" alt="draw" src="https://user-images.githubusercontent.com/69183944/154488550-7f18d0a8-26a6-4d52-bad3-bbbf631eeeef.png">
+<br>
 
 ### :stopwatch: 타이머
 제한시간동안 무한한 창의적 발상과 상상력이 발휘해보세요. 너무 쉽게 그리면 몰리가 알아채고, 못 그리면 의심을 받을 수 있으니 주의하세요.<br>
@@ -121,3 +121,4 @@
 2021.09.18 ~ 2021.12.06 | 개발
 2021.12.01 ~ 2022.01.16 | 테스트
 2022.01.17 ~ 2022.02.20 | 마케팅
+2022.04.04 ~ 2022.06.10 | 버그 수정 및 리팩토링
